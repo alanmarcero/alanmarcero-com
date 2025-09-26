@@ -29,7 +29,8 @@ interface YouTubeRes {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
-  const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&key=${apiKey}`;
+  const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+
 
   const [fetchErr, response] = await asyncWrapper(fetch(apiUrl));
   if (fetchErr || !response) {
