@@ -1,11 +1,19 @@
 {
   "compilerOptions": {
-    "module": "CommonJS"
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
+    "dist",
     "eslint.config.mts",
     "**/*.test.ts",
-     "**/*.local.ts"
+    "**/*.local.ts"
   ]
 }
