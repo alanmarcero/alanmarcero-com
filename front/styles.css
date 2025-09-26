@@ -1,0 +1,298 @@
+/* ----------------------------------------------------
+   GENERAL STYLES
+---------------------------------------------------- */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-image: url('/assets/images/background.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #EEEEEE;
+  height: 100%;
+}
+
+a.youtube-link {
+  color: #ff4d4d; /* Replace with your brand's red or accent color */
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+a.youtube-link:hover {
+  color: #ff1a1a; /* Slightly deeper red on hover */
+  text-decoration: underline;
+}
+
+
+/* ----------------------------------------------------
+   NEWS BANNER
+---------------------------------------------------- */
+.news-banner {
+  background-color: #00ADB5;
+  color: #222831;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  font-size: 14px;
+  overflow: hidden;
+  border-bottom: 1px solid #393E46;
+}
+
+.news-content {
+  width: 100%;
+  text-align: center;
+  animation: moveLeftRight 5s ease-in-out infinite;
+}
+
+@keyframes moveLeftRight {
+  0%, 100% {
+      transform: translateX(0);
+  }
+  50% {
+      transform: translateX(50px);
+  }
+}
+
+/* ----------------------------------------------------
+   HEADER (WITHOUT NAV)
+---------------------------------------------------- */
+header {
+  background: rgba(31, 31, 31, 0.95);
+  color: #EEEEEE;
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px; /* Adjust for news banner */
+  border-bottom: 1px solid #00ADB5;
+}
+
+/* Search container */
+.search-container {
+  margin-top: 15px;
+}
+
+#searchInput {
+  width: 60%;
+  max-width: 400px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  outline: none;
+}
+
+#searchInput:focus {
+  border-color: #00ADB5;
+}
+
+/* ----------------------------------------------------
+   SECTION TITLES (Stylized Box)
+---------------------------------------------------- */
+.section-title {
+  display: block;
+  width: fit-content; 
+  margin: 40px auto 20px auto;
+  text-align: center;
+  background-color: rgba(57, 62, 70, 0.95);
+  color: #00ADB5;
+  font-size: 2em;
+  padding: 15px 25px;
+  border: 2px solid #00ADB5;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ----------------------------------------------------
+   ABOUT ME SECTION
+---------------------------------------------------- */
+#about {
+  background-color: rgba(57, 62, 70, 0.9);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  max-width: 1200px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.about-me-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-me-image {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: cover;
+  object-position: center top 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+/* ----------------------------------------------------
+   PATCH BANKS GRID
+---------------------------------------------------- */
+.patch-banks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* ----------------------------------------------------
+   STORE ITEMS (Both Patch Banks & Music tiles)
+---------------------------------------------------- */
+.store-item {
+  background-color: rgba(57, 62, 70, 0.9);
+  padding: 30px;
+  border-radius: 15px;
+  transition: background-color 0.3s, transform 0.3s;
+  text-align: center;
+  border: 1px solid #393E46;
+  /* We'll set data-search in scripts.js so we can filter them */
+}
+
+.store-item h3 {
+  color: #00ADB5;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+}
+
+.store-item p {
+  font-size: 15px;
+  color: #DDDDDD;
+  margin-bottom: 20px;
+}
+
+/* YouTube Embeds */
+.youtube-embed-container {
+  margin-bottom: 10px;
+}
+
+iframe {
+  width: 100%;
+  height: 220px;
+  margin: 0 auto;
+  display: block;
+  border: none;
+}
+
+.store-item .download-btn {
+  display: inline-block;
+  background-color: #00ADB5;
+  color: #222831;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.store-item .download-btn:hover {
+  background-color: #6EE3EF;
+  color: #16181D;
+}
+
+.store-item:hover {
+  background-color: #393E46;
+  transform: translateY(-5px);
+}
+
+/* ----------------------------------------------------
+   MUSIC & REMIXES GRID
+---------------------------------------------------- */
+#music-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* ----------------------------------------------------
+   DONATE SECTION
+---------------------------------------------------- */
+#donate {
+  background-color: rgba(57, 62, 70, 0.9);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+.paypal-button {
+  display: inline-block;
+  background-color: #00ADB5;
+  color: #222831;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.paypal-button:hover {
+  background-color: #6EE3EF;
+  transform: translateY(-3px);
+}
+
+/* ----------------------------------------------------
+   FOOTER
+---------------------------------------------------- */
+footer {
+  text-align: center;
+  padding: 10px;
+  background: #16181D;
+}
+
+/* ----------------------------------------------------
+   RESPONSIVE DESIGN (Mobile - 767px and below)
+---------------------------------------------------- */
+@media (max-width: 767px) {
+  .news-banner {
+    height: auto;
+    padding: 5px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .news-content {
+    margin-bottom: 10px;
+  }
+
+  .patch-banks-grid,
+  #music-container {
+    grid-template-columns: 1fr;
+  }
+
+  #about,
+  #donate {
+    margin: 20px auto;
+    padding: 15px;
+  }
+
+  iframe {
+    height: 200px; /* Slightly smaller for mobile */
+  }
+
+  #searchInput {
+    width: 80%; /* More flexible for small screens */
+  }
+}
