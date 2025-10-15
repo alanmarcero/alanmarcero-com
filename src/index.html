@@ -1,96 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Alan Marcero - Synth Patch Banks</title>
-  <!-- Reference the updated CSS (styles.css) -->
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <!-- Main scripts -->
-  <script defer src="assets/js/scripts.js"></script>
-  <!-- Patch banks data (with YouTube IDs) -->
-  <script defer src="assets/js/patch-banks.js"></script>
-</head>
-<body>
-  <!-- News Banner -->
-  <div class="news-banner" id="newsBanner">
-    <div class="news-content">
-      <span id="newsText"></span>
-    </div>
-  </div>
-
-  <!-- Header (No Navigation, Just Title & Search) -->
-  <header>
-    <h1>Alan's Synthesizer Patch Banks</h1>
-    <!-- Fuzzy Search Input -->
-    <div class="search-container">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Search patches and music..."
-        aria-label="Search patches and music"
-      >
-    </div>
-  </header>
-
-  <!-- About Me Section -->
-  <section id="about">
-    <h2 class="section-title">About Me</h2>
-    <div class="about-me-content">
-      <img src="assets/images/about-me.webp" alt="About Me Image" class="about-me-image">
-      <p>
-        Hi, I’m Alan from Boston, USA. I’ve been making trance and other electronic music with synthesizers and my PC since my high school days in the early 2000s. This is where I share my passion for creating original tracks, remixes, and sound design.
-      </p>
-      <p>
-        My music has been supported by trance legends like Ferry Corsten, Paul van Dyk, Sean Tyas, Daniel Kandi, and more. Remixes of my tracks have been featured on A State of Trance, BBC Radio 1’s Essential Mix, and Trance Around the World. I’ve released music on iconic labels like Armada, Bonzai, and Ministry of Sound.
-      </p>
-      <p>
-        Thanks for stopping by. <a class="youtube-link" href="https://www.youtube.com/alanmarcero" target="_blank" rel="noopener noreferrer">Subscribe to my YouTube!</a>
-      </p>
-    </div>
-  </section>
-
-
-  <!-- Patch Banks Section -->
-  <section id="store">
-    <h2 class="section-title">Patch Banks</h2>
-    <div class="patch-banks-grid">
-      <!-- Dynamically loaded by scripts.js -->
-    </div>
-  </section>
-
-  <!-- Music and Remixes Section -->
-  <section id="music-remixes">
-    <h2 class="section-title">Music and Remixes</h2>
-    <div id="music-container" class="store-container">
-      <!-- YouTube tiles loaded dynamically by scripts.js -->
-    </div>
-  </section>
-
-  <!-- Donate Section -->
-  <section id="donate">
-    <h2 class="section-title">Support My Work</h2>
-    <p>If you enjoy the patches and music, consider supporting me via the following:</p>
-    <a 
-      href="https://www.paypal.com/donate/?hosted_button_id=NFXJTJVKD43CG"
-      class="paypal-button"
-      target="_blank"
-      rel="noopener"
-    >
-      Donate via PayPal
-    </a>
-  </section>
-
-  <footer>
-    <p>2025 Alan Marcero</p>
-  </footer>
-
-  <!-- Inline script to display the latest news -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const newsText = document.getElementById('newsText');
-      newsText.textContent = "April 2025.  The site is back up!  Please consider supporting via PayPal.";
-    });
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alan Marcero - Synth Patch Banks</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
