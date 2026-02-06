@@ -238,6 +238,34 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 - Music items: Fetched live from YouTube API via Lambda
 - Search: Client-side filtering in React (case-insensitive, matches name + description)
 
+## Image Generation
+
+Images are generated via the **Stability AI** MCP tool and converted to webp using `cwebp` (installed via `brew install webp`).
+
+**Current images:**
+
+| File | Aspect Ratio | Usage | Style |
+|------|-------------|-------|-------|
+| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (180x180 CSS, cyan border + glow) | Analog synthesizer with cyan/purple/pink neon lighting |
+| `public/background.webp` | 1:1 (1536x1536) | Full-page body overlay at 8% opacity | Synthwave retro grid with neon purple/cyan vanishing point |
+
+**Generation guidelines:**
+- Use the `stability-ai-generate-image` MCP tool
+- Match the site's synthwave palette: purple (`#a855f7`), cyan (`#00e5ff`), hot pink (`#ff2d95`), sunset orange (`#f97316`)
+- Hero image: use `1:1` aspect ratio, `cinematic` style preset, focus on synthesizers/music production gear
+- Background image: use `16:9` or `1:1` aspect ratio, `digital-art` style preset, abstract/geometric patterns
+- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, washed out colors
+- Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
+- Delete intermediate PNG files after conversion
+
+**Regenerating images:**
+```bash
+# After generating with Stability AI MCP tool:
+cwebp -q 85 public/about-me-synthwave.png -o public/about-me.webp
+cwebp -q 85 public/background-synthwave.png -o public/background.webp
+rm public/*-synthwave.png
+```
+
 ## Future Feature Ideas
 
 **Planned:**
