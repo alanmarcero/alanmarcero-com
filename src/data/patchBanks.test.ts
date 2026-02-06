@@ -28,23 +28,19 @@ describe('patchBanks', () => {
     });
   });
 
-  it('audioDemo is array or false', () => {
+  it('audioDemo is always an array', () => {
     patchBanks.forEach((bank) => {
-      const isValidAudioDemo =
-        bank.audioDemo === false || Array.isArray(bank.audioDemo);
-      expect(isValidAudioDemo).toBe(true);
+      expect(Array.isArray(bank.audioDemo)).toBe(true);
     });
   });
 
-  it('audioDemo arrays contain valid YouTube video IDs', () => {
+  it('audioDemo entries contain valid YouTube video IDs', () => {
     const youtubeIdPattern = /^[a-zA-Z0-9_-]{11}$/;
 
     patchBanks.forEach((bank) => {
-      if (Array.isArray(bank.audioDemo)) {
-        bank.audioDemo.forEach((videoId) => {
-          expect(videoId).toMatch(youtubeIdPattern);
-        });
-      }
+      bank.audioDemo.forEach((videoId) => {
+        expect(videoId).toMatch(youtubeIdPattern);
+      });
     });
   });
 });

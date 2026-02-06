@@ -4,10 +4,8 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import App from "./App";
 
-// Mock fetch globally
 global.fetch = jest.fn();
 
-// Mock the patchBanks data
 jest.mock("./data/patchBanks", () => ({
   patchBanks: [
     {
@@ -19,47 +17,41 @@ jest.mock("./data/patchBanks", () => ({
   ],
 }));
 
+const mockFetchSuccess = (items = []) => {
+  global.fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ items }),
+  });
+};
+
 describe("App", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders the header", () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     expect(screen.getByText("Alan's Synthesizer Patch Banks")).toBeInTheDocument();
   });
 
   it("renders the news banner", () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     expect(screen.getByText(/The site is back up/)).toBeInTheDocument();
   });
 
   it("renders the search input", () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     expect(screen.getByPlaceholderText("Search patches and music...")).toBeInTheDocument();
   });
 
   it("shows loading message while fetching music", () => {
-    global.fetch.mockImplementationOnce(() => new Promise(() => {})); // Never resolves
-
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
     render(<App />);
 
     expect(screen.getByText("Loading music...")).toBeInTheDocument();
@@ -67,7 +59,6 @@ describe("App", () => {
 
   it("shows error message when fetch fails", async () => {
     global.fetch.mockRejectedValueOnce(new Error("Network error"));
-
     render(<App />);
 
     await waitFor(() => {
@@ -76,11 +67,7 @@ describe("App", () => {
   });
 
   it("shows error message when response is not ok", async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-    });
-
+    global.fetch.mockResolvedValueOnce({ ok: false, status: 500 });
     render(<App />);
 
     await waitFor(() => {
@@ -89,15 +76,9 @@ describe("App", () => {
   });
 
   it("renders music items after successful fetch", async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        items: [
-          { title: "Music Track 1", videoId: "vid1", description: "Desc 1" },
-        ],
-      }),
-    });
-
+    mockFetchSuccess([
+      { title: "Music Track 1", videoId: "vid1", description: "Desc 1" },
+    ]);
     render(<App />);
 
     await waitFor(() => {
@@ -106,11 +87,7 @@ describe("App", () => {
   });
 
   it("renders patch banks from data", async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     await waitFor(() => {
@@ -119,11 +96,7 @@ describe("App", () => {
   });
 
   it("filters patch banks by search query", async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     const searchInput = screen.getByPlaceholderText("Search patches and music...");
@@ -135,16 +108,10 @@ describe("App", () => {
   });
 
   it("filters music items by search query", async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        items: [
-          { title: "Trance Track", videoId: "vid1", description: "" },
-          { title: "House Track", videoId: "vid2", description: "" },
-        ],
-      }),
-    });
-
+    mockFetchSuccess([
+      { title: "Trance Track", videoId: "vid1", description: "" },
+      { title: "House Track", videoId: "vid2", description: "" },
+    ]);
     render(<App />);
 
     await waitFor(() => {
@@ -161,11 +128,7 @@ describe("App", () => {
   });
 
   it("renders About Me section", () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     expect(screen.getByText("About Me")).toBeInTheDocument();
@@ -173,11 +136,7 @@ describe("App", () => {
   });
 
   it("renders Donate section with PayPal link", () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     expect(screen.getByText("Support My Work")).toBeInTheDocument();
@@ -186,11 +145,7 @@ describe("App", () => {
   });
 
   it("renders footer", () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ items: [] }),
-    });
-
+    mockFetchSuccess();
     render(<App />);
 
     expect(screen.getByText("2025 Alan Marcero")).toBeInTheDocument();
