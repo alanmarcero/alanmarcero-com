@@ -3,7 +3,7 @@
  */
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import App from "./App";
-import { LAMBDA_URL } from "./config";
+import { LAMBDA_URL, PAYPAL_DONATE_URL } from "./config";
 
 global.fetch = jest.fn();
 
@@ -44,11 +44,12 @@ describe("App", () => {
     expect(screen.getByPlaceholderText("Search patches and music...")).toBeInTheDocument();
   });
 
-  it("shows loading message while fetching music", () => {
+  it("shows skeleton cards while fetching music", () => {
     global.fetch.mockImplementationOnce(() => new Promise(() => {}));
-    render(<App />);
+    const { container } = render(<App />);
 
-    expect(screen.getByText("Loading music...")).toBeInTheDocument();
+    const skeletons = container.querySelectorAll(".skeleton-card");
+    expect(skeletons.length).toBe(3);
   });
 
   it("shows error message when fetch fails", async () => {
@@ -134,14 +135,15 @@ describe("App", () => {
 
     expect(screen.getByText("Support My Work")).toBeInTheDocument();
     const paypalLink = screen.getByText("Donate via PayPal");
-    expect(paypalLink).toHaveAttribute("href", "https://www.paypal.com/donate/?hosted_button_id=NFXJTJVKD43CG");
+    expect(paypalLink).toHaveAttribute("href", PAYPAL_DONATE_URL);
   });
 
-  it("renders footer", () => {
+  it("renders footer with current year", () => {
     mockFetchSuccess();
     render(<App />);
 
-    expect(screen.getByText("2025 Alan Marcero")).toBeInTheDocument();
+    const year = new Date().getFullYear().toString();
+    expect(screen.getByText(new RegExp(`${year} Alan Marcero`))).toBeInTheDocument();
   });
 
   it("fetches from LAMBDA_URL on mount", () => {
@@ -160,14 +162,14 @@ describe("App", () => {
     expect(screen.getByText("Music and Remixes")).toBeInTheDocument();
   });
 
-  it("hides loading message after successful fetch", async () => {
+  it("hides skeleton cards after successful fetch", async () => {
     mockFetchSuccess([
       { title: "Track 1", videoId: "v1", description: "" },
     ]);
-    render(<App />);
+    const { container } = render(<App />);
 
     await waitFor(() => {
-      expect(screen.queryByText("Loading music...")).not.toBeInTheDocument();
+      expect(container.querySelectorAll(".skeleton-card").length).toBe(0);
     });
   });
 
@@ -242,6 +244,109 @@ describe("App", () => {
       expect(screen.getByText("Track A")).toBeInTheDocument();
       expect(screen.getByText("Track B")).toBeInTheDocument();
       expect(screen.getByText("Track C")).toBeInTheDocument();
+    });
+  });
+
+  it("shows no-results message when search yields nothing", async () => {
+    mockFetchSuccess([]);
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/No results for/)).not.toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "xyznonexistent" } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/No results for/)).toBeInTheDocument();
+      expect(screen.getByText(/xyznonexistent/)).toBeInTheDocument();
+    });
+  });
+
+  it("renders BackToTop button", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    expect(screen.getByLabelText("Back to top")).toBeInTheDocument();
+  });
+
+  it("renders footer social links", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    expect(screen.getByText("YouTube")).toBeInTheDocument();
+    expect(screen.getByText("GitHub")).toBeInTheDocument();
+  });
+
+  it("handles missing data.items gracefully", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({}),
+    });
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Unable to load music")).not.toBeInTheDocument();
+    });
+  });
+
+  it("does not show no-results while still loading", () => {
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "xyznonexistent" } });
+
+    expect(screen.queryByText(/No results for/)).not.toBeInTheDocument();
+  });
+
+  it("hides skeleton cards after fetch error", async () => {
+    global.fetch.mockRejectedValueOnce(new Error("fail"));
+    const { container } = render(<App />);
+
+    await waitFor(() => {
+      expect(container.querySelectorAll(".skeleton-card").length).toBe(0);
+    });
+  });
+
+  it("filters music items by description field", async () => {
+    mockFetchSuccess([
+      { title: "Track One", videoId: "v1", description: "ambient pads" },
+      { title: "Track Two", videoId: "v2", description: "hard trance" },
+    ]);
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Track One")).toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "ambient" } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Track One")).toBeInTheDocument();
+      expect(screen.queryByText("Track Two")).not.toBeInTheDocument();
+    });
+  });
+
+  it("passes card-index style to patch bank items", async () => {
+    mockFetchSuccess();
+    const { container } = render(<App />);
+
+    await waitFor(() => {
+      const card = container.querySelector(".store-item");
+      expect(card.style.getPropertyValue("--card-index")).toBe("0");
+    });
+  });
+
+  it("does not show error and skeleton at the same time", async () => {
+    global.fetch.mockRejectedValueOnce(new Error("Network error"));
+    const { container } = render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Unable to load music. Please try again later.")).toBeInTheDocument();
+      expect(container.querySelectorAll(".skeleton-card").length).toBe(0);
     });
   });
 });

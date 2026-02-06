@@ -3,6 +3,7 @@
  */
 import { render, screen, fireEvent } from "@testing-library/react";
 import Hero from "./Hero";
+import { YOUTUBE_CHANNEL_URL } from "../config";
 
 describe("Hero", () => {
   const defaultProps = {
@@ -33,7 +34,7 @@ describe("Hero", () => {
     render(<Hero {...defaultProps} />);
 
     const link = screen.getByText("Subscribe on YouTube");
-    expect(link).toHaveAttribute("href", "https://www.youtube.com/alanmarcero");
+    expect(link).toHaveAttribute("href", YOUTUBE_CHANNEL_URL);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
@@ -78,5 +79,58 @@ describe("Hero", () => {
 
     const link = screen.getByText("Subscribe on YouTube");
     expect(link).toHaveClass("btn-primary");
+  });
+
+  it("does not show clear button when search is empty", () => {
+    render(<Hero {...defaultProps} />);
+
+    expect(screen.queryByLabelText("Clear search")).not.toBeInTheDocument();
+  });
+
+  it("shows clear button when search has value", () => {
+    render(<Hero {...defaultProps} searchQuery="trance" />);
+
+    expect(screen.getByLabelText("Clear search")).toBeInTheDocument();
+  });
+
+  it("clears search when clear button is clicked", () => {
+    render(<Hero {...defaultProps} searchQuery="trance" />);
+
+    fireEvent.click(screen.getByLabelText("Clear search"));
+
+    expect(defaultProps.onSearchChange).toHaveBeenCalledWith("");
+  });
+
+  it("clear button has search-clear class", () => {
+    render(<Hero {...defaultProps} searchQuery="trance" />);
+
+    const clearBtn = screen.getByLabelText("Clear search");
+    expect(clearBtn).toHaveClass("search-clear");
+  });
+
+  it("hero CTA has hero-cta class", () => {
+    render(<Hero {...defaultProps} />);
+
+    const link = screen.getByText("Subscribe on YouTube");
+    expect(link).toHaveClass("hero-cta");
+  });
+
+  it("hero image has hero-image class", () => {
+    render(<Hero {...defaultProps} />);
+
+    const img = screen.getByAltText("Alan Marcero");
+    expect(img).toHaveClass("hero-image");
+  });
+
+  it("renders hero section with hero class", () => {
+    const { container } = render(<Hero {...defaultProps} />);
+
+    expect(container.querySelector(".hero")).toBeInTheDocument();
+  });
+
+  it("renders hero backdrop", () => {
+    const { container } = render(<Hero {...defaultProps} />);
+
+    expect(container.querySelector(".hero-backdrop")).toBeInTheDocument();
   });
 });

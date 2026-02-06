@@ -5,7 +5,6 @@ function YouTubeEmbed({ videoId, title = "YouTube video", width = "100%", height
       title={title}
       width={width}
       height={height}
-      frameBorder="0"
       allowFullScreen
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     />
