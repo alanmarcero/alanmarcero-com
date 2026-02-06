@@ -162,7 +162,6 @@ header {
   transition: background-color 0.3s, transform 0.3s;
   text-align: center;
   border: 1px solid #393E46;
-  /* We'll set data-search in scripts.js so we can filter them */
 }
 
 .store-item h3 {
@@ -222,6 +221,22 @@ iframe {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 10px;
+}
+
+.loading-message,
+.error-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2em;
+}
+
+.loading-message {
+  color: #00ADB5;
+}
+
+.error-message {
+  color: #ff6b6b;
 }
 
 /* ----------------------------------------------------
