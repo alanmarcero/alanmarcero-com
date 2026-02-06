@@ -19,13 +19,12 @@ describe("handler", () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error("network down"));
 
     const result = await handler(mockEvent as APIGatewayEvent);
-    console.log(result);
 
     expect(result.statusCode).toBe(500);
     expect(result.body).toContain("network down");
   });
 
-  it("returns 403", async () => {
+  it("returns 500 when YouTube API returns non-ok response", async () => {
     const mockResponse = {
       ok: false,
       status: 403,
@@ -36,8 +35,8 @@ describe("handler", () => {
 
     const result = await handler(mockEvent as APIGatewayEvent);
 
-    expect(result.statusCode).toBe(403);
-    expect(result.body).toContain("Forbidden");
+    expect(result.statusCode).toBe(500);
+    expect(result.body).toContain("YouTube Fetch Failed");
   });
 
   it("returns 500 on json parse error", async () => {
