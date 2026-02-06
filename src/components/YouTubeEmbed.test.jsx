@@ -35,4 +35,18 @@ describe("YouTubeEmbed", () => {
     const iframe = document.querySelector("iframe");
     expect(iframe).toHaveAttribute("allowFullScreen");
   });
+
+  it("has default title attribute for accessibility", () => {
+    render(<YouTubeEmbed videoId="abc123" />);
+
+    const iframe = document.querySelector("iframe");
+    expect(iframe).toHaveAttribute("title", "YouTube video");
+  });
+
+  it("accepts custom title", () => {
+    render(<YouTubeEmbed videoId="abc123" title="Demo video" />);
+
+    const iframe = document.querySelector("iframe");
+    expect(iframe).toHaveAttribute("title", "Demo video");
+  });
 });

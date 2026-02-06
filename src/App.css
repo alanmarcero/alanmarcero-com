@@ -1,4 +1,23 @@
 /* ----------------------------------------------------
+   CSS CUSTOM PROPERTIES
+---------------------------------------------------- */
+:root {
+  --cyan: #00ADB5;
+  --cyan-light: #6EE3EF;
+  --dark-bg: #222831;
+  --dark-bg-alt: rgba(57, 62, 70, 0.9);
+  --dark-bg-strong: rgba(31, 31, 31, 0.95);
+  --dark-bg-section: rgba(57, 62, 70, 0.95);
+  --border-color: #393E46;
+  --text-primary: #EEEEEE;
+  --text-secondary: #DDDDDD;
+  --footer-bg: #16181D;
+  --error-color: #ff6b6b;
+  --youtube-link: #ff4d4d;
+  --youtube-link-hover: #ff1a1a;
+}
+
+/* ----------------------------------------------------
    GENERAL STYLES
 ---------------------------------------------------- */
 html, body {
@@ -10,19 +29,19 @@ html, body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  color: #EEEEEE;
+  color: var(--text-primary);
   height: 100%;
 }
 
 a.youtube-link {
-  color: #ff4d4d; /* Replace with your brand's red or accent color */
+  color: var(--youtube-link);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
 a.youtube-link:hover {
-  color: #ff1a1a; /* Slightly deeper red on hover */
+  color: var(--youtube-link-hover);
   text-decoration: underline;
 }
 
@@ -31,8 +50,8 @@ a.youtube-link:hover {
    NEWS BANNER
 ---------------------------------------------------- */
 .news-banner {
-  background-color: #00ADB5;
-  color: #222831;
+  background-color: var(--cyan);
+  color: var(--dark-bg);
   height: 40px;
   display: flex;
   align-items: center;
@@ -44,7 +63,7 @@ a.youtube-link:hover {
   z-index: 1000;
   font-size: 14px;
   overflow: hidden;
-  border-bottom: 1px solid #393E46;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .news-content {
@@ -66,12 +85,12 @@ a.youtube-link:hover {
    HEADER (WITHOUT NAV)
 ---------------------------------------------------- */
 header {
-  background: rgba(31, 31, 31, 0.95);
-  color: #EEEEEE;
+  background: var(--dark-bg-strong);
+  color: var(--text-primary);
   padding: 20px;
   text-align: center;
   margin-top: 40px; /* Adjust for news banner */
-  border-bottom: 1px solid #00ADB5;
+  border-bottom: 1px solid var(--cyan);
 }
 
 /* Search container */
@@ -90,7 +109,7 @@ header {
 }
 
 #searchInput:focus {
-  border-color: #00ADB5;
+  border-color: var(--cyan);
 }
 
 /* ----------------------------------------------------
@@ -101,11 +120,11 @@ header {
   width: fit-content;
   margin: 40px auto 20px auto;
   text-align: center;
-  background-color: rgba(57, 62, 70, 0.95);
-  color: #00ADB5;
+  background-color: var(--dark-bg-section);
+  color: var(--cyan);
   font-size: 2em;
   padding: 15px 25px;
-  border: 2px solid #00ADB5;
+  border: 2px solid var(--cyan);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
@@ -114,7 +133,7 @@ header {
    ABOUT ME SECTION
 ---------------------------------------------------- */
 #about {
-  background-color: rgba(57, 62, 70, 0.9);
+  background-color: var(--dark-bg-alt);
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
@@ -156,23 +175,23 @@ header {
    STORE ITEMS (Both Patch Banks & Music tiles)
 ---------------------------------------------------- */
 .store-item {
-  background-color: rgba(57, 62, 70, 0.9);
+  background-color: var(--dark-bg-alt);
   padding: 30px;
   border-radius: 15px;
   transition: background-color 0.3s, transform 0.3s;
   text-align: center;
-  border: 1px solid #393E46;
+  border: 1px solid var(--border-color);
 }
 
 .store-item h3 {
-  color: #00ADB5;
+  color: var(--cyan);
   margin-bottom: 15px;
   font-size: 1.4em;
 }
 
 .store-item p {
   font-size: 15px;
-  color: #DDDDDD;
+  color: var(--text-secondary);
   margin-bottom: 20px;
 }
 
@@ -191,8 +210,8 @@ iframe {
 
 .store-item .download-btn {
   display: inline-block;
-  background-color: #00ADB5;
-  color: #222831;
+  background-color: var(--cyan);
+  color: var(--dark-bg);
   padding: 12px 25px;
   border-radius: 5px;
   text-decoration: none;
@@ -202,12 +221,12 @@ iframe {
 }
 
 .store-item .download-btn:hover {
-  background-color: #6EE3EF;
-  color: #16181D;
+  background-color: var(--cyan-light);
+  color: var(--footer-bg);
 }
 
 .store-item:hover {
-  background-color: #393E46;
+  background-color: var(--border-color);
   transform: translateY(-5px);
 }
 
@@ -232,18 +251,18 @@ iframe {
 }
 
 .loading-message {
-  color: #00ADB5;
+  color: var(--cyan);
 }
 
 .error-message {
-  color: #ff6b6b;
+  color: var(--error-color);
 }
 
 /* ----------------------------------------------------
    DONATE SECTION
 ---------------------------------------------------- */
 #donate {
-  background-color: rgba(57, 62, 70, 0.9);
+  background-color: var(--dark-bg-alt);
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
@@ -253,8 +272,8 @@ iframe {
 
 .paypal-button {
   display: inline-block;
-  background-color: #00ADB5;
-  color: #222831;
+  background-color: var(--cyan);
+  color: var(--dark-bg);
   padding: 12px 25px;
   border-radius: 5px;
   text-decoration: none;
@@ -264,7 +283,7 @@ iframe {
 }
 
 .paypal-button:hover {
-  background-color: #6EE3EF;
+  background-color: var(--cyan-light);
   transform: translateY(-3px);
 }
 
@@ -274,7 +293,7 @@ iframe {
 footer {
   text-align: center;
   padding: 10px;
-  background: #16181D;
+  background: var(--footer-bg);
 }
 
 /* ----------------------------------------------------

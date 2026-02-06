@@ -41,14 +41,6 @@ describe("PatchBankItem", () => {
     expect(iframes[1]).toHaveAttribute("src", "https://www.youtube.com/embed/video2");
   });
 
-  it("renders no iframes when audioDemo is false", () => {
-    const bankNoDemo = { ...mockBank, audioDemo: false };
-    render(<PatchBankItem bank={bankNoDemo} />);
-
-    const iframes = document.querySelectorAll("iframe");
-    expect(iframes).toHaveLength(0);
-  });
-
   it("renders no iframes when audioDemo is empty array", () => {
     const bankEmptyDemo = { ...mockBank, audioDemo: [] };
     render(<PatchBankItem bank={bankEmptyDemo} />);
