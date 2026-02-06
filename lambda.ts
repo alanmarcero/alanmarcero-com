@@ -27,20 +27,22 @@ interface YouTubeRes {
   }[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
   const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+
+  const headers = { "Content-Type": "application/json" };
 
   const [fetchErr, response] = await asyncWrapper(fetch(apiUrl));
   if (fetchErr || !response || !response.ok)
-    return { statusCode: 500, body: JSON.stringify({ error: "YouTube Fetch Failed", details: fetchErr?.message }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "YouTube Fetch Failed", details: fetchErr?.message }) };
 
   const [parseErr, playList] = await asyncWrapper<YouTubeRes>(response.json());
   if (parseErr || !playList)
-    return { statusCode: 500, body: JSON.stringify({ error: `Parse Failed: ${parseErr?.message}` }) }
+    return { statusCode: 500, headers, body: JSON.stringify({ error: `Parse Failed: ${parseErr?.message}` }) };
 
   return {
     statusCode: 200,
+    headers,
     body: JSON.stringify({
       items: playList.items.map(item => ({
         title: item.snippet.title,

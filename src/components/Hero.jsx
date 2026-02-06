@@ -1,3 +1,5 @@
+import { YOUTUBE_CHANNEL_URL } from '../config';
+
 function Hero({ searchQuery, onSearchChange }) {
   return (
     <section className="hero">
@@ -20,7 +22,7 @@ function Hero({ searchQuery, onSearchChange }) {
         </div>
         <a
           className="btn-primary hero-cta"
-          href="https://www.youtube.com/alanmarcero"
+          href={YOUTUBE_CHANNEL_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -34,6 +36,15 @@ function Hero({ searchQuery, onSearchChange }) {
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
+          {searchQuery && (
+            <button
+              className="search-clear"
+              onClick={() => onSearchChange('')}
+              aria-label="Clear search"
+            >
+              &times;
+            </button>
+          )}
         </div>
       </div>
     </section>
