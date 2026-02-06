@@ -3,11 +3,14 @@ import './App.css';
 import PatchBankItem from './components/PatchBankItem';
 import MusicItem from './components/MusicItem';
 import { patchBanks as patchBanksData } from './data/patchBanks';
+import { LAMBDA_URL } from './config';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [patchBanks, setPatchBanks] = useState([]);
   const [musicItems, setMusicItems] = useState([]);
+  const [musicLoading, setMusicLoading] = useState(true);
+  const [musicError, setMusicError] = useState(null);
 
   // Load patch banks data
   useEffect(() => {
@@ -16,14 +19,19 @@ function App() {
 
   // Fetch YouTube playlist
   useEffect(() => {
-    const lambdaUrl = 'https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws/';
-
-    fetch(lambdaUrl)
-      .then(response => response.json())
+    fetch(LAMBDA_URL)
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to load music');
+        return response.json();
+      })
       .then(data => {
         setMusicItems(data.items);
+        setMusicLoading(false);
       })
-      .catch(error => console.error('Error fetching YouTube playlist:', error));
+      .catch(error => {
+        setMusicError(error.message);
+        setMusicLoading(false);
+      });
   }, []);
 
   // Filter function
@@ -107,7 +115,9 @@ function App() {
       <section id="music-remixes">
         <h2 className="section-title">Music and Remixes</h2>
         <div id="music-container" className="store-container">
-          {filteredMusicItems.map((item, index) => (
+          {musicLoading && <p className="loading-message">Loading music...</p>}
+          {musicError && <p className="error-message">Unable to load music. Please try again later.</p>}
+          {!musicLoading && !musicError && filteredMusicItems.map((item, index) => (
             <MusicItem key={index} item={item} />
           ))}
         </div>
