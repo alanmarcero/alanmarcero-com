@@ -1,4 +1,4 @@
-import { LAMBDA_URL } from './config';
+import { LAMBDA_URL, YOUTUBE_CHANNEL_URL, GITHUB_URL, PAYPAL_DONATE_URL } from './config';
 
 describe('config', () => {
   it('exports LAMBDA_URL', () => {
@@ -12,5 +12,23 @@ describe('config', () => {
   it('LAMBDA_URL points to AWS Lambda', () => {
     expect(LAMBDA_URL).toContain('lambda-url');
     expect(LAMBDA_URL).toContain('.on.aws');
+  });
+
+  it('exports external URLs as valid HTTPS URLs', () => {
+    expect(YOUTUBE_CHANNEL_URL).toMatch(/^https:\/\/.+/);
+    expect(GITHUB_URL).toMatch(/^https:\/\/.+/);
+    expect(PAYPAL_DONATE_URL).toMatch(/^https:\/\/.+/);
+  });
+
+  it('YOUTUBE_CHANNEL_URL points to youtube.com', () => {
+    expect(YOUTUBE_CHANNEL_URL).toContain('youtube.com');
+  });
+
+  it('GITHUB_URL points to github.com', () => {
+    expect(GITHUB_URL).toContain('github.com');
+  });
+
+  it('PAYPAL_DONATE_URL points to paypal.com', () => {
+    expect(PAYPAL_DONATE_URL).toContain('paypal.com');
   });
 });

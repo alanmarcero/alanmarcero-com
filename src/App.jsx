@@ -3,8 +3,12 @@ import './App.css';
 import Hero from './components/Hero';
 import PatchBankItem from './components/PatchBankItem';
 import MusicItem from './components/MusicItem';
+import SkeletonCard from './components/SkeletonCard';
+import BackToTop from './components/BackToTop';
+import NoResults from './components/NoResults';
+import Footer from './components/Footer';
 import { patchBanks as patchBanksData } from './data/patchBanks';
-import { LAMBDA_URL } from './config';
+import { LAMBDA_URL, PAYPAL_DONATE_URL } from './config';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,42 +23,43 @@ function App() {
         return response.json();
       })
       .then(data => {
-        setMusicItems(data.items);
-        setMusicLoading(false);
+        setMusicItems(data.items ?? []);
       })
       .catch(error => {
         setMusicError(error.message);
+      })
+      .finally(() => {
         setMusicLoading(false);
       });
   }, []);
 
-  const query = searchQuery.toLowerCase();
-
-  const filterPatchBank = (bank) => {
+  const createSearchFilter = (...fields) => (entry) => {
     if (!searchQuery) return true;
-    const searchableText = `${bank.name} ${bank.description}`.toLowerCase();
+    const query = searchQuery.toLowerCase();
+    const searchableText = fields.map(f => entry[f] || '').join(' ').toLowerCase();
     return searchableText.includes(query);
   };
 
-  const filterMusicItem = (item) => {
-    if (!searchQuery) return true;
-    const searchableText = `${item.title} ${item.description || ''}`.toLowerCase();
-    return searchableText.includes(query);
-  };
+  const filteredPatchBanks = patchBanksData.filter(createSearchFilter('name', 'description'));
+  const filteredMusicItems = musicItems.filter(createSearchFilter('title', 'description'));
 
-  const filteredPatchBanks = patchBanksData.filter(filterPatchBank);
-  const filteredMusicItems = musicItems.filter(filterMusicItem);
+  const hasNoResults = searchQuery
+    && filteredPatchBanks.length === 0
+    && filteredMusicItems.length === 0
+    && !musicLoading;
 
   return (
     <>
       <Hero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
+      {hasNoResults && <NoResults query={searchQuery} />}
+
       {/* Patch Banks Section */}
       <section id="store">
         <h2 className="section-title">Patch Banks</h2>
-        <div className="patch-banks-grid">
-          {filteredPatchBanks.map((bank) => (
-            <PatchBankItem key={bank.downloadLink} bank={bank} />
+        <div className="content-grid">
+          {filteredPatchBanks.map((bank, index) => (
+            <PatchBankItem key={bank.downloadLink} bank={bank} style={{ '--card-index': index }} />
           ))}
         </div>
       </section>
@@ -62,11 +67,17 @@ function App() {
       {/* Music and Remixes Section */}
       <section id="music-remixes">
         <h2 className="section-title">Music and Remixes</h2>
-        <div id="music-container" className="store-container">
-          {musicLoading && <p className="loading-message">Loading music...</p>}
+        <div className="content-grid">
+          {musicLoading && (
+            <>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </>
+          )}
           {musicError && <p className="error-message">Unable to load music. Please try again later.</p>}
-          {!musicLoading && !musicError && filteredMusicItems.map((item) => (
-            <MusicItem key={item.videoId} item={item} />
+          {!musicLoading && !musicError && filteredMusicItems.map((item, index) => (
+            <MusicItem key={item.videoId} item={item} style={{ '--card-index': index }} />
           ))}
         </div>
       </section>
@@ -76,7 +87,7 @@ function App() {
         <h2 className="section-title">Support My Work</h2>
         <p>If you enjoy the patches and music, consider supporting me via the following:</p>
         <a
-          href="https://www.paypal.com/donate/?hosted_button_id=NFXJTJVKD43CG"
+          href={PAYPAL_DONATE_URL}
           className="btn-primary paypal-button"
           target="_blank"
           rel="noopener"
@@ -85,9 +96,8 @@ function App() {
         </a>
       </section>
 
-      <footer>
-        <p>2025 Alan Marcero</p>
-      </footer>
+      <Footer />
+      <BackToTop />
     </>
   );
 }
