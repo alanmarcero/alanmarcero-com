@@ -38,22 +38,33 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 ├── src/
 │   ├── components/
-│   │   ├── Hero.jsx              # Hero section: image, name, bio, CTA, search
-│   │   ├── Hero.test.jsx         # Hero tests (9 tests)
-│   │   ├── YouTubeEmbed.jsx      # Shared YouTube iframe component
-│   │   ├── YouTubeEmbed.test.jsx # YouTubeEmbed tests (7 tests)
-│   │   ├── PatchBankItem.jsx     # Patch bank card with download button
-│   │   ├── PatchBankItem.test.jsx # PatchBankItem tests (8 tests)
-│   │   ├── MusicItem.jsx         # YouTube playlist item display
-│   │   └── MusicItem.test.jsx    # MusicItem tests (5 tests)
+│   │   ├── BackToTop.jsx          # Scroll-to-top button (uses useScrollPosition)
+│   │   ├── BackToTop.test.jsx     # BackToTop tests (7 tests)
+│   │   ├── Footer.jsx             # Footer with social links + dynamic year
+│   │   ├── Footer.test.jsx        # Footer tests (7 tests)
+│   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear
+│   │   ├── Hero.test.jsx          # Hero tests (17 tests)
+│   │   ├── MusicItem.jsx          # YouTube playlist item display
+│   │   ├── MusicItem.test.jsx     # MusicItem tests (8 tests)
+│   │   ├── NoResults.jsx          # Empty state for search with no matches
+│   │   ├── NoResults.test.jsx     # NoResults tests (7 tests)
+│   │   ├── PatchBankItem.jsx      # Patch bank card with download button
+│   │   ├── PatchBankItem.test.jsx # PatchBankItem tests (11 tests)
+│   │   ├── SkeletonCard.jsx       # Loading placeholder with shimmer animation
+│   │   ├── SkeletonCard.test.jsx  # SkeletonCard tests (7 tests)
+│   │   ├── YouTubeEmbed.jsx       # Shared YouTube iframe component
+│   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests (7 tests)
+│   ├── hooks/
+│   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
+│   │   └── useScrollPosition.test.js # useScrollPosition tests (7 tests)
 │   ├── data/
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
 │   │   └── patchBanks.test.ts    # Data validation tests (6 tests)
-│   ├── config.js                 # Centralized config (Lambda URL)
-│   ├── config.test.ts            # Config tests (3 tests)
+│   ├── config.js                 # Centralized config (Lambda URL, external URLs)
+│   ├── config.test.ts            # Config tests (7 tests)
 │   ├── App.jsx                   # Main app: data fetching, search filtering, layout
-│   ├── App.test.jsx              # App integration tests (20 tests)
-│   ├── App.css                   # Full stylesheet: synthwave theme, responsive
+│   ├── App.test.jsx              # App integration tests (29 tests)
+│   ├── App.css                   # Full stylesheet: synthwave theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
@@ -62,20 +73,22 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.html                    # Entry HTML with Google Fonts
 ├── lambda.ts                     # AWS Lambda handler
 ├── lambda.local.ts               # Local Lambda dev runner
-├── lambda.test.ts                # Lambda tests (4 tests)
+├── lambda.test.ts                # Lambda tests (7 tests)
 ├── .npmrc                        # Forces npm.org registry (overrides corporate)
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 62 tests across 8 suites**
+**Total: 127 tests across 13 suites**
 
 ## Key Files
 
-- `src/components/Hero.jsx` — Unified hero: profile image, gradient name, tagline, bio, YouTube CTA, search input
 - `src/App.jsx` — Main component: fetches music from Lambda, client-side search filtering, renders Hero + sections
-- `src/App.css` — Complete stylesheet: CSS custom properties, synthwave palette, glassmorphism cards, responsive
+- `src/App.css` — Complete stylesheet: CSS custom properties, synthwave palette, glassmorphism cards, animations, responsive
+- `src/components/Hero.jsx` — Unified hero: profile image, gradient name, tagline, bio, YouTube CTA, search input with clear button
+- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
+- `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
-- `lambda.ts` — Fetches YouTube playlist, transforms response, returns JSON
+- `lambda.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers
 
 ## Design System
 
@@ -102,6 +115,17 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `.btn-primary` — Gradient pill button (used by Hero CTA, download buttons, PayPal button)
 - `.store-item` — Glassmorphism card with `backdrop-filter: blur(12px)`, purple border, hover lift + glow
 - `.section-title` — Centered heading with gradient underline
+- `.content-grid` — Responsive grid layout for patch bank and music sections
+- `.skeleton-card` — Loading placeholder card with shimmer animation
+- `.back-to-top` / `.back-to-top--visible` — Fixed scroll-to-top button with slide-up transition
+- `.no-results` — Centered empty state message for search
+- `.search-clear` — Clear button inside search input
+
+**Animations:**
+- Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
+- `@keyframes shimmer` — Gradient sweep for skeleton loading cards
+- `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
+- Smooth scroll behavior (`html { scroll-behavior: smooth }`)
 
 **Responsive breakpoints:**
 - Desktop: 3-column grid (default)
@@ -118,32 +142,39 @@ App
 │   ├── Tagline
 │   ├── Bio paragraph
 │   ├── YouTube CTA (.btn-primary)
-│   └── Search input (pill-shaped)
+│   └── Search input (pill-shaped) + clear button
+├── SkeletonCard[] (×3, shown during loading)
+├── NoResults (query) — shown when search yields no matches
 ├── Patch Banks section
-│   └── PatchBankItem[] (bank)
+│   └── PatchBankItem[] (bank, style={--card-index})
 │       ├── Name, description
 │       ├── YouTubeEmbed[] (videoId)
 │       └── Download button (.btn-primary)
 ├── Music section
-│   └── MusicItem[] (item)
+│   └── MusicItem[] (item, style={--card-index})
 │       ├── Title
 │       ├── YouTubeEmbed (videoId)
 │       └── Description
 ├── Donate section
 │   └── PayPal button (.btn-primary)
-└── Footer
+├── Footer
+│   ├── Social links (YouTube, GitHub)
+│   └── Dynamic copyright year
+└── BackToTop (uses useScrollPosition hook)
 ```
 
 ## Development
 
 ```bash
 npm install                    # Install dependencies
-npm run dev                    # Vite dev server
-npm test                       # Jest (62 tests)
+npm run dev                    # Vite dev server (requires Node.js 20.19+)
+npm test                       # Jest (127 tests)
 npm run build                  # Vite production build
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node lambda.local.ts    # Run Lambda locally
 ```
+
+**Node.js requirement:** Vite 7 requires Node.js 20.19+ or 22.12+. Use `nvm use 20.19.6` if your default version is older.
 
 **Note:** `.npmrc` overrides corporate CodeArtifact registry to use public npm.org. Shell hooks may interfere with npm commands; use `--prefix /Users/alan.marcero/Documents/alanmarcero-com` if running from a different directory.
 
