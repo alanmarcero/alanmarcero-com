@@ -7,17 +7,10 @@ import { LAMBDA_URL } from './config';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [patchBanks, setPatchBanks] = useState([]);
   const [musicItems, setMusicItems] = useState([]);
   const [musicLoading, setMusicLoading] = useState(true);
   const [musicError, setMusicError] = useState(null);
 
-  // Load patch banks data
-  useEffect(() => {
-    setPatchBanks(patchBanksData);
-  }, []);
-
-  // Fetch YouTube playlist
   useEffect(() => {
     fetch(LAMBDA_URL)
       .then(response => {
@@ -34,29 +27,22 @@ function App() {
       });
   }, []);
 
-  // Filter function
-  const filterItems = (item) => {
+  const query = searchQuery.toLowerCase();
+
+  const filterPatchBank = (bank) => {
     if (!searchQuery) return true;
-
-    const query = searchQuery.toLowerCase();
-
-    // For patch banks
-    if (item.name) {
-      const searchData = `${item.name} ${item.description}`.toLowerCase();
-      return searchData.includes(query);
-    }
-
-    // For music items
-    if (item.title) {
-      const searchData = `${item.title} ${item.description || ''}`.toLowerCase();
-      return searchData.includes(query);
-    }
-
-    return false;
+    const searchableText = `${bank.name} ${bank.description}`.toLowerCase();
+    return searchableText.includes(query);
   };
 
-  const filteredPatchBanks = patchBanks.filter(filterItems);
-  const filteredMusicItems = musicItems.filter(filterItems);
+  const filterMusicItem = (item) => {
+    if (!searchQuery) return true;
+    const searchableText = `${item.title} ${item.description || ''}`.toLowerCase();
+    return searchableText.includes(query);
+  };
+
+  const filteredPatchBanks = patchBanksData.filter(filterPatchBank);
+  const filteredMusicItems = musicItems.filter(filterMusicItem);
 
   return (
     <>
@@ -105,8 +91,8 @@ function App() {
       <section id="store">
         <h2 className="section-title">Patch Banks</h2>
         <div className="patch-banks-grid">
-          {filteredPatchBanks.map((bank, index) => (
-            <PatchBankItem key={index} bank={bank} />
+          {filteredPatchBanks.map((bank) => (
+            <PatchBankItem key={bank.downloadLink} bank={bank} />
           ))}
         </div>
       </section>
@@ -117,8 +103,8 @@ function App() {
         <div id="music-container" className="store-container">
           {musicLoading && <p className="loading-message">Loading music...</p>}
           {musicError && <p className="error-message">Unable to load music. Please try again later.</p>}
-          {!musicLoading && !musicError && filteredMusicItems.map((item, index) => (
-            <MusicItem key={index} item={item} />
+          {!musicLoading && !musicError && filteredMusicItems.map((item) => (
+            <MusicItem key={item.videoId} item={item} />
           ))}
         </div>
       </section>

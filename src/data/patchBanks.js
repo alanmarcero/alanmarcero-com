@@ -50,19 +50,19 @@ export const patchBanks = [
   {
     name: 'Roland JP-08',
     description: '88 patches of basses, leads, pads, and plucks for trance and synthwave on the JP-08 module.',
-    audioDemo: false,
+    audioDemo: [],
     downloadLink: '/banks/Alan-M_JP08.zip'
   },
   {
     name: 'Waves CODEX',
     description: '128 patches for the CODEX wavetable synth. Originally commissioned by Waves, now neatly organized here.',
-    audioDemo: false,
+    audioDemo: [],
     downloadLink: '/banks/Alan-M_CODEX.zip'
   },
   {
     name: 'Audio Demo MIDIs',
     description: 'A collection of MIDI files used in various demos. Explore the progressions behind each patch.',
-    audioDemo: false,
+    audioDemo: [],
     downloadLink: '/banks/audio-demo-midis.zip'
   }
 ];
