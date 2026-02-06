@@ -56,4 +56,17 @@ describe("PatchBankItem", () => {
     const iframes = document.querySelectorAll("iframe");
     expect(iframes).toHaveLength(1);
   });
+
+  it("download button has btn-primary class", () => {
+    render(<PatchBankItem bank={mockBank} />);
+
+    const downloadBtn = screen.getByText("Download");
+    expect(downloadBtn).toHaveClass("btn-primary");
+  });
+
+  it("renders with store-item container class", () => {
+    const { container } = render(<PatchBankItem bank={mockBank} />);
+
+    expect(container.querySelector(".store-item")).toBeInTheDocument();
+  });
 });
