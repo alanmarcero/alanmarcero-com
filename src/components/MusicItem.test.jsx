@@ -37,4 +37,10 @@ describe("MusicItem", () => {
 
     expect(screen.getByText("No Desc")).toBeInTheDocument();
   });
+
+  it("renders with store-item container class", () => {
+    const { container } = render(<MusicItem item={mockItem} />);
+
+    expect(container.querySelector(".store-item")).toBeInTheDocument();
+  });
 });

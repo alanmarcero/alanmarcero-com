@@ -49,4 +49,14 @@ describe("YouTubeEmbed", () => {
     const iframe = document.querySelector("iframe");
     expect(iframe).toHaveAttribute("title", "Demo video");
   });
+
+  it("has permissions policy for embedded content", () => {
+    render(<YouTubeEmbed videoId="abc123" />);
+
+    const iframe = document.querySelector("iframe");
+    expect(iframe).toHaveAttribute(
+      "allow",
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    );
+  });
 });

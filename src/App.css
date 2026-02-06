@@ -2,19 +2,28 @@
    CSS CUSTOM PROPERTIES
 ---------------------------------------------------- */
 :root {
-  --cyan: #00ADB5;
-  --cyan-light: #6EE3EF;
-  --dark-bg: #222831;
-  --dark-bg-alt: rgba(57, 62, 70, 0.9);
-  --dark-bg-strong: rgba(31, 31, 31, 0.95);
-  --dark-bg-section: rgba(57, 62, 70, 0.95);
-  --border-color: #393E46;
-  --text-primary: #EEEEEE;
-  --text-secondary: #DDDDDD;
-  --footer-bg: #16181D;
-  --error-color: #ff6b6b;
-  --youtube-link: #ff4d4d;
-  --youtube-link-hover: #ff1a1a;
+  --accent-primary: #a855f7;
+  --accent-primary-light: #c084fc;
+  --gradient-accent: linear-gradient(135deg, #7c3aed, #a855f7, #e879f9);
+  --gradient-hero: linear-gradient(180deg, rgba(15, 10, 30, 0.95), rgba(30, 15, 60, 0.8));
+  --bg-body: #0a0a14;
+  --bg-surface: rgba(20, 15, 40, 0.9);
+  --bg-surface-hover: rgba(35, 25, 60, 0.95);
+  --border-subtle: rgba(168, 85, 247, 0.15);
+  --border-medium: rgba(168, 85, 247, 0.3);
+  --text-primary: #f0eef5;
+  --text-secondary: #b0a8c8;
+  --text-muted: #7a7099;
+  --bg-footer: #08080f;
+  --error-color: #f87171;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 40px rgba(168, 85, 247, 0.05);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 60px rgba(168, 85, 247, 0.1);
+  --glow-accent: 0 4px 20px rgba(168, 85, 247, 0.4);
+  --focus-ring: 0 0 0 3px rgba(168, 85, 247, 0.2);
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
 }
 
 /* ----------------------------------------------------
@@ -23,140 +32,189 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  height: 100%;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
   background-image: url('/background.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  color: var(--text-primary);
-  height: 100%;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: -1;
 }
 
-a.youtube-link {
-  color: var(--youtube-link);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s ease, text-decoration 0.2s ease;
+h1, h2, h3, h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
-
-a.youtube-link:hover {
-  color: var(--youtube-link-hover);
-  text-decoration: underline;
-}
-
 
 /* ----------------------------------------------------
-   NEWS BANNER
+   SHARED BUTTON
 ---------------------------------------------------- */
-.news-banner {
-  background-color: var(--cyan);
-  color: var(--dark-bg);
-  height: 40px;
+.btn-primary {
+  display: inline-block;
+  background: var(--gradient-accent);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 100px;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-accent);
+}
+
+/* ----------------------------------------------------
+   HERO SECTION
+---------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 10px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  font-size: 14px;
   overflow: hidden;
-  border-bottom: 1px solid var(--border-color);
 }
 
-.news-content {
-  width: 100%;
-  text-align: center;
-  animation: moveLeftRight 5s ease-in-out infinite;
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-hero);
+  z-index: 0;
 }
 
-@keyframes moveLeftRight {
-  0%, 100% {
-      transform: translateX(0);
-  }
-  50% {
-      transform: translateX(50px);
-  }
+.hero-backdrop::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+  animation: heroPulse 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
-/* ----------------------------------------------------
-   HEADER (WITHOUT NAV)
----------------------------------------------------- */
-header {
-  background: var(--dark-bg-strong);
-  color: var(--text-primary);
-  padding: 20px;
-  text-align: center;
-  margin-top: 40px; /* Adjust for news banner */
-  border-bottom: 1px solid var(--cyan);
-}
-
-/* Search container */
-.search-container {
-  margin-top: 15px;
-}
-
-#searchInput {
-  width: 60%;
-  max-width: 400px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #888;
-  border-radius: 5px;
-  outline: none;
-}
-
-#searchInput:focus {
-  border-color: var(--cyan);
-}
-
-/* ----------------------------------------------------
-   SECTION TITLES (Stylized Box)
----------------------------------------------------- */
-.section-title {
-  display: block;
-  width: fit-content;
-  margin: 40px auto 20px auto;
-  text-align: center;
-  background-color: var(--dark-bg-section);
-  color: var(--cyan);
-  font-size: 2em;
-  padding: 15px 25px;
-  border: 2px solid var(--cyan);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-}
-
-/* ----------------------------------------------------
-   ABOUT ME SECTION
----------------------------------------------------- */
-#about {
-  background-color: var(--dark-bg-alt);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
-  max-width: 1200px;
-  margin: 40px auto;
-  text-align: center;
-}
-
-.about-me-content {
+.hero-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  text-align: center;
+  max-width: 720px;
+  padding: 60px 24px;
 }
 
-.about-me-image {
-  width: 100%;
-  height: auto;
-  max-height: 320px;
+.hero-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
   object-fit: cover;
-  object-position: center top 20px;
-  border-radius: 15px;
-  margin-bottom: 20px;
+  border: 3px solid var(--accent-primary);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+  margin-bottom: 24px;
+}
+
+.hero-name {
+  font-size: 3.5rem;
+  margin: 0 0 8px;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-tagline {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin: 0 0 24px;
+  letter-spacing: -0.01em;
+}
+
+.hero-bio {
+  max-width: 600px;
+  margin-bottom: 28px;
+}
+
+.hero-bio p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.hero-cta {
+  padding: 12px 32px;
+  margin-bottom: 32px;
+}
+
+.hero-search input {
+  width: 340px;
+  max-width: 100%;
+  padding: 12px 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: rgba(20, 15, 40, 0.8);
+  border: 1px solid var(--border-medium);
+  border-radius: 100px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.hero-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.hero-search input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* ----------------------------------------------------
+   SECTION TITLES
+---------------------------------------------------- */
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: 60px auto 32px;
+  position: relative;
+  padding-bottom: 12px;
+  width: fit-content;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-accent);
+  border-radius: 2px;
 }
 
 /* ----------------------------------------------------
@@ -165,34 +223,62 @@ header {
 .patch-banks-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 10px;
+  padding: 0 24px;
 }
 
 /* ----------------------------------------------------
    STORE ITEMS (Both Patch Banks & Music tiles)
 ---------------------------------------------------- */
 .store-item {
-  background-color: var(--dark-bg-alt);
-  padding: 30px;
-  border-radius: 15px;
-  transition: background-color 0.3s, transform 0.3s;
+  position: relative;
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
   text-align: center;
-  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease both;
+}
+
+.store-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-accent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.store-item:hover {
+  background: var(--bg-surface-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.store-item:hover::before {
+  opacity: 1;
 }
 
 .store-item h3 {
-  color: var(--cyan);
-  margin-bottom: 15px;
-  font-size: 1.4em;
+  color: var(--accent-primary-light);
+  margin-bottom: 12px;
+  font-size: 1.3em;
 }
 
 .store-item p {
-  font-size: 15px;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 /* YouTube Embeds */
@@ -206,28 +292,14 @@ iframe {
   margin: 0 auto;
   display: block;
   border: none;
+  border-radius: var(--radius-sm);
 }
 
+/* Download / Action Buttons */
 .store-item .download-btn {
-  display: inline-block;
-  background-color: var(--cyan);
-  color: var(--dark-bg);
-  padding: 12px 25px;
-  border-radius: 5px;
-  text-decoration: none;
-  transition: background-color 0.3s, color 0.3s;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-.store-item .download-btn:hover {
-  background-color: var(--cyan-light);
-  color: var(--footer-bg);
-}
-
-.store-item:hover {
-  background-color: var(--border-color);
-  transform: translateY(-5px);
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  margin-top: 8px;
 }
 
 /* ----------------------------------------------------
@@ -236,10 +308,10 @@ iframe {
 #music-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 10px;
+  padding: 0 24px;
 }
 
 .loading-message,
@@ -247,11 +319,11 @@ iframe {
   grid-column: 1 / -1;
   text-align: center;
   padding: 40px;
-  font-size: 1.2em;
+  font-size: 1.1em;
 }
 
 .loading-message {
-  color: var(--cyan);
+  color: var(--accent-primary-light);
 }
 
 .error-message {
@@ -262,29 +334,25 @@ iframe {
    DONATE SECTION
 ---------------------------------------------------- */
 #donate {
-  background-color: var(--dark-bg-alt);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 40px 30px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
   max-width: 800px;
-  margin: 40px auto;
+  margin: 60px auto;
+  text-align: center;
+}
+
+#donate p {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
 }
 
 .paypal-button {
-  display: inline-block;
-  background-color: var(--cyan);
-  color: var(--dark-bg);
-  padding: 12px 25px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.paypal-button:hover {
-  background-color: var(--cyan-light);
-  transform: translateY(-3px);
+  padding: 12px 28px;
 }
 
 /* ----------------------------------------------------
@@ -292,41 +360,105 @@ iframe {
 ---------------------------------------------------- */
 footer {
   text-align: center;
-  padding: 10px;
-  background: var(--footer-bg);
+  padding: 20px;
+  background: var(--bg-footer);
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 /* ----------------------------------------------------
-   RESPONSIVE DESIGN (Mobile - 767px and below)
+   ANIMATIONS
 ---------------------------------------------------- */
-@media (max-width: 767px) {
-  .news-banner {
-    height: auto;
-    padding: 5px 10px;
-    flex-direction: column;
-    align-items: flex-start;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
+/* ----------------------------------------------------
+   RESPONSIVE — TABLET (max-width: 1024px)
+---------------------------------------------------- */
+@media (max-width: 1024px) {
+  .patch-banks-grid,
+  #music-container {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .news-content {
-    margin-bottom: 10px;
+  .hero-name {
+    font-size: 2.8rem;
+  }
+
+  .hero-tagline {
+    font-size: 1.1rem;
+  }
+}
+
+/* ----------------------------------------------------
+   RESPONSIVE — MOBILE (max-width: 767px)
+---------------------------------------------------- */
+@media (max-width: 767px) {
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-content {
+    padding: 40px 20px;
+  }
+
+  .hero-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .hero-name {
+    font-size: 2.2rem;
+  }
+
+  .hero-tagline {
+    font-size: 1rem;
+  }
+
+  .hero-bio p {
+    font-size: 0.9rem;
+  }
+
+  .hero-search input {
+    width: 280px;
   }
 
   .patch-banks-grid,
   #music-container {
     grid-template-columns: 1fr;
+    padding: 0 16px;
   }
 
-  #about,
+  .section-title {
+    font-size: 1.6rem;
+    margin: 40px auto 24px;
+  }
+
   #donate {
-    margin: 20px auto;
-    padding: 15px;
+    margin: 40px 16px;
+    padding: 24px 20px;
   }
 
   iframe {
-    height: 200px; /* Slightly smaller for mobile */
-  }
-
-  #searchInput {
-    width: 80%; /* More flexible for small screens */
+    height: 200px;
   }
 }

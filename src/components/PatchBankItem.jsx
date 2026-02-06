@@ -16,7 +16,7 @@ function PatchBankItem({ bank }) {
         ))
       )}
 
-      <a className="download-btn" href={bank.downloadLink}>
+      <a className="btn-primary download-btn" href={bank.downloadLink}>
         Download
       </a>
     </div>
