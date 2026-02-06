@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import Hero from './components/Hero';
 import PatchBankItem from './components/PatchBankItem';
 import MusicItem from './components/MusicItem';
 import { patchBanks as patchBanksData } from './data/patchBanks';
@@ -46,46 +47,7 @@ function App() {
 
   return (
     <>
-      {/* News Banner */}
-      <div className="news-banner" id="newsBanner">
-        <div className="news-content">
-          <span id="newsText">
-            April 2025. The site is back up! Please consider supporting via PayPal.
-          </span>
-        </div>
-      </div>
-
-      {/* Header */}
-      <header>
-        <h1>Alan's Synthesizer Patch Banks</h1>
-        <div className="search-container">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Search patches and music..."
-            aria-label="Search patches and music"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </header>
-
-      {/* About Me Section */}
-      <section id="about">
-        <h2 className="section-title">About Me</h2>
-        <div className="about-me-content">
-          <img src="/about-me.webp" alt="About Me Image" className="about-me-image" />
-          <p>
-            Hi, I'm Alan from Boston, USA. I've been making trance and other electronic music with synthesizers and my PC since my high school days in the early 2000s. This is where I share my passion for creating original tracks, remixes, and sound design.
-          </p>
-          <p>
-            My music has been supported by trance legends like Ferry Corsten, Paul van Dyk, Sean Tyas, Daniel Kandi, and more. Remixes of my tracks have been featured on A State of Trance, BBC Radio 1's Essential Mix, and Trance Around the World. I've released music on iconic labels like Armada, Bonzai, and Ministry of Sound.
-          </p>
-          <p>
-            Thanks for stopping by. <a className="youtube-link" href="https://www.youtube.com/alanmarcero" target="_blank" rel="noopener noreferrer">Subscribe to my YouTube!</a>
-          </p>
-        </div>
-      </section>
+      <Hero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       {/* Patch Banks Section */}
       <section id="store">
@@ -115,7 +77,7 @@ function App() {
         <p>If you enjoy the patches and music, consider supporting me via the following:</p>
         <a
           href="https://www.paypal.com/donate/?hosted_button_id=NFXJTJVKD43CG"
-          className="paypal-button"
+          className="btn-primary paypal-button"
           target="_blank"
           rel="noopener"
         >

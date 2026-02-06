@@ -3,6 +3,7 @@
  */
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import App from "./App";
+import { LAMBDA_URL } from "./config";
 
 global.fetch = jest.fn();
 
@@ -29,18 +30,11 @@ describe("App", () => {
     jest.clearAllMocks();
   });
 
-  it("renders the header", () => {
+  it("renders the hero with name", () => {
     mockFetchSuccess();
     render(<App />);
 
-    expect(screen.getByText("Alan's Synthesizer Patch Banks")).toBeInTheDocument();
-  });
-
-  it("renders the news banner", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByText(/The site is back up/)).toBeInTheDocument();
+    expect(screen.getByText("Alan Marcero")).toBeInTheDocument();
   });
 
   it("renders the search input", () => {
@@ -127,12 +121,11 @@ describe("App", () => {
     });
   });
 
-  it("renders About Me section", () => {
+  it("renders hero bio text", () => {
     mockFetchSuccess();
     render(<App />);
 
-    expect(screen.getByText("About Me")).toBeInTheDocument();
-    expect(screen.getByText(/I'm Alan from Boston/)).toBeInTheDocument();
+    expect(screen.getByText(/Trance and electronic music producer from Boston/)).toBeInTheDocument();
   });
 
   it("renders Donate section with PayPal link", () => {
@@ -149,5 +142,106 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByText("2025 Alan Marcero")).toBeInTheDocument();
+  });
+
+  it("fetches from LAMBDA_URL on mount", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith(LAMBDA_URL);
+  });
+
+  it("renders section titles", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    expect(screen.getByText("Patch Banks")).toBeInTheDocument();
+    expect(screen.getByText("Music and Remixes")).toBeInTheDocument();
+  });
+
+  it("hides loading message after successful fetch", async () => {
+    mockFetchSuccess([
+      { title: "Track 1", videoId: "v1", description: "" },
+    ]);
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading music...")).not.toBeInTheDocument();
+    });
+  });
+
+  it("search is case-insensitive", async () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "TEST SYNTH" } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Synth")).toBeInTheDocument();
+    });
+  });
+
+  it("filters patch banks by description", async () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "Test patches" } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Synth")).toBeInTheDocument();
+    });
+  });
+
+  it("shows all items when search is cleared", async () => {
+    mockFetchSuccess([
+      { title: "Track A", videoId: "v1", description: "" },
+    ]);
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Track A")).toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "zzz" } });
+
+    await waitFor(() => {
+      expect(screen.queryByText("Track A")).not.toBeInTheDocument();
+    });
+
+    fireEvent.change(searchInput, { target: { value: "" } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Track A")).toBeInTheDocument();
+      expect(screen.getByText("Test Synth")).toBeInTheDocument();
+    });
+  });
+
+  it("PayPal link opens in new tab with security attributes", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const paypalLink = screen.getByText("Donate via PayPal");
+    expect(paypalLink).toHaveAttribute("target", "_blank");
+    expect(paypalLink).toHaveAttribute("rel", "noopener");
+    expect(paypalLink).toHaveClass("btn-primary");
+  });
+
+  it("renders multiple music items", async () => {
+    mockFetchSuccess([
+      { title: "Track A", videoId: "v1", description: "Desc A" },
+      { title: "Track B", videoId: "v2", description: "Desc B" },
+      { title: "Track C", videoId: "v3", description: "Desc C" },
+    ]);
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Track A")).toBeInTheDocument();
+      expect(screen.getByText("Track B")).toBeInTheDocument();
+      expect(screen.getByText("Track C")).toBeInTheDocument();
+    });
   });
 });
