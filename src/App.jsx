@@ -19,11 +19,11 @@ function App() {
   useEffect(() => {
     fetch(LAMBDA_URL)
       .then(response => {
-        if (!response.ok) throw new Error('Failed to load music');
+        if (!response.ok) throw new Error(`Failed to load music: ${response.status}`);
         return response.json();
       })
-      .then(data => {
-        setMusicItems(data.items ?? []);
+      .then(musicResponse => {
+        setMusicItems(musicResponse.items ?? []);
       })
       .catch(error => {
         setMusicError(error.message);
@@ -36,7 +36,7 @@ function App() {
   const createSearchFilter = (...fields) => (entry) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    const searchableText = fields.map(f => entry[f] || '').join(' ').toLowerCase();
+    const searchableText = fields.map(fieldName => entry[fieldName] || '').join(' ').toLowerCase();
     return searchableText.includes(query);
   };
 

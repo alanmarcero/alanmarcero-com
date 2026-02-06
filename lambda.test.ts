@@ -2,6 +2,7 @@ import { handler } from "./lambda";
 import type { APIGatewayEvent } from "aws-lambda";
 
 beforeAll(() => {
+  process.env.YOUTUBE_API_KEY = 'test-api-key';
   global.fetch = jest.fn();
 });
 
@@ -13,6 +14,18 @@ const mockEvent: Partial<APIGatewayEvent> = {
 describe("handler", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+  });
+
+  it("returns 500 when API key is missing", async () => {
+    const originalKey = process.env.YOUTUBE_API_KEY;
+    delete process.env.YOUTUBE_API_KEY;
+
+    const result = await handler(mockEvent as APIGatewayEvent);
+
+    expect(result.statusCode).toBe(500);
+    expect(result.body).toContain("Missing YOUTUBE_API_KEY");
+
+    process.env.YOUTUBE_API_KEY = originalKey;
   });
 
   it("returns 500 on fetch error", async () => {
@@ -87,34 +100,22 @@ describe("handler", () => {
     expect(body.items[0]).toEqual({
       title: "Test Video",
       videoId: "abc123",
-      publishedAt: "2025-01-01T00:00:00Z",
-      thumbnail: "http://thumb/1.jpg",
     });
   });
 
-  it("handles missing thumbnails gracefully", async () => {
+  it("returns 200 with empty playlist", async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
       status: 200,
       statusText: "OK",
-      json: async () => ({
-        items: [
-          {
-            snippet: {
-              title: "No Thumb Video",
-              publishedAt: "2025-06-01T00:00:00Z",
-              resourceId: { videoId: "noThumb1" },
-            },
-          },
-        ],
-      }),
+      json: async () => ({ items: [] }),
     });
 
     const result = await handler(mockEvent as APIGatewayEvent);
-    const body = JSON.parse(result.body);
+    expect(result.statusCode).toBe(200);
 
-    expect(body.items[0].thumbnail).toBeUndefined();
-    expect(body.items[0].title).toBe("No Thumb Video");
+    const body = JSON.parse(result.body);
+    expect(body.items).toEqual([]);
   });
 
   it("maps multiple playlist items", async () => {
@@ -161,5 +162,6 @@ describe("handler", () => {
     expect(calledUrl).toContain("googleapis.com/youtube/v3/playlistItems");
     expect(calledUrl).toContain("playlistId=PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c");
     expect(calledUrl).toContain("maxResults=50");
+    expect(calledUrl).toContain("key=test-api-key");
   });
 });

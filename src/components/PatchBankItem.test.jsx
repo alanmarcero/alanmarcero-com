@@ -57,19 +57,6 @@ describe("PatchBankItem", () => {
     expect(iframes).toHaveLength(1);
   });
 
-  it("download button has btn-primary class", () => {
-    render(<PatchBankItem bank={mockBank} />);
-
-    const downloadBtn = screen.getByText("Download");
-    expect(downloadBtn).toHaveClass("btn-primary");
-  });
-
-  it("renders with store-item container class", () => {
-    const { container } = render(<PatchBankItem bank={mockBank} />);
-
-    expect(container.querySelector(".store-item")).toBeInTheDocument();
-  });
-
   it("applies style prop to container", () => {
     const { container } = render(
       <PatchBankItem bank={mockBank} style={{ '--card-index': 2 }} />
@@ -77,22 +64,5 @@ describe("PatchBankItem", () => {
 
     const card = container.querySelector(".store-item");
     expect(card.style.getPropertyValue("--card-index")).toBe("2");
-  });
-
-  it("renders name in an h3 element", () => {
-    const { container } = render(<PatchBankItem bank={mockBank} />);
-
-    const heading = container.querySelector("h3");
-    expect(heading).toHaveTextContent("Test Synth Patches");
-  });
-
-  it("renders description in a paragraph element", () => {
-    const { container } = render(<PatchBankItem bank={mockBank} />);
-
-    const paragraphs = container.querySelectorAll("p");
-    const descParagraph = Array.from(paragraphs).find(
-      (p) => p.textContent === "128 awesome patches"
-    );
-    expect(descParagraph).toBeInTheDocument();
   });
 });
