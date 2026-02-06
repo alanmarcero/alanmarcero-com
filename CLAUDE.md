@@ -54,7 +54,6 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── SkeletonCard.test.jsx  # SkeletonCard tests (5 tests)
 │   │   ├── YouTubeEmbed.jsx       # Shared YouTube iframe component
 │   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests (7 tests)
-
 │   ├── hooks/
 │   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
 │   │   └── useScrollPosition.test.js # useScrollPosition tests (7 tests)
@@ -253,8 +252,8 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 **Generation guidelines:**
 - Use the `stability-ai-generate-image` MCP tool
 - Match the site's outrun palette: electric cyan (`#00e5ff`), hot magenta (`#ff2d95`), sunset orange (`#ff6b00`)
-- Hero image: use `1:1` aspect ratio, `cinematic` style preset, focus on synthesizers/music production gear
-- Background image: use `16:9` or `1:1` aspect ratio, `digital-art` style preset, abstract/geometric patterns
+- Hero image: use `1:1` aspect ratio, `digital-art` style preset, focus on synthesizers/music production gear
+- Background image: use `1:1` aspect ratio, `digital-art` style preset, abstract/geometric patterns
 - Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, washed out colors
 - Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
 - Delete intermediate PNG files after conversion
@@ -262,9 +261,9 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 **Regenerating images:**
 ```bash
 # After generating with Stability AI MCP tool:
-cwebp -q 85 public/about-me-synthwave.png -o public/about-me.webp
-cwebp -q 85 public/background-synthwave.png -o public/background.webp
-rm public/*-synthwave.png
+cwebp -q 85 public/about-me-outrun.png -o public/about-me.webp
+cwebp -q 85 public/background-outrun.png -o public/background.webp
+rm public/*-outrun.png
 ```
 
 ## Future Feature Ideas
