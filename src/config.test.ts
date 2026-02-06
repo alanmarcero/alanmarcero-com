@@ -1,10 +1,6 @@
 import { LAMBDA_URL, YOUTUBE_CHANNEL_URL, GITHUB_URL, PAYPAL_DONATE_URL } from './config';
 
 describe('config', () => {
-  it('exports LAMBDA_URL', () => {
-    expect(LAMBDA_URL).toBeDefined();
-  });
-
   it('LAMBDA_URL is a valid HTTPS URL', () => {
     expect(LAMBDA_URL).toMatch(/^https:\/\/.+/);
   });

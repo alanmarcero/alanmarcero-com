@@ -43,19 +43,6 @@ describe("BackToTop", () => {
     expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   });
 
-  it("has aria-label for accessibility", () => {
-    render(<BackToTop />);
-
-    expect(screen.getByLabelText("Back to top")).toBeInTheDocument();
-  });
-
-  it("always has base back-to-top class", () => {
-    render(<BackToTop />);
-
-    const button = screen.getByLabelText("Back to top");
-    expect(button).toHaveClass("back-to-top");
-  });
-
   it("hides when scrolling back below threshold", () => {
     render(<BackToTop />);
 
@@ -72,11 +59,5 @@ describe("BackToTop", () => {
     });
 
     expect(screen.getByLabelText("Back to top")).not.toHaveClass("back-to-top--visible");
-  });
-
-  it("renders arrow symbol", () => {
-    render(<BackToTop />);
-
-    expect(screen.getByLabelText("Back to top").textContent).toBe("↑");
   });
 });

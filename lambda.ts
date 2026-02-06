@@ -11,7 +11,6 @@ const asyncWrapper = async function <T>(
   }
 };
 
-const apiKey = process.env.YOUTUBE_API_KEY;
 const playlistId = "PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c";
 
 interface YouTubeRes {
@@ -28,6 +27,10 @@ interface YouTubeRes {
 }
 
 export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey)
+    return { statusCode: 500, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "Missing YOUTUBE_API_KEY" }) };
+
   const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
 
   const headers = { "Content-Type": "application/json" };
@@ -47,8 +50,6 @@ export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyR
       items: playList.items.map(item => ({
         title: item.snippet.title,
         videoId: item.snippet.resourceId.videoId,
-        publishedAt: item.snippet.publishedAt,
-        thumbnail: item.snippet.thumbnails?.medium?.url,
       })),
     }),
   };

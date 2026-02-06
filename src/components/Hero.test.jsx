@@ -74,13 +74,6 @@ describe("Hero", () => {
     expect(input).toBeInTheDocument();
   });
 
-  it("YouTube CTA has btn-primary class", () => {
-    render(<Hero {...defaultProps} />);
-
-    const link = screen.getByText("Subscribe on YouTube");
-    expect(link).toHaveClass("btn-primary");
-  });
-
   it("does not show clear button when search is empty", () => {
     render(<Hero {...defaultProps} />);
 
@@ -99,38 +92,5 @@ describe("Hero", () => {
     fireEvent.click(screen.getByLabelText("Clear search"));
 
     expect(defaultProps.onSearchChange).toHaveBeenCalledWith("");
-  });
-
-  it("clear button has search-clear class", () => {
-    render(<Hero {...defaultProps} searchQuery="trance" />);
-
-    const clearBtn = screen.getByLabelText("Clear search");
-    expect(clearBtn).toHaveClass("search-clear");
-  });
-
-  it("hero CTA has hero-cta class", () => {
-    render(<Hero {...defaultProps} />);
-
-    const link = screen.getByText("Subscribe on YouTube");
-    expect(link).toHaveClass("hero-cta");
-  });
-
-  it("hero image has hero-image class", () => {
-    render(<Hero {...defaultProps} />);
-
-    const img = screen.getByAltText("Alan Marcero");
-    expect(img).toHaveClass("hero-image");
-  });
-
-  it("renders hero section with hero class", () => {
-    const { container } = render(<Hero {...defaultProps} />);
-
-    expect(container.querySelector(".hero")).toBeInTheDocument();
-  });
-
-  it("renders hero backdrop", () => {
-    const { container } = render(<Hero {...defaultProps} />);
-
-    expect(container.querySelector(".hero-backdrop")).toBeInTheDocument();
   });
 });

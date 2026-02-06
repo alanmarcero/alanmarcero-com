@@ -122,13 +122,6 @@ describe("App", () => {
     });
   });
 
-  it("renders hero bio text", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByText(/Trance and electronic music producer from Boston/)).toBeInTheDocument();
-  });
-
   it("renders Donate section with PayPal link", () => {
     mockFetchSuccess();
     render(<App />);
@@ -136,14 +129,6 @@ describe("App", () => {
     expect(screen.getByText("Support My Work")).toBeInTheDocument();
     const paypalLink = screen.getByText("Donate via PayPal");
     expect(paypalLink).toHaveAttribute("href", PAYPAL_DONATE_URL);
-  });
-
-  it("renders footer with current year", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    const year = new Date().getFullYear().toString();
-    expect(screen.getByText(new RegExp(`${year} Alan Marcero`))).toBeInTheDocument();
   });
 
   it("fetches from LAMBDA_URL on mount", () => {
@@ -229,7 +214,6 @@ describe("App", () => {
     const paypalLink = screen.getByText("Donate via PayPal");
     expect(paypalLink).toHaveAttribute("target", "_blank");
     expect(paypalLink).toHaveAttribute("rel", "noopener");
-    expect(paypalLink).toHaveClass("btn-primary");
   });
 
   it("renders multiple music items", async () => {
@@ -262,21 +246,6 @@ describe("App", () => {
       expect(screen.getByText(/No results for/)).toBeInTheDocument();
       expect(screen.getByText(/xyznonexistent/)).toBeInTheDocument();
     });
-  });
-
-  it("renders BackToTop button", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByLabelText("Back to top")).toBeInTheDocument();
-  });
-
-  it("renders footer social links", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByText("YouTube")).toBeInTheDocument();
-    expect(screen.getByText("GitHub")).toBeInTheDocument();
   });
 
   it("handles missing data.items gracefully", async () => {

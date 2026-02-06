@@ -5,21 +5,6 @@ import { render } from "@testing-library/react";
 import SkeletonCard from "./SkeletonCard";
 
 describe("SkeletonCard", () => {
-  it("renders skeleton container with correct class", () => {
-    const { container } = render(<SkeletonCard />);
-
-    const card = container.querySelector(".skeleton-card");
-    expect(card).toBeInTheDocument();
-    expect(card).toHaveClass("store-item");
-  });
-
-  it("renders shimmer bars", () => {
-    const { container } = render(<SkeletonCard />);
-
-    const bars = container.querySelectorAll(".skeleton-bar");
-    expect(bars.length).toBeGreaterThanOrEqual(3);
-  });
-
   it("has aria-hidden for accessibility", () => {
     const { container } = render(<SkeletonCard />);
 

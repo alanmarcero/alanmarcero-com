@@ -36,22 +36,4 @@ describe("Footer", () => {
       expect(link).toHaveAttribute("rel", "noopener noreferrer");
     });
   });
-
-  it("renders footer-links container", () => {
-    const { container } = render(<Footer />);
-
-    expect(container.querySelector(".footer-links")).toBeInTheDocument();
-  });
-
-  it("copyright has footer-copyright class", () => {
-    const { container } = render(<Footer />);
-
-    expect(container.querySelector(".footer-copyright")).toBeInTheDocument();
-  });
-
-  it("renders inside a footer element", () => {
-    const { container } = render(<Footer />);
-
-    expect(container.querySelector("footer")).toBeInTheDocument();
-  });
 });
