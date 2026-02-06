@@ -2,54 +2,57 @@
    CSS CUSTOM PROPERTIES
 ---------------------------------------------------- */
 :root {
-  --accent-primary: #ff3399;
-  --accent-primary-light: #ff70b8;
-  --gradient-accent: linear-gradient(135deg, #ff3399, #00e5ff);
-  --gradient-hero: linear-gradient(180deg, rgba(14, 14, 28, 0.93), rgba(22, 14, 36, 0.78));
-  --bg-body: #10101f;
-  --bg-surface: rgba(22, 20, 42, 0.88);
-  --bg-surface-hover: rgba(32, 26, 52, 0.92);
-  --border-subtle: rgba(255, 51, 153, 0.15);
-  --border-medium: rgba(255, 51, 153, 0.28);
-  --text-primary: #f4f2fc;
-  --text-secondary: #d0c8e6;
-  --text-muted: #9890b0;
-  --bg-footer: #0c0c18;
-  --error-color: #f87171;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 51, 153, 0.05);
-  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 60px rgba(255, 51, 153, 0.10);
-  --glow-accent: 0 4px 20px rgba(255, 51, 153, 0.35), 0 4px 20px rgba(0, 229, 255, 0.2);
+  /* Backgrounds — near-black void */
+  --bg-body: #060608;
+  --bg-surface: rgba(8, 12, 18, 0.92);
+  --bg-surface-hover: rgba(14, 18, 28, 0.95);
+  --bg-footer: #030305;
+
+  /* Primary: Electric Cyan */
+  --accent-primary: #00e5ff;
+  --accent-primary-light: #40f0ff;
+  --accent-cyan: #00e5ff;
+  --accent-cyan-light: #66f2ff;
+  --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.15);
+
+  /* Secondary: Hot Magenta */
+  --accent-pink-light: #ff5aae;
+
+  /* Tertiary: Sunset Orange */
+  --accent-sunset-dim: rgba(255, 107, 0, 0.10);
+  --glow-sunset: 0 0 20px rgba(255, 107, 0, 0.35);
+
+  /* Text — bright whites for contrast */
+  --text-primary: #f0f4f8;
+  --text-secondary: #8a9bb0;
+  --text-muted: #4a5568;
+
+  /* Borders — cyan-tinted */
+  --border-subtle: rgba(0, 229, 255, 0.08);
+  --border-medium: rgba(0, 229, 255, 0.15);
+
+  /* Gradients — outrun palette */
+  --gradient-accent: linear-gradient(135deg, #00e5ff, #ff2d95);
+  --gradient-hero: linear-gradient(180deg, rgba(6, 6, 8, 0.98), rgba(6, 6, 8, 0.85));
+  --gradient-hero-text: linear-gradient(135deg, #00e5ff, #40f0ff, #ff2d95);
+  --gradient-cta: linear-gradient(135deg, #00e5ff, #0090cc);
+  --gradient-purple-pink: linear-gradient(135deg, #ff2d95, #ff6b00);
+  --gradient-cyan-purple: linear-gradient(135deg, #00e5ff, #ff2d95);
+  --gradient-sunset-pink: linear-gradient(135deg, #ff6b00, #ff2d95);
+  --gradient-back-to-top: linear-gradient(135deg, #00e5ff, #0090cc);
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 229, 255, 0.1);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 229, 255, 0.08);
+  --glow-accent: 0 0 20px rgba(0, 229, 255, 0.35), 0 0 40px rgba(255, 45, 149, 0.12);
   --focus-ring: 0 0 0 3px rgba(0, 229, 255, 0.25);
+  --error-color: #ff4757;
+
+  /* Shared */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
   --radius-sm: 8px;
   --radius-lg: 16px;
-
-  /* Cyan / Electric Blue */
-  --accent-cyan: #00e5ff;
-  --accent-cyan-light: #67efff;
-  --accent-cyan-dim: rgba(0, 229, 255, 0.15);
-  --glow-cyan: 0 4px 20px rgba(0, 229, 255, 0.45);
-
-  /* Hot Pink — primary */
-  --accent-pink: #ff3399;
-  --accent-pink-light: #ff70b8;
-  --accent-pink-dim: rgba(255, 51, 153, 0.15);
-  --glow-pink: 0 4px 20px rgba(255, 51, 153, 0.45);
-
-  /* Sunset / Chrome (gold → orange) */
-  --accent-sunset: #ffb800;
-  --accent-sunset-light: #ffd54f;
-  --accent-sunset-dim: rgba(255, 184, 0, 0.15);
-  --glow-sunset: 0 4px 20px rgba(255, 184, 0, 0.4);
-
-  /* Multi-color gradients — outrun palette (no purple) */
-  --gradient-hero-text: linear-gradient(135deg, #ffd54f, #ffb800, #ff3399, #00e5ff);
-  --gradient-cta: linear-gradient(135deg, #ff3399, #ff6633);
-  --gradient-purple-pink: linear-gradient(135deg, #ff3399, #ff6633);
-  --gradient-cyan-purple: linear-gradient(135deg, #00e5ff, #ff3399);
-  --gradient-sunset-pink: linear-gradient(135deg, #ffd54f, #ffb800, #ff3399);
-  --gradient-back-to-top: linear-gradient(135deg, #00e5ff, #ff3399);
 }
 
 /* ----------------------------------------------------
@@ -79,7 +82,7 @@ body::before {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.08;
+  opacity: 0.04;
   pointer-events: none;
   z-index: -1;
 }
@@ -88,7 +91,7 @@ h1, h2, h3, h4 {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
 }
 
 /* ----------------------------------------------------
@@ -150,7 +153,7 @@ a:focus-visible {
   width: 500px;
   height: 500px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255, 51, 153, 0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
   animation: heroPulse 8s ease-in-out infinite reverse;
   pointer-events: none;
 }
@@ -163,7 +166,7 @@ a:focus-visible {
   width: 600px;
   height: 600px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.12) 0%, rgba(255, 184, 0, 0.06) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 45, 149, 0.05) 0%, transparent 70%);
   animation: heroPulse 6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -180,13 +183,14 @@ a:focus-visible {
 }
 
 .hero-image {
-  width: 180px;
-  height: 180px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--accent-cyan);
-  box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+  border: 2px solid var(--accent-cyan);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), 0 0 60px rgba(0, 229, 255, 0.1);
   margin-bottom: 24px;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .hero-name {
@@ -196,7 +200,7 @@ a:focus-visible {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3)) drop-shadow(0 0 40px rgba(168, 85, 247, 0.2));
+  filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3)) drop-shadow(0 0 40px rgba(0, 229, 255, 0.12));
 }
 
 .hero-tagline {
@@ -227,7 +231,7 @@ a:focus-visible {
 }
 
 .hero-cta:hover {
-  box-shadow: var(--glow-pink);
+  box-shadow: var(--glow-cyan);
 }
 
 .hero-search input {
@@ -237,7 +241,7 @@ a:focus-visible {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   color: var(--text-primary);
-  background: rgba(20, 15, 40, 0.8);
+  background: rgba(6, 8, 14, 0.9);
   border: 1px solid var(--border-medium);
   border-radius: 100px;
   outline: none;
@@ -246,11 +250,6 @@ a:focus-visible {
 
 .hero-search input::placeholder {
   color: var(--text-muted);
-}
-
-.hero-search input:focus {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.2);
 }
 
 .hero-search input:focus-visible {
@@ -290,14 +289,9 @@ a:focus-visible {
   border-radius: 4px;
 }
 
-/* Hero image hover */
-.hero-image {
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-}
-
 .hero-image:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 40px rgba(0, 229, 255, 0.5);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.45), 0 0 80px rgba(0, 229, 255, 0.15);
 }
 
 /* ----------------------------------------------------
@@ -321,7 +315,7 @@ section + section::before {
   height: 1px;
   margin: 0 auto 20px;
   background: var(--gradient-accent);
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .section-title::after {
@@ -407,9 +401,9 @@ section + section::before {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   background: var(--gradient-accent);
-  opacity: 0;
+  opacity: 0.3;
   transition: opacity var(--transition-base);
 }
 
@@ -478,8 +472,8 @@ iframe {
 }
 
 #store .store-item:hover {
-  border-color: rgba(255, 45, 149, 0.25);
-  box-shadow: var(--shadow-card-hover), 0 0 30px rgba(255, 45, 149, 0.08);
+  border-color: rgba(255, 45, 149, 0.15);
+  box-shadow: var(--shadow-card-hover), 0 0 30px rgba(255, 45, 149, 0.06);
 }
 
 #store .store-item .btn-primary {
@@ -487,7 +481,7 @@ iframe {
 }
 
 #store .store-item .btn-primary:hover {
-  box-shadow: var(--glow-pink);
+  box-shadow: var(--glow-cyan);
 }
 
 /* Music — cyan-magenta */
@@ -500,8 +494,8 @@ iframe {
 }
 
 #music-remixes .store-item:hover {
-  border-color: rgba(0, 229, 255, 0.25);
-  box-shadow: var(--shadow-card-hover), 0 0 30px rgba(0, 229, 255, 0.08);
+  border-color: rgba(0, 229, 255, 0.15);
+  box-shadow: var(--shadow-card-hover), 0 0 30px rgba(0, 229, 255, 0.06);
 }
 
 /* ----------------------------------------------------
@@ -549,9 +543,9 @@ iframe {
   border-radius: 8px;
   background: linear-gradient(
     90deg,
-    rgba(0, 229, 255, 0.06) 25%,
-    rgba(0, 229, 255, 0.12) 50%,
-    rgba(0, 229, 255, 0.06) 75%
+    rgba(0, 229, 255, 0.04) 25%,
+    rgba(0, 229, 255, 0.10) 50%,
+    rgba(0, 229, 255, 0.04) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
@@ -700,24 +694,24 @@ footer {
 
 @keyframes heroPulse {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.5;
     transform: translate(-50%, -50%) scale(1);
   }
   50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.08);
   }
 }
 
 @keyframes buttonPulse {
   0% {
-    box-shadow: var(--glow-pink);
+    box-shadow: var(--glow-cyan);
   }
   50% {
-    box-shadow: var(--glow-pink), 0 0 0 8px rgba(255, 45, 149, 0);
+    box-shadow: var(--glow-cyan), 0 0 0 8px rgba(0, 229, 255, 0);
   }
   100% {
-    box-shadow: var(--glow-pink);
+    box-shadow: var(--glow-cyan);
   }
 }
 
@@ -755,8 +749,8 @@ footer {
   }
 
   .hero-image {
-    width: 140px;
-    height: 140px;
+    width: 170px;
+    height: 170px;
   }
 
   .hero-name {
@@ -813,8 +807,8 @@ footer {
     inset: 0;
     background: repeating-linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.03) 0px,
-      rgba(0, 0, 0, 0.03) 1px,
+      rgba(0, 0, 0, 0.04) 0px,
+      rgba(0, 0, 0, 0.04) 1px,
       transparent 1px,
       transparent 3px
     );
