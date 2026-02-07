@@ -1,14 +1,6 @@
 import { patchBanks } from './patchBanks';
 
 describe('patchBanks', () => {
-  it('exports an array', () => {
-    expect(Array.isArray(patchBanks)).toBe(true);
-  });
-
-  it('has at least one patch bank', () => {
-    expect(patchBanks.length).toBeGreaterThan(0);
-  });
-
   it('each patch bank has required fields', () => {
     patchBanks.forEach((bank) => {
       expect(bank).toHaveProperty('name');

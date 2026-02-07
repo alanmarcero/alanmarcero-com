@@ -39,40 +39,39 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── src/
 │   ├── components/
 │   │   ├── BackToTop.jsx          # Scroll-to-top button (uses useScrollPosition + SCROLL_THRESHOLD)
-│   │   ├── BackToTop.test.jsx     # BackToTop tests (4 tests)
+│   │   ├── BackToTop.test.jsx     # BackToTop tests
 │   │   ├── Footer.jsx             # Footer with nav links + dynamic year
-│   │   ├── Footer.test.jsx        # Footer tests (4 tests)
+│   │   ├── Footer.test.jsx        # Footer tests
 │   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear
-│   │   ├── Hero.test.jsx          # Hero tests (11 tests)
+│   │   ├── Hero.test.jsx          # Hero tests
 │   │   ├── MusicItem.jsx          # YouTube playlist item display (card glow)
-│   │   ├── MusicItem.test.jsx     # MusicItem tests (7 tests)
+│   │   ├── MusicItem.test.jsx     # MusicItem tests
 │   │   ├── NoResults.jsx          # Empty state for search with no matches (aria-hidden emoji)
-│   │   ├── NoResults.test.jsx     # NoResults tests (3 tests)
+│   │   ├── NoResults.test.jsx     # NoResults tests
 │   │   ├── PatchBankItem.jsx      # Patch bank card with download button (card glow, onDownload)
-│   │   ├── PatchBankItem.test.jsx # PatchBankItem tests (9 tests)
+│   │   ├── PatchBankItem.test.jsx # PatchBankItem tests
 │   │   ├── SkeletonCard.jsx       # Loading placeholder with shimmer animation
-│   │   ├── SkeletonCard.test.jsx  # SkeletonCard tests (5 tests)
+│   │   ├── SkeletonCard.test.jsx  # SkeletonCard tests
 │   │   ├── Toast.jsx              # Download toast notification
-│   │   ├── Toast.test.jsx         # Toast tests (4 tests)
+│   │   ├── Toast.test.jsx         # Toast tests
 │   │   ├── YouTubeEmbed.jsx       # Shared YouTube iframe component
-│   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests (7 tests)
+│   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests
 │   ├── hooks/
 │   │   ├── useMusicItems.js          # Custom hook: Lambda fetch for music items
-│   │   ├── useMusicItems.test.js     # useMusicItems tests (7 tests)
+│   │   ├── useMusicItems.test.js     # useMusicItems tests
 │   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
-│   │   ├── useScrollPosition.test.js # useScrollPosition tests (7 tests)
+│   │   ├── useScrollPosition.test.js # useScrollPosition tests
 │   │   ├── useScrollReveal.js        # Custom hook: IntersectionObserver scroll-reveal
-│   │   └── useScrollReveal.test.js   # useScrollReveal tests (8 tests)
+│   │   └── useScrollReveal.test.js   # useScrollReveal tests
 │   ├── utils/
 │   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
-│   │   └── cardGlow.test.js       # cardGlow tests (4 tests)
+│   │   └── cardGlow.test.js       # cardGlow tests
 │   ├── data/
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
-│   │   └── patchBanks.test.ts    # Data validation tests (6 tests)
+│   │   └── patchBanks.test.ts    # Data validation tests
 │   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold, toast duration)
-│   ├── config.test.ts            # Config tests (8 tests)
 │   ├── App.jsx                   # Main app: search filtering, scroll reveal, toast, layout
-│   ├── App.test.jsx              # App integration tests (30 tests)
+│   ├── App.test.jsx              # App integration tests
 │   ├── App.css                   # Full stylesheet: Outrun CRT theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
@@ -82,12 +81,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.html                    # Entry HTML with Google Fonts, meta description, canonical URL
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
-├── index.test.ts                 # Lambda tests (8 tests)
+├── index.test.ts                 # Lambda tests
 ├── .npmrc                        # Forces npm.org registry (overrides corporate)
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 130 tests across 17 suites**
+**Total: 114 tests across 16 suites**
 
 ## Key Files
 

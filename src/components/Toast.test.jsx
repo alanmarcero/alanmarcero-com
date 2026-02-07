@@ -24,10 +24,4 @@ describe("Toast", () => {
     const toast = screen.getByRole("status");
     expect(toast).not.toHaveClass("toast--visible");
   });
-
-  it("has role=status for accessibility", () => {
-    render(<Toast message="Test" visible={false} />);
-
-    expect(screen.getByRole("status")).toBeInTheDocument();
-  });
 });

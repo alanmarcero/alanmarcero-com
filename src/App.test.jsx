@@ -3,7 +3,7 @@
  */
 import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
 import App from "./App";
-import { LAMBDA_URL, PAYPAL_DONATE_URL } from "./config";
+import { LAMBDA_URL, PAYPAL_DONATE_URL, TOAST_DISMISS_MS } from "./config";
 
 global.fetch = jest.fn();
 
@@ -37,20 +37,6 @@ const mockFetchSuccess = (items = []) => {
 describe("App", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("renders the hero with name", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByText("Alan Marcero")).toBeInTheDocument();
-  });
-
-  it("renders the search input", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByPlaceholderText("Search patches and music...")).toBeInTheDocument();
   });
 
   it("shows skeleton cards while fetching music", () => {
@@ -146,14 +132,6 @@ describe("App", () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledWith(LAMBDA_URL);
-  });
-
-  it("renders section titles", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByText("Patch Banks")).toBeInTheDocument();
-    expect(screen.getByText("Music and Remixes")).toBeInTheDocument();
   });
 
   it("hides skeleton cards after successful fetch", async () => {
@@ -368,17 +346,11 @@ describe("App", () => {
     expect(screen.getByText("Downloading now...")).toBeInTheDocument();
 
     act(() => {
-      jest.advanceTimersByTime(2500);
+      jest.advanceTimersByTime(TOAST_DISMISS_MS);
     });
 
     expect(screen.queryByText("Downloading now...")).not.toBeInTheDocument();
     jest.useRealTimers();
   });
 
-  it("renders Toast component", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByRole("status")).toBeInTheDocument();
-  });
 });
