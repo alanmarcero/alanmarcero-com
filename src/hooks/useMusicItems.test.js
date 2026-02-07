@@ -75,7 +75,7 @@ describe("useMusicItems", () => {
     renderHook(() => useMusicItems());
 
     expect(global.fetch).toHaveBeenCalledWith(
-      "https://REDACTED_LAMBDA_URL/"
+      "/api"
     );
   });
 });

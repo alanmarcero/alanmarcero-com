@@ -9,6 +9,13 @@ export default defineConfig({
   server: {
     headers: {
       'Cache-Control': 'no-store'
+    },
+    proxy: {
+      '/api': {
+        target: 'https://REDACTED_LAMBDA_URL',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/'),
+      }
     }
   }
 });

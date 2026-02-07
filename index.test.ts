@@ -34,7 +34,7 @@ describe("handler", () => {
     const result = await handler(mockEvent as APIGatewayEvent);
 
     expect(result.statusCode).toBe(500);
-    expect(result.headers).toEqual({ "Content-Type": "application/json" });
+    expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
     expect(result.body).toContain("YouTube Fetch Failed");
     expect(result.body).not.toContain("network down");
   });
@@ -51,7 +51,7 @@ describe("handler", () => {
     const result = await handler(mockEvent as APIGatewayEvent);
 
     expect(result.statusCode).toBe(500);
-    expect(result.headers).toEqual({ "Content-Type": "application/json" });
+    expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
     expect(result.body).toContain("YouTube Fetch Failed");
   });
 
@@ -69,7 +69,7 @@ describe("handler", () => {
     const result = await handler(mockEvent as APIGatewayEvent);
 
     expect(result.statusCode).toBe(500);
-    expect(result.headers).toEqual({ "Content-Type": "application/json" });
+    expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
     expect(result.body).toContain("YouTube Fetch Failed");
     expect(result.body).not.toContain("invalid json");
   });
@@ -95,7 +95,7 @@ describe("handler", () => {
 
     const result = await handler(mockEvent as APIGatewayEvent);
     expect(result.statusCode).toBe(200);
-    expect(result.headers).toEqual({ "Content-Type": "application/json" });
+    expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
 
     const body = JSON.parse(result.body);
     expect(body.items).toHaveLength(1);
