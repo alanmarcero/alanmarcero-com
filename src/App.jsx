@@ -61,7 +61,7 @@ function App() {
         className={revealClass(donateVisible)}
       >
         <h2 className="section-title">Support My Work</h2>
-        <p>If you enjoy the patches and music, consider supporting me via the following:</p>
+        <p>Every patch bank is free. If they help your music, consider giving back:</p>
         <a
           href={PAYPAL_DONATE_URL}
           className="btn-primary paypal-button"
