@@ -1,4 +1,4 @@
-import { LAMBDA_URL, YOUTUBE_CHANNEL_URL, GITHUB_URL, PAYPAL_DONATE_URL } from './config';
+import { LAMBDA_URL, YOUTUBE_CHANNEL_URL, GITHUB_URL, PAYPAL_DONATE_URL, SCROLL_THRESHOLD } from './config';
 
 describe('config', () => {
   it('LAMBDA_URL is a valid HTTPS URL', () => {
@@ -26,5 +26,9 @@ describe('config', () => {
 
   it('PAYPAL_DONATE_URL points to paypal.com', () => {
     expect(PAYPAL_DONATE_URL).toContain('paypal.com');
+  });
+
+  it('SCROLL_THRESHOLD matches the expected pixel value', () => {
+    expect(SCROLL_THRESHOLD).toBe(400);
   });
 });

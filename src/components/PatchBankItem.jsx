@@ -6,15 +6,11 @@ function PatchBankItem({ bank, style }) {
       <h3>{bank.name}</h3>
       <p>{bank.description}</p>
 
-      {Array.isArray(bank.audioDemo) && bank.audioDemo.length > 0 && (
-        bank.audioDemo.map((videoId) => (
-          videoId && (
-            <div key={videoId} className="youtube-embed-container">
-              <YouTubeEmbed videoId={videoId} />
-            </div>
-          )
-        ))
-      )}
+      {bank.audioDemo?.filter(Boolean).map((videoId) => (
+        <div key={videoId} className="youtube-embed-container">
+          <YouTubeEmbed videoId={videoId} />
+        </div>
+      ))}
 
       <a className="btn-primary download-btn" href={bank.downloadLink}>
         Download
