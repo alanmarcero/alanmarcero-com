@@ -115,7 +115,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | `--accent-orange` | `#ff6b00` | Tertiary (PayPal) |
 | `--gradient-accent` | cyan → magenta (135deg) | Buttons, glows |
 | `--gradient-hero-text` | cyan → magenta (135deg) | Hero name |
-| `--bg-body` | `#0a0a12` | Deep blue-black |
+| `--bg-body` | `#0e0e1a` | Deep blue-black |
 | `--bg-surface` | `rgba(16, 16, 32, 0.85)` | Card backgrounds (frosted) |
 | `--bg-surface-hover` | `rgba(20, 20, 40, 0.9)` | Card hover |
 | `--bg-surface-alt` | `rgba(12, 12, 24, 0.6)` | Alternating sections |
@@ -167,6 +167,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
 - `@keyframes shimmer` — Cyan gradient sweep for skeleton loading cards
 - `@keyframes crtFlicker` — Subtle opacity flicker on body scanlines
+- `@keyframes gradientFlow` — Flowing gradient on donate section title underline (3s linear infinite)
 - Scroll-reveal fade-up for sections (IntersectionObserver, one-shot, 0.6s ease)
 - Mouse-follow radial glow on cards (CSS custom properties `--mouse-x`/`--mouse-y`)
 - Button press feedback (scale 0.96 on :active)
@@ -193,6 +194,8 @@ App
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
+├── Donate section (scroll-reveal, compact banner, animated gradient underline)
+│   └── PayPal button (.btn-primary, orange accent)
 ├── Patch Banks section (scroll-reveal, ref=storeRef)
 │   └── PatchBankItem[] (bank, style={--card-index}, onDownload, cardGlowHandlers)
 │       ├── Name, description
@@ -203,8 +206,6 @@ App
 │       ├── Title
 │       ├── YouTubeEmbed (videoId)
 │       └── Description
-├── Donate section (scroll-reveal, ref=donateRef)
-│   └── PayPal button (.btn-primary, orange accent)
 ├── Footer
 │   ├── Social links (YouTube, GitHub)
 │   └── Dynamic copyright year
