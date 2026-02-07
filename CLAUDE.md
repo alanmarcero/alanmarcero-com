@@ -308,6 +308,6 @@ rm input.png
 
 - **Lambda error responses:** Generic `{ error: "YouTube Fetch Failed" }` — no internal error messages leaked
 - **External links:** PayPal donate link uses `target="_blank" rel="noopener noreferrer"`
-- **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups`
+- **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups allow-presentation`
 - **Environment files:** `.env*` in `.gitignore`
 - **Last audit:** Feb 2026 — 0 critical, 0 high, 0 medium findings
