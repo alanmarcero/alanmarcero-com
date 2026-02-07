@@ -93,7 +93,7 @@ function App() {
       <section
         id="music-remixes"
         ref={musicRef}
-        className={revealClass(musicVisible, 'section--alt')}
+        className={revealClass(musicVisible)}
       >
         <h2 className="section-title">Music and Remixes</h2>
         <div className="content-grid">
