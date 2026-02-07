@@ -38,6 +38,15 @@ describe("MusicItem", () => {
     expect(screen.getByText("No Desc")).toBeInTheDocument();
   });
 
+  it("renders Watch on YouTube link with correct URL", () => {
+    render(<MusicItem item={mockItem} />);
+
+    const link = screen.getByText("Watch on YouTube");
+    expect(link).toHaveAttribute("href", "https://www.youtube.com/watch?v=xyz789");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("applies style prop to container", () => {
     const { container } = render(
       <MusicItem item={mockItem} style={{ '--card-index': 3 }} />
