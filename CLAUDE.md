@@ -40,13 +40,13 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── components/
 │   │   ├── BackToTop.jsx          # Scroll-to-top button (uses useScrollPosition + SCROLL_THRESHOLD)
 │   │   ├── BackToTop.test.jsx     # BackToTop tests (4 tests)
-│   │   ├── Footer.jsx             # Footer with social links + dynamic year
+│   │   ├── Footer.jsx             # Footer with nav links + dynamic year
 │   │   ├── Footer.test.jsx        # Footer tests (4 tests)
 │   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear
 │   │   ├── Hero.test.jsx          # Hero tests (11 tests)
 │   │   ├── MusicItem.jsx          # YouTube playlist item display (card glow)
 │   │   ├── MusicItem.test.jsx     # MusicItem tests (7 tests)
-│   │   ├── NoResults.jsx          # Empty state for search with no matches
+│   │   ├── NoResults.jsx          # Empty state for search with no matches (aria-hidden emoji)
 │   │   ├── NoResults.test.jsx     # NoResults tests (3 tests)
 │   │   ├── PatchBankItem.jsx      # Patch bank card with download button (card glow, onDownload)
 │   │   ├── PatchBankItem.test.jsx # PatchBankItem tests (9 tests)
@@ -69,8 +69,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── data/
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
 │   │   └── patchBanks.test.ts    # Data validation tests (6 tests)
-│   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold)
-│   ├── config.test.ts            # Config tests (7 tests)
+│   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold, toast duration)
+│   ├── config.test.ts            # Config tests (8 tests)
 │   ├── App.jsx                   # Main app: search filtering, scroll reveal, toast, layout
 │   ├── App.test.jsx              # App integration tests (30 tests)
 │   ├── App.css                   # Full stylesheet: Outrun CRT theme, animations, responsive
@@ -79,7 +79,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── banks/                    # Downloadable patch zip files
 │   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
 │   └── hero-bg.webp              # Background image (outrun landscape, used in .hero-backdrop)
-├── index.html                    # Entry HTML with Google Fonts
+├── index.html                    # Entry HTML with Google Fonts, meta description, canonical URL
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests (8 tests)
@@ -87,14 +87,14 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 129 tests across 17 suites**
+**Total: 130 tests across 17 suites**
 
 ## Key Files
 
 - `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
 - `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button
-- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal) and UI constants (SCROLL_THRESHOLD)
+- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -206,7 +206,7 @@ App
 │       ├── YouTubeEmbed (videoId)
 │       └── Description
 ├── Footer
-│   ├── Social links (YouTube, GitHub)
+│   ├── Nav links (YouTube, GitHub) — semantic <nav> element
 │   └── Dynamic copyright year
 ├── BackToTop (uses useScrollPosition hook, gradient pill with CRT overlay)
 └── Toast (message, visible) — download notification
@@ -217,7 +217,7 @@ App
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+)
-npm test                       # Jest (129 tests, 17 suites)
+npm test                       # Jest (130 tests, 17 suites)
 npm run build                  # Vite production build
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -310,4 +310,5 @@ rm input.png
 - **External links:** PayPal donate link uses `target="_blank" rel="noopener noreferrer"`
 - **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups allow-presentation`
 - **Environment files:** `.env*` in `.gitignore`
+- **SEO:** Meta description, canonical URL, theme-color meta tag
 - **Last audit:** Feb 2026 — 0 critical, 0 high, 0 medium findings
