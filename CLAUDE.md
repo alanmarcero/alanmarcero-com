@@ -5,20 +5,23 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ## Architecture
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   CloudFront    │────▶│   S3 (Frontend)  │     │  YouTube API    │
-│   (CDN + HTTPS) │     │   Static React   │     │                 │
-└─────────────────┘     └──────────────────┘     └────────▲────────┘
-                                                          │
-┌─────────────────┐     ┌──────────────────┐              │
-│    Route 53     │     │     Lambda       │──────────────┘
-│   (DNS)         │     │  (Playlist API)  │
-└─────────────────┘     └──────────────────┘
+                        ┌──────────────────┐
+                   ┌───▶│   S3 (Frontend)  │
+                   │    │   Static React   │
+┌─────────────────┐│    └──────────────────┘     ┌─────────────────┐
+│   CloudFront    │┤                              │  YouTube API    │
+│   (CDN + HTTPS) ││    ┌──────────────────┐     │                 │
+└─────────────────┘└───▶│     Lambda       │────▶└─────────────────┘
+                  /api  │  (Playlist API)  │
+┌─────────────────┐     └──────────────────┘
+│    Route 53     │
+│   (DNS)         │
+└─────────────────┘
 ```
 
 **Cost-optimized AWS setup:**
 - S3 + CloudFront for static frontend hosting
-- Single Lambda with Function URL (no API Gateway costs)
+- Lambda behind CloudFront at `/api` with 5-minute edge cache (CachingOptimized policy)
 - No database — patch bank data is hardcoded, YouTube data is fetched on-demand
 
 ## Tech Stack
@@ -29,7 +32,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | Styling | CSS custom properties, Google Fonts (Inter, Space Grotesk) |
 | Lambda | TypeScript, Node.js |
 | Testing | Jest 30, React Testing Library |
-| Hosting | S3, CloudFront, Lambda Function URL |
+| Hosting | S3, CloudFront (static + Lambda /api) |
 | CI/CD | GitHub Actions |
 | DNS/TLS | Route 53, CloudFront (ACM) |
 
@@ -82,6 +85,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
+├── infrastructure/
+│   └── cloudfront-add-api-origin.yml  # Archived: one-time CloudFront /api origin setup
 ├── .npmrc                        # Forces npm.org registry (overrides corporate)
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
@@ -97,7 +102,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
-- `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers. Generic error responses (no internal message leaks)
+- `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Cache-Control: public, max-age=300. Generic error responses (no internal message leaks)
 
 ## Design System
 
@@ -234,9 +239,14 @@ npx ts-node index.local.ts     # Run Lambda locally
 
 ## Lambda Details
 
-- **Endpoint:** `https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws/`
+- **Frontend path:** `/api` (routed through CloudFront, 5-minute edge cache)
+- **Origin:** `https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws/`
+- **Cache-Control:** `public, max-age=300` on all responses (200 + 500)
+- **CloudFront cache policy:** CachingOptimized (respects origin Cache-Control)
+- **Origin request policy:** AllViewerExceptHostHeader (Lambda Function URLs reject mismatched Host)
 - **Playlist ID:** `PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c`
 - **Max Results:** 50 items per request
+- **Dev proxy:** Vite proxies `/api` to Lambda origin (see `vite.config.js`)
 
 ## Deployment
 
