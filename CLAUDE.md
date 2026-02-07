@@ -1,6 +1,6 @@
 # alanmarcero.com
 
-Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Warm studio aesthetic with amber/copper palette on warm charcoal backgrounds.
+Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Meridian theme — editorial design with indigo accents on deep navy-black backgrounds.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19, Vite 7 |
-| Styling | CSS custom properties, Google Fonts (Inter, Sora) |
+| Styling | CSS custom properties, Google Fonts (Inter, DM Serif Display) |
 | Lambda | TypeScript, Node.js |
 | Testing | Jest 30, React Testing Library |
 | Hosting | S3, CloudFront, Lambda Function URL |
@@ -64,12 +64,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── config.test.ts            # Config tests (6 tests)
 │   ├── App.jsx                   # Main app: data fetching, search filtering, layout
 │   ├── App.test.jsx              # App integration tests (25 tests)
-│   ├── App.css                   # Full stylesheet: outrun theme, animations, responsive
+│   ├── App.css                   # Full stylesheet: Meridian theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
-│   ├── about-me.webp             # Hero profile image
-│   └── background.webp           # Faint body overlay (4% opacity)
+│   └── about-me.webp             # Hero profile image (circular, indigo border)
 ├── index.html                    # Entry HTML with Google Fonts
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
@@ -83,8 +82,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ## Key Files
 
 - `src/App.jsx` — Main component: fetches music from Lambda, client-side search filtering, renders Hero + sections
-- `src/App.css` — Complete stylesheet: CSS custom properties, warm studio palette, frosted glass cards, animations, responsive
-- `src/components/Hero.jsx` — Side-by-side hero (desktop) / stacked (mobile): profile image, name, tagline, bio, YouTube CTA, search input with clear button
+- `src/App.css` — Complete stylesheet: CSS custom properties, Meridian indigo palette, sharp cards, animations, responsive
+- `src/components/Hero.jsx` — Centered stacked hero: circular profile image, serif name, uppercase tagline, ghost CTA, search input with clear button
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -92,40 +91,49 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ## Design System
 
-**Theme:** Warm Studio — amber/copper accents on warm charcoal backgrounds. Dark mode only. Inspired by premium analog audio gear.
+**Theme:** Meridian — editorial, sophisticated design with indigo accents on deep navy-black backgrounds. Dark mode only. Inspired by premium music magazines.
 
-**Fonts:** Inter 400/600 (body), Sora 400/600/700 (headings) via Google Fonts.
+**Fonts:** Inter 400/500/600 (body, buttons, tagline), DM Serif Display 400 (headings) via Google Fonts.
 
 **CSS Custom Properties (App.css `:root`):**
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--accent-primary` | `#e8a83e` | Primary warm amber |
-| `--accent-primary-light` | `#f0bc5e` | Card headings, hover states |
-| `--accent-secondary` | `#c45e3a` | Burnt copper (PayPal button) |
-| `--gradient-accent` | amber → copper | Accent gradient |
-| `--bg-body` | `#111113` | Page background (warm charcoal) |
-| `--bg-surface` | `rgba(26,26,28,0.85)` | Card surfaces (frosted glass) |
-| `--bg-surface-alt` | `rgba(20,20,22,0.6)` | Alternating section background |
-| `--focus-ring` | amber outline | Search input focus state |
-| `--text-primary` | `#ede9e3` | Main text (warm cream) |
-| `--text-secondary` | `#9a958e` | Secondary text, bio |
-| `--text-muted` | `#5a5550` | Footer, placeholders |
+| `--accent-primary` | `#6366f1` | Indigo violet |
+| `--accent-primary-light` | `#818cf8` | Hover states, tagline |
+| `--accent-primary-dark` | `#4f46e5` | PayPal button |
+| `--bg-body` | `#0a0c14` | Deep navy-black |
+| `--bg-surface` | `#12141f` | Card backgrounds (solid) |
+| `--bg-surface-hover` | `#181a28` | Card hover |
+| `--bg-surface-alt` | `#0e1019` | Alternating sections |
+| `--bg-footer` | `#060710` | Footer |
+| `--text-primary` | `#f8fafc` | Crisp cool white |
+| `--text-secondary` | `#cbd5e1` | Slate gray |
+| `--text-muted` | `#64748b` | Muted |
 
 **Shared CSS classes:**
-- `.btn-primary` — Solid amber pill button (used by Hero CTA, download buttons)
-- `.store-item` — Frosted glass card with `backdrop-filter: blur(12px)`, amber left-border on hover, lift + shadow
-- `.section-title` — Left-aligned heading with short amber underline
+- `.btn-primary` — Solid indigo button with 6px radius (used by download, PayPal buttons)
+- `.hero-cta` — Ghost/outlined CTA button (transparent bg, indigo border, fills on hover)
+- `.store-item` — Sharp card (4px radius, solid bg, 2px indigo top border, lift on hover)
+- `.section-title` — Centered serif heading with thin centered 1px underline (60px wide)
 - `.section--alt` — Alternating section background tone
 - `.content-grid` — Responsive grid layout for patch bank and music sections
-- `.skeleton-card` — Loading placeholder card with warm shimmer animation
-- `.back-to-top` / `.back-to-top--visible` — Fixed amber circle scroll-to-top button
+- `.skeleton-card` — Loading placeholder card with indigo shimmer animation
+- `.back-to-top` / `.back-to-top--visible` — Fixed indigo square button (6px radius)
 - `.no-results` — Centered empty state message for search
 - `.search-clear` — Clear button inside search input
 
+**Key visual characteristics:**
+- No grain texture, no scanlines, no frosted glass — clean solid backgrounds
+- No backdrop-filter usage anywhere
+- Cards: 4px border-radius, solid backgrounds, 2px indigo top border
+- Buttons: 6px border-radius (not pill-shaped)
+- Hero image: circular (border-radius: 50%), indigo border
+- Hero tagline: uppercase, letter-spacing 2px, Inter 600
+
 **Animations:**
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
-- `@keyframes shimmer` — Warm gradient sweep for skeleton loading cards
+- `@keyframes shimmer` — Indigo gradient sweep for skeleton loading cards
 - `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
 - Smooth scroll behavior (`html { scroll-behavior: smooth }`)
 
@@ -139,14 +147,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 App
 ├── Hero (searchQuery, onSearchChange)
-│   ├── hero-image-wrapper
-│   │   └── Profile image (rounded square, amber border)
-│   └── hero-text
-│       ├── Name (plain text, warm cream)
-│       ├── Tagline (amber accent)
-│       ├── Bio paragraph
-│       ├── YouTube CTA (.btn-primary)
-│       └── Search input (pill-shaped) + clear button
+│   ├── Profile image (circular, indigo border)
+│   ├── Name (serif, 4.5rem)
+│   ├── Tagline (uppercase, tracked, indigo)
+│   ├── Bio paragraph
+│   ├── YouTube CTA (ghost button)
+│   └── Search input (6px radius) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
 ├── Patch Banks section
@@ -250,23 +256,23 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 
 | File | Aspect Ratio | Usage | Style |
 |------|-------------|-------|-------|
-| `public/about-me.webp` | 1:1 (1536x1536) | Hero rounded-square avatar (220x220 CSS, amber border) | Currently outrun style — needs regeneration for warm studio theme |
+| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (180x180 CSS, indigo border) | Currently outrun style — needs regeneration for Meridian theme |
 
-**Note:** Background image (`background.webp`) is no longer used. Body background now uses a CSS-only grain texture via SVG data URI.
+**Note:** No background image used. No grain texture. Clean solid backgrounds only.
 
 **Generation guidelines:**
 - Use the `stability-ai-generate-image` MCP tool
-- Match the site's warm studio palette: warm amber (`#e8a83e`), burnt copper (`#c45e3a`), warm charcoal (`#111113`)
-- Hero image: use `1:1` aspect ratio, `photographic` or `analog-film` style preset, focus on synthesizers/music production gear with warm lighting
-- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, neon colors, cyan, magenta
+- Match the site's Meridian palette: indigo (`#6366f1`), deep navy-black (`#0a0c14`)
+- Hero image: use `1:1` aspect ratio, `photographic` style preset, focus on synthesizers/music production gear with cool-toned lighting
+- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, warm tones, amber, orange
 - Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
 - Delete intermediate PNG files after conversion
 
 **Regenerating images:**
 ```bash
 # After generating with Stability AI MCP tool:
-cwebp -q 85 public/about-me-warm.png -o public/about-me.webp
-rm public/*-warm.png
+cwebp -q 85 public/about-me-meridian.png -o public/about-me.webp
+rm public/*-meridian.png
 ```
 
 ## Future Feature Ideas
