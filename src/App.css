@@ -479,7 +479,7 @@ iframe {
   background: var(--bg-surface);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-  padding: 28px 30px;
+  padding: 28px 24px;
   border-radius: var(--radius-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
@@ -490,6 +490,11 @@ iframe {
 
 #donate .section-title {
   margin: 0 0 16px;
+  padding-left: 0;
+}
+
+#donate .section-title::after {
+  left: 0;
 }
 
 #donate p {
