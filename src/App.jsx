@@ -65,7 +65,7 @@ function App() {
       </section>
 
       {/* Music and Remixes Section */}
-      <section id="music-remixes">
+      <section id="music-remixes" className="section--alt">
         <h2 className="section-title">Music and Remixes</h2>
         <div className="content-grid">
           {musicLoading && (
