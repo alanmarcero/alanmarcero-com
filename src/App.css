@@ -45,6 +45,7 @@
   --transition-base: 250ms ease;
   --radius-card: 8px;
   --radius-btn: 50px;
+  --backdrop-blur: blur(12px);
 }
 
 /* ----------------------------------------------------
@@ -114,7 +115,8 @@ h1, h2, h3, h4 {
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
-.btn-primary::after {
+.btn-primary::after,
+.back-to-top::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -134,12 +136,7 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), 0 0 40px rgba(255, 45, 149, 0.15);
 }
 
-.btn-primary:focus-visible {
-  outline: 2px solid var(--accent-cyan);
-  outline-offset: 2px;
-  box-shadow: var(--focus-ring);
-}
-
+.btn-primary:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
@@ -347,8 +344,8 @@ a:focus-visible {
 .store-item {
   position: relative;
   background: var(--bg-surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   padding: 24px;
   border-radius: var(--radius-card);
   border: 1px solid var(--border-subtle);
@@ -418,8 +415,8 @@ iframe {
 ---------------------------------------------------- */
 #donate {
   background: var(--bg-surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   padding: 44px 30px;
   border-radius: var(--radius-card);
   border: 1px solid var(--border-subtle);
@@ -530,21 +527,6 @@ iframe {
   pointer-events: none;
   z-index: 100;
   overflow: hidden;
-}
-
-.back-to-top::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.06) 0px,
-    rgba(0, 0, 0, 0.06) 1px,
-    transparent 1px,
-    transparent var(--crt-btn-line-spacing)
-  );
-  border-radius: inherit;
-  pointer-events: none;
 }
 
 .back-to-top--visible {

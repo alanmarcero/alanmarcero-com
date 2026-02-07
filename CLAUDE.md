@@ -38,7 +38,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 ├── src/
 │   ├── components/
-│   │   ├── BackToTop.jsx          # Scroll-to-top button (uses useScrollPosition)
+│   │   ├── BackToTop.jsx          # Scroll-to-top button (uses useScrollPosition + SCROLL_THRESHOLD)
 │   │   ├── BackToTop.test.jsx     # BackToTop tests (4 tests)
 │   │   ├── Footer.jsx             # Footer with social links + dynamic year
 │   │   ├── Footer.test.jsx        # Footer tests (4 tests)
@@ -55,20 +55,23 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── YouTubeEmbed.jsx       # Shared YouTube iframe component
 │   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests (7 tests)
 │   ├── hooks/
+│   │   ├── useMusicItems.js          # Custom hook: Lambda fetch for music items
+│   │   ├── useMusicItems.test.js     # useMusicItems tests (7 tests)
 │   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
 │   │   └── useScrollPosition.test.js # useScrollPosition tests (7 tests)
 │   ├── data/
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
 │   │   └── patchBanks.test.ts    # Data validation tests (6 tests)
-│   ├── config.js                 # Centralized config (Lambda URL, external URLs)
-│   ├── config.test.ts            # Config tests (6 tests)
-│   ├── App.jsx                   # Main app: data fetching, search filtering, layout
+│   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold)
+│   ├── config.test.ts            # Config tests (7 tests)
+│   ├── App.jsx                   # Main app: search filtering, layout (delegates fetch to useMusicItems)
 │   ├── App.test.jsx              # App integration tests (25 tests)
 │   ├── App.css                   # Full stylesheet: Outrun CRT theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
-│   └── about-me.webp             # Hero profile image (circular, cyan border glow)
+│   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
+│   └── hero-bg.webp              # Background image (outrun landscape, used in .hero-backdrop)
 ├── index.html                    # Entry HTML with Google Fonts
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
@@ -77,14 +80,15 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 98 tests across 13 suites**
+**Total: 104 tests across 14 suites**
 
 ## Key Files
 
-- `src/App.jsx` — Main component: fetches music from Lambda, client-side search filtering, renders Hero + sections
+- `src/App.jsx` — Main component: client-side search filtering, layout (delegates fetch to useMusicItems hook)
 - `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button
-- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
+- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal) and UI constants (SCROLL_THRESHOLD)
+- `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
 - `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers
@@ -115,7 +119,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 **CRT Effects:**
 - `body::after` — Full-viewport scanlines (repeating-linear-gradient, 3px spacing, z-index 9999, pointer-events: none) with subtle flicker animation
-- `.btn-primary::after` — Finer scanlines on button surfaces (2px spacing)
+- `.btn-primary::after, .back-to-top::after` — Shared finer scanlines on button surfaces (2px spacing, single CSS rule)
 - `@keyframes crtFlicker` — Gentle opacity oscillation on body scanlines
 - `@media (prefers-reduced-motion: reduce)` — Disables flicker, keeps static scanlines
 
@@ -195,7 +199,7 @@ App
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+)
-npm test                       # Jest (98 tests)
+npm test                       # Jest (104 tests, 14 suites)
 npm run build                  # Vite production build
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -267,45 +271,17 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 
 ## Image Generation
 
-Images are generated via the **Stability AI** MCP tool and converted to webp using `cwebp` (installed via `brew install webp`).
+Images converted to webp using `cwebp` (installed via `brew install webp`). Can be generated via Stability AI MCP tool or Gemini.
 
 **Current images:**
 
-| File | Aspect Ratio | Usage | Style |
-|------|-------------|-------|-------|
-| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (200px CSS, cyan border glow) | Outrun style — matches current theme |
+| File | Usage | Style |
+|------|-------|-------|
+| `public/about-me.webp` | Hero circular avatar (200px CSS, cyan border glow) | Bright outrun synth setup |
+| `public/hero-bg.webp` | Hero section background (35% opacity via .hero-backdrop) | Abstract outrun landscape |
 
-**Generation guidelines:**
-- Use the `stability-ai-generate-image` MCP tool
-- Match the site's Outrun palette: cyan (`#00e5ff`), magenta (`#ff2d95`), dark blue-black (`#0a0a12`)
-- Hero image: use `1:1` aspect ratio, `neon-punk` or `photographic` style preset, focus on synthesizers/music production gear
-- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality
-- Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
-- Delete intermediate PNG files after conversion
-
-**Regenerating images:**
+**Converting images:**
 ```bash
-# After generating with Stability AI MCP tool:
-cwebp -q 85 public/about-me-outrun.png -o public/about-me.webp
-rm public/*-outrun.png
+cwebp -q 85 input.png -o public/output.webp
+rm input.png
 ```
-
-## Future Feature Ideas
-
-**Planned:**
-- Photo portfolio section (public gallery for studio/gear/live shots)
-- Admin photo upload (hidden, password-protected, uploads to S3)
-- Payment processing for patch banks (Stripe Checkout + Lambda)
-
-**Other ideas:**
-
-| Feature | Effort |
-|---------|--------|
-| Mailing list signup (Buttondown/Mailchimp free tier) | Low |
-| Soundcloud/Spotify embeds alongside YouTube | Low |
-| Gear list page with photos | Low |
-| Patch request form | Low |
-| Blog/news section (static markdown) | Medium |
-| Download counter via Lambda | Medium |
-| Audio previews (MP3 clips per patch bank) | Medium |
-| Preset browser (filter by synth/genre/type) | High |
