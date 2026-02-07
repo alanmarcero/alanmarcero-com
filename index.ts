@@ -1,5 +1,8 @@
 import type { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
 
+const YOUTUBE_PLAYLIST_ID = "PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c";
+const MAX_PLAYLIST_RESULTS = 50;
+
 const asyncWrapper = async function <T>(
   promise: Promise<T>
 ): Promise<[Error | null, T | undefined]> {
@@ -7,11 +10,9 @@ const asyncWrapper = async function <T>(
     const data = await promise;
     return [null, data];
   } catch (err) {
-    return [err as Error, undefined];
+    return [err instanceof Error ? err : new Error(String(err)), undefined];
   }
 };
-
-const playlistId = "PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c";
 
 interface YouTubeRes {
   items: {
@@ -31,7 +32,7 @@ export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyR
   if (!apiKey)
     return { statusCode: 500, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "Missing YOUTUBE_API_KEY" }) };
 
-  const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+  const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${MAX_PLAYLIST_RESULTS}&playlistId=${YOUTUBE_PLAYLIST_ID}&key=${apiKey}`;
 
   const headers = { "Content-Type": "application/json" };
 

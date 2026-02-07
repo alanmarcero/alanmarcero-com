@@ -1,0 +1,29 @@
+import { useState, useEffect } from 'react';
+import { LAMBDA_URL } from '../config';
+
+function useMusicItems() {
+  const [musicItems, setMusicItems] = useState([]);
+  const [musicLoading, setMusicLoading] = useState(true);
+  const [musicError, setMusicError] = useState(null);
+
+  useEffect(() => {
+    fetch(LAMBDA_URL)
+      .then(response => {
+        if (!response.ok) throw new Error(`Failed to load music: ${response.status}`);
+        return response.json();
+      })
+      .then(musicResponse => {
+        setMusicItems(musicResponse.items ?? []);
+      })
+      .catch(error => {
+        setMusicError(error.message);
+      })
+      .finally(() => {
+        setMusicLoading(false);
+      });
+  }, []);
+
+  return { musicItems, musicLoading, musicError };
+}
+
+export default useMusicItems;
