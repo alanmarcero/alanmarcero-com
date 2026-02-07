@@ -9,6 +9,13 @@ export default defineConfig({
   server: {
     headers: {
       'Cache-Control': 'no-store'
+    },
+    proxy: {
+      '/api': {
+        target: 'https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/'),
+      }
     }
   }
 });

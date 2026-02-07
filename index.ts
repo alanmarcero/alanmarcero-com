@@ -34,7 +34,10 @@ export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyR
 
   const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${MAX_PLAYLIST_RESULTS}&playlistId=${YOUTUBE_PLAYLIST_ID}&key=${apiKey}`;
 
-  const headers = { "Content-Type": "application/json" };
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "Cache-Control": "public, max-age=300",
+  };
 
   const [fetchErr, response] = await asyncWrapper(fetch(apiUrl));
   if (fetchErr || !response || !response.ok)
