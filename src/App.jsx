@@ -67,7 +67,7 @@ function App() {
           href={PAYPAL_DONATE_URL}
           className="btn-primary paypal-button"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
         >
           Donate via PayPal
         </a>

@@ -213,7 +213,7 @@ describe("App", () => {
 
     const paypalLink = screen.getByText("Donate via PayPal");
     expect(paypalLink).toHaveAttribute("target", "_blank");
-    expect(paypalLink).toHaveAttribute("rel", "noopener");
+    expect(paypalLink).toHaveAttribute("rel", "noopener noreferrer");
   });
 
   it("renders multiple music items", async () => {

@@ -35,7 +35,8 @@ describe("handler", () => {
 
     expect(result.statusCode).toBe(500);
     expect(result.headers).toEqual({ "Content-Type": "application/json" });
-    expect(result.body).toContain("network down");
+    expect(result.body).toContain("YouTube Fetch Failed");
+    expect(result.body).not.toContain("network down");
   });
 
   it("returns 500 when YouTube API returns non-ok response", async () => {
@@ -69,7 +70,8 @@ describe("handler", () => {
 
     expect(result.statusCode).toBe(500);
     expect(result.headers).toEqual({ "Content-Type": "application/json" });
-    expect(result.body).toContain("invalid json");
+    expect(result.body).toContain("YouTube Fetch Failed");
+    expect(result.body).not.toContain("invalid json");
   });
 
   it("returns 200 with mapped playlist", async () => {
