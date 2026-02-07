@@ -1,8 +1,9 @@
 import YouTubeEmbed from './YouTubeEmbed';
+import { cardGlowHandlers } from '../utils/cardGlow';
 
-function PatchBankItem({ bank, style }) {
+function PatchBankItem({ bank, style, onDownload }) {
   return (
-    <div className="store-item" style={style}>
+    <div className="store-item" style={style} {...cardGlowHandlers}>
       <h3>{bank.name}</h3>
       <p>{bank.description}</p>
 
@@ -12,7 +13,7 @@ function PatchBankItem({ bank, style }) {
         </div>
       ))}
 
-      <a className="btn-primary download-btn" href={bank.downloadLink}>
+      <a className="btn-primary download-btn" href={bank.downloadLink} onClick={onDownload}>
         Download
       </a>
     </div>
