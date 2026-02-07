@@ -91,7 +91,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
-- `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers
+- `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers. Generic error responses (no internal message leaks)
 
 ## Design System
 
@@ -119,14 +119,14 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 **CRT Effects:**
 - `body::after` — Full-viewport scanlines (repeating-linear-gradient, 3px spacing, z-index 9999, pointer-events: none) with subtle flicker animation
-- `.btn-primary::after, .back-to-top::after` — Shared finer scanlines on button surfaces (2px spacing, single CSS rule)
+- `.btn-primary::after, .back-to-top::after` — Shared finer scanlines on button surfaces (2px spacing, consolidated CSS rule)
 - `@keyframes crtFlicker` — Gentle opacity oscillation on body scanlines
 - `@media (prefers-reduced-motion: reduce)` — Disables flicker, keeps static scanlines
 
 **Shared CSS classes:**
 - `.btn-primary` — Gradient pill button (50px radius, cyan→magenta, CRT overlay via ::after)
 - `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
-- `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover)
+- `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, flexbox column layout with download button at bottom-center)
 - `.section-title` — Left-aligned heading with cyan gradient underline (::after, 60px wide)
 - `.section--alt` — Alternating section background tone
 - `.content-grid` — Responsive grid layout for patch bank and music sections
@@ -140,9 +140,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - **Centered stacked hero** on all viewports (flexbox column, centered text)
 - CRT scanlines across entire viewport (body::after) and on buttons (::after)
 - Frosted glass cards with `backdrop-filter: blur(12px)` on semi-transparent backgrounds
-- Cards: 8px border-radius, cyan left-border glow on hover, neon box-shadow
+- Cards: 8px border-radius, cyan left-border glow on hover, neon box-shadow, flexbox column with download buttons bottom-center
+- YouTube embeds: 85% width, 180px height within cards
 - Buttons: pill-shaped (50px border-radius), gradient background
 - Hero image: circular (50% radius, 200px), cyan border with multi-layered neon glow
+- Hero content: max-width 800px, hero bio: max-width 620px
+- Hero backdrop: 20% opacity background image
 - Hero name: gradient text (cyan→magenta) via `background-clip: text`
 - Hero tagline: uppercase, letter-spacing 3px, Inter 600, cyan color
 - Pill-shaped search input with cyan focus ring
@@ -278,10 +281,18 @@ Images converted to webp using `cwebp` (installed via `brew install webp`). Can 
 | File | Usage | Style |
 |------|-------|-------|
 | `public/about-me.webp` | Hero circular avatar (200px CSS, cyan border glow) | Bright outrun synth setup |
-| `public/hero-bg.webp` | Hero section background (35% opacity via .hero-backdrop) | Abstract outrun landscape |
+| `public/hero-bg.webp` | Hero section background (20% opacity via .hero-backdrop) | Abstract outrun landscape |
 
 **Converting images:**
 ```bash
 cwebp -q 85 input.png -o public/output.webp
 rm input.png
 ```
+
+## Security
+
+- **Lambda error responses:** Generic `{ error: "YouTube Fetch Failed" }` — no internal error messages leaked
+- **External links:** PayPal donate link uses `target="_blank" rel="noopener noreferrer"`
+- **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups`
+- **Environment files:** `.env*` in `.gitignore`
+- **Last audit:** Feb 2026 — 0 critical, 0 high, 0 medium findings
