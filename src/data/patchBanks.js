@@ -19,7 +19,7 @@ export const patchBanks = [
   },
   {
     name: 'Roland SH-01A',
-    description: '64 trance, EDM, and synthwave patches — basses, leads, pads, and plucks for Roland\'s SH-101 Boutique.',
+    description: '64 trance, EDM, and synthwave patches. Basses, leads, pads, and plucks for Roland\'s SH-101 Boutique.',
     audioDemo: ['wgnuQIXI3mo'],
     downloadLink: '/banks/Alan-M_SH-01A.zip'
   },
@@ -30,14 +30,14 @@ export const patchBanks = [
     downloadLink: '/banks/Alan_M_Andromeda_A6.zip'
   },
   {
-    name: 'Roland JP-8000, JP-8080, and JE-8086',
-    description: '128 supersaw-driven patches for the iconic JP-8000/8080 hardware and the free JE-8086 emulator.',
+    name: 'Roland JP-8000, JP-8080, JE-8086, and Airwave',
+    description: '128 supersaw-driven patches for the iconic JP-8000/8080 hardware, the free JE-8086 emulator, and Adam Szabo\'s Airwave VSTi.',
     audioDemo: ['HLFXwiBmuwc', 'hM7FGL3AJfI'],
     downloadLink: '/banks/Alan_M_JP80x0.zip'
   },
   {
     name: 'Moog Slim Phatty and Little Phatty',
-    description: '100 trance patches — 45 basses, 45 leads, and 10 plucks built on Moog\'s thick analog oscillators.',
+    description: '100 trance patches. 45 basses, 45 leads, and 10 plucks built on Moog\'s thick analog oscillators.',
     audioDemo: ['Naz0NJVPkpc'],
     downloadLink: '/banks/Alan-M_Moog_Phatty_Rev1.zip'
   },
@@ -49,7 +49,7 @@ export const patchBanks = [
   },
   {
     name: 'Roland JP-08',
-    description: '88 trance and synthwave patches for Roland\'s Jupiter-8 Boutique module — basses, leads, pads, and plucks.',
+    description: '88 trance and synthwave patches for Roland\'s Jupiter-8 Boutique module. Basses, leads, pads, and plucks.',
     audioDemo: [],
     downloadLink: '/banks/Alan-M_JP08.zip'
   },

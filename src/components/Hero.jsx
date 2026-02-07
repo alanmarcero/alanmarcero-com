@@ -14,7 +14,7 @@ function Hero({ searchQuery, onSearchChange }) {
         <p className="hero-tagline">Synthesizer Sound Designer & Producer</p>
         <div className="hero-bio">
           <p>
-            Trance and electronic music producer from Boston, USA — crafting original tracks,
+            Trance and electronic music producer from Boston, USA. Crafting original tracks,
             remixes, and synthesizer sound design since the early 2000s. Supported by Ferry Corsten,
             Paul van Dyk, Sean Tyas, and Daniel Kandi. Featured on A State of Trance and
             BBC Radio 1's Essential Mix. Released on Armada, Bonzai, and Ministry of Sound.
