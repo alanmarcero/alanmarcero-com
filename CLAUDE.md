@@ -1,6 +1,6 @@
 # alanmarcero.com
 
-Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Vesper theme — editorial design with soft violet accents, Syne headings, and side-by-side hero layout on deep purple-black backgrounds.
+Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Outrun CRT theme — retro-futuristic design with cyan/magenta/orange accents, CRT scanline overlays, Space Grotesk headings, frosted glass cards, and centered hero layout on deep blue-black backgrounds.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19, Vite 7 |
-| Styling | CSS custom properties, Google Fonts (Inter, Syne) |
+| Styling | CSS custom properties, Google Fonts (Inter, Space Grotesk) |
 | Lambda | TypeScript, Node.js |
 | Testing | Jest 30, React Testing Library |
 | Hosting | S3, CloudFront, Lambda Function URL |
@@ -64,11 +64,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── config.test.ts            # Config tests (6 tests)
 │   ├── App.jsx                   # Main app: data fetching, search filtering, layout
 │   ├── App.test.jsx              # App integration tests (25 tests)
-│   ├── App.css                   # Full stylesheet: Vesper theme, animations, responsive
+│   ├── App.css                   # Full stylesheet: Outrun CRT theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
-│   └── about-me.webp             # Hero profile image (rounded square, violet border)
+│   └── about-me.webp             # Hero profile image (circular, cyan border glow)
 ├── index.html                    # Entry HTML with Google Fonts
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
@@ -82,8 +82,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ## Key Files
 
 - `src/App.jsx` — Main component: fetches music from Lambda, client-side search filtering, renders Hero + sections
-- `src/App.css` — Complete stylesheet: CSS custom properties, Vesper violet palette, editorial cards, side-by-side hero, animations, responsive
-- `src/components/Hero.jsx` — Side-by-side hero (desktop) / stacked (mobile): rounded-square profile image, Syne name, uppercase tagline, ghost CTA, search input with clear button
+- `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
+- `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -91,72 +91,85 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ## Design System
 
-**Theme:** Vesper — editorial design with soft violet accents, Syne headings, and side-by-side hero layout. Dark mode only. Purple-black backgrounds with subtle violet-tinted borders.
+**Theme:** Outrun CRT — retro-futuristic design with cyan/magenta/orange accents, CRT scanline overlays on background and buttons, frosted glass cards, gradient text, and neon glow effects. Dark mode only.
 
-**Fonts:** Inter 400/500/600 (body, buttons, tagline), Syne 600/800 (headings — distinctive letterforms) via Google Fonts.
+**Fonts:** Inter 400/500/600 (body, buttons, tagline), Space Grotesk 500/700 (headings — techy geometric) via Google Fonts.
 
 **CSS Custom Properties (App.css `:root`):**
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--accent-primary` | `#a78bfa` | Soft violet |
-| `--accent-primary-light` | `#c4b5fd` | Hover states |
-| `--accent-primary-dark` | `#8b5cf6` | Buttons, PayPal |
-| `--bg-body` | `#08070b` | Deep purple-black |
-| `--bg-surface` | `#13121a` | Card backgrounds (solid) |
-| `--bg-surface-hover` | `#1c1b26` | Card hover |
-| `--bg-surface-alt` | `#0e0d14` | Alternating sections |
-| `--bg-footer` | `#050409` | Footer |
-| `--text-primary` | `#ededf0` | Cool off-white |
-| `--text-secondary` | `#8585a0` | Cool gray |
-| `--text-muted` | `#484860` | Muted |
+| `--accent-cyan` | `#00e5ff` | Primary cyan |
+| `--accent-magenta` | `#ff2d95` | Secondary magenta |
+| `--accent-orange` | `#ff6b00` | Tertiary (PayPal) |
+| `--gradient-accent` | cyan → magenta (135deg) | Buttons, glows |
+| `--gradient-hero-text` | cyan → magenta (135deg) | Hero name |
+| `--bg-body` | `#0a0a12` | Deep blue-black |
+| `--bg-surface` | `rgba(16, 16, 32, 0.85)` | Card backgrounds (frosted) |
+| `--bg-surface-hover` | `rgba(20, 20, 40, 0.9)` | Card hover |
+| `--bg-surface-alt` | `rgba(12, 12, 24, 0.6)` | Alternating sections |
+| `--bg-footer` | `#06060e` | Footer |
+| `--text-primary` | `#e8e6f0` | Cool off-white |
+| `--text-secondary` | `#8888aa` | Muted lavender |
+| `--text-muted` | `#4a4a66` | Faint |
+
+**CRT Effects:**
+- `body::after` — Full-viewport scanlines (repeating-linear-gradient, 3px spacing, z-index 9999, pointer-events: none) with subtle flicker animation
+- `.btn-primary::after` — Finer scanlines on button surfaces (2px spacing)
+- `@keyframes crtFlicker` — Gentle opacity oscillation on body scanlines
+- `@media (prefers-reduced-motion: reduce)` — Disables flicker, keeps static scanlines
 
 **Shared CSS classes:**
-- `.btn-primary` — Solid violet button (6px radius)
-- `.hero-cta` — Ghost/outlined CTA button (transparent bg, violet border, fills on hover)
-- `.store-item` — Card (10px radius, solid bg, border brightens to violet on hover)
-- `.section-title` — Left-aligned heading with violet em-dash prefix (::before)
+- `.btn-primary` — Gradient pill button (50px radius, cyan→magenta, CRT overlay via ::after)
+- `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
+- `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover)
+- `.section-title` — Left-aligned heading with cyan gradient underline (::after, 60px wide)
 - `.section--alt` — Alternating section background tone
 - `.content-grid` — Responsive grid layout for patch bank and music sections
-- `.skeleton-card` — Loading placeholder card with violet shimmer animation
-- `.back-to-top` / `.back-to-top--visible` — Fixed violet button (6px radius)
+- `.skeleton-card` — Loading placeholder card with cyan shimmer animation
+- `.back-to-top` / `.back-to-top--visible` — Fixed gradient pill button with CRT overlay
 - `.no-results` — Centered empty state message for search
 - `.search-clear` — Clear button inside search input
+- `.paypal-button` — Orange accent button
 
 **Key visual characteristics:**
-- **Side-by-side hero** on desktop (CSS Grid: image left, text right), stacked centered on mobile
-- No grain texture, no scanlines, no frosted glass — clean solid backgrounds
-- No backdrop-filter usage anywhere
-- Cards: 10px border-radius, solid backgrounds, border brightens on hover (no colored accents or glows)
-- Buttons: 6px border-radius (slightly rounded, not pill)
-- Hero image: rounded square (20px radius, 200px), violet border with subtle glow
-- Hero tagline: uppercase, letter-spacing 3px, Inter 600
-- Violet-tinted subtle borders (rgba violet at 8% and 15%)
-- Left-aligned section titles with em-dash prefix
-- Syne font gives headings a distinctive editorial personality
+- **Centered stacked hero** on all viewports (flexbox column, centered text)
+- CRT scanlines across entire viewport (body::after) and on buttons (::after)
+- Frosted glass cards with `backdrop-filter: blur(12px)` on semi-transparent backgrounds
+- Cards: 8px border-radius, cyan left-border glow on hover, neon box-shadow
+- Buttons: pill-shaped (50px border-radius), gradient background
+- Hero image: circular (50% radius, 200px), cyan border with multi-layered neon glow
+- Hero name: gradient text (cyan→magenta) via `background-clip: text`
+- Hero tagline: uppercase, letter-spacing 3px, Inter 600, cyan color
+- Pill-shaped search input with cyan focus ring
+- Cyan-tinted subtle borders (rgba cyan at 8% and 20%)
+- Left-aligned section titles with short gradient underline
+- Space Grotesk gives headings a techy geometric personality
+- Neon glow effects (layered box-shadows) on cards, buttons, hero image
 
 **Animations:**
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
-- `@keyframes shimmer` — Violet gradient sweep for skeleton loading cards
+- `@keyframes shimmer` — Cyan gradient sweep for skeleton loading cards
+- `@keyframes crtFlicker` — Subtle opacity flicker on body scanlines
 - `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
 - Smooth scroll behavior (`html { scroll-behavior: smooth }`)
 
 **Responsive breakpoints:**
 - Desktop: 3-column grid (default)
-- Tablet (max-width: 1024px): 2-column grid, smaller hero text
+- Tablet (max-width: 1024px): 2-column grid, smaller hero text/image
 - Mobile (max-width: 767px): 1-column grid, compact hero
 
 ## Component Architecture
 
 ```
 App
-├── Hero (searchQuery, onSearchChange) — CSS Grid side-by-side desktop, stacked mobile
-│   ├── Profile image (rounded square 20px, 200px, violet border)
-│   ├── Name (Syne 800, 3.5rem)
-│   ├── Tagline (uppercase, 3px tracking, violet)
+├── Hero (searchQuery, onSearchChange) — Centered stacked layout (flexbox column)
+│   ├── Profile image (circular 50%, 200px, cyan border glow)
+│   ├── Name (Space Grotesk 700, 3.5rem, gradient text cyan→magenta)
+│   ├── Tagline (uppercase, 3px tracking, cyan)
 │   ├── Bio paragraph
-│   ├── YouTube CTA (ghost button, 6px radius)
-│   └── Search input (6px radius, spans full width) + clear button
+│   ├── YouTube CTA (gradient pill button with CRT overlay)
+│   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
 ├── Patch Banks section
@@ -170,11 +183,11 @@ App
 │       ├── YouTubeEmbed (videoId)
 │       └── Description
 ├── Donate section
-│   └── PayPal button (.btn-primary)
+│   └── PayPal button (.btn-primary, orange accent)
 ├── Footer
 │   ├── Social links (YouTube, GitHub)
 │   └── Dynamic copyright year
-└── BackToTop (uses useScrollPosition hook)
+└── BackToTop (uses useScrollPosition hook, gradient pill with CRT overlay)
 ```
 
 ## Development
@@ -260,14 +273,12 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 
 | File | Aspect Ratio | Usage | Style |
 |------|-------------|-------|-------|
-| `public/about-me.webp` | 1:1 (1536x1536) | Hero rounded-square avatar (200px CSS, violet border) | Currently outrun style — needs regeneration for Vesper theme |
-
-**Note:** No background image used. No grain texture. Clean solid backgrounds only.
+| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (200px CSS, cyan border glow) | Outrun style — matches current theme |
 
 **Generation guidelines:**
 - Use the `stability-ai-generate-image` MCP tool
-- Match the site's Vesper palette: violet (`#a78bfa`), purple-black (`#08070b`)
-- Hero image: use `1:1` aspect ratio, `photographic` style preset, focus on synthesizers/music production gear
+- Match the site's Outrun palette: cyan (`#00e5ff`), magenta (`#ff2d95`), dark blue-black (`#0a0a12`)
+- Hero image: use `1:1` aspect ratio, `neon-punk` or `photographic` style preset, focus on synthesizers/music production gear
 - Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality
 - Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
 - Delete intermediate PNG files after conversion
@@ -275,8 +286,8 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 **Regenerating images:**
 ```bash
 # After generating with Stability AI MCP tool:
-cwebp -q 85 public/about-me-vesper.png -o public/about-me.webp
-rm public/*-vesper.png
+cwebp -q 85 public/about-me-outrun.png -o public/about-me.webp
+rm public/*-outrun.png
 ```
 
 ## Future Feature Ideas
