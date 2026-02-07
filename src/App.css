@@ -389,8 +389,8 @@ a:focus-visible {
 }
 
 iframe {
-  width: 100%;
-  height: 220px;
+  width: 85%;
+  height: 180px;
   margin: 0 auto;
   display: block;
   border: none;
