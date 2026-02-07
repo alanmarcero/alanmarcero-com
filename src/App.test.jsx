@@ -1,11 +1,20 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
 import App from "./App";
 import { LAMBDA_URL, PAYPAL_DONATE_URL } from "./config";
 
 global.fetch = jest.fn();
+
+let intersectionCallback;
+global.IntersectionObserver = jest.fn((callback) => {
+  intersectionCallback = callback;
+  return {
+    observe: jest.fn(),
+    disconnect: jest.fn(),
+  };
+});
 
 jest.mock("./data/patchBanks", () => ({
   patchBanks: [
@@ -317,5 +326,59 @@ describe("App", () => {
       expect(screen.getByText("Unable to load music. Please try again later.")).toBeInTheDocument();
       expect(container.querySelectorAll(".skeleton-card").length).toBe(0);
     });
+  });
+
+  it("sections start with scroll-reveal class", () => {
+    mockFetchSuccess();
+    const { container } = render(<App />);
+
+    const sections = container.querySelectorAll(".scroll-reveal");
+    expect(sections.length).toBe(3);
+  });
+
+  it("sections gain scroll-reveal--visible when intersected", () => {
+    mockFetchSuccess();
+    const { container } = render(<App />);
+
+    act(() => {
+      intersectionCallback([{ isIntersecting: true }]);
+    });
+
+    const visibleSections = container.querySelectorAll(".scroll-reveal--visible");
+    expect(visibleSections.length).toBeGreaterThan(0);
+  });
+
+  it("shows toast when download button is clicked", async () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const downloadBtn = screen.getByText("Download");
+    fireEvent.click(downloadBtn);
+
+    expect(screen.getByText("Download started")).toBeInTheDocument();
+  });
+
+  it("toast auto-dismisses after timeout", async () => {
+    jest.useFakeTimers();
+    mockFetchSuccess();
+    render(<App />);
+
+    const downloadBtn = screen.getByText("Download");
+    fireEvent.click(downloadBtn);
+    expect(screen.getByText("Download started")).toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(2500);
+    });
+
+    expect(screen.queryByText("Download started")).not.toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it("renders Toast component", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    expect(screen.getByRole("status")).toBeInTheDocument();
   });
 });

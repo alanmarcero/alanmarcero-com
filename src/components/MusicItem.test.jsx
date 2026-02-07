@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import MusicItem from "./MusicItem";
 
 describe("MusicItem", () => {
@@ -54,5 +54,19 @@ describe("MusicItem", () => {
 
     const card = container.querySelector(".store-item");
     expect(card.style.getPropertyValue("--card-index")).toBe("3");
+  });
+
+  it("has mouse event handlers for card glow", () => {
+    const { container } = render(<MusicItem item={mockItem} />);
+
+    const card = container.querySelector(".store-item");
+    card.getBoundingClientRect = () => ({ left: 0, top: 0 });
+
+    fireEvent.mouseMove(card, { clientX: 80, clientY: 40 });
+    expect(card.style.getPropertyValue("--mouse-x")).toBe("80px");
+    expect(card.style.getPropertyValue("--mouse-y")).toBe("40px");
+
+    fireEvent.mouseLeave(card);
+    expect(card.style.getPropertyValue("--mouse-x")).toBe("");
   });
 });
