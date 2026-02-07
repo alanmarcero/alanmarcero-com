@@ -1,6 +1,6 @@
 # alanmarcero.com
 
-Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Dark outrun aesthetic with electric cyan/magenta palette on near-black backgrounds.
+Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Warm studio aesthetic with amber/copper palette on warm charcoal backgrounds.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19, Vite 7 |
-| Styling | CSS custom properties, Google Fonts (Inter, Space Grotesk) |
+| Styling | CSS custom properties, Google Fonts (Inter, Sora) |
 | Lambda | TypeScript, Node.js |
 | Testing | Jest 30, React Testing Library |
 | Hosting | S3, CloudFront, Lambda Function URL |
@@ -83,8 +83,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ## Key Files
 
 - `src/App.jsx` — Main component: fetches music from Lambda, client-side search filtering, renders Hero + sections
-- `src/App.css` — Complete stylesheet: CSS custom properties, outrun palette, dark panel cards, animations, responsive
-- `src/components/Hero.jsx` — Unified hero: profile image, gradient name, tagline, bio, YouTube CTA, search input with clear button
+- `src/App.css` — Complete stylesheet: CSS custom properties, warm studio palette, frosted glass cards, animations, responsive
+- `src/components/Hero.jsx` — Side-by-side hero (desktop) / stacked (mobile): profile image, name, tagline, bio, YouTube CTA, search input with clear button
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -92,38 +92,40 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ## Design System
 
-**Theme:** Dark outrun — electric cyan/magenta accents on near-black backgrounds. Dark mode only.
+**Theme:** Warm Studio — amber/copper accents on warm charcoal backgrounds. Dark mode only. Inspired by premium analog audio gear.
 
-**Fonts:** Inter 400/600 (body), Space Grotesk 500/700 (headings) via Google Fonts.
+**Fonts:** Inter 400/600 (body), Sora 400/600/700 (headings) via Google Fonts.
 
 **CSS Custom Properties (App.css `:root`):**
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--accent-primary` | `#00e5ff` | Primary electric cyan |
-| `--accent-primary-light` | `#40f0ff` | Card headings, hover states |
-| `--gradient-accent` | cyan → magenta | Buttons, underlines, card top borders |
-| `--bg-body` | `#060608` | Page background (near-black) |
-| `--bg-surface` | `rgba(8,12,18,0.92)` | Card surfaces (dark panels) |
-| `--glow-accent` | cyan/magenta box-shadow | Shared button hover glow |
-| `--focus-ring` | cyan outline | Search input focus state |
-| `--text-primary` | `#f0f4f8` | Main text (cool blue-white) |
-| `--text-secondary` | `#8a9bb0` | Secondary text, bio |
-| `--text-muted` | `#4a5568` | Footer, placeholders |
+| `--accent-primary` | `#e8a83e` | Primary warm amber |
+| `--accent-primary-light` | `#f0bc5e` | Card headings, hover states |
+| `--accent-secondary` | `#c45e3a` | Burnt copper (PayPal button) |
+| `--gradient-accent` | amber → copper | Accent gradient |
+| `--bg-body` | `#111113` | Page background (warm charcoal) |
+| `--bg-surface` | `rgba(26,26,28,0.85)` | Card surfaces (frosted glass) |
+| `--bg-surface-alt` | `rgba(20,20,22,0.6)` | Alternating section background |
+| `--focus-ring` | amber outline | Search input focus state |
+| `--text-primary` | `#ede9e3` | Main text (warm cream) |
+| `--text-secondary` | `#9a958e` | Secondary text, bio |
+| `--text-muted` | `#5a5550` | Footer, placeholders |
 
 **Shared CSS classes:**
-- `.btn-primary` — Gradient pill button (used by Hero CTA, download buttons, PayPal button)
-- `.store-item` — Dark panel card with `backdrop-filter: blur(12px)`, cyan border, hover lift + glow
-- `.section-title` — Centered heading with gradient underline
+- `.btn-primary` — Solid amber pill button (used by Hero CTA, download buttons)
+- `.store-item` — Frosted glass card with `backdrop-filter: blur(12px)`, amber left-border on hover, lift + shadow
+- `.section-title` — Left-aligned heading with short amber underline
+- `.section--alt` — Alternating section background tone
 - `.content-grid` — Responsive grid layout for patch bank and music sections
-- `.skeleton-card` — Loading placeholder card with shimmer animation
-- `.back-to-top` / `.back-to-top--visible` — Fixed scroll-to-top button with slide-up transition
+- `.skeleton-card` — Loading placeholder card with warm shimmer animation
+- `.back-to-top` / `.back-to-top--visible` — Fixed amber circle scroll-to-top button
 - `.no-results` — Centered empty state message for search
 - `.search-clear` — Clear button inside search input
 
 **Animations:**
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
-- `@keyframes shimmer` — Gradient sweep for skeleton loading cards
+- `@keyframes shimmer` — Warm gradient sweep for skeleton loading cards
 - `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
 - Smooth scroll behavior (`html { scroll-behavior: smooth }`)
 
@@ -137,12 +139,14 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 App
 ├── Hero (searchQuery, onSearchChange)
-│   ├── Profile image (circular, cyan glow)
-│   ├── Gradient text name
-│   ├── Tagline
-│   ├── Bio paragraph
-│   ├── YouTube CTA (.btn-primary)
-│   └── Search input (pill-shaped) + clear button
+│   ├── hero-image-wrapper
+│   │   └── Profile image (rounded square, amber border)
+│   └── hero-text
+│       ├── Name (plain text, warm cream)
+│       ├── Tagline (amber accent)
+│       ├── Bio paragraph
+│       ├── YouTube CTA (.btn-primary)
+│       └── Search input (pill-shaped) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
 ├── Patch Banks section
@@ -246,24 +250,23 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 
 | File | Aspect Ratio | Usage | Style |
 |------|-------------|-------|-------|
-| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (180x180 CSS, cyan border + glow) | Cyan wireframe synthesizer on black, outrun blueprint style |
-| `public/background.webp` | 1:1 (1536x1536) | Full-page body overlay at 4% opacity | Outrun perspective grid with cyan/magenta neon lines on black void |
+| `public/about-me.webp` | 1:1 (1536x1536) | Hero rounded-square avatar (220x220 CSS, amber border) | Currently outrun style — needs regeneration for warm studio theme |
+
+**Note:** Background image (`background.webp`) is no longer used. Body background now uses a CSS-only grain texture via SVG data URI.
 
 **Generation guidelines:**
 - Use the `stability-ai-generate-image` MCP tool
-- Match the site's outrun palette: electric cyan (`#00e5ff`), hot magenta (`#ff2d95`), sunset orange (`#ff6b00`)
-- Hero image: use `1:1` aspect ratio, `digital-art` style preset, focus on synthesizers/music production gear
-- Background image: use `1:1` aspect ratio, `digital-art` style preset, abstract/geometric patterns
-- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, washed out colors
+- Match the site's warm studio palette: warm amber (`#e8a83e`), burnt copper (`#c45e3a`), warm charcoal (`#111113`)
+- Hero image: use `1:1` aspect ratio, `photographic` or `analog-film` style preset, focus on synthesizers/music production gear with warm lighting
+- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, neon colors, cyan, magenta
 - Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
 - Delete intermediate PNG files after conversion
 
 **Regenerating images:**
 ```bash
 # After generating with Stability AI MCP tool:
-cwebp -q 85 public/about-me-outrun.png -o public/about-me.webp
-cwebp -q 85 public/background-outrun.png -o public/background.webp
-rm public/*-outrun.png
+cwebp -q 85 public/about-me-warm.png -o public/about-me.webp
+rm public/*-warm.png
 ```
 
 ## Future Feature Ideas
