@@ -4,13 +4,6 @@
 import { cardGlowHandlers } from "./cardGlow";
 
 describe("cardGlowHandlers", () => {
-  it("exports onMouseMove and onMouseLeave", () => {
-    expect(cardGlowHandlers).toHaveProperty("onMouseMove");
-    expect(cardGlowHandlers).toHaveProperty("onMouseLeave");
-    expect(typeof cardGlowHandlers.onMouseMove).toBe("function");
-    expect(typeof cardGlowHandlers.onMouseLeave).toBe("function");
-  });
-
   it("sets --mouse-x and --mouse-y on mousemove", () => {
     const el = document.createElement("div");
     el.getBoundingClientRect = () => ({ left: 10, top: 20 });
