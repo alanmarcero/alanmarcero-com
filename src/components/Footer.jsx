@@ -3,7 +3,7 @@ import { YOUTUBE_CHANNEL_URL, GITHUB_URL } from '../config';
 function Footer() {
   return (
     <footer>
-      <div className="footer-links">
+      <nav className="footer-links">
         <a
           href={YOUTUBE_CHANNEL_URL}
           target="_blank"
@@ -18,7 +18,7 @@ function Footer() {
         >
           GitHub
         </a>
-      </div>
+      </nav>
       <p className="footer-copyright">{new Date().getFullYear()} Alan Marcero</p>
     </footer>
   );

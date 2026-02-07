@@ -12,8 +12,8 @@ export const patchBanks = [
     downloadLink: '/banks/Alan-M_Nord_Lead_3.zip'
   },
   {
-    name: 'Access Virus TI and TI2, OsTIrus, Viper',
-    description: '128 patches spanning Anjunabeats and Armada sounds. Works on Virus TI hardware, the OsTIrus emulator, and Viper VSTi.',
+    name: 'Access Virus TI and TI2, OsTIrus, Adam Szabo Viper',
+    description: '128 patches spanning Anjunabeats and Armada sounds. Works on Virus TI hardware, the OsTIrus emulator, and Adam Szabo\'s Viper VSTi.',
     audioDemo: ['rUif508d-gM'],
     downloadLink: '/banks/Alan-M_Virus_TI_Patches.zip'
   },
