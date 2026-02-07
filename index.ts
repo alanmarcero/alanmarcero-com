@@ -38,11 +38,11 @@ export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyR
 
   const [fetchErr, response] = await asyncWrapper(fetch(apiUrl));
   if (fetchErr || !response || !response.ok)
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "YouTube Fetch Failed", details: fetchErr?.message }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "YouTube Fetch Failed" }) };
 
   const [parseErr, playList] = await asyncWrapper<YouTubeRes>(response.json());
   if (parseErr || !playList)
-    return { statusCode: 500, headers, body: JSON.stringify({ error: `Parse Failed: ${parseErr?.message}` }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "YouTube Fetch Failed" }) };
 
   return {
     statusCode: 200,
