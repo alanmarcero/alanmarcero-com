@@ -44,28 +44,35 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── Footer.test.jsx        # Footer tests (4 tests)
 │   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear
 │   │   ├── Hero.test.jsx          # Hero tests (11 tests)
-│   │   ├── MusicItem.jsx          # YouTube playlist item display
-│   │   ├── MusicItem.test.jsx     # MusicItem tests (5 tests)
+│   │   ├── MusicItem.jsx          # YouTube playlist item display (card glow)
+│   │   ├── MusicItem.test.jsx     # MusicItem tests (7 tests)
 │   │   ├── NoResults.jsx          # Empty state for search with no matches
 │   │   ├── NoResults.test.jsx     # NoResults tests (3 tests)
-│   │   ├── PatchBankItem.jsx      # Patch bank card with download button
-│   │   ├── PatchBankItem.test.jsx # PatchBankItem tests (7 tests)
+│   │   ├── PatchBankItem.jsx      # Patch bank card with download button (card glow, onDownload)
+│   │   ├── PatchBankItem.test.jsx # PatchBankItem tests (9 tests)
 │   │   ├── SkeletonCard.jsx       # Loading placeholder with shimmer animation
 │   │   ├── SkeletonCard.test.jsx  # SkeletonCard tests (5 tests)
+│   │   ├── Toast.jsx              # Download toast notification
+│   │   ├── Toast.test.jsx         # Toast tests (4 tests)
 │   │   ├── YouTubeEmbed.jsx       # Shared YouTube iframe component
 │   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests (7 tests)
 │   ├── hooks/
 │   │   ├── useMusicItems.js          # Custom hook: Lambda fetch for music items
 │   │   ├── useMusicItems.test.js     # useMusicItems tests (7 tests)
 │   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
-│   │   └── useScrollPosition.test.js # useScrollPosition tests (7 tests)
+│   │   ├── useScrollPosition.test.js # useScrollPosition tests (7 tests)
+│   │   ├── useScrollReveal.js        # Custom hook: IntersectionObserver scroll-reveal
+│   │   └── useScrollReveal.test.js   # useScrollReveal tests (8 tests)
+│   ├── utils/
+│   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
+│   │   └── cardGlow.test.js       # cardGlow tests (4 tests)
 │   ├── data/
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
 │   │   └── patchBanks.test.ts    # Data validation tests (6 tests)
 │   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold)
 │   ├── config.test.ts            # Config tests (7 tests)
-│   ├── App.jsx                   # Main app: search filtering, layout (delegates fetch to useMusicItems)
-│   ├── App.test.jsx              # App integration tests (25 tests)
+│   ├── App.jsx                   # Main app: search filtering, scroll reveal, toast, layout
+│   ├── App.test.jsx              # App integration tests (30 tests)
 │   ├── App.css                   # Full stylesheet: Outrun CRT theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
@@ -80,11 +87,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 104 tests across 14 suites**
+**Total: 129 tests across 17 suites**
 
 ## Key Files
 
-- `src/App.jsx` — Main component: client-side search filtering, layout (delegates fetch to useMusicItems hook)
+- `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
 - `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal) and UI constants (SCROLL_THRESHOLD)
@@ -126,8 +133,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 **Shared CSS classes:**
 - `.btn-primary` — Gradient pill button (50px radius, cyan→magenta, CRT overlay via ::after)
 - `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
-- `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, flexbox column layout with download button at bottom-center)
-- `.section-title` — Left-aligned heading with cyan gradient underline (::after, 60px wide)
+- `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, mouse-follow glow via ::before, flexbox column layout with download button at bottom-center)
+- `.section-title` — Left-aligned heading with cyan gradient underline (::after, 60px wide, animates in with scroll reveal)
+- `.scroll-reveal` / `.scroll-reveal--visible` — Fade-up reveal on scroll via IntersectionObserver
+- `.toast` / `.toast--visible` — Fixed bottom-center notification with slide-up animation
 - `.section--alt` — Alternating section background tone
 - `.content-grid` — Responsive grid layout for patch bank and music sections
 - `.skeleton-card` — Loading placeholder card with cyan shimmer animation
@@ -140,7 +149,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - **Centered stacked hero** on all viewports (flexbox column, centered text)
 - CRT scanlines across entire viewport (body::after) and on buttons (::after)
 - Frosted glass cards with `backdrop-filter: blur(12px)` on semi-transparent backgrounds
-- Cards: 8px border-radius, cyan left-border glow on hover, neon box-shadow, flexbox column with download buttons bottom-center
+- Cards: 8px border-radius, cyan left-border glow on hover, mouse-follow radial glow (::before), neon box-shadow, flexbox column with download buttons bottom-center
 - YouTube embeds: 85% width, 180px height within cards
 - Buttons: pill-shaped (50px border-radius), gradient background
 - Hero image: circular (50% radius, 200px), cyan border with multi-layered neon glow
@@ -154,10 +163,15 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - Space Grotesk gives headings a techy geometric personality
 - Neon glow effects (layered box-shadows) on cards, buttons, hero image
 
-**Animations:**
+**Animations & Micro-Interactions:**
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
 - `@keyframes shimmer` — Cyan gradient sweep for skeleton loading cards
 - `@keyframes crtFlicker` — Subtle opacity flicker on body scanlines
+- Scroll-reveal fade-up for sections (IntersectionObserver, one-shot, 0.6s ease)
+- Mouse-follow radial glow on cards (CSS custom properties `--mouse-x`/`--mouse-y`)
+- Button press feedback (scale 0.96 on :active)
+- Section-title underline grow (0→60px, 0.5s ease, 0.2s delay after reveal)
+- Download toast slide-up notification (2.5s auto-dismiss)
 - `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
 - Smooth scroll behavior (`html { scroll-behavior: smooth }`)
 
@@ -179,22 +193,23 @@ App
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
-├── Patch Banks section
-│   └── PatchBankItem[] (bank, style={--card-index})
+├── Patch Banks section (scroll-reveal, ref=storeRef)
+│   └── PatchBankItem[] (bank, style={--card-index}, onDownload, cardGlowHandlers)
 │       ├── Name, description
 │       ├── YouTubeEmbed[] (videoId)
-│       └── Download button (.btn-primary)
-├── Music section
-│   └── MusicItem[] (item, style={--card-index})
+│       └── Download button (.btn-primary, triggers toast)
+├── Music section (scroll-reveal, ref=musicRef)
+│   └── MusicItem[] (item, style={--card-index}, cardGlowHandlers)
 │       ├── Title
 │       ├── YouTubeEmbed (videoId)
 │       └── Description
-├── Donate section
+├── Donate section (scroll-reveal, ref=donateRef)
 │   └── PayPal button (.btn-primary, orange accent)
 ├── Footer
 │   ├── Social links (YouTube, GitHub)
 │   └── Dynamic copyright year
-└── BackToTop (uses useScrollPosition hook, gradient pill with CRT overlay)
+├── BackToTop (uses useScrollPosition hook, gradient pill with CRT overlay)
+└── Toast (message, visible) — download notification
 ```
 
 ## Development

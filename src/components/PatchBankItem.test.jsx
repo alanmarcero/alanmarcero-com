@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import PatchBankItem from "./PatchBankItem";
 
 describe("PatchBankItem", () => {
@@ -64,5 +64,28 @@ describe("PatchBankItem", () => {
 
     const card = container.querySelector(".store-item");
     expect(card.style.getPropertyValue("--card-index")).toBe("2");
+  });
+
+  it("calls onDownload when download button is clicked", () => {
+    const onDownload = jest.fn();
+    render(<PatchBankItem bank={mockBank} onDownload={onDownload} />);
+
+    fireEvent.click(screen.getByText("Download"));
+
+    expect(onDownload).toHaveBeenCalledTimes(1);
+  });
+
+  it("has mouse event handlers for card glow", () => {
+    const { container } = render(<PatchBankItem bank={mockBank} />);
+
+    const card = container.querySelector(".store-item");
+    card.getBoundingClientRect = () => ({ left: 0, top: 0 });
+
+    fireEvent.mouseMove(card, { clientX: 50, clientY: 30 });
+    expect(card.style.getPropertyValue("--mouse-x")).toBe("50px");
+    expect(card.style.getPropertyValue("--mouse-y")).toBe("30px");
+
+    fireEvent.mouseLeave(card);
+    expect(card.style.getPropertyValue("--mouse-x")).toBe("");
   });
 });
