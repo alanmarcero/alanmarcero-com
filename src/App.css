@@ -397,8 +397,9 @@ iframe {
   border-radius: 6px;
 }
 
-/* Download / Action Buttons */
-.store-item .download-btn {
+/* Card Action Buttons */
+.store-item .download-btn,
+.store-item .youtube-button {
   padding: 10px 22px;
   font-size: 0.9rem;
   margin-top: auto;
