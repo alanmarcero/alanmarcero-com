@@ -1,0 +1,81 @@
+name: Add API Origin to CloudFront
+
+on:
+  workflow_dispatch:
+
+jobs:
+  add-api-origin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Get current CloudFront config
+        run: |
+          aws cloudfront get-distribution-config \
+            --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --output json > cf-config.json
+
+          jq -r '.ETag' cf-config.json > etag.txt
+          jq '.DistributionConfig' cf-config.json > dist-config.json
+
+      - name: Add Lambda API origin
+        run: |
+          jq '.Origins.Items += [{
+            "Id": "lambda-api",
+            "DomainName": "hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws",
+            "OriginPath": "",
+            "CustomHeaders": { "Quantity": 0, "Items": [] },
+            "CustomOriginConfig": {
+              "HTTPPort": 80,
+              "HTTPSPort": 443,
+              "OriginProtocolPolicy": "https-only",
+              "OriginSslProtocols": { "Quantity": 1, "Items": ["TLSv1.2"] },
+              "OriginReadTimeout": 30,
+              "OriginKeepaliveTimeout": 5
+            },
+            "ConnectionAttempts": 3,
+            "ConnectionTimeout": 10,
+            "OriginShield": { "Enabled": false }
+          }] | .Origins.Quantity = (.Origins.Items | length)' dist-config.json > dist-config-with-origin.json
+
+      - name: Add /api cache behavior
+        run: |
+          jq '.CacheBehaviors.Items = [{
+            "PathPattern": "/api",
+            "TargetOriginId": "lambda-api",
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": {
+              "Quantity": 2,
+              "Items": ["HEAD", "GET"],
+              "CachedMethods": { "Quantity": 2, "Items": ["HEAD", "GET"] }
+            },
+            "Compress": true,
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+            "SmoothStreaming": false,
+            "FieldLevelEncryptionId": "",
+            "ForwardedValues": null,
+            "TrustedSigners": null,
+            "TrustedKeyGroups": null,
+            "LambdaFunctionAssociations": { "Quantity": 0, "Items": [] },
+            "FunctionAssociations": { "Quantity": 0, "Items": [] }
+          }] + .CacheBehaviors.Items | .CacheBehaviors.Quantity = (.CacheBehaviors.Items | length)' dist-config-with-origin.json > dist-config-final.json
+
+      - name: Update CloudFront distribution
+        run: |
+          ETAG=$(cat etag.txt)
+          aws cloudfront update-distribution \
+            --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --if-match "$ETAG" \
+            --distribution-config file://dist-config-final.json
+
+      - name: Wait for deployment
+        run: |
+          echo "CloudFront distribution update initiated."
+          echo "Status will change to 'Deployed' in 5-15 minutes."
+          echo "Check: aws cloudfront get-distribution --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --query 'Distribution.Status'"
