@@ -64,7 +64,7 @@ function App() {
               key={bank.downloadLink}
               bank={bank}
               style={{ '--card-index': index }}
-              onDownload={() => showToast('Download started')}
+              onDownload={() => showToast('Downloading now...')}
             />
           ))}
         </div>

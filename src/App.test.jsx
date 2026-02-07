@@ -355,7 +355,7 @@ describe("App", () => {
     const downloadBtn = screen.getByText("Download");
     fireEvent.click(downloadBtn);
 
-    expect(screen.getByText("Download started")).toBeInTheDocument();
+    expect(screen.getByText("Downloading now...")).toBeInTheDocument();
   });
 
   it("toast auto-dismisses after timeout", async () => {
@@ -365,13 +365,13 @@ describe("App", () => {
 
     const downloadBtn = screen.getByText("Download");
     fireEvent.click(downloadBtn);
-    expect(screen.getByText("Download started")).toBeInTheDocument();
+    expect(screen.getByText("Downloading now...")).toBeInTheDocument();
 
     act(() => {
       jest.advanceTimersByTime(2500);
     });
 
-    expect(screen.queryByText("Download started")).not.toBeInTheDocument();
+    expect(screen.queryByText("Downloading now...")).not.toBeInTheDocument();
     jest.useRealTimers();
   });
 
