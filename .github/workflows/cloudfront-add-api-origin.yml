@@ -59,9 +59,6 @@ jobs:
             "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
             "SmoothStreaming": false,
             "FieldLevelEncryptionId": "",
-            "ForwardedValues": null,
-            "TrustedSigners": null,
-            "TrustedKeyGroups": null,
             "LambdaFunctionAssociations": { "Quantity": 0, "Items": [] },
             "FunctionAssociations": { "Quantity": 0, "Items": [] }
           }] + .CacheBehaviors.Items | .CacheBehaviors.Quantity = (.CacheBehaviors.Items | length)' dist-config-with-origin.json > dist-config-final.json
