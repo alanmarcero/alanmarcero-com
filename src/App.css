@@ -163,8 +163,10 @@ a:focus-visible {
   inset: 0;
   background:
     radial-gradient(ellipse at 50% 40%, rgba(0, 229, 255, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 60%, rgba(255, 45, 149, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 60% 60%, rgba(255, 45, 149, 0.04) 0%, transparent 50%),
+    url('/hero-bg.webp') center bottom / cover no-repeat;
   z-index: 0;
+  opacity: 0.35;
 }
 
 .hero-content {
