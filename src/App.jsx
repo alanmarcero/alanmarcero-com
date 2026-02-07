@@ -15,12 +15,15 @@ import { PAYPAL_DONATE_URL } from './config';
 
 const SKELETON_COUNT = 3;
 
-const createSearchFilter = (query, ...fields) => (entry) => {
+const createSearchFilter = (query, ...fields) => (item) => {
   if (!query) return true;
   const lowerQuery = query.toLowerCase();
-  const searchableText = fields.map(field => entry[field] || '').join(' ').toLowerCase();
+  const searchableText = fields.map(field => item[field] || '').join(' ').toLowerCase();
   return searchableText.includes(lowerQuery);
 };
+
+const revealClass = (isVisible, extra = '') =>
+  `${extra ? extra + ' ' : ''}scroll-reveal${isVisible ? ' scroll-reveal--visible' : ''}`;
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,9 +56,26 @@ function App() {
       {hasNoResults && <NoResults query={searchQuery} />}
 
       <section
+        id="donate"
+        ref={donateRef}
+        className={revealClass(donateVisible)}
+      >
+        <h2 className="section-title">Support My Work</h2>
+        <p>If you enjoy the patches and music, consider supporting me via the following:</p>
+        <a
+          href={PAYPAL_DONATE_URL}
+          className="btn-primary paypal-button"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Donate via PayPal
+        </a>
+      </section>
+
+      <section
         id="store"
         ref={storeRef}
-        className={`scroll-reveal${storeVisible ? ' scroll-reveal--visible' : ''}`}
+        className={revealClass(storeVisible)}
       >
         <h2 className="section-title">Patch Banks</h2>
         <div className="content-grid">
@@ -73,7 +93,7 @@ function App() {
       <section
         id="music-remixes"
         ref={musicRef}
-        className={`section--alt scroll-reveal${musicVisible ? ' scroll-reveal--visible' : ''}`}
+        className={revealClass(musicVisible, 'section--alt')}
       >
         <h2 className="section-title">Music and Remixes</h2>
         <div className="content-grid">
@@ -85,23 +105,6 @@ function App() {
             <MusicItem key={item.videoId} item={item} style={{ '--card-index': index }} />
           ))}
         </div>
-      </section>
-
-      <section
-        id="donate"
-        ref={donateRef}
-        className={`scroll-reveal${donateVisible ? ' scroll-reveal--visible' : ''}`}
-      >
-        <h2 className="section-title">Support My Work</h2>
-        <p>If you enjoy the patches and music, consider supporting me via the following:</p>
-        <a
-          href={PAYPAL_DONATE_URL}
-          className="btn-primary paypal-button"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Donate via PayPal
-        </a>
       </section>
 
       <Footer />
