@@ -60,7 +60,7 @@ jobs:
       - name: Package Lambda
         run: |
           cd dist
-          zip -r ../lambda.zip lambda.js
+          zip -r ../lambda.zip index.js
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -71,9 +71,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── about-me.webp             # Hero profile image
 │   └── background.webp           # Faint body overlay (4% opacity)
 ├── index.html                    # Entry HTML with Google Fonts
-├── lambda.ts                     # AWS Lambda handler
-├── lambda.local.ts               # Local Lambda dev runner
-├── lambda.test.ts                # Lambda tests (8 tests)
+├── index.ts                      # AWS Lambda handler
+├── index.local.ts                # Local Lambda dev runner
+├── index.test.ts                 # Lambda tests (8 tests)
 ├── .npmrc                        # Forces npm.org registry (overrides corporate)
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
@@ -88,7 +88,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
-- `lambda.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers
+- `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Content-Type headers
 
 ## Design System
 
@@ -171,7 +171,7 @@ npm run dev                    # Vite dev server (requires Node.js 20.19+)
 npm test                       # Jest (98 tests)
 npm run build                  # Vite production build
 npm run build:ts               # Compile Lambda TypeScript
-npx ts-node lambda.local.ts    # Run Lambda locally
+npx ts-node index.local.ts     # Run Lambda locally
 ```
 
 **Node.js requirement:** Vite 7 requires Node.js 20.19+ or 22.12+. Use `nvm use 20.19.6` if your default version is older.
@@ -213,7 +213,7 @@ aws s3 sync dist/ s3://YOUR-BUCKET-NAME --delete
 
 # Lambda
 npm run build:ts
-cd dist && zip -r ../lambda.zip lambda.js
+cd dist && zip -r ../lambda.zip index.js
 aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb://lambda.zip
 ```
 
