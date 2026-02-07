@@ -1,6 +1,6 @@
 # alanmarcero.com
 
-Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Aether theme — clean modern design with emerald accents on true neutral black backgrounds.
+Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Pulse theme — bold modern design with hot rose accents on deep neutral black backgrounds.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19, Vite 7 |
-| Styling | CSS custom properties, Google Fonts (Inter, Space Grotesk) |
+| Styling | CSS custom properties, Google Fonts (Inter, Plus Jakarta Sans) |
 | Lambda | TypeScript, Node.js |
 | Testing | Jest 30, React Testing Library |
 | Hosting | S3, CloudFront, Lambda Function URL |
@@ -64,11 +64,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── config.test.ts            # Config tests (6 tests)
 │   ├── App.jsx                   # Main app: data fetching, search filtering, layout
 │   ├── App.test.jsx              # App integration tests (25 tests)
-│   ├── App.css                   # Full stylesheet: Aether theme, animations, responsive
+│   ├── App.css                   # Full stylesheet: Pulse theme, animations, responsive
 │   └── main.jsx                  # React entry point
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
-│   └── about-me.webp             # Hero profile image (circular, emerald border)
+│   └── about-me.webp             # Hero profile image (circular, rose glow border)
 ├── index.html                    # Entry HTML with Google Fonts
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
@@ -82,8 +82,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ## Key Files
 
 - `src/App.jsx` — Main component: fetches music from Lambda, client-side search filtering, renders Hero + sections
-- `src/App.css` — Complete stylesheet: CSS custom properties, Aether emerald palette, soft cards, animations, responsive
-- `src/components/Hero.jsx` — Centered stacked hero: circular profile image, geometric name, uppercase tagline, ghost CTA, search input with clear button
+- `src/App.css` — Complete stylesheet: CSS custom properties, Pulse rose palette, glow cards, pill buttons, animations, responsive
+- `src/components/Hero.jsx` — Centered stacked hero: circular profile image with rose glow, bold name, uppercase tagline, ghost CTA, pill search input with clear button
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal)
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -91,50 +91,51 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ## Design System
 
-**Theme:** Aether — clean modern design with emerald accents on true neutral black backgrounds. Dark mode only. Premium tech aesthetic.
+**Theme:** Pulse — bold modern design with hot rose accents on deep neutral black backgrounds. Dark mode only. Rose glow hover effects, pill-shaped buttons and inputs.
 
-**Fonts:** Inter 400/500/600 (body, buttons, tagline), Space Grotesk 400/700 (headings) via Google Fonts.
+**Fonts:** Inter 400/500/600 (body, buttons, tagline), Plus Jakarta Sans 600/800 (headings) via Google Fonts.
 
 **CSS Custom Properties (App.css `:root`):**
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--accent-primary` | `#10b981` | Emerald |
-| `--accent-primary-light` | `#34d399` | Hover states |
-| `--accent-primary-dark` | `#059669` | PayPal button |
-| `--bg-body` | `#09090b` | True neutral black |
-| `--bg-surface` | `#18181b` | Card backgrounds (solid) |
-| `--bg-surface-hover` | `#27272a` | Card hover |
-| `--bg-surface-alt` | `#0f0f11` | Alternating sections |
-| `--bg-footer` | `#050506` | Footer |
-| `--text-primary` | `#fafafa` | Near-white |
-| `--text-secondary` | `#a1a1aa` | Zinc gray |
-| `--text-muted` | `#52525b` | Muted |
+| `--accent-primary` | `#f43f5e` | Hot rose |
+| `--accent-primary-light` | `#fb7185` | Hover states |
+| `--accent-primary-dark` | `#e11d48` | PayPal button |
+| `--bg-body` | `#08080a` | Deep neutral black |
+| `--bg-surface` | `#111114` | Card backgrounds (solid) |
+| `--bg-surface-hover` | `#1a1a1e` | Card hover |
+| `--bg-surface-alt` | `#0c0c0f` | Alternating sections |
+| `--bg-footer` | `#050507` | Footer |
+| `--text-primary` | `#f0f0f3` | Soft white |
+| `--text-secondary` | `#8888a0` | Cool gray |
+| `--text-muted` | `#4a4a5c` | Muted |
 
 **Shared CSS classes:**
-- `.btn-primary` — Solid emerald button with 8px radius (used by download, PayPal buttons)
-- `.hero-cta` — Ghost/outlined CTA button (transparent bg, emerald border, fills on hover)
-- `.store-item` — Soft card (12px radius, solid bg, emerald left-border on hover)
-- `.section-title` — Left-aligned geometric heading with 36px emerald underline
+- `.btn-primary` — Solid rose pill button (border-radius: 100px)
+- `.hero-cta` — Ghost/outlined CTA pill button (transparent bg, rose border, fills on hover)
+- `.store-item` — Rounded card (16px radius, solid bg, rose glow shadow on hover)
+- `.section-title` — Centered heading with gradient-fade underline (transparent → rose → transparent)
 - `.section--alt` — Alternating section background tone
 - `.content-grid` — Responsive grid layout for patch bank and music sections
-- `.skeleton-card` — Loading placeholder card with emerald shimmer animation
-- `.back-to-top` / `.back-to-top--visible` — Fixed emerald button (8px radius)
+- `.skeleton-card` — Loading placeholder card with rose shimmer animation
+- `.back-to-top` / `.back-to-top--visible` — Fixed circular rose button
 - `.no-results` — Centered empty state message for search
-- `.search-clear` — Clear button inside search input
+- `.search-clear` — Clear button inside pill search input
 
 **Key visual characteristics:**
 - No grain texture, no scanlines, no frosted glass — clean solid backgrounds
 - No backdrop-filter usage anywhere
-- Cards: 12px border-radius, solid backgrounds, emerald left-border appears on hover
-- Buttons: 8px border-radius (softly rounded)
-- Hero image: circular (border-radius: 50%), emerald border
-- Hero tagline: uppercase, letter-spacing 3px, Inter 600
-- True neutral zinc grays (no warm or cool tint)
+- Cards: 16px border-radius, solid backgrounds, rose glow shadow on hover (no border accent)
+- Buttons: pill-shaped (border-radius: 100px)
+- Hero image: circular (190px), rose-tinted border with rose glow shadow
+- Hero tagline: uppercase, letter-spacing 4px, Inter 600
+- Rose-tinted subtle borders (rgba rose at 6% and 12%)
+- Centered section titles with gradient-fade underline
 
 **Animations:**
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
-- `@keyframes shimmer` — Emerald gradient sweep for skeleton loading cards
+- `@keyframes shimmer` — Rose gradient sweep for skeleton loading cards
 - `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
 - Smooth scroll behavior (`html { scroll-behavior: smooth }`)
 
@@ -148,12 +149,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 App
 ├── Hero (searchQuery, onSearchChange)
-│   ├── Profile image (circular, emerald border)
-│   ├── Name (Space Grotesk, 4.5rem)
-│   ├── Tagline (uppercase, tracked, emerald)
+│   ├── Profile image (circular, 190px, rose glow)
+│   ├── Name (Plus Jakarta Sans, 4.5rem)
+│   ├── Tagline (uppercase, 4px tracking, rose)
 │   ├── Bio paragraph
-│   ├── YouTube CTA (ghost button)
-│   └── Search input (8px radius) + clear button
+│   ├── YouTube CTA (ghost pill button)
+│   └── Search input (pill-shaped) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
 ├── Patch Banks section
@@ -257,23 +258,23 @@ Images are generated via the **Stability AI** MCP tool and converted to webp usi
 
 | File | Aspect Ratio | Usage | Style |
 |------|-------------|-------|-------|
-| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (160x160 CSS, emerald border) | Currently outrun style — needs regeneration for Aether theme |
+| `public/about-me.webp` | 1:1 (1536x1536) | Hero circular avatar (190px CSS, rose glow border) | Currently outrun style — needs regeneration for Pulse theme |
 
 **Note:** No background image used. No grain texture. Clean solid backgrounds only.
 
 **Generation guidelines:**
 - Use the `stability-ai-generate-image` MCP tool
-- Match the site's Aether palette: emerald (`#10b981`), neutral black (`#09090b`)
-- Hero image: use `1:1` aspect ratio, `photographic` style preset, focus on synthesizers/music production gear with cool-toned lighting
-- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality, warm tones, amber, orange
+- Match the site's Pulse palette: rose (`#f43f5e`), deep black (`#08080a`)
+- Hero image: use `1:1` aspect ratio, `photographic` style preset, focus on synthesizers/music production gear
+- Negative prompts should exclude: text, watermarks, logos, people, blurry/low quality
 - Convert PNG output to webp: `cwebp -q 85 input.png -o output.webp`
 - Delete intermediate PNG files after conversion
 
 **Regenerating images:**
 ```bash
 # After generating with Stability AI MCP tool:
-cwebp -q 85 public/about-me-aether.png -o public/about-me.webp
-rm public/*-aether.png
+cwebp -q 85 public/about-me-pulse.png -o public/about-me.webp
+rm public/*-pulse.png
 ```
 
 ## Future Feature Ideas
