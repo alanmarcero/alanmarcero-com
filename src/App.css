@@ -319,9 +319,11 @@ a:focus-visible {
   left: 24px;
   width: 60px;
   height: 2px;
-  background: var(--gradient-accent);
+  background: linear-gradient(90deg, #00e5ff, #ff2d95, #00e5ff);
+  background-size: 200% 100%;
   border-radius: 1px;
   transition: width 0.5s ease 0.2s;
+  animation: gradientFlow 3s linear infinite;
 }
 
 .scroll-reveal .section-title::after {
@@ -459,32 +461,12 @@ iframe {
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
   max-width: 1200px;
-  margin: 0 auto 20px;
+  margin: 20px auto 20px;
   text-align: center;
 }
 
 #donate .section-title {
   margin: 0 0 16px;
-  text-align: center;
-  padding-left: 0;
-  padding-right: 0;
-}
-
-#donate .section-title::after {
-  width: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(90deg, #00e5ff, #ff2d95, #00e5ff);
-  background-size: 200% 100%;
-  animation: gradientFlow 3s linear infinite;
-}
-
-.scroll-reveal #donate .section-title::after {
-  width: 0;
-}
-
-.scroll-reveal--visible #donate .section-title::after {
-  width: 80px;
 }
 
 #donate p {
