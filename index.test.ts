@@ -1,4 +1,4 @@
-import { handler } from "./lambda";
+import { handler } from "./index";
 import type { APIGatewayEvent } from "aws-lambda";
 
 beforeAll(() => {
