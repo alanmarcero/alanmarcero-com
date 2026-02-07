@@ -118,13 +118,13 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | `--bg-body` | `#0e0e1a` | Deep blue-black |
 | `--bg-surface` | `rgba(16, 16, 32, 0.85)` | Card backgrounds (frosted) |
 | `--bg-surface-hover` | `rgba(20, 20, 40, 0.9)` | Card hover |
-| `--bg-surface-alt` | `rgba(12, 12, 24, 0.6)` | Alternating sections |
 | `--bg-footer` | `#06060e` | Footer |
 | `--text-primary` | `#e8e6f0` | Cool off-white |
 | `--text-secondary` | `#8888aa` | Muted lavender |
 | `--text-muted` | `#4a4a66` | Faint |
 
 **CRT Effects:**
+- `html, body` background-image — Phosphor dot grid (cyan horizontal + magenta vertical micro-lines at low opacity) with edge vignette (radial-gradient darkening corners), `background-attachment: fixed`
 - `body::after` — Full-viewport scanlines (repeating-linear-gradient, 3px spacing, z-index 9999, pointer-events: none) with subtle flicker animation
 - `.btn-primary::after, .back-to-top::after` — Shared finer scanlines on button surfaces (2px spacing, consolidated CSS rule)
 - `@keyframes crtFlicker` — Gentle opacity oscillation on body scanlines
@@ -134,11 +134,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `.btn-primary` — Gradient pill button (50px radius, cyan→magenta, CRT overlay via ::after)
 - `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
 - `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, mouse-follow glow via ::before, flexbox column layout with download button at bottom-center)
-- `.section-title` — Left-aligned heading with cyan gradient underline (::after, 60px wide, animates in with scroll reveal)
+- `.section-title` — Left-aligned heading with flowing gradient underline (::after, 60px wide, 4px tall, gradientFlow animation, animates in with scroll reveal)
 - `.scroll-reveal` / `.scroll-reveal--visible` — Fade-up reveal on scroll via IntersectionObserver
 - `.toast` / `.toast--visible` — Fixed bottom-center notification with slide-up animation
-- `.section--alt` — Alternating section background tone
-- `.content-grid` — Responsive grid layout for patch bank and music sections
+- `.content-grid` — Responsive grid layout for patch bank and music sections (20px bottom padding)
 - `.skeleton-card` — Loading placeholder card with cyan shimmer animation
 - `.back-to-top` / `.back-to-top--visible` — Fixed gradient pill button with CRT overlay
 - `.no-results` — Centered empty state message for search
@@ -147,19 +146,19 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 **Key visual characteristics:**
 - **Centered stacked hero** on all viewports (flexbox column, centered text)
-- CRT scanlines across entire viewport (body::after) and on buttons (::after)
+- CRT phosphor grid on body background + edge vignette, scanlines across entire viewport (body::after), and on buttons (::after)
 - Frosted glass cards with `backdrop-filter: blur(12px)` on semi-transparent backgrounds
 - Cards: 8px border-radius, cyan left-border glow on hover, mouse-follow radial glow (::before), neon box-shadow, flexbox column with download buttons bottom-center
 - YouTube embeds: 85% width, 180px height within cards
 - Buttons: pill-shaped (50px border-radius), gradient background
-- Hero image: circular (50% radius, 200px), cyan border with multi-layered neon glow
-- Hero content: max-width 800px, hero bio: max-width 620px
+- Hero image: circular (50% radius, 260px desktop / 220px tablet / 180px mobile), cyan border with multi-layered neon glow
+- Hero content: max-width 800px, hero bio: max-width 720px
 - Hero backdrop: 20% opacity background image
 - Hero name: gradient text (cyan→magenta) via `background-clip: text`
 - Hero tagline: uppercase, letter-spacing 3px, Inter 600, cyan color
 - Pill-shaped search input with cyan focus ring
 - Cyan-tinted subtle borders (rgba cyan at 8% and 20%)
-- Left-aligned section titles with short gradient underline
+- Left-aligned section titles with flowing gradient underline (4px, gradientFlow animation)
 - Space Grotesk gives headings a techy geometric personality
 - Neon glow effects (layered box-shadows) on cards, buttons, hero image
 
@@ -167,11 +166,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
 - `@keyframes shimmer` — Cyan gradient sweep for skeleton loading cards
 - `@keyframes crtFlicker` — Subtle opacity flicker on body scanlines
-- `@keyframes gradientFlow` — Flowing gradient on donate section title underline (3s linear infinite)
+- `@keyframes gradientFlow` — Flowing cyan→magenta gradient on all section title underlines (3s linear infinite)
 - Scroll-reveal fade-up for sections (IntersectionObserver, one-shot, 0.6s ease)
 - Mouse-follow radial glow on cards (CSS custom properties `--mouse-x`/`--mouse-y`)
 - Button press feedback (scale 0.96 on :active)
-- Section-title underline grow (0→60px, 0.5s ease, 0.2s delay after reveal)
+- Section-title underline grow (0→60px, 4px tall, 0.5s ease, 0.2s delay after reveal)
 - Download toast slide-up notification (2.5s auto-dismiss)
 - `@media (prefers-reduced-motion: reduce)` — Disables all animations and transitions
 - Smooth scroll behavior (`html { scroll-behavior: smooth }`)
@@ -186,7 +185,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 App
 ├── Hero (searchQuery, onSearchChange) — Centered stacked layout (flexbox column)
-│   ├── Profile image (circular 50%, 200px, cyan border glow)
+│   ├── Profile image (circular 50%, 260px, cyan border glow)
 │   ├── Name (Space Grotesk 700, 3.5rem, gradient text cyan→magenta)
 │   ├── Tagline (uppercase, 3px tracking, cyan)
 │   ├── Bio paragraph
@@ -194,14 +193,14 @@ App
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
-├── Donate section (scroll-reveal, compact banner, animated gradient underline)
+├── Donate section (scroll-reveal, compact 1200px banner, left-aligned title, flowing gradient underline)
 │   └── PayPal button (.btn-primary, orange accent)
 ├── Patch Banks section (scroll-reveal, ref=storeRef)
 │   └── PatchBankItem[] (bank, style={--card-index}, onDownload, cardGlowHandlers)
 │       ├── Name, description
 │       ├── YouTubeEmbed[] (videoId)
 │       └── Download button (.btn-primary, triggers toast)
-├── Music section (scroll-reveal, ref=musicRef)
+├── Music section (scroll-reveal, ref=musicRef, consistent background)
 │   └── MusicItem[] (item, style={--card-index}, cardGlowHandlers)
 │       ├── Title
 │       ├── YouTubeEmbed (videoId)
@@ -218,7 +217,7 @@ App
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+)
-npm test                       # Jest (104 tests, 14 suites)
+npm test                       # Jest (129 tests, 17 suites)
 npm run build                  # Vite production build
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -296,7 +295,7 @@ Images converted to webp using `cwebp` (installed via `brew install webp`). Can 
 
 | File | Usage | Style |
 |------|-------|-------|
-| `public/about-me.webp` | Hero circular avatar (200px CSS, cyan border glow) | Bright outrun synth setup |
+| `public/about-me.webp` | Hero circular avatar (260px CSS, cyan border glow) | Bright outrun synth setup |
 | `public/hero-bg.webp` | Hero section background (20% opacity via .hero-backdrop) | Abstract outrun landscape |
 
 **Converting images:**
