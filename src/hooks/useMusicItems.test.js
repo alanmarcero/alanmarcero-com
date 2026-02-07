@@ -75,7 +75,7 @@ describe("useMusicItems", () => {
     renderHook(() => useMusicItems());
 
     expect(global.fetch).toHaveBeenCalledWith(
-      "https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws/"
+      "/api"
     );
   });
 });
