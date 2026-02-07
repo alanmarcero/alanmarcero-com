@@ -49,6 +49,18 @@
 }
 
 /* ----------------------------------------------------
+   CRT VIGNETTE — darkened edges like a real CRT
+---------------------------------------------------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ----------------------------------------------------
    CRT SCANLINE OVERLAY — full viewport
 ---------------------------------------------------- */
 body::after {
