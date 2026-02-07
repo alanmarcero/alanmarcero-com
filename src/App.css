@@ -49,15 +49,26 @@
 }
 
 /* ----------------------------------------------------
-   CRT VIGNETTE — darkened edges like a real CRT
+   CRT BACKGROUND — phosphor dot pattern + vignette
 ---------------------------------------------------- */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
-  pointer-events: none;
-  z-index: 9998;
+html, body {
+  background-image:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.45) 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 229, 255, 0.012) 2px,
+      rgba(0, 229, 255, 0.012) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(255, 45, 149, 0.008) 2px,
+      rgba(255, 45, 149, 0.008) 4px
+    );
+  background-attachment: fixed;
 }
 
 /* ----------------------------------------------------
@@ -330,7 +341,7 @@ a:focus-visible {
   bottom: 0;
   left: 24px;
   width: 60px;
-  height: 2px;
+  height: 4px;
   background: linear-gradient(90deg, #00e5ff, #ff2d95, #00e5ff);
   background-size: 200% 100%;
   border-radius: 1px;
