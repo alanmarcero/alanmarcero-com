@@ -71,23 +71,17 @@ describe("useScrollReveal", () => {
     expect(container.firstChild.getAttribute("data-visible")).toBe("true");
   });
 
-  it("disconnects observer after intersection", () => {
-    render(<TestComponent />);
+  it("toggles visibility when element leaves viewport", () => {
+    const { container } = render(<TestComponent />);
 
     act(() => {
       observerCallback([{ isIntersecting: true }]);
     });
-
-    expect(observers[0].disconnect).toHaveBeenCalled();
-  });
-
-  it("does not set visible when not intersecting", () => {
-    const { container } = render(<TestComponent />);
+    expect(container.firstChild.getAttribute("data-visible")).toBe("true");
 
     act(() => {
       observerCallback([{ isIntersecting: false }]);
     });
-
     expect(container.firstChild.getAttribute("data-visible")).toBe("false");
   });
 
