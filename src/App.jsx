@@ -11,7 +11,7 @@ import Toast from './components/Toast';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollReveal from './hooks/useScrollReveal';
 import { patchBanks as patchBanksData } from './data/patchBanks';
-import { PAYPAL_DONATE_URL } from './config';
+import { PAYPAL_DONATE_URL, TOAST_DISMISS_MS } from './config';
 
 const SKELETON_COUNT = 3;
 
@@ -38,7 +38,7 @@ function App() {
   const showToast = useCallback((message) => {
     clearTimeout(toastTimerRef.current);
     setToast(message);
-    toastTimerRef.current = setTimeout(() => setToast(null), 2500);
+    toastTimerRef.current = setTimeout(() => setToast(null), TOAST_DISMISS_MS);
   }, []);
 
   const filteredPatchBanks = patchBanksData.filter(createSearchFilter(searchQuery, 'name', 'description'));
