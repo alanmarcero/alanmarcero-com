@@ -3,7 +3,7 @@
 ---------------------------------------------------- */
 :root {
   /* Backgrounds */
-  --bg-body: #0a0a12;
+  --bg-body: #0e0e1a;
   --bg-surface: rgba(16, 16, 32, 0.85);
   --bg-surface-hover: rgba(20, 20, 40, 0.9);
   --bg-surface-alt: rgba(12, 12, 24, 0.6);
@@ -454,18 +454,42 @@ iframe {
   background: var(--bg-surface);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-  padding: 44px 30px;
+  padding: 28px 30px;
   border-radius: var(--radius-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
-  max-width: 800px;
-  margin: 60px auto;
+  max-width: 1200px;
+  margin: 0 auto 20px;
   text-align: center;
+}
+
+#donate .section-title {
+  margin: 0 0 16px;
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#donate .section-title::after {
+  width: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #00e5ff, #ff2d95, #00e5ff);
+  background-size: 200% 100%;
+  animation: gradientFlow 3s linear infinite;
+}
+
+.scroll-reveal #donate .section-title::after {
+  width: 0;
+}
+
+.scroll-reveal--visible #donate .section-title::after {
+  width: 80px;
 }
 
 #donate p {
   color: var(--text-secondary);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .paypal-button {
@@ -681,6 +705,11 @@ footer {
   }
 }
 
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
 /* ----------------------------------------------------
    RESPONSIVE — TABLET (max-width: 1024px)
 ---------------------------------------------------- */
@@ -749,8 +778,8 @@ footer {
   }
 
   #donate {
-    margin: 40px 16px;
-    padding: 24px 20px;
+    margin: 0 16px 20px;
+    padding: 20px;
   }
 
   iframe {
