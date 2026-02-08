@@ -12,9 +12,8 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'https://REDACTED_LAMBDA_URL',
+        target: 'https://alanmarcero.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/'),
       }
     }
   }
