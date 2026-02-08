@@ -10,12 +10,12 @@
 
   /* Accent Colors */
   --accent-cyan: #00e5ff;
-  --accent-magenta: #ff2d95;
-  --accent-orange: #ff6b00;
+  --accent-magenta: #b829f5;
+  --accent-orange: #ff4500;
 
   /* Gradients */
-  --gradient-accent: linear-gradient(135deg, #00e5ff, #ff2d95);
-  --gradient-hero-text: linear-gradient(135deg, #00e5ff, #ff2d95);
+  --gradient-accent: linear-gradient(135deg, #00e5ff, #b829f5);
+  --gradient-hero-text: linear-gradient(135deg, #00e5ff, #b829f5);
 
   /* Text */
   --text-primary: #e8e6f0;
@@ -30,7 +30,7 @@
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
   --shadow-card-hover: 0 8px 32px rgba(0, 229, 255, 0.1), 0 0 16px rgba(0, 229, 255, 0.05);
   --glow-cyan: 0 0 12px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 229, 255, 0.1);
-  --glow-magenta: 0 0 12px rgba(255, 45, 149, 0.3), 0 0 40px rgba(255, 45, 149, 0.1);
+  --glow-magenta: 0 0 12px rgba(184, 41, 245, 0.3), 0 0 40px rgba(184, 41, 245, 0.1);
   --focus-ring: 0 0 0 3px rgba(0, 229, 255, 0.25);
   --error-color: #ef4444;
 
@@ -64,8 +64,8 @@ html, body {
       90deg,
       transparent 0px,
       transparent 2px,
-      rgba(255, 45, 149, 0.008) 2px,
-      rgba(255, 45, 149, 0.008) 4px
+      rgba(184, 41, 245, 0.008) 2px,
+      rgba(184, 41, 245, 0.008) 4px
     );
   background-attachment: fixed;
 }
@@ -152,7 +152,7 @@ h1, h2, h3, h4 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), 0 0 40px rgba(255, 45, 149, 0.15);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), 0 0 40px rgba(184, 41, 245, 0.15);
 }
 
 .btn-primary:active {
@@ -183,7 +183,7 @@ a:focus-visible {
   inset: 0;
   background:
     radial-gradient(ellipse at 50% 40%, rgba(0, 229, 255, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 60%, rgba(255, 45, 149, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 60%, rgba(184, 41, 245, 0.04) 0%, transparent 50%),
     url('/hero-bg.webp') center bottom / cover no-repeat;
   z-index: 0;
   opacity: 0.2;
@@ -337,7 +337,7 @@ a:focus-visible {
   left: 24px;
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, #00e5ff, #ff2d95, #00e5ff);
+  background: linear-gradient(90deg, #00e5ff, #b829f5);
   background-size: 200% 100%;
   border-radius: 1px;
   transition: width 0.5s ease 0.2s;
@@ -503,7 +503,7 @@ iframe {
 }
 
 .paypal-button:hover {
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3), 0 0 40px rgba(255, 107, 0, 0.1);
+  box-shadow: 0 0 20px rgba(255, 69, 0, 0.3), 0 0 40px rgba(255, 69, 0, 0.1);
 }
 
 .venmo-button {
@@ -611,7 +611,7 @@ iframe {
 }
 
 .back-to-top:hover {
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.35), 0 0 48px rgba(255, 45, 149, 0.15);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.35), 0 0 48px rgba(184, 41, 245, 0.15);
 }
 
 .back-to-top:focus-visible {
