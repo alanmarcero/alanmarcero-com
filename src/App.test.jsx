@@ -3,7 +3,7 @@
  */
 import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
 import App from "./App";
-import { LAMBDA_URL, PAYPAL_DONATE_URL, TOAST_DISMISS_MS } from "./config";
+import { LAMBDA_URL, PAYPAL_DONATE_URL, VENMO_DONATE_URL, TOAST_DISMISS_MS } from "./config";
 
 global.fetch = jest.fn();
 
@@ -124,6 +124,16 @@ describe("App", () => {
     expect(screen.getByText("Support My Work")).toBeInTheDocument();
     const paypalLink = screen.getByText("Donate via PayPal");
     expect(paypalLink).toHaveAttribute("href", PAYPAL_DONATE_URL);
+  });
+
+  it("renders Donate section with Venmo link", () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const venmoLink = screen.getByText("Donate via Venmo");
+    expect(venmoLink).toHaveAttribute("href", VENMO_DONATE_URL);
+    expect(venmoLink).toHaveAttribute("target", "_blank");
+    expect(venmoLink).toHaveAttribute("rel", "noopener noreferrer");
   });
 
   it("fetches from LAMBDA_URL on mount", () => {
