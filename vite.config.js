@@ -12,9 +12,8 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws',
+        target: 'https://alanmarcero.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/'),
       }
     }
   }
