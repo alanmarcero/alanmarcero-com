@@ -1,6 +1,6 @@
 # alanmarcero.com
 
-Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Outrun CRT theme — retro-futuristic design with cyan/magenta/orange accents, CRT scanline overlays, Space Grotesk headings, frosted glass cards, and centered hero layout on deep blue-black backgrounds.
+Personal website for a music producer showcasing synthesizer patch banks and YouTube music content. Hard Outrun CRT theme — retro-futuristic design with cyan/violet/orange accents, CRT scanline overlays, CRT glitch animations, Space Grotesk headings, frosted glass cards, and centered hero layout on deep blue-black backgrounds.
 
 ## Architecture
 
@@ -99,7 +99,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
 - `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button
-- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
+- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal, Venmo) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -108,7 +108,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ## Design System
 
-**Theme:** Outrun CRT — retro-futuristic design with cyan/magenta/orange accents, CRT scanline overlays on background and buttons, frosted glass cards, gradient text, and neon glow effects. Dark mode only.
+**Theme:** Hard Outrun CRT — retro-futuristic design with cyan/violet/orange accents, CRT scanline overlays on background and buttons, CRT glitch on hero name, scanline sweep bar, frosted glass cards, gradient text, and neon glow effects. Dark mode only.
 
 **Fonts:** Inter 400/500/600 (body, buttons, tagline), Space Grotesk 500/700 (headings — techy geometric) via Google Fonts.
 
@@ -117,10 +117,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | Token | Value | Usage |
 |-------|-------|-------|
 | `--accent-cyan` | `#00e5ff` | Primary cyan |
-| `--accent-magenta` | `#ff2d95` | Secondary magenta |
-| `--accent-orange` | `#ff6b00` | Tertiary (PayPal) |
-| `--gradient-accent` | cyan → magenta (135deg) | Buttons, glows |
-| `--gradient-hero-text` | cyan → magenta (135deg) | Hero name |
+| `--accent-magenta` | `#b829f5` | Secondary violet |
+| `--accent-orange` | `#ff4500` | Tertiary (PayPal button) |
+| `--gradient-accent` | cyan → violet (135deg) | Buttons, glows |
+| `--gradient-hero-text` | cyan → violet (135deg) | Hero name |
 | `--bg-body` | `#0e0e1a` | Deep blue-black |
 | `--bg-surface` | `rgba(16, 16, 32, 0.85)` | Card backgrounds (frosted) |
 | `--bg-surface-hover` | `rgba(20, 20, 40, 0.9)` | Card hover |
@@ -130,14 +130,17 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 | `--text-muted` | `#4a4a66` | Faint |
 
 **CRT Effects:**
-- `html, body` background-image — Phosphor dot grid (cyan horizontal + magenta vertical micro-lines at low opacity) with edge vignette (radial-gradient darkening corners), `background-attachment: fixed`
+- `html, body` background-image — Phosphor dot grid (cyan horizontal + violet vertical micro-lines at low opacity) with edge vignette (radial-gradient darkening corners), `background-attachment: fixed`
 - `body::after` — Full-viewport scanlines (repeating-linear-gradient, 3px spacing, z-index 9999, pointer-events: none) with subtle flicker animation
+- `body::before` — Scanline sweep bar (120px bright bar sweeping top-to-bottom, 10s linear infinite, 2-3% opacity)
 - `.btn-primary::after, .back-to-top::after` — Shared finer scanlines on button surfaces (2px spacing, consolidated CSS rule)
+- `.hero-name` — CRT glitch effect via `::before`/`::after` pseudo-elements with `content: attr(data-text)`, cyan/violet color channel split, `clip-path: polygon()` + transform offsets, fires ~500ms every 8s
+- `.hero-name` — Flowing gradient text animation (`background-size: 300%`, 6s ease-in-out infinite)
 - `@keyframes crtFlicker` — Gentle opacity oscillation on body scanlines
-- `@media (prefers-reduced-motion: reduce)` — Disables flicker, keeps static scanlines
+- `@media (prefers-reduced-motion: reduce)` — Disables flicker and all animations
 
 **Shared CSS classes:**
-- `.btn-primary` — Gradient pill button (50px radius, cyan→magenta, CRT overlay via ::after)
+- `.btn-primary` — Gradient pill button (50px radius, cyan→violet, CRT overlay via ::after)
 - `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
 - `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, mouse-follow glow via ::before, flexbox column layout with download button at bottom-center)
 - `.section-title` — Left-aligned heading with flowing gradient underline (::after, 60px wide, 4px tall, gradientFlow animation, animates in with scroll reveal)
@@ -148,7 +151,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `.back-to-top` / `.back-to-top--visible` — Fixed gradient pill button with CRT overlay
 - `.no-results` — Centered empty state message for search
 - `.search-clear` — Clear button inside search input
-- `.paypal-button` — Orange accent button
+- `.paypal-button` — Orange accent button (`--accent-orange`)
+- `.venmo-button` — Blue accent button (`#008CFF`)
+- `.donate-buttons` — Flex row wrapper for donate buttons
 
 **Key visual characteristics:**
 - **Centered stacked hero** on all viewports (flexbox column, centered text)
@@ -158,9 +163,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - YouTube embeds: 85% width, 180px height within cards
 - Buttons: pill-shaped (50px border-radius), gradient background
 - Hero image: circular (50% radius, 260px desktop / 220px tablet / 180px mobile), cyan border with multi-layered neon glow
-- Hero content: max-width 800px, hero bio: max-width 720px
+- Hero content: max-width 900px, hero bio: max-width 820px
 - Hero backdrop: 20% opacity background image
-- Hero name: gradient text (cyan→magenta) via `background-clip: text`
+- Hero name: flowing gradient text (cyan→violet→cyan, 300% background-size) via `background-clip: text`, CRT glitch via ::before/::after pseudo-elements
 - Hero tagline: uppercase, letter-spacing 3px, Inter 600, cyan color
 - Pill-shaped search input with cyan focus ring
 - Cyan-tinted subtle borders (rgba cyan at 8% and 20%)
@@ -172,7 +177,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
 - `@keyframes shimmer` — Cyan gradient sweep for skeleton loading cards
 - `@keyframes crtFlicker` — Subtle opacity flicker on body scanlines
-- `@keyframes gradientFlow` — Flowing cyan→magenta gradient on all section title underlines (3s linear infinite)
+- `@keyframes scanlineSweep` — Bright bar sweeping top-to-bottom across viewport (10s, 2-3% opacity)
+- `@keyframes heroGradientFlow` — Flowing cyan→violet gradient on hero name (6s ease-in-out infinite)
+- `@keyframes glitchTop / glitchBottom` — CRT glitch on hero name via pseudo-elements, fires ~500ms every 8s with clip-path + translate offsets
+- `@keyframes gradientFlow` — Flowing cyan→violet gradient on all section title underlines (3s linear infinite)
 - Scroll-reveal fade-up for sections (IntersectionObserver, one-shot, 0.6s ease)
 - Mouse-follow radial glow on cards (CSS custom properties `--mouse-x`/`--mouse-y`)
 - Button press feedback (scale 0.96 on :active)
@@ -192,15 +200,17 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 App
 ├── Hero (searchQuery, onSearchChange) — Centered stacked layout (flexbox column)
 │   ├── Profile image (circular 50%, 260px, cyan border glow)
-│   ├── Name (Space Grotesk 700, 3.5rem, gradient text cyan→magenta)
+│   ├── Name (Space Grotesk 700, 3.5rem, flowing gradient text cyan→violet, CRT glitch via ::before/::after)
 │   ├── Tagline (uppercase, 3px tracking, cyan)
 │   ├── Bio paragraph
 │   ├── YouTube CTA (gradient pill button with CRT overlay)
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
-├── Donate section (scroll-reveal, compact 1200px banner, left-aligned title, flowing gradient underline)
-│   └── PayPal button (.btn-primary, orange accent)
+├── Donate section (scroll-reveal, compact 1200px banner, left-aligned title, cyan/violet border glow)
+│   └── Donate buttons (.donate-buttons flex row)
+│       ├── PayPal button (.btn-primary, orange accent)
+│       └── Venmo button (.btn-primary, blue accent)
 ├── Patch Banks section (scroll-reveal, ref=storeRef)
 │   └── PatchBankItem[] (bank, style={--card-index}, onDownload, cardGlowHandlers)
 │       ├── Name, description
