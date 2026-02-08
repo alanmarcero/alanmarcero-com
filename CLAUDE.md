@@ -315,6 +315,7 @@ rm input.png
 
 ## Security
 
+- **Lambda Function URL lockdown:** CloudFront Origin Access Control (OAC) with IAM auth. The Lambda Function URL auth type is `AWS_IAM` — direct access returns 403. Only CloudFront can invoke it via SigV4-signed requests, scoped to the specific distribution. Setup workflow: `infrastructure/cloudfront-add-oac.yml`
 - **Lambda error responses:** Generic `{ error: "YouTube Fetch Failed" }` — no internal error messages leaked
 - **External links:** PayPal donate link uses `target="_blank" rel="noopener noreferrer"`
 - **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups allow-presentation`
