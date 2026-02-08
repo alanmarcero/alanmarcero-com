@@ -38,10 +38,10 @@ describe("MusicItem", () => {
     expect(screen.getByText("No Desc")).toBeInTheDocument();
   });
 
-  it("renders Watch on YouTube link with correct URL", () => {
+  it("renders Listen on YouTube link with correct URL", () => {
     render(<MusicItem item={mockItem} />);
 
-    const link = screen.getByText("Watch on YouTube");
+    const link = screen.getByText("Listen on YouTube");
     expect(link).toHaveAttribute("href", "https://www.youtube.com/watch?v=xyz789");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
