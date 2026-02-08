@@ -94,6 +94,31 @@ body::after {
   50% { opacity: 0.85; }
 }
 
+/* CRT SCANLINE SWEEP — slow bright bar across viewport */
+body::before {
+  content: '';
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 9998;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0.02) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: scanlineSweep 10s linear infinite;
+}
+
+@keyframes scanlineSweep {
+  0% { top: -120px; }
+  100% { top: 100vh; }
+}
+
 /* ----------------------------------------------------
    GENERAL STYLES
 ---------------------------------------------------- */
@@ -225,10 +250,41 @@ a:focus-visible {
 .hero-name {
   font-size: 3.5rem;
   margin: 0 0 8px;
-  background: var(--gradient-hero-text);
+  background: linear-gradient(90deg, #00e5ff, #b829f5, #00e5ff);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: heroGradientFlow 6s ease-in-out infinite;
+  position: relative;
+}
+
+.hero-name::before,
+.hero-name::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  background-size: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+}
+
+.hero-name::before {
+  color: var(--accent-cyan);
+  z-index: -1;
+  animation: glitchTop 8s infinite linear;
+}
+
+.hero-name::after {
+  color: var(--accent-magenta);
+  z-index: -2;
+  animation: glitchBottom 8s infinite linear;
 }
 
 .hero-tagline {
@@ -469,8 +525,8 @@ iframe {
   -webkit-backdrop-filter: var(--backdrop-blur);
   padding: 28px 24px;
   border-radius: var(--radius-card);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-card), 0 0 20px rgba(0, 229, 255, 0.06), 0 0 40px rgba(184, 41, 245, 0.04);
   max-width: 1200px;
   margin: 20px auto 20px;
   text-align: center;
@@ -497,22 +553,9 @@ iframe {
   flex-wrap: wrap;
 }
 
-.paypal-button {
-  padding: 14px 32px;
-  background: var(--accent-orange);
-}
-
-.paypal-button:hover {
-  box-shadow: 0 0 20px rgba(255, 69, 0, 0.3), 0 0 40px rgba(255, 69, 0, 0.1);
-}
-
+.paypal-button,
 .venmo-button {
   padding: 14px 32px;
-  background: #008CFF;
-}
-
-.venmo-button:hover {
-  box-shadow: 0 0 20px rgba(0, 140, 255, 0.3), 0 0 40px rgba(0, 140, 255, 0.1);
 }
 
 /* ----------------------------------------------------
@@ -708,6 +751,67 @@ footer {
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   100% { background-position: 200% 50%; }
+}
+
+@keyframes heroGradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes glitchTop {
+  0%, 92%, 100% {
+    opacity: 0;
+    clip-path: none;
+    transform: none;
+  }
+  93% {
+    opacity: 0.8;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    transform: translate(-3px, -2px);
+  }
+  94% {
+    opacity: 0.6;
+    clip-path: polygon(0 25%, 100% 25%, 100% 70%, 0 70%);
+    transform: translate(3px, 1px);
+  }
+  95% {
+    opacity: 0.8;
+    clip-path: polygon(0 15%, 100% 15%, 100% 55%, 0 55%);
+    transform: translate(-2px, 0);
+  }
+  96% {
+    opacity: 0;
+    clip-path: none;
+    transform: none;
+  }
+}
+
+@keyframes glitchBottom {
+  0%, 92%, 100% {
+    opacity: 0;
+    clip-path: none;
+    transform: none;
+  }
+  93% {
+    opacity: 0.8;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+    transform: translate(3px, 2px);
+  }
+  94% {
+    opacity: 0.6;
+    clip-path: polygon(0 40%, 100% 40%, 100% 85%, 0 85%);
+    transform: translate(-2px, -1px);
+  }
+  95% {
+    opacity: 0.8;
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+    transform: translate(2px, 1px);
+  }
+  96% {
+    opacity: 0;
+    clip-path: none;
+    transform: none;
+  }
 }
 
 /* ----------------------------------------------------

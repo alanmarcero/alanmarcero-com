@@ -10,7 +10,7 @@ function Hero({ searchQuery, onSearchChange }) {
           alt="Alan Marcero"
           className="hero-image"
         />
-        <h1 className="hero-name">Alan Marcero</h1>
+        <h1 className="hero-name" data-text="Alan Marcero" aria-label="Alan Marcero">Alan Marcero</h1>
         <p className="hero-tagline">Synthesizer Sound Designer & Producer</p>
         <div className="hero-bio">
           <p>
