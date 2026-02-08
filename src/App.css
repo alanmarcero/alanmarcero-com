@@ -490,6 +490,13 @@ iframe {
   margin-bottom: 16px;
 }
 
+.donate-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .paypal-button {
   padding: 14px 32px;
   background: var(--accent-orange);
@@ -497,6 +504,15 @@ iframe {
 
 .paypal-button:hover {
   box-shadow: 0 0 20px rgba(255, 107, 0, 0.3), 0 0 40px rgba(255, 107, 0, 0.1);
+}
+
+.venmo-button {
+  padding: 14px 32px;
+  background: #008CFF;
+}
+
+.venmo-button:hover {
+  box-shadow: 0 0 20px rgba(0, 140, 255, 0.3), 0 0 40px rgba(0, 140, 255, 0.1);
 }
 
 /* ----------------------------------------------------
