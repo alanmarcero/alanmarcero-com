@@ -86,7 +86,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
 ├── infrastructure/
-│   └── cloudfront-add-api-origin.yml  # Archived: one-time CloudFront /api origin setup
+│   ├── cloudfront-add-api-origin.yml  # Archived: one-time CloudFront /api origin setup
+│   └── cloudfront-add-oac.yml        # Archived: one-time Lambda URL lockdown (OAC + IAM auth)
 ├── .npmrc                        # Forces npm.org registry (overrides corporate)
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
@@ -103,6 +104,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
 - `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Cache-Control: public, max-age=300. Generic error responses (no internal message leaks)
+- `infrastructure/cloudfront-add-oac.yml` — One-time workflow: Lambda URL lockdown via CloudFront OAC (already run)
 
 ## Design System
 
@@ -240,13 +242,14 @@ npx ts-node index.local.ts     # Run Lambda locally
 ## Lambda Details
 
 - **Frontend path:** `/api` (routed through CloudFront, 5-minute edge cache)
-- **Origin:** `https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws/`
+- **Origin:** `https://hh2nvebg2jac4yabkprsserxcq0lvhid.lambda-url.us-east-1.on.aws/` (direct access returns 403 — locked down via OAC)
+- **Auth:** `AWS_IAM` — CloudFront signs requests via OAC (SigV4), scoped to distribution
 - **Cache-Control:** `public, max-age=300` on all responses (200 + 500)
 - **CloudFront cache policy:** CachingOptimized (respects origin Cache-Control)
 - **Origin request policy:** AllViewerExceptHostHeader (Lambda Function URLs reject mismatched Host)
 - **Playlist ID:** `PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c`
 - **Max Results:** 50 items per request
-- **Dev proxy:** Vite proxies `/api` to Lambda origin (see `vite.config.js`)
+- **Dev proxy:** Vite proxies `/api` through CloudFront (`https://alanmarcero.com`)
 
 ## Deployment
 
