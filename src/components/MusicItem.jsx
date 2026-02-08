@@ -13,7 +13,7 @@ function MusicItem({ item, style }) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Watch on YouTube
+        Listen on YouTube
       </a>
     </div>
   );
