@@ -75,13 +75,35 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold, toast duration)
 │   ├── App.jsx                   # Main app: search filtering, scroll reveal, toast, layout
 │   ├── App.test.jsx              # App integration tests
-│   ├── App.css                   # Full stylesheet: Outrun CRT theme, animations, responsive
-│   └── main.jsx                  # React entry point
+│   ├── App.css                   # Main page stylesheet (imports shared/theme.css): hero, cards, animations, responsive
+│   ├── main.jsx                  # React entry point (main page)
+│   ├── shared/
+│   │   └── theme.css             # Shared theme tokens, CRT base styles, resets, .btn-primary, reduced-motion
+│   └── arcade/
+│       ├── main.jsx              # React entry point (arcade page)
+│       ├── ArcadeApp.jsx         # Root: game picker vs active game state
+│       ├── ArcadeApp.css         # Arcade-specific styles (imports shared/theme.css): cabinet cards, game canvas, touch controls
+│       ├── components/
+│       │   ├── ArcadeHeader.jsx  # Back-to-home link + "ARCADE" gradient title
+│       │   ├── GamePicker.jsx    # Flex layout of CabinetCards
+│       │   ├── CabinetCard.jsx   # Mini arcade cabinet styled button (screen, marquee, joystick, INSERT COIN)
+│       │   ├── GameCanvas.jsx    # Full-screen game wrapper: canvas, CRT overlay, HUD, game-over, TouchControls
+│       │   └── TouchControls.jsx # Mobile d-pad + action buttons (pointer: coarse only)
+│       └── games/
+│           ├── gameRegistry.js   # Game metadata + factory functions for all 3 games
+│           ├── useGameLoop.js    # Shared requestAnimationFrame hook with delta-time clamping
+│           ├── space-invaders/
+│           │   └── SpaceInvaders.js  # Canvas game: player ship, alien grid, shields, bullets
+│           ├── asteroids/
+│           │   └── Asteroids.js      # Canvas game: vector-style ship, asteroid polygons, wrap-around
+│           └── tetris/
+│               └── Tetris.js         # Canvas game: 10x20 grid, 7 tetrominoes, ghost piece, line-clear
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
 │   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
 │   └── hero-bg.webp              # Background image (outrun landscape, used in .hero-backdrop)
-├── index.html                    # Entry HTML with Google Fonts, meta description, canonical URL
+├── index.html                    # Main page HTML entry with Google Fonts, meta description, canonical URL
+├── arcade.html                   # Arcade page HTML entry (separate Vite entry point)
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -97,8 +119,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ## Key Files
 
 - `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
-- `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
-- `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
+- `src/shared/theme.css` — Shared CSS custom properties, CRT background/scanline base, resets, `.btn-primary`, reduced-motion. Imported by both `App.css` and `ArcadeApp.css`
+- `src/App.css` — Main page stylesheet (imports shared theme): hero, cards, CRT scanline sweep, glitch keyframes, animations, responsive
+- `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, CTA row (YouTube + Arcade links), pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
+- `src/arcade/ArcadeApp.jsx` — Arcade page root: toggles between game picker and active game canvas
+- `src/arcade/games/gameRegistry.js` — Game metadata array (id, name, description, accent color, controls, factory function) for Space Invaders, Asteroids, Tetris
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
@@ -112,7 +137,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 **Fonts:** Inter 400/500/600 (body, buttons, tagline), Space Grotesk 500/700 (headings — techy geometric) via Google Fonts.
 
-**CSS Custom Properties (App.css `:root`):**
+**CSS Custom Properties (shared/theme.css `:root`):**
 
 | Token | Value | Usage |
 |-------|-------|-------|
@@ -141,7 +166,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 **Shared CSS classes:**
 - `.btn-primary` — Gradient pill button (50px radius, cyan→violet, CRT overlay via ::after)
+- `.hero-cta-row` — Flex container for hero CTAs (gap, wrap, centered)
 - `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
+- `.hero-cta--secondary` — Outlined CTA variant (transparent bg, cyan border, hover glow)
 - `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, mouse-follow glow via ::before, flexbox column layout with download button at bottom-center)
 - `.section-title` — Left-aligned heading with flowing gradient underline (::after, 60px wide, 4px tall, gradientFlow animation, animates in with scroll reveal)
 - `.scroll-reveal` / `.scroll-reveal--visible` — Fade-up reveal on scroll via IntersectionObserver
@@ -200,7 +227,9 @@ App
 │   ├── Name (Space Grotesk 700, 3.5rem, flowing gradient text cyan→violet, randomized dual CRT glitch via JS + ::before/::after)
 │   ├── Tagline (uppercase, 3px tracking, cyan)
 │   ├── Bio paragraph
-│   ├── YouTube CTA (gradient pill button with CRT overlay)
+│   ├── CTA row (.hero-cta-row flex container)
+│   │   ├── YouTube CTA (gradient pill button with CRT overlay)
+│   │   └── Arcade link (outlined secondary CTA → /arcade.html)
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
@@ -221,13 +250,37 @@ App
 └── Toast (message, visible) — download notification
 ```
 
+**Arcade Page** (`arcade.html` — separate Vite entry point, zero impact on main bundle):
+```
+ArcadeApp
+├── [Picker mode]
+│   ├── ArcadeHeader — Back-to-home link, "ARCADE" gradient title
+│   └── GamePicker — Flex row of CabinetCards
+│       └── CabinetCard[] (game) — Mini arcade cabinet: screen area with scanlines, gradient marquee, decorative joystick/buttons, blinking "INSERT COIN"
+├── [Game mode]
+│   └── GameCanvas (game, onExit) — Full-screen fixed wrapper
+│       ├── HUD bar (score, lives, level, ESC exit button)
+│       ├── <canvas> — Game rendering (requestAnimationFrame loop via useGameLoop)
+│       ├── CRT scanline overlay div (pointer-events: none)
+│       ├── TouchControls — D-pad + action buttons (pointer: coarse only)
+│       └── Game-over overlay (score, Play Again, Back to Arcade)
+```
+
+**Game Class Interface** (plain JS, no React — used by all 3 games):
+- `init(w, h)` / `resize(w, h)` — Set up game state for canvas dimensions
+- `update(dt)` / `render(ctx)` — Game loop (dt in seconds, ctx is CanvasRenderingContext2D)
+- `handleKeyDown(key)` / `handleKeyUp(key)` — Keyboard input
+- `handleTouchAction(action, active)` — Mobile touch controls
+- `onHudUpdate` callback — Reports `{score, lives, level, gameOver}` to React HUD
+- `destroy()` — Cleanup
+
 ## Development
 
 ```bash
 npm install                    # Install dependencies
-npm run dev                    # Vite dev server (requires Node.js 20.19+)
-npm test                       # Jest (130 tests, 17 suites)
-npm run build                  # Vite production build
+npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
+npm test                       # Jest (111 tests, 16 suites)
+npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
 ```
@@ -301,6 +354,22 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 - Patch banks: Hardcoded in `src/data/patchBanks.js` (11 entries)
 - Music items: Fetched live from YouTube API via Lambda
 - Search: Client-side filtering in React (case-insensitive, matches name + description)
+- Arcade games: Canvas-based, all game logic in plain JS classes (no external game libraries)
+
+## Arcade Page
+
+**URL:** `/arcade.html` (separate Vite entry point — not React Router)
+
+**Architecture:** Separate `arcade.html` entry + `src/arcade/main.jsx` React root. Zero impact on main page bundle size. Vite handles shared vendor chunks (React) automatically via `build.rollupOptions.input` in `vite.config.js`.
+
+**Games** (canvas-based, Outrun CRT palette only):
+- **Space Invaders** — Cyan player ship, alien grid (cyan/violet/orange by row), destructible shields, levels increase alien speed
+- **Asteroids** — Vector-style outlines (violet ship, cyan asteroid polygons, orange thrust), wrap-around edges, asteroids split on hit
+- **Tetris** — 10x20 grid, 7 tetrominoes in palette colors, ghost piece, next-piece preview, line-clear flash, DAS key repeat
+
+**Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
+
+**CRT overlay on games:** CSS div with scanline `repeating-linear-gradient` positioned over the canvas + `crtFlicker` animation, `pointer-events: none`.
 
 ## Image Generation
 

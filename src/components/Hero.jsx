@@ -56,14 +56,19 @@ function Hero({ searchQuery, onSearchChange }) {
             BBC Radio 1's Essential Mix. Released on Armada, Bonzai, and Ministry of Sound.
           </p>
         </div>
-        <a
-          className="btn-primary hero-cta"
-          href={YOUTUBE_CHANNEL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Subscribe on YouTube
-        </a>
+        <div className="hero-cta-row">
+          <a
+            className="btn-primary hero-cta"
+            href={YOUTUBE_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Subscribe on YouTube
+          </a>
+          <a className="hero-cta--secondary" href="/arcade.html">
+            Arcade
+          </a>
+        </div>
         <div className="hero-search">
           <input
             type="text"
