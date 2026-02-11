@@ -1,9 +1,9 @@
 import { useRef, useEffect } from 'react';
+import { useGameLoop } from '../games/useGameLoop';
 
 function CabinetCard({ game, onSelect }) {
   const canvasRef = useRef(null);
   const gameRef = useRef(null);
-  const frameRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -12,16 +12,14 @@ function CabinetCard({ game, onSelect }) {
     const ctx = canvas.getContext('2d');
     const instance = game.factory();
 
-    // Suppress HUD updates for demo
     instance.onHudUpdate = (data) => {
       if (data.gameOver) {
-        // Restart demo after a pause
         setTimeout(() => {
           if (!gameRef.current) return;
           const fresh = game.factory();
           fresh.onHudUpdate = instance.onHudUpdate;
           gameRef.current.instance.destroy();
-          gameRef.current.instance = fresh;
+          gameRef.current = { instance: fresh, ctx };
           const c = canvasRef.current;
           if (c) fresh.init(c.width, c.height);
         }, 1500);
@@ -32,35 +30,29 @@ function CabinetCard({ game, onSelect }) {
       const rect = canvas.parentElement.getBoundingClientRect();
       canvas.width = rect.width;
       canvas.height = rect.height;
-      instance.resize(canvas.width, canvas.height);
+      gameRef.current?.instance.resize(canvas.width, canvas.height);
     };
 
-    gameRef.current = { instance };
+    gameRef.current = { instance, ctx };
     resize();
     instance.init(canvas.width, canvas.height);
-
-    let lastTime = performance.now();
-    const tick = (now) => {
-      const dt = Math.min((now - lastTime) / 1000, 0.05);
-      lastTime = now;
-      const g = gameRef.current;
-      if (!g) return;
-      g.instance.update(dt);
-      g.instance.render(ctx);
-      frameRef.current = requestAnimationFrame(tick);
-    };
-    frameRef.current = requestAnimationFrame(tick);
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas.parentElement);
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
       ro.disconnect();
       gameRef.current?.instance.destroy();
       gameRef.current = null;
     };
   }, [game]);
+
+  useGameLoop((dt) => {
+    const ref = gameRef.current;
+    if (!ref) return;
+    ref.instance.update(dt);
+    ref.instance.render(ref.ctx);
+  });
 
   return (
     <button

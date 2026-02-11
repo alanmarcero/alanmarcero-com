@@ -1,13 +1,4 @@
-/**
- * Asteroids - Retro vector-style arcade game
- * Rendered on HTML5 canvas with Outrun CRT color palette
- * No imports - fully self-contained
- */
-
-const CYAN = '#00e5ff';
-const VIOLET = '#b829f5';
-const ORANGE = '#ff4500';
-const BG = '#0e0e1a';
+import { CYAN, VIOLET, ORANGE, BG } from '../palette';
 
 const SHIP_ROTATION_SPEED = 4; // rad/s
 const SHIP_THRUST = 280; // pixels/s^2
@@ -523,21 +514,6 @@ export class Asteroids {
   }
 
   _restart() {
-    this.score = 0;
-    this.lives = STARTING_LIVES;
-    this.level = 1;
-    this.gameOver = false;
-    this.bullets = [];
-    this.asteroids = [];
-    this.fireCooldown = 0;
-    this.respawnTimer = 0;
-    this.levelTransitionTimer = 0;
-    this.levelTransitioning = false;
-    this.keys = {};
-    this.touchActions = {};
-
-    this._spawnShip();
-    this._spawnAsteroids(STARTING_ASTEROIDS);
-    this._emitHud();
+    this.init(this.width, this.height);
   }
 }
