@@ -11,7 +11,7 @@ import Toast from './components/Toast';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollReveal from './hooks/useScrollReveal';
 import { patchBanks as patchBanksData } from './data/patchBanks';
-import { PAYPAL_DONATE_URL, VENMO_DONATE_URL, TOAST_DISMISS_MS } from './config';
+import { TOAST_DISMISS_MS } from './config';
 
 const SKELETON_COUNT = 3;
 
@@ -33,8 +33,6 @@ function App() {
 
   const [storeRef, storeVisible] = useScrollReveal();
   const [musicRef, musicVisible] = useScrollReveal();
-  const [donateRef, donateVisible] = useScrollReveal();
-
   const showToast = useCallback((message) => {
     clearTimeout(toastTimerRef.current);
     setToast(message);
@@ -54,33 +52,6 @@ function App() {
       <Hero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       {hasNoResults && <NoResults query={searchQuery} />}
-
-      <section
-        id="donate"
-        ref={donateRef}
-        className={revealClass(donateVisible)}
-      >
-        <h2 className="section-title">Support My Work</h2>
-        <p>Every patch bank is free. If they help your music, consider giving back:</p>
-        <div className="donate-buttons">
-          <a
-            href={PAYPAL_DONATE_URL}
-            className="btn-primary paypal-button"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Donate via PayPal
-          </a>
-          <a
-            href={VENMO_DONATE_URL}
-            className="btn-primary venmo-button"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Donate via Venmo
-          </a>
-        </div>
-      </section>
 
       <section
         id="store"
