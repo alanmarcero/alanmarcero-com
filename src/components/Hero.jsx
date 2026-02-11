@@ -65,7 +65,7 @@ function Hero({ searchQuery, onSearchChange }) {
           >
             Subscribe on YouTube
           </a>
-          <a className="hero-cta--secondary" href="/arcade.html">
+          <a className="btn-primary hero-cta--arcade" href="/arcade.html">
             Arcade
           </a>
         </div>
