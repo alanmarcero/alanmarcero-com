@@ -103,6 +103,8 @@ function GameCanvas({ game, onExit }) {
       <div className="game-canvas-area">
         <canvas ref={canvasRef} />
         <div className="game-crt-overlay" />
+        <div className="game-crt-vignette" />
+        <div className="game-crt-reflection" />
 
         <TouchControls controls={game.controls.touch} onAction={handleTouchAction} />
 

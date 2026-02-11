@@ -169,30 +169,9 @@
   padding: 12px 28px;
 }
 
-.hero-cta--secondary {
-  position: relative;
-  display: inline-block;
+.hero-cta--arcade {
   padding: 12px 28px;
-  background: transparent;
-  color: var(--accent-cyan);
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  text-decoration: none;
-  border: 2px solid var(--accent-cyan);
-  border-radius: var(--radius-btn);
-  overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
-}
-
-.hero-cta--secondary:hover {
-  transform: translateY(-2px);
-  background: rgba(0, 229, 255, 0.08);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), 0 0 40px rgba(0, 229, 255, 0.08);
-}
-
-.hero-cta--secondary:active {
-  transform: scale(0.96);
+  background: var(--accent-orange);
 }
 
 .hero-search {
