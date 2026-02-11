@@ -531,53 +531,6 @@ iframe {
 }
 
 /* ----------------------------------------------------
-   DONATE SECTION
----------------------------------------------------- */
-#donate {
-  background: var(--bg-surface);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  padding: 28px 24px;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--border-medium);
-  box-shadow: var(--shadow-card), 0 0 20px rgba(0, 229, 255, 0.06), 0 0 40px rgba(184, 41, 245, 0.04);
-  max-width: 1200px;
-  margin: 20px auto 20px;
-  text-align: center;
-}
-
-#donate .section-title {
-  margin: 0 0 16px;
-  padding-left: 0;
-}
-
-#donate .section-title::after {
-  left: 0;
-}
-
-#donate p {
-  color: var(--text-secondary);
-  margin-bottom: 16px;
-}
-
-.donate-buttons {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.paypal-button {
-  padding: 14px 32px;
-  background: var(--accent-orange);
-}
-
-.venmo-button {
-  padding: 14px 32px;
-  background: #008CFF;
-}
-
-/* ----------------------------------------------------
    SKELETON CARDS
 ---------------------------------------------------- */
 .skeleton-card {
@@ -885,11 +838,6 @@ footer {
 
   .section-title::after {
     left: 24px;
-  }
-
-  #donate {
-    margin: 20px 16px 20px;
-    padding: 20px;
   }
 
   iframe {
