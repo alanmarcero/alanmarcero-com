@@ -1,22 +1,8 @@
-/**
- * Space Invaders - Outrun CRT themed canvas game
- *
- * Retro Space Invaders rendered with the site's neon Outrun palette.
- * No imports - fully self-contained plain JS class.
- */
+import { BG, CYAN, VIOLET, ORANGE } from '../palette';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-const COLORS = {
-  BG: '#0e0e1a',
-  CYAN: '#00e5ff',
-  VIOLET: '#b829f5',
-  ORANGE: '#ff4500',
-  WHITE: '#e8e6f0',
-  MUTED: '#8888aa',
-  SHIELD: '#00e5ff',
-};
 
 // Virtual game area (4:3 aspect ratio) - all coordinates are in this space
 const GAME_W = 480;
@@ -161,7 +147,7 @@ export class SpaceInvaders {
 
   render(ctx) {
     // Clear
-    ctx.fillStyle = COLORS.BG;
+    ctx.fillStyle = BG;
     ctx.fillRect(0, 0, this.canvasW, this.canvasH);
 
     ctx.save();
@@ -283,15 +269,15 @@ export class SpaceInvaders {
       for (let c = 0; c < ALIEN_COLS; c++) {
         let color, points, sprite;
         if (r < 2) {
-          color = COLORS.ORANGE;
+          color = ORANGE;
           points = SCORE_TOP;
           sprite = ALIEN_SPRITE_A;
         } else if (r < 4) {
-          color = COLORS.VIOLET;
+          color = VIOLET;
           points = SCORE_MID;
           sprite = ALIEN_SPRITE_B;
         } else {
-          color = COLORS.CYAN;
+          color = CYAN;
           points = SCORE_BOT;
           sprite = ALIEN_SPRITE_C;
         }
@@ -500,6 +486,27 @@ export class SpaceInvaders {
   // Internal: collisions
   // -----------------------------------------------------------------------
 
+  _checkBulletsVsShields(bullets) {
+    for (let bi = bullets.length - 1; bi >= 0; bi--) {
+      const b = bullets[bi];
+      let hit = false;
+      for (const shield of this._shields) {
+        for (const block of shield) {
+          if (!block.alive) continue;
+          if (aabb(b.x, b.y, b.w, b.h, block.x, block.y, block.w, block.h)) {
+            block.alive = false;
+            hit = true;
+            break;
+          }
+        }
+        if (hit) break;
+      }
+      if (hit) {
+        bullets.splice(bi, 1);
+      }
+    }
+  }
+
   _checkCollisions() {
     // Player bullets vs aliens
     for (let bi = this._playerBullets.length - 1; bi >= 0; bi--) {
@@ -520,25 +527,8 @@ export class SpaceInvaders {
       }
     }
 
-    // Player bullets vs shields
-    for (let bi = this._playerBullets.length - 1; bi >= 0; bi--) {
-      const b = this._playerBullets[bi];
-      let hit = false;
-      for (const shield of this._shields) {
-        for (const block of shield) {
-          if (!block.alive) continue;
-          if (aabb(b.x, b.y, b.w, b.h, block.x, block.y, block.w, block.h)) {
-            block.alive = false;
-            hit = true;
-            break;
-          }
-        }
-        if (hit) break;
-      }
-      if (hit) {
-        this._playerBullets.splice(bi, 1);
-      }
-    }
+    // Bullets vs shields
+    this._checkBulletsVsShields(this._playerBullets);
 
     // Alien bullets vs player
     const p = this._player;
@@ -554,24 +544,7 @@ export class SpaceInvaders {
     }
 
     // Alien bullets vs shields
-    for (let bi = this._alienBullets.length - 1; bi >= 0; bi--) {
-      const b = this._alienBullets[bi];
-      let hit = false;
-      for (const shield of this._shields) {
-        for (const block of shield) {
-          if (!block.alive) continue;
-          if (aabb(b.x, b.y, b.w, b.h, block.x, block.y, block.w, block.h)) {
-            block.alive = false;
-            hit = true;
-            break;
-          }
-        }
-        if (hit) break;
-      }
-      if (hit) {
-        this._alienBullets.splice(bi, 1);
-      }
-    }
+    this._checkBulletsVsShields(this._alienBullets);
 
     // Aliens vs shields (aliens marching through shields)
     for (const a of this._aliens) {
@@ -656,9 +629,9 @@ export class SpaceInvaders {
     }
 
     ctx.save();
-    ctx.shadowColor = COLORS.CYAN;
+    ctx.shadowColor = CYAN;
     ctx.shadowBlur = 8;
-    ctx.fillStyle = COLORS.CYAN;
+    ctx.fillStyle = CYAN;
 
     // Ship body - simple geometric shape
     // Base rectangle
@@ -711,8 +684,8 @@ export class SpaceInvaders {
 
   _renderShields(ctx) {
     ctx.save();
-    ctx.fillStyle = COLORS.SHIELD;
-    ctx.shadowColor = COLORS.SHIELD;
+    ctx.fillStyle = CYAN;
+    ctx.shadowColor = CYAN;
     ctx.shadowBlur = 2;
 
     for (const shield of this._shields) {
@@ -727,9 +700,9 @@ export class SpaceInvaders {
 
   _renderPlayerBullets(ctx) {
     ctx.save();
-    ctx.shadowColor = COLORS.CYAN;
+    ctx.shadowColor = CYAN;
     ctx.shadowBlur = 10;
-    ctx.fillStyle = COLORS.CYAN;
+    ctx.fillStyle = CYAN;
 
     for (const b of this._playerBullets) {
       ctx.fillRect(b.x, b.y, b.w, b.h);
@@ -740,9 +713,9 @@ export class SpaceInvaders {
 
   _renderAlienBullets(ctx) {
     ctx.save();
-    ctx.shadowColor = COLORS.ORANGE;
+    ctx.shadowColor = ORANGE;
     ctx.shadowBlur = 10;
-    ctx.fillStyle = COLORS.ORANGE;
+    ctx.fillStyle = ORANGE;
 
     for (const b of this._alienBullets) {
       ctx.fillRect(b.x, b.y, b.w, b.h);
