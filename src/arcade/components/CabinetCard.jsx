@@ -1,26 +1,22 @@
 function CabinetCard({ game, onSelect }) {
   return (
     <button
-      className="cabinet-card"
+      className="crt-monitor"
       onClick={() => onSelect(game.id)}
-      style={{ '--cabinet-accent': game.accent }}
+      style={{ '--monitor-accent': game.accent }}
     >
-      <div className="cabinet-screen">
-        <div className="cabinet-scanlines" />
-        <span className="cabinet-game-icon">{game.id === 'space-invaders' ? '/\\' : game.id === 'asteroids' ? '<>' : '[]'}</span>
-      </div>
-      <div className="cabinet-marquee">
-        <span className="cabinet-name">{game.name}</span>
-      </div>
-      <p className="cabinet-desc">{game.description}</p>
-      <div className="cabinet-controls">
-        <div className="cabinet-joystick" />
-        <div className="cabinet-buttons">
-          <span className="cabinet-btn cabinet-btn--cyan" />
-          <span className="cabinet-btn cabinet-btn--violet" />
+      <div className="crt-monitor-bezel">
+        <div className="crt-monitor-screen">
+          <div className="crt-monitor-scanlines" />
+          <div className="crt-monitor-vignette" />
+          <div className="crt-monitor-reflection" />
+          <div className="crt-monitor-content">
+            <span className="crt-monitor-title">{game.name}</span>
+            <span className="crt-monitor-insert">INSERT COIN</span>
+          </div>
         </div>
       </div>
-      <span className="cabinet-insert-coin">INSERT COIN</span>
+      <p className="crt-monitor-desc">{game.description}</p>
     </button>
   );
 }
