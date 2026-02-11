@@ -1,6 +1,7 @@
 import { SpaceInvaders } from './space-invaders/SpaceInvaders';
 import { Asteroids } from './asteroids/Asteroids';
 import { Tetris } from './tetris/Tetris';
+import { PacMan } from './pac-man/PacMan';
 
 export const games = [
   {
@@ -35,5 +36,16 @@ export const games = [
       touch: ['left', 'right', 'down', 'rotate', 'drop'],
     },
     factory: () => new Tetris(),
+  },
+  {
+    id: 'pac-man',
+    name: 'Pac-Man',
+    description: 'Eat dots and avoid ghosts in the maze',
+    accent: '#ff4500',
+    controls: {
+      keyboard: { left: 'ArrowLeft', right: 'ArrowRight', up: 'ArrowUp', down: 'ArrowDown' },
+      touch: ['left', 'right', 'up', 'down'],
+    },
+    factory: () => new PacMan(),
   },
 ];
