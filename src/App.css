@@ -94,14 +94,14 @@ body::after {
   50% { opacity: 0.85; }
 }
 
-/* CRT SCANLINE SWEEP — slow bright bar across viewport */
-body::before {
+/* CRT SCANLINE SWEEP — slow bright bar across hero section */
+.hero::after {
   content: '';
-  position: fixed;
+  position: absolute;
   left: 0;
   width: 100%;
   height: 120px;
-  z-index: 9998;
+  z-index: 2;
   background: linear-gradient(
     180deg,
     transparent 0%,
@@ -116,7 +116,7 @@ body::before {
 
 @keyframes scanlineSweep {
   0% { top: -120px; }
-  100% { top: 100vh; }
+  100% { top: 100%; }
 }
 
 /* ----------------------------------------------------
