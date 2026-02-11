@@ -307,6 +307,13 @@
   flex: 1;
   position: relative;
   overflow: hidden;
+  border-radius: 20px;
+  margin: 8px 12px 12px;
+  border: 2px solid rgba(0, 229, 255, 0.1);
+  box-shadow:
+    inset 0 0 80px 20px rgba(0, 0, 0, 0.6),
+    inset 0 0 8px 2px rgba(0, 229, 255, 0.04),
+    0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .game-canvas-area canvas {
@@ -315,10 +322,27 @@
   height: 100%;
 }
 
-/* CRT overlay on game */
+/* CRT rounded vignette — dark curved edges like a CRT tube */
+.game-crt-vignette {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0.7) 95%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* CRT scanline overlay on game */
 .game-crt-overlay {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   background: repeating-linear-gradient(
     0deg,
     rgba(0, 0, 0, 0.04) 0px,
@@ -327,8 +351,26 @@
     transparent 3px
   );
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   animation: crtFlicker 4s ease-in-out infinite;
+}
+
+/* CRT screen reflection — subtle glossy highlight */
+.game-crt-reflection {
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  width: 35%;
+  height: 25%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 70%
+  );
+  transform: rotate(-15deg);
+  pointer-events: none;
+  z-index: 4;
 }
 
 /* Game over overlay */
