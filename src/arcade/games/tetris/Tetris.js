@@ -1,21 +1,18 @@
-// Tetris - Outrun CRT themed Tetris game rendered on HTML5 canvas
-// No imports - fully self-contained
+import { BG, CYAN, VIOLET, ORANGE, WHITE } from '../palette';
 
 const COLS = 10;
 const ROWS = 20;
 
-const BG_COLOR = '#0e0e1a';
 const GRID_COLOR = 'rgba(0, 229, 255, 0.06)';
-const FLASH_COLOR = '#e8e6f0';
 
 const PIECE_COLORS = {
-  I: '#00e5ff',
-  O: '#ff4500',
-  T: '#b829f5',
-  S: '#00e5ff',
-  Z: '#ff4500',
-  J: '#b829f5',
-  L: '#e8e6f0',
+  I: CYAN,
+  O: ORANGE,
+  T: VIOLET,
+  S: CYAN,
+  Z: ORANGE,
+  J: VIOLET,
+  L: WHITE,
 };
 
 // SRS tetromino shapes - each piece has 4 rotation states
@@ -406,24 +403,30 @@ export class Tetris {
     }
   }
 
+  _resetDAS() {
+    this.dasDirection = 0;
+    this.dasPhase = 'idle';
+    this.dasTimer = 0;
+  }
+
+  _startDAS(dir) {
+    this.dasDirection = dir;
+    this.dasPhase = 'initial';
+    this.dasTimer = 0;
+  }
+
   _updateDAS(dt) {
     const dir = this.keysHeld.left && !this.keysHeld.right ? -1
       : this.keysHeld.right && !this.keysHeld.left ? 1
       : 0;
 
     if (dir === 0) {
-      this.dasDirection = 0;
-      this.dasPhase = 'idle';
-      this.dasTimer = 0;
+      this._resetDAS();
       return;
     }
 
     if (dir !== this.dasDirection) {
-      // Direction changed, reset DAS
-      this.dasDirection = dir;
-      this.dasPhase = 'initial';
-      this.dasTimer = 0;
-      // Immediate move already happened in handleKeyDown
+      this._startDAS(dir);
       return;
     }
 
@@ -449,7 +452,7 @@ export class Tetris {
     const cs = this.cellSize;
 
     // Clear canvas
-    ctx.fillStyle = BG_COLOR;
+    ctx.fillStyle = BG;
     ctx.fillRect(0, 0, this.width, this.height);
 
     // Draw board background
@@ -538,7 +541,7 @@ export class Tetris {
       ctx.fillStyle = 'rgba(14, 14, 26, 0.75)';
       ctx.fillRect(this.boardX, this.boardY, boardW, boardH);
 
-      ctx.fillStyle = '#e8e6f0';
+      ctx.fillStyle = WHITE;
       ctx.font = `bold ${Math.max(14, cs * 1.2)}px "Space Grotesk", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -630,25 +633,21 @@ export class Tetris {
         if (!this.keysHeld.left) {
           this.keysHeld.left = true;
           this._moveHorizontal(-1);
-          this.dasDirection = -1;
-          this.dasPhase = 'initial';
-          this.dasTimer = 0;
+          this._startDAS(-1);
         }
         break;
       case 'ArrowRight':
         if (!this.keysHeld.right) {
           this.keysHeld.right = true;
           this._moveHorizontal(1);
-          this.dasDirection = 1;
-          this.dasPhase = 'initial';
-          this.dasTimer = 0;
+          this._startDAS(1);
         }
         break;
       case 'ArrowDown':
         this.softDrop = true;
         break;
       case 'ArrowUp':
-        this._rotate(1); // Clockwise
+        this._rotate(1);
         break;
       case ' ':
         this._hardDrop();
@@ -660,19 +659,11 @@ export class Tetris {
     switch (key) {
       case 'ArrowLeft':
         this.keysHeld.left = false;
-        if (this.dasDirection === -1) {
-          this.dasDirection = 0;
-          this.dasPhase = 'idle';
-          this.dasTimer = 0;
-        }
+        if (this.dasDirection === -1) this._resetDAS();
         break;
       case 'ArrowRight':
         this.keysHeld.right = false;
-        if (this.dasDirection === 1) {
-          this.dasDirection = 0;
-          this.dasPhase = 'idle';
-          this.dasTimer = 0;
-        }
+        if (this.dasDirection === 1) this._resetDAS();
         break;
       case 'ArrowDown':
         this.softDrop = false;
@@ -686,32 +677,20 @@ export class Tetris {
         if (active) {
           this.keysHeld.left = true;
           this._moveHorizontal(-1);
-          this.dasDirection = -1;
-          this.dasPhase = 'initial';
-          this.dasTimer = 0;
+          this._startDAS(-1);
         } else {
           this.keysHeld.left = false;
-          if (this.dasDirection === -1) {
-            this.dasDirection = 0;
-            this.dasPhase = 'idle';
-            this.dasTimer = 0;
-          }
+          if (this.dasDirection === -1) this._resetDAS();
         }
         break;
       case 'right':
         if (active) {
           this.keysHeld.right = true;
           this._moveHorizontal(1);
-          this.dasDirection = 1;
-          this.dasPhase = 'initial';
-          this.dasTimer = 0;
+          this._startDAS(1);
         } else {
           this.keysHeld.right = false;
-          if (this.dasDirection === 1) {
-            this.dasDirection = 0;
-            this.dasPhase = 'idle';
-            this.dasTimer = 0;
-          }
+          if (this.dasDirection === 1) this._resetDAS();
         }
         break;
       case 'down':
