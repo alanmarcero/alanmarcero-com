@@ -45,7 +45,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── BackToTop.test.jsx     # BackToTop tests
 │   │   ├── Footer.jsx             # Footer with nav links + dynamic year
 │   │   ├── Footer.test.jsx        # Footer tests
-│   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear
+│   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear, useRandomGlitch hook
 │   │   ├── Hero.test.jsx          # Hero tests
 │   │   ├── MusicItem.jsx          # YouTube playlist item display (card glow)
 │   │   ├── MusicItem.test.jsx     # MusicItem tests
@@ -98,7 +98,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 - `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
 - `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
-- `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button
+- `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal, Venmo) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
@@ -108,7 +108,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ## Design System
 
-**Theme:** Hard Outrun CRT — retro-futuristic design with cyan/violet/orange accents, CRT scanline overlays on background and buttons, CRT glitch on hero name, scanline sweep bar, frosted glass cards, gradient text, and neon glow effects. Dark mode only.
+**Theme:** Hard Outrun CRT — retro-futuristic design with cyan/violet/orange accents, CRT scanline overlays on background and buttons, randomized dual CRT glitch on hero name, scanline sweep bar (hero-only), frosted glass cards, gradient text, and neon glow effects. Dark mode only.
 
 **Fonts:** Inter 400/500/600 (body, buttons, tagline), Space Grotesk 500/700 (headings — techy geometric) via Google Fonts.
 
@@ -132,9 +132,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 **CRT Effects:**
 - `html, body` background-image — Phosphor dot grid (cyan horizontal + violet vertical micro-lines at low opacity) with edge vignette (radial-gradient darkening corners), `background-attachment: fixed`
 - `body::after` — Full-viewport scanlines (repeating-linear-gradient, 3px spacing, z-index 9999, pointer-events: none) with subtle flicker animation
-- `body::before` — Scanline sweep bar (120px bright bar sweeping top-to-bottom, 10s linear infinite, 2-3% opacity)
+- `.hero::after` — Scanline sweep bar confined to hero section (120px bright bar sweeping top-to-bottom within hero, 10s linear infinite, 2-3% opacity, clipped by hero's `overflow: hidden`)
 - `.btn-primary::after, .back-to-top::after` — Shared finer scanlines on button surfaces (2px spacing, consolidated CSS rule)
-- `.hero-name` — CRT glitch effect via `::before`/`::after` pseudo-elements with `content: attr(data-text)`, cyan/violet color channel split, `clip-path: polygon()` + transform offsets, fires ~500ms every 8s
+- `.hero-name` — Dual CRT glitch effects via `::before`/`::after` pseudo-elements with `content: attr(data-text)`, cyan/violet color channel split. JS-driven (`useRandomGlitch` hook in Hero.jsx): random interval (4-10s), randomly selects between effect 1 (standard: 500ms, 3-5px offsets) or effect 2 (intense: 700ms, 8-12px offsets + skewX + flicker gaps). Triggered by adding `.glitch-1`/`.glitch-2` CSS classes. Respects `prefers-reduced-motion`
 - `.hero-name` — Flowing gradient text animation (`background-size: 300%`, 6s ease-in-out infinite)
 - `@keyframes crtFlicker` — Gentle opacity oscillation on body scanlines
 - `@media (prefers-reduced-motion: reduce)` — Disables flicker and all animations
@@ -157,7 +157,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 **Key visual characteristics:**
 - **Centered stacked hero** on all viewports (flexbox column, centered text)
-- CRT phosphor grid on body background + edge vignette, scanlines across entire viewport (body::after), and on buttons (::after)
+- CRT phosphor grid on body background + edge vignette, scanlines across entire viewport (body::after), scanline sweep bar confined to hero section (.hero::after), and finer scanlines on buttons (::after)
 - Frosted glass cards with `backdrop-filter: blur(12px)` on semi-transparent backgrounds
 - Cards: 8px border-radius, cyan left-border glow on hover, mouse-follow radial glow (::before), neon box-shadow, flexbox column with download buttons bottom-center
 - YouTube embeds: 85% width, 180px height within cards
@@ -165,7 +165,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - Hero image: circular (50% radius, 260px desktop / 220px tablet / 180px mobile), cyan border with multi-layered neon glow
 - Hero content: max-width 900px, hero bio: max-width 820px
 - Hero backdrop: 20% opacity background image
-- Hero name: flowing gradient text (cyan→violet→cyan, 300% background-size) via `background-clip: text`, CRT glitch via ::before/::after pseudo-elements
+- Hero name: flowing gradient text (cyan→violet→cyan, 300% background-size) via `background-clip: text`, randomized dual CRT glitch via JS-driven `.glitch-1`/`.glitch-2` classes on ::before/::after pseudo-elements
 - Hero tagline: uppercase, letter-spacing 3px, Inter 600, cyan color
 - Pill-shaped search input with cyan focus ring
 - Cyan-tinted subtle borders (rgba cyan at 8% and 20%)
@@ -177,9 +177,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - Staggered card entry via `--card-index` CSS custom property (80ms delay per card)
 - `@keyframes shimmer` — Cyan gradient sweep for skeleton loading cards
 - `@keyframes crtFlicker` — Subtle opacity flicker on body scanlines
-- `@keyframes scanlineSweep` — Bright bar sweeping top-to-bottom across viewport (10s, 2-3% opacity)
+- `@keyframes scanlineSweep` — Bright bar sweeping top-to-bottom within hero section only (10s, 2-3% opacity)
 - `@keyframes heroGradientFlow` — Flowing cyan→violet gradient on hero name (6s ease-in-out infinite)
-- `@keyframes glitchTop / glitchBottom` — CRT glitch on hero name via pseudo-elements, fires ~500ms every 8s with clip-path + translate offsets
+- `@keyframes glitch1Top / glitch1Bottom` — Standard CRT glitch (500ms, 3-5px translates, clip-path slices)
+- `@keyframes glitch2Top / glitch2Bottom` — Intense CRT glitch (700ms, 8-12px translates, skewX distortion, flicker gaps)
 - `@keyframes gradientFlow` — Flowing cyan→violet gradient on all section title underlines (3s linear infinite)
 - Scroll-reveal fade-up for sections (IntersectionObserver, one-shot, 0.6s ease)
 - Mouse-follow radial glow on cards (CSS custom properties `--mouse-x`/`--mouse-y`)
@@ -198,9 +199,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 
 ```
 App
-├── Hero (searchQuery, onSearchChange) — Centered stacked layout (flexbox column)
+├── Hero (searchQuery, onSearchChange) — Centered stacked layout (flexbox column), scanline sweep bar (::after), useRandomGlitch hook
 │   ├── Profile image (circular 50%, 260px, cyan border glow)
-│   ├── Name (Space Grotesk 700, 3.5rem, flowing gradient text cyan→violet, CRT glitch via ::before/::after)
+│   ├── Name (Space Grotesk 700, 3.5rem, flowing gradient text cyan→violet, randomized dual CRT glitch via JS + ::before/::after)
 │   ├── Tagline (uppercase, 3px tracking, cyan)
 │   ├── Bio paragraph
 │   ├── YouTube CTA (gradient pill button with CRT overlay)
