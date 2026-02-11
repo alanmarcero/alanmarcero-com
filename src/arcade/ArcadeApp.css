@@ -58,7 +58,7 @@
 ---------------------------------------------------- */
 .game-picker {
   width: 100%;
-  max-width: 960px;
+  max-width: 1060px;
 }
 
 .picker-subtitle {
@@ -73,7 +73,7 @@
 
 .picker-grid {
   display: flex;
-  gap: 24px;
+  gap: 48px;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -194,17 +194,33 @@
   z-index: 4;
 }
 
-/* Text content on screen */
-.crt-monitor-content {
-  position: relative;
-  z-index: 1;
+/* Live demo canvas fills the screen */
+.crt-monitor-demo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+/* Title + INSERT COIN overlay on top of demo */
+.crt-monitor-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  gap: 16px;
+  gap: 12px;
+  background: rgba(2, 2, 8, 0.45);
+  opacity: 1;
+  transition: opacity var(--transition-base);
+}
+
+.crt-monitor:hover .crt-monitor-overlay {
+  opacity: 0;
 }
 
 .crt-monitor-title {
@@ -231,13 +247,6 @@
 @keyframes blinkCoin {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
-}
-
-.crt-monitor-desc {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin: 12px 0 0;
-  line-height: 1.4;
 }
 
 /* ----------------------------------------------------
@@ -565,6 +574,7 @@
   .picker-grid {
     flex-direction: column;
     align-items: center;
+    gap: 32px;
   }
 
   .crt-monitor {
