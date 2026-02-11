@@ -72,10 +72,10 @@
 }
 
 .picker-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 280px);
   gap: 48px;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 /* ----------------------------------------------------
@@ -572,9 +572,9 @@
   }
 
   .picker-grid {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
     gap: 32px;
+    justify-items: center;
   }
 
   .crt-monitor {
