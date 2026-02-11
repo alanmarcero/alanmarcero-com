@@ -92,14 +92,14 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 114 tests across 16 suites**
+**Total: 111 tests across 16 suites**
 
 ## Key Files
 
 - `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
 - `src/App.css` — Complete stylesheet: CSS custom properties, Outrun CRT palette, frosted glass cards, centered hero, CRT scanlines, neon glow effects, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, gradient CTA, pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
-- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub, PayPal, Venmo) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
+- `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
@@ -151,10 +151,6 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `.back-to-top` / `.back-to-top--visible` — Fixed gradient pill button with CRT overlay
 - `.no-results` — Centered empty state message for search
 - `.search-clear` — Clear button inside search input
-- `.paypal-button` — Orange accent button (`--accent-orange`)
-- `.venmo-button` — Blue accent button (`#008CFF`)
-- `.donate-buttons` — Flex row wrapper for donate buttons
-
 **Key visual characteristics:**
 - **Centered stacked hero** on all viewports (flexbox column, centered text)
 - CRT phosphor grid on body background + edge vignette, scanlines across entire viewport (body::after), scanline sweep bar confined to hero section (.hero::after), and finer scanlines on buttons (::after)
@@ -208,10 +204,6 @@ App
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
-├── Donate section (scroll-reveal, compact 1200px banner, left-aligned title, cyan/violet border glow)
-│   └── Donate buttons (.donate-buttons flex row)
-│       ├── PayPal button (.btn-primary, orange accent)
-│       └── Venmo button (.btn-primary, blue accent)
 ├── Patch Banks section (scroll-reveal, ref=storeRef)
 │   └── PatchBankItem[] (bank, style={--card-index}, onDownload, cardGlowHandlers)
 │       ├── Name, description
@@ -331,7 +323,7 @@ rm input.png
 
 - **Lambda Function URL lockdown:** CloudFront Origin Access Control (OAC) with IAM auth. The Lambda Function URL auth type is `AWS_IAM` — direct access returns 403. Only CloudFront can invoke it via SigV4-signed requests, scoped to the specific distribution. Setup workflow: `infrastructure/cloudfront-add-oac.yml`
 - **Lambda error responses:** Generic `{ error: "YouTube Fetch Failed" }` — no internal error messages leaked
-- **External links:** PayPal donate link uses `target="_blank" rel="noopener noreferrer"`
+- **External links:** All external links use `target="_blank" rel="noopener noreferrer"`
 - **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups allow-presentation`
 - **Environment files:** `.env*` in `.gitignore`
 - **SEO:** Meta description, canonical URL, theme-color meta tag

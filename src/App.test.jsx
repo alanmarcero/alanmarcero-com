@@ -3,7 +3,7 @@
  */
 import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
 import App from "./App";
-import { LAMBDA_URL, PAYPAL_DONATE_URL, VENMO_DONATE_URL, TOAST_DISMISS_MS } from "./config";
+import { LAMBDA_URL, TOAST_DISMISS_MS } from "./config";
 
 global.fetch = jest.fn();
 
@@ -117,25 +117,6 @@ describe("App", () => {
     });
   });
 
-  it("renders Donate section with PayPal link", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    expect(screen.getByText("Support My Work")).toBeInTheDocument();
-    const paypalLink = screen.getByText("Donate via PayPal");
-    expect(paypalLink).toHaveAttribute("href", PAYPAL_DONATE_URL);
-  });
-
-  it("renders Donate section with Venmo link", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    const venmoLink = screen.getByText("Donate via Venmo");
-    expect(venmoLink).toHaveAttribute("href", VENMO_DONATE_URL);
-    expect(venmoLink).toHaveAttribute("target", "_blank");
-    expect(venmoLink).toHaveAttribute("rel", "noopener noreferrer");
-  });
-
   it("fetches from LAMBDA_URL on mount", () => {
     mockFetchSuccess();
     render(<App />);
@@ -202,15 +183,6 @@ describe("App", () => {
       expect(screen.getByText("Track A")).toBeInTheDocument();
       expect(screen.getByText("Test Synth")).toBeInTheDocument();
     });
-  });
-
-  it("PayPal link opens in new tab with security attributes", () => {
-    mockFetchSuccess();
-    render(<App />);
-
-    const paypalLink = screen.getByText("Donate via PayPal");
-    expect(paypalLink).toHaveAttribute("target", "_blank");
-    expect(paypalLink).toHaveAttribute("rel", "noopener noreferrer");
   });
 
   it("renders multiple music items", async () => {
@@ -321,7 +293,7 @@ describe("App", () => {
     const { container } = render(<App />);
 
     const sections = container.querySelectorAll(".scroll-reveal");
-    expect(sections.length).toBe(3);
+    expect(sections.length).toBe(2);
   });
 
   it("sections gain scroll-reveal--visible when intersected", () => {
