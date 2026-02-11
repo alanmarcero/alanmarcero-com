@@ -1,98 +1,4 @@
-/* ----------------------------------------------------
-   CSS CUSTOM PROPERTIES — Outrun CRT Theme
----------------------------------------------------- */
-:root {
-  /* Backgrounds */
-  --bg-body: #0e0e1a;
-  --bg-surface: rgba(16, 16, 32, 0.85);
-  --bg-surface-hover: rgba(20, 20, 40, 0.9);
-  --bg-footer: #06060e;
-
-  /* Accent Colors */
-  --accent-cyan: #00e5ff;
-  --accent-magenta: #b829f5;
-  --accent-orange: #ff4500;
-
-  /* Gradients */
-  --gradient-accent: linear-gradient(135deg, #00e5ff, #b829f5);
-  --gradient-hero-text: linear-gradient(135deg, #00e5ff, #b829f5);
-
-  /* Text */
-  --text-primary: #e8e6f0;
-  --text-secondary: #8888aa;
-  --text-muted: #4a4a66;
-
-  /* Borders */
-  --border-subtle: rgba(0, 229, 255, 0.08);
-  --border-medium: rgba(0, 229, 255, 0.2);
-
-  /* Shadows & Glows */
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 8px 32px rgba(0, 229, 255, 0.1), 0 0 16px rgba(0, 229, 255, 0.05);
-  --glow-cyan: 0 0 12px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 229, 255, 0.1);
-  --glow-magenta: 0 0 12px rgba(184, 41, 245, 0.3), 0 0 40px rgba(184, 41, 245, 0.1);
-  --focus-ring: 0 0 0 3px rgba(0, 229, 255, 0.25);
-  --error-color: #ef4444;
-
-  /* CRT */
-  --crt-line-opacity: 0.03;
-  --crt-line-spacing: 3px;
-  --crt-btn-line-spacing: 2px;
-
-  /* Shared */
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --radius-card: 8px;
-  --radius-btn: 50px;
-  --backdrop-blur: blur(12px);
-}
-
-/* ----------------------------------------------------
-   CRT BACKGROUND — phosphor dot pattern + vignette
----------------------------------------------------- */
-html, body {
-  background-image:
-    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.45) 100%),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(0, 229, 255, 0.012) 2px,
-      rgba(0, 229, 255, 0.012) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(184, 41, 245, 0.008) 2px,
-      rgba(184, 41, 245, 0.008) 4px
-    );
-  background-attachment: fixed;
-}
-
-/* ----------------------------------------------------
-   CRT SCANLINE OVERLAY — full viewport
----------------------------------------------------- */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, var(--crt-line-opacity)) 0px,
-    rgba(0, 0, 0, var(--crt-line-opacity)) 1px,
-    transparent 1px,
-    transparent var(--crt-line-spacing)
-  );
-  pointer-events: none;
-  z-index: 9999;
-  animation: crtFlicker 4s ease-in-out infinite;
-}
-
-@keyframes crtFlicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
-}
+@import './shared/theme.css';
 
 /* CRT SCANLINE SWEEP — slow bright bar across hero section */
 .hero::after {
@@ -117,78 +23,6 @@ body::after {
 @keyframes scanlineSweep {
   0% { top: -120px; }
   100% { top: 100%; }
-}
-
-/* ----------------------------------------------------
-   GENERAL STYLES
----------------------------------------------------- */
-html {
-  scroll-behavior: smooth;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg-body);
-  color: var(--text-primary);
-  line-height: 1.6;
-}
-
-h1, h2, h3, h4 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-/* ----------------------------------------------------
-   SHARED BUTTON — pill shape, gradient, CRT overlay
----------------------------------------------------- */
-.btn-primary {
-  position: relative;
-  display: inline-block;
-  background: var(--gradient-accent);
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  text-decoration: none;
-  border-radius: var(--radius-btn);
-  overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-}
-
-.btn-primary::after,
-.back-to-top::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.06) 0px,
-    rgba(0, 0, 0, 0.06) 1px,
-    transparent 1px,
-    transparent var(--crt-btn-line-spacing)
-  );
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), 0 0 40px rgba(184, 41, 245, 0.15);
-}
-
-.btn-primary:active {
-  transform: scale(0.96);
-}
-
-.btn-primary:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--accent-cyan);
-  outline-offset: 2px;
-  box-shadow: var(--focus-ring);
 }
 
 /* ----------------------------------------------------
@@ -323,9 +157,42 @@ a:focus-visible {
   margin: 0;
 }
 
+.hero-cta-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
 .hero-cta {
   padding: 12px 28px;
-  margin-bottom: 8px;
+}
+
+.hero-cta--secondary {
+  position: relative;
+  display: inline-block;
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--accent-cyan);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 2px solid var(--accent-cyan);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base);
+}
+
+.hero-cta--secondary:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), 0 0 40px rgba(0, 229, 255, 0.08);
+}
+
+.hero-cta--secondary:active {
+  transform: scale(0.96);
 }
 
 .hero-search {
@@ -850,26 +717,5 @@ footer {
     width: 38px;
     height: 38px;
     font-size: 1rem;
-  }
-}
-
-/* ----------------------------------------------------
-   REDUCED MOTION
----------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  body::after {
-    animation: none;
-    opacity: 1;
   }
 }
