@@ -1,6 +1,42 @@
+import { useEffect, useRef } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
 
+const GLITCH_EFFECTS = [
+  { className: 'glitch-1', duration: 500 },
+  { className: 'glitch-2', duration: 700 },
+];
+
+function useRandomGlitch(ref) {
+  useEffect(() => {
+    if (typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let delayTimer;
+    let durationTimer;
+
+    const schedule = () => {
+      const delay = (Math.random() * 6 + 4) * 1000;
+      delayTimer = setTimeout(() => {
+        const effect = GLITCH_EFFECTS[Math.floor(Math.random() * GLITCH_EFFECTS.length)];
+        const el = ref.current;
+        if (!el) return;
+        el.classList.add(effect.className);
+        durationTimer = setTimeout(() => {
+          el.classList.remove(effect.className);
+          schedule();
+        }, effect.duration);
+      }, delay);
+    };
+
+    schedule();
+    return () => { clearTimeout(delayTimer); clearTimeout(durationTimer); };
+  }, [ref]);
+}
+
 function Hero({ searchQuery, onSearchChange }) {
+  const nameRef = useRef(null);
+  useRandomGlitch(nameRef);
+
   return (
     <section className="hero">
       <div className="hero-backdrop" />
@@ -10,7 +46,7 @@ function Hero({ searchQuery, onSearchChange }) {
           alt="Alan Marcero"
           className="hero-image"
         />
-        <h1 className="hero-name" data-text="Alan Marcero" aria-label="Alan Marcero">Alan Marcero</h1>
+        <h1 ref={nameRef} className="hero-name" data-text="Alan Marcero" aria-label="Alan Marcero">Alan Marcero</h1>
         <p className="hero-tagline">Synthesizer Sound Designer & Producer</p>
         <div className="hero-bio">
           <p>
