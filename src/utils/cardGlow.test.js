@@ -30,6 +30,7 @@ describe("cardGlowHandlers", () => {
   });
 
   it("handler references are stable across imports", () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { cardGlowHandlers: handlers2 } = require("./cardGlow");
     expect(cardGlowHandlers.onMouseMove).toBe(handlers2.onMouseMove);
     expect(cardGlowHandlers.onMouseLeave).toBe(handlers2.onMouseLeave);

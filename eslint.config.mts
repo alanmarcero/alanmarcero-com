@@ -7,16 +7,39 @@ export default defineConfig([
   {
     ignores: [
       "jest.config.js",
-      "node_modules"
+      "node_modules",
+      "dist",
     ],
   },
   {
-    files: ["**/*.{js,ts}"],
+    files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: { js },
     extends: ["js/recommended"],
     languageOptions: {
-      globals: globals.node
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    rules: {
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    },
+  },
+  {
+    files: ["**/*.test.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
     },
   },
   ...tseslint.configs.recommended,
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    },
+  },
 ]);

@@ -122,7 +122,10 @@ describe("App", () => {
     render(<App />);
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(LAMBDA_URL);
+    expect(global.fetch).toHaveBeenCalledWith(
+      LAMBDA_URL,
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
   });
 
   it("hides skeleton cards after successful fetch", async () => {

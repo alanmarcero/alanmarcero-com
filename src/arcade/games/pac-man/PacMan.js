@@ -760,7 +760,7 @@ export class PacMan {
     }
   }
 
-  _randomTarget(g) {
+  _randomTarget(_g) {
     // Frightened mode: pick random direction at intersections
     // We encode this as a random target far away
     return {
