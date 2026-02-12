@@ -309,8 +309,6 @@ describe('Tetris', () => {
 
   describe('Rotation', () => {
     test('rotation changes currentRotation', () => {
-      const pieceType = game.currentType;
-
       game._rotate(1);
 
       expect(game.currentRotation).toBe(1);

@@ -3,7 +3,6 @@
  */
 import { renderHook, act } from "@testing-library/react";
 import { render } from "@testing-library/react";
-import { useRef, useEffect } from "react";
 import useScrollReveal from "./useScrollReveal";
 
 let observers;

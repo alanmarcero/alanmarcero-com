@@ -45,6 +45,8 @@ function Hero({ searchQuery, onSearchChange }) {
           src="/about-me.webp"
           alt="Alan Marcero"
           className="hero-image"
+          loading="eager"
+          fetchPriority="high"
         />
         <h1 ref={nameRef} className="hero-name" data-text="Alan Marcero" aria-label="Alan Marcero">Alan Marcero</h1>
         <p className="hero-tagline">Synthesizer Sound Designer & Producer</p>

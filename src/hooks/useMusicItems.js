@@ -7,7 +7,9 @@ function useMusicItems() {
   const [musicError, setMusicError] = useState(null);
 
   useEffect(() => {
-    fetch(LAMBDA_URL)
+    const controller = new AbortController();
+
+    fetch(LAMBDA_URL, { signal: controller.signal })
       .then(response => {
         if (!response.ok) throw new Error(`Failed to load music: ${response.status}`);
         return response.json();
@@ -16,11 +18,14 @@ function useMusicItems() {
         setMusicItems(musicResponse.items ?? []);
       })
       .catch(error => {
+        if (error.name === 'AbortError') return;
         setMusicError(error.message);
       })
       .finally(() => {
-        setMusicLoading(false);
+        if (!controller.signal.aborted) setMusicLoading(false);
       });
+
+    return () => controller.abort();
   }, []);
 
   return { musicItems, musicLoading, musicError };

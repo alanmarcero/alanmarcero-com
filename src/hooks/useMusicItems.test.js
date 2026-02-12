@@ -75,7 +75,8 @@ describe("useMusicItems", () => {
     renderHook(() => useMusicItems());
 
     expect(global.fetch).toHaveBeenCalledWith(
-      "/api"
+      "/api",
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
     );
   });
 });
