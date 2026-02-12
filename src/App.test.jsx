@@ -118,7 +118,7 @@ describe("App", () => {
   });
 
   it("fetches from LAMBDA_URL on mount", () => {
-    mockFetchSuccess();
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
     render(<App />);
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -292,7 +292,7 @@ describe("App", () => {
   });
 
   it("sections start with scroll-reveal class", () => {
-    mockFetchSuccess();
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
     const { container } = render(<App />);
 
     const sections = container.querySelectorAll(".scroll-reveal");
@@ -300,7 +300,7 @@ describe("App", () => {
   });
 
   it("sections gain scroll-reveal--visible when intersected", () => {
-    mockFetchSuccess();
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
     const { container } = render(<App />);
 
     act(() => {
@@ -311,8 +311,8 @@ describe("App", () => {
     expect(visibleSections.length).toBeGreaterThan(0);
   });
 
-  it("shows toast when download button is clicked", async () => {
-    mockFetchSuccess();
+  it("shows toast when download button is clicked", () => {
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
     render(<App />);
 
     const downloadBtn = screen.getByText("Download");
