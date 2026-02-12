@@ -90,14 +90,39 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │       │   ├── GameCanvas.jsx    # Full-screen game wrapper: canvas, CRT overlay, HUD, game-over, TouchControls
 │       │   └── TouchControls.jsx # Mobile d-pad + action buttons (pointer: coarse only)
 │       └── games/
-│           ├── gameRegistry.js   # Game metadata + factory functions for all 3 games
+│           ├── gameRegistry.js   # Game metadata + factory functions for all 10 games
 │           ├── useGameLoop.js    # Shared requestAnimationFrame hook with delta-time clamping
+│           ├── palette.js        # Shared CRT palette constants (CYAN, VIOLET, ORANGE, BG, WHITE, MUTED)
 │           ├── space-invaders/
-│           │   └── SpaceInvaders.js  # Canvas game: player ship, alien grid, shields, bullets
+│           │   ├── SpaceInvaders.js      # Canvas game: player ship, alien grid, shields, bullets
+│           │   └── SpaceInvaders.test.js
 │           ├── asteroids/
-│           │   └── Asteroids.js      # Canvas game: vector-style ship, asteroid polygons, wrap-around
-│           └── tetris/
-│               └── Tetris.js         # Canvas game: 10x20 grid, 7 tetrominoes, ghost piece, line-clear
+│           │   ├── Asteroids.js          # Canvas game: vector-style ship, asteroid polygons, wrap-around
+│           │   └── Asteroids.test.js
+│           ├── tetris/
+│           │   ├── Tetris.js             # Canvas game: 10x20 grid, 7 tetrominoes, ghost piece, line-clear
+│           │   └── Tetris.test.js
+│           ├── pac-man/
+│           │   ├── PacMan.js             # Canvas game: maze, dots, power pellets, 4 ghosts with AI
+│           │   └── PacMan.test.js
+│           ├── breakout/
+│           │   ├── Breakout.js           # Canvas game: paddle, ball, 6x10 brick grid, angle deflection
+│           │   └── Breakout.test.js
+│           ├── frogger/
+│           │   ├── Frogger.js            # Canvas game: grid movement, road/river lanes, logs, 5 goals
+│           │   └── Frogger.test.js
+│           ├── snake/
+│           │   ├── Snake.js              # Canvas game: grid movement, food, speed increase, wall/self collision
+│           │   └── Snake.test.js
+│           ├── pong/
+│           │   ├── Pong.js               # Canvas game: player vs AI, paddle angle, serve timer
+│           │   └── Pong.test.js
+│           ├── rhythm/
+│           │   ├── RhythmCatcher.js      # Canvas game: 4 lanes, falling notes, timing, combo system
+│           │   └── RhythmCatcher.test.js
+│           └── centipede/
+│               ├── Centipede.js          # Canvas game: mushroom field, centipede chain, spider, splitting
+│               └── Centipede.test.js
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
 │   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
@@ -114,7 +139,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 111 tests across 16 suites**
+**Total: 558 tests across 26 suites**
 
 ## Key Files
 
@@ -123,7 +148,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/App.css` — Main page stylesheet (imports shared theme): hero, cards, CRT scanline sweep, glitch keyframes, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, CTA row (YouTube + Arcade links), pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
 - `src/arcade/ArcadeApp.jsx` — Arcade page root: toggles between game picker and active game canvas
-- `src/arcade/games/gameRegistry.js` — Game metadata array (id, name, description, accent color, controls, factory function) for Space Invaders, Asteroids, Tetris
+- `src/arcade/games/gameRegistry.js` — Game metadata array (id, name, description, accent color, controls, factory function) for all 10 arcade games
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
@@ -266,7 +291,7 @@ ArcadeApp
 │       └── Game-over overlay (score, Play Again, Back to Arcade)
 ```
 
-**Game Class Interface** (plain JS, no React — used by all 3 games):
+**Game Class Interface** (plain JS, no React — used by all 10 games):
 - `init(w, h)` / `resize(w, h)` — Set up game state for canvas dimensions
 - `update(dt)` / `render(ctx)` — Game loop (dt in seconds, ctx is CanvasRenderingContext2D)
 - `handleKeyDown(key)` / `handleKeyUp(key)` — Keyboard input
@@ -279,7 +304,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (111 tests, 16 suites)
+npm test                       # Jest (558 tests, 26 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -362,10 +387,17 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 
 **Architecture:** Separate `arcade.html` entry + `src/arcade/main.jsx` React root. Zero impact on main page bundle size. Vite handles shared vendor chunks (React) automatically via `build.rollupOptions.input` in `vite.config.js`.
 
-**Games** (canvas-based, Outrun CRT palette only):
+**Games** (10 canvas-based games, Outrun CRT palette only):
 - **Space Invaders** — Cyan player ship, alien grid (cyan/violet/orange by row), destructible shields, levels increase alien speed
 - **Asteroids** — Vector-style outlines (violet ship, cyan asteroid polygons, orange thrust), wrap-around edges, asteroids split on hit
 - **Tetris** — 10x20 grid, 7 tetrominoes in palette colors, ghost piece, next-piece preview, line-clear flash, DAS key repeat
+- **Pac-Man** — Maze with dots, power pellets, 4 ghosts with scatter/chase/frightened AI modes
+- **Breakout** — Paddle + ball, 6x10 brick grid with row colors/scores, angle-based paddle deflection, 3 lives
+- **Frogger** — Grid-based movement, road (vehicles) and river (logs) lanes, 5 goal slots, forward progress scoring
+- **Snake** — Grid-based timer movement, food spawning, speed increase per food, wall/self collision, 1 life
+- **Pong** — Player vs AI paddle, angle-based bounce, AI with reaction delay/imprecision, serve timer
+- **Rhythm Catcher** — 4 lanes (arrow keys), falling notes, perfect/good timing windows, combo multiplier, pattern generation
+- **Centipede** — Player in bottom zone, 10-segment centipede chain, mushroom field, spider enemy, segment splitting on hit
 
 **Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
 
