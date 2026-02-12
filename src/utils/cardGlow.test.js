@@ -3,8 +3,34 @@
  */
 import { cardGlowHandlers } from "./cardGlow";
 
+let rafCallbacks = [];
+let rafId = 1;
+
+beforeEach(() => {
+  rafCallbacks = [];
+  rafId = 1;
+  jest.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+    const id = rafId++;
+    rafCallbacks.push({ id, cb });
+    return id;
+  });
+  jest.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => {
+    rafCallbacks = rafCallbacks.filter((entry) => entry.id !== id);
+  });
+});
+
+afterEach(() => {
+  window.requestAnimationFrame.mockRestore();
+  window.cancelAnimationFrame.mockRestore();
+});
+
+function flushRAF() {
+  const cbs = rafCallbacks.splice(0);
+  cbs.forEach((entry) => entry.cb(performance.now()));
+}
+
 describe("cardGlowHandlers", () => {
-  it("sets --mouse-x and --mouse-y on mousemove", () => {
+  it("sets --mouse-x and --mouse-y on mousemove after RAF", () => {
     const el = document.createElement("div");
     el.getBoundingClientRect = () => ({ left: 10, top: 20 });
 
@@ -14,8 +40,23 @@ describe("cardGlowHandlers", () => {
       currentTarget: el,
     });
 
+    expect(el.style.getPropertyValue("--mouse-x")).toBe("");
+    flushRAF();
     expect(el.style.getPropertyValue("--mouse-x")).toBe("100px");
     expect(el.style.getPropertyValue("--mouse-y")).toBe("50px");
+  });
+
+  it("cancels pending RAF on subsequent mousemove", () => {
+    const el = document.createElement("div");
+    el.getBoundingClientRect = () => ({ left: 0, top: 0 });
+
+    cardGlowHandlers.onMouseMove({ clientX: 10, clientY: 10, currentTarget: el });
+    cardGlowHandlers.onMouseMove({ clientX: 20, clientY: 20, currentTarget: el });
+
+    expect(window.cancelAnimationFrame).toHaveBeenCalled();
+    flushRAF();
+    expect(el.style.getPropertyValue("--mouse-x")).toBe("20px");
+    expect(el.style.getPropertyValue("--mouse-y")).toBe("20px");
   });
 
   it("removes --mouse-x and --mouse-y on mouseleave", () => {
@@ -25,6 +66,18 @@ describe("cardGlowHandlers", () => {
 
     cardGlowHandlers.onMouseLeave({ currentTarget: el });
 
+    expect(el.style.getPropertyValue("--mouse-x")).toBe("");
+    expect(el.style.getPropertyValue("--mouse-y")).toBe("");
+  });
+
+  it("cancels pending RAF on mouseleave", () => {
+    const el = document.createElement("div");
+    el.getBoundingClientRect = () => ({ left: 0, top: 0 });
+
+    cardGlowHandlers.onMouseMove({ clientX: 50, clientY: 50, currentTarget: el });
+    cardGlowHandlers.onMouseLeave({ currentTarget: el });
+
+    flushRAF();
     expect(el.style.getPropertyValue("--mouse-x")).toBe("");
     expect(el.style.getPropertyValue("--mouse-y")).toBe("");
   });

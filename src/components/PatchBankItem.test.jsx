@@ -76,6 +76,7 @@ describe("PatchBankItem", () => {
   });
 
   it("has mouse event handlers for card glow", () => {
+    jest.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => { cb(0); return 1; });
     const { container } = render(<PatchBankItem bank={mockBank} />);
 
     const card = container.querySelector(".store-item");
@@ -87,5 +88,6 @@ describe("PatchBankItem", () => {
 
     fireEvent.mouseLeave(card);
     expect(card.style.getPropertyValue("--mouse-x")).toBe("");
+    window.requestAnimationFrame.mockRestore();
   });
 });
