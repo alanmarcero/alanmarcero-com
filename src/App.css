@@ -357,6 +357,8 @@ iframe {
   display: block;
   border: none;
   border-radius: 6px;
+  position: relative;
+  z-index: 10000;
 }
 
 /* Card Action Buttons */
