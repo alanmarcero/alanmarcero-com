@@ -80,10 +80,10 @@ export class Frogger {
 
     // Road lanes (rows 7-10): vehicles
     const roadConfigs = [
-      { speed: 50 * speedMul, dir: -1, objW: 40, gap: 120 },
-      { speed: 70 * speedMul, dir: 1, objW: 60, gap: 140 },
-      { speed: 45 * speedMul, dir: -1, objW: 35, gap: 100 },
-      { speed: 65 * speedMul, dir: 1, objW: 50, gap: 130 },
+      { speed: 50 * speedMul, dir: -1, objW: 40, gap: 240 },
+      { speed: 70 * speedMul, dir: 1, objW: 60, gap: 280 },
+      { speed: 45 * speedMul, dir: -1, objW: 35, gap: 200 },
+      { speed: 65 * speedMul, dir: 1, objW: 50, gap: 260 },
     ];
 
     for (let r = 0; r < ROWS; r++) {
