@@ -7,7 +7,7 @@ function YouTubeEmbed({ videoId, title = "YouTube video", width = "100%", height
       height={height}
       allowFullScreen
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation"
     />
   );
 }
