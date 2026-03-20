@@ -272,12 +272,12 @@ export class RhythmCatcher {
       if (effect.type === 'perfect') {
         ctx.shadowColor = CYAN;
         ctx.shadowBlur = 8;
-        ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+        ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
         ctx.fillText('PERFECT', effect.x, effect.y - 10 - (1 - alpha) * 20);
       } else if (effect.type === 'good') {
         ctx.shadowColor = VIOLET;
         ctx.shadowBlur = 6;
-        ctx.fillStyle = `rgba(184, 41, 245, ${alpha})`;
+        ctx.fillStyle = `rgba(200, 64, 255, ${alpha})`;
         ctx.fillText('GOOD', effect.x, effect.y - 10 - (1 - alpha) * 20);
       } else {
         ctx.fillStyle = `rgba(255, 69, 0, ${alpha})`;

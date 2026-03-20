@@ -272,7 +272,7 @@ export class Frogger {
         ctx.fillStyle = 'rgba(40, 40, 60, 0.5)';
         ctx.fillRect(0, y, GAME_W, CELL);
       } else if (type === 'safe' || type === 'start') {
-        ctx.fillStyle = 'rgba(0, 229, 255, 0.05)';
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.05)';
         ctx.fillRect(0, y, GAME_W, CELL);
       }
     }
@@ -287,7 +287,7 @@ export class Frogger {
         ctx.shadowBlur = 6;
         ctx.fillStyle = CYAN;
       } else {
-        ctx.fillStyle = 'rgba(0, 229, 255, 0.2)';
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.2)';
       }
       ctx.fillRect(gx, 0, CELL * 2, CELL);
       ctx.restore();

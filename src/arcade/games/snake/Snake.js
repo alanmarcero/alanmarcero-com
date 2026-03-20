@@ -141,7 +141,7 @@ export class Snake {
   }
 
   _renderGrid(ctx) {
-    ctx.strokeStyle = 'rgba(0, 229, 255, 0.05)';
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
     ctx.lineWidth = 0.5;
     for (let x = 0; x <= COLS; x++) {
       ctx.beginPath();
@@ -190,7 +190,7 @@ export class Snake {
         ctx.shadowBlur = 4;
         // Gradient from violet (head end) to dark (tail)
         const alpha = 0.4 + 0.6 * (1 - t);
-        ctx.fillStyle = `rgba(184, 41, 245, ${alpha})`;
+        ctx.fillStyle = `rgba(200, 64, 255, ${alpha})`;
       }
 
       const pad = 1;
