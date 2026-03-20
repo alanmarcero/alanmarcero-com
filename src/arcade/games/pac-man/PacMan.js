@@ -270,10 +270,10 @@ export class PacMan {
 
   handleKeyDown(key) {
     this._demoMode = false;
-    if (key === 'ArrowLeft') this._keys.left = true;
-    if (key === 'ArrowRight') this._keys.right = true;
-    if (key === 'ArrowUp') this._keys.up = true;
-    if (key === 'ArrowDown') this._keys.down = true;
+    if (key === 'ArrowLeft') { this._keys.left = true; this._nextDir = DIR.LEFT; }
+    if (key === 'ArrowRight') { this._keys.right = true; this._nextDir = DIR.RIGHT; }
+    if (key === 'ArrowUp') { this._keys.up = true; this._nextDir = DIR.UP; }
+    if (key === 'ArrowDown') { this._keys.down = true; this._nextDir = DIR.DOWN; }
   }
 
   handleKeyUp(key) {
@@ -285,10 +285,10 @@ export class PacMan {
 
   handleTouchAction(action, active) {
     this._demoMode = false;
-    if (action === 'left') this._keys.left = active;
-    if (action === 'right') this._keys.right = active;
-    if (action === 'up') this._keys.up = active;
-    if (action === 'down') this._keys.down = active;
+    if (action === 'left') { this._keys.left = active; if (active) this._nextDir = DIR.LEFT; }
+    if (action === 'right') { this._keys.right = active; if (active) this._nextDir = DIR.RIGHT; }
+    if (action === 'up') { this._keys.up = active; if (active) this._nextDir = DIR.UP; }
+    if (action === 'down') { this._keys.down = active; if (active) this._nextDir = DIR.DOWN; }
   }
 
   destroy() {
@@ -387,12 +387,7 @@ export class PacMan {
   _updateInput() {
     if (this._demoMode) {
       this._demoAI();
-      return;
     }
-    if (this._keys.left) this._nextDir = DIR.LEFT;
-    else if (this._keys.right) this._nextDir = DIR.RIGHT;
-    else if (this._keys.up) this._nextDir = DIR.UP;
-    else if (this._keys.down) this._nextDir = DIR.DOWN;
   }
 
   // -----------------------------------------------------------------------
@@ -468,9 +463,13 @@ export class PacMan {
       const nc = tileX + this._nextDir.x;
       const nr = tileY + this._nextDir.y;
       if (isWalkable(nc, nr)) {
+        // Only snap to center when actually changing direction to avoid
+        // oscillation (snap + move each frame = zero net progress)
+        if (this._nextDir !== this._currentDir) {
+          p.x = centerX;
+          p.y = centerY;
+        }
         this._currentDir = this._nextDir;
-        p.x = centerX;
-        p.y = centerY;
       }
     }
 
@@ -680,8 +679,6 @@ export class PacMan {
     const threshold = speed * dt + 1;
 
     if (Math.abs(g.x - centerX) < threshold && Math.abs(g.y - centerY) < threshold) {
-      g.x = centerX;
-      g.y = centerY;
       g.col = col;
       g.row = row;
 
@@ -707,6 +704,13 @@ export class PacMan {
       // If no direction found (dead end), reverse
       if (bestDist === Infinity) {
         bestDir = rev;
+      }
+
+      // Only snap to center when changing direction to avoid
+      // oscillation (snap + move each frame = zero net progress)
+      if (bestDir !== g.dir) {
+        g.x = centerX;
+        g.y = centerY;
       }
 
       g.dir = bestDir;
