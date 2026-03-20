@@ -3,7 +3,7 @@ import { BG, CYAN, VIOLET, ORANGE, WHITE } from '../palette';
 const COLS = 10;
 const ROWS = 20;
 
-const GRID_COLOR = 'rgba(0, 229, 255, 0.06)';
+const GRID_COLOR = 'rgba(0, 240, 255, 0.06)';
 
 const PIECE_COLORS = {
   I: CYAN,
@@ -480,7 +480,7 @@ export class Tetris {
     }
 
     // Draw board border
-    ctx.strokeStyle = 'rgba(0, 229, 255, 0.15)';
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
     ctx.lineWidth = 2;
     ctx.strokeRect(this.boardX, this.boardY, boardW, boardH);
 
@@ -591,12 +591,12 @@ export class Tetris {
     ctx.fillRect(boxX, boxY, boxW, boxH);
 
     // Preview box border
-    ctx.strokeStyle = 'rgba(0, 229, 255, 0.15)';
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
     ctx.lineWidth = 1.5;
     ctx.strokeRect(boxX, boxY, boxW, boxH);
 
     // "NEXT" label
-    ctx.fillStyle = 'rgba(0, 229, 255, 0.5)';
+    ctx.fillStyle = 'rgba(0, 240, 255, 0.5)';
     ctx.font = `bold ${Math.max(9, previewCellSize * 0.55)}px "Space Grotesk", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
