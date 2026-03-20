@@ -149,7 +149,7 @@ describe('Tetris', () => {
   describe('Line clearing', () => {
     test('clears full line and increases score', () => {
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       const initialScore = game.score;
@@ -165,7 +165,7 @@ describe('Tetris', () => {
 
     test('sets clearingLines when full row detected', () => {
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       game.handleKeyDown(' ');
@@ -177,7 +177,7 @@ describe('Tetris', () => {
     test('multiple lines cleared at once increase score more', () => {
       for (let r = 18; r < 20; r++) {
         for (let c = 0; c < 10; c++) {
-          game.board[r][c] = '#00e5ff';
+          game.board[r][c] = '#00f0ff';
         }
       }
 
@@ -196,7 +196,7 @@ describe('Tetris', () => {
       game.linesCleared = 9;
 
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       game.handleKeyDown(' ');
@@ -215,7 +215,7 @@ describe('Tetris', () => {
       game.linesCleared = 25;
 
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       game.handleKeyDown(' ');
@@ -279,7 +279,7 @@ describe('Tetris', () => {
     test('game over when board is full at spawn', () => {
       for (let r = 0; r < 4; r++) {
         for (let c = 0; c < 10; c++) {
-          game.board[r][c] = '#00e5ff';
+          game.board[r][c] = '#00f0ff';
         }
       }
 
@@ -391,7 +391,7 @@ describe('Tetris', () => {
     });
 
     test('_isValid returns false when colliding with locked piece', () => {
-      game.board[10][5] = '#00e5ff';
+      game.board[10][5] = '#00f0ff';
       const cells = [[0, 0]];
       const result = game._isValid(cells, 5, 10);
       expect(result).toBe(false);
@@ -554,7 +554,7 @@ describe('Tetris', () => {
     test('single line clear awards correct score', () => {
       game.level = 1;
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       game.handleKeyDown(' ');
@@ -567,7 +567,7 @@ describe('Tetris', () => {
     test('line clear score scales with level', () => {
       game.level = 3;
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       game.handleKeyDown(' ');
@@ -583,7 +583,7 @@ describe('Tetris', () => {
       const initialLines = game.linesCleared;
 
       for (let c = 0; c < 10; c++) {
-        game.board[19][c] = '#00e5ff';
+        game.board[19][c] = '#00f0ff';
       }
 
       game.handleKeyDown(' ');
@@ -598,7 +598,7 @@ describe('Tetris', () => {
 
       for (let r = 18; r < 20; r++) {
         for (let c = 0; c < 10; c++) {
-          game.board[r][c] = '#00e5ff';
+          game.board[r][c] = '#00f0ff';
         }
       }
 

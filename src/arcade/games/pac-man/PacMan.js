@@ -255,7 +255,7 @@ export class PacMan {
     // Level transition flash
     if (this._levelTransition) {
       const alpha = 0.12 + 0.08 * Math.sin(this._levelTransitionTimer * 14);
-      ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+      ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
       ctx.fillRect(0, 0, GAME_W, GAME_H);
     }
 

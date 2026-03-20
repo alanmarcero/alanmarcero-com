@@ -395,7 +395,7 @@ export class Centipede {
 
     if (this._levelTransition) {
       const alpha = 0.15 + 0.1 * Math.sin(this._levelTransitionTimer * 12);
-      ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+      ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
       ctx.fillRect(0, 0, GAME_W, GAME_H);
     }
 
@@ -404,7 +404,7 @@ export class Centipede {
 
   _renderPlayerZone(ctx) {
     const y = GAME_H - PLAYER_ZONE_ROWS * CELL;
-    ctx.fillStyle = 'rgba(0, 229, 255, 0.03)';
+    ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
     ctx.fillRect(0, y, GAME_W, PLAYER_ZONE_ROWS * CELL);
   }
 
@@ -418,7 +418,7 @@ export class Centipede {
       ctx.save();
       ctx.shadowColor = VIOLET;
       ctx.shadowBlur = 3;
-      ctx.fillStyle = `rgba(184, 41, 245, ${0.3 + 0.7 * alpha})`;
+      ctx.fillStyle = `rgba(200, 64, 255, ${0.3 + 0.7 * alpha})`;
       ctx.beginPath();
       // Mushroom shape: half circle on top, rectangle stem
       ctx.arc(x + CELL / 2, y + CELL / 3, CELL / 2.5, Math.PI, 0);

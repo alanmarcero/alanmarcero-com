@@ -14,7 +14,7 @@ export const games = [
     id: 'space-invaders',
     name: 'Space Invaders',
     description: 'Defend Earth from waves of alien invaders',
-    accent: '#00e5ff',
+    accent: '#00f0ff',
     controls: {
       keyboard: { left: 'ArrowLeft', right: 'ArrowRight', fire: 'Space' },
       touch: ['left', 'right', 'fire'],
@@ -25,7 +25,7 @@ export const games = [
     id: 'asteroids',
     name: 'Asteroids',
     description: 'Navigate and blast through an asteroid field',
-    accent: '#b829f5',
+    accent: '#c840ff',
     controls: {
       keyboard: { left: 'ArrowLeft', right: 'ArrowRight', thrust: 'ArrowUp', fire: 'Space' },
       touch: ['left', 'right', 'thrust', 'fire'],
@@ -58,7 +58,7 @@ export const games = [
     id: 'breakout',
     name: 'Breakout',
     description: 'Smash bricks with a bouncing ball',
-    accent: '#00e5ff',
+    accent: '#00f0ff',
     controls: {
       keyboard: { left: 'ArrowLeft', right: 'ArrowRight', launch: 'Space' },
       touch: ['left', 'right', 'fire'],
@@ -69,7 +69,7 @@ export const games = [
     id: 'frogger',
     name: 'Frogger',
     description: 'Cross traffic and rivers to reach safety',
-    accent: '#b829f5',
+    accent: '#c840ff',
     controls: {
       keyboard: { left: 'ArrowLeft', right: 'ArrowRight', up: 'ArrowUp', down: 'ArrowDown' },
       touch: ['left', 'right', 'up', 'down'],
@@ -80,7 +80,7 @@ export const games = [
     id: 'snake',
     name: 'Snake',
     description: 'Eat food and grow without hitting yourself',
-    accent: '#00e5ff',
+    accent: '#00f0ff',
     controls: {
       keyboard: { left: 'ArrowLeft', right: 'ArrowRight', up: 'ArrowUp', down: 'ArrowDown' },
       touch: ['left', 'right', 'up', 'down'],
@@ -91,7 +91,7 @@ export const games = [
     id: 'pong',
     name: 'Pong',
     description: 'Classic paddle ball against the CPU',
-    accent: '#b829f5',
+    accent: '#c840ff',
     controls: {
       keyboard: { up: 'ArrowUp', down: 'ArrowDown' },
       touch: ['up', 'down'],

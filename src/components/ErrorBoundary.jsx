@@ -30,7 +30,7 @@ class ErrorBoundary extends React.Component {
           <h1 style={{
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: '2rem',
-            background: 'var(--gradient-hero-text, linear-gradient(135deg, #00e5ff, #b829f5))',
+            background: 'var(--gradient-hero-text, linear-gradient(135deg, #00f0ff, #c840ff))',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             marginBottom: '1rem',

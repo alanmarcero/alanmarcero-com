@@ -168,7 +168,7 @@ export class SpaceInvaders {
     // Level transition flash
     if (this._levelTransition) {
       const alpha = 0.15 + 0.1 * Math.sin(this._levelTransitionTimer * 12);
-      ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+      ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
       ctx.fillRect(0, 0, GAME_W, GAME_H);
     }
 
