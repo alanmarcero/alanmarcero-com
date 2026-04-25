@@ -4,33 +4,55 @@ const GAME_W = 480;
 const GAME_H = 360;
 
 const REAL_BIRDS = [
-  'Boobie', 'Bushtit', 'Shag', 'Smew', 'Hoatzin', 'Dickcissel',
-  'Knot', 'Wagtail', 'Drongo', 'Frogmouth', 'Potoo', 'Hoopoe',
-  'Cock-of-the-Rock', 'Go-Away-Bird', 'Penduline Tit', 'Satanic Nightjar',
-  'Ruff', 'Twite', 'Dunnock', 'Plover', 'Snipe', 'Cuckoo',
-  'Babbler', 'Loon', 'Nuthatch', 'Grebe', 'Gnatcatcher', 'Woodcock',
-  'Grosbeak', 'Booby', 'Tit', 'Towhee', 'Chuck-will\'s-widow',
-  'Whip-poor-will', 'Bellbird', 'Mousebird', 'Oilbird', 'Tinamou',
-  'Kakapo', 'Kookaburra', 'Bushshrike', 'Wattled Curassow',
-  'Lyrebird', 'Spoonbill', 'Limpkin', 'Bananaquit', 'Kagu',
+  // The inherently rude classics — real birds, all of them.
+  'Boobie', 'Booby', 'Blue-Footed Booby', 'Red-Footed Booby', 'Masked Booby',
+  'Tit', 'Great Tit', 'Blue Tit', 'Coal Tit', 'Long-Tailed Tit',
+  'Bearded Tit', 'Sombre Tit', 'Marsh Tit', 'Willow Tit', 'Bushtit',
+  'Penduline Tit', 'Tit-Babbler', 'Tit-Tyrant', 'Tit-Spinetail',
+  'Cock', 'Woodcock', 'Cock-of-the-Rock', 'Hairy Woodpecker',
+  'Shag', 'Pied Shag', 'Spotted Shag', 'Rough-Faced Shag',
+  'Dickcissel', 'Horny Screamer', 'Horned Screamer', 'Hornbill',
+  'Knob-Billed Duck', 'Bare-Faced Bulbul', 'Bare-Cheeked Babbler',
+  'Bare-Eyed Pigeon', 'Naked-Faced Spiderhunter',
+  // The merely absurd.
+  'Smew', 'Hoatzin', 'Hoopoe', 'Frogmouth', 'Potoo', 'Drongo',
+  'Wagtail', 'Go-Away-Bird', 'Satanic Nightjar', 'Chuck-Will\'s-Widow',
+  'Whip-Poor-Will', 'Ruff', 'Twite', 'Dunnock', 'Plover', 'Snipe',
+  'Cuckoo', 'Babbler', 'Loon', 'Nuthatch', 'Grebe', 'Gnatcatcher',
+  'Grosbeak', 'Towhee', 'Bellbird', 'Mousebird', 'Oilbird', 'Tinamou',
+  'Kakapo', 'Kookaburra', 'Bushshrike', 'Lyrebird', 'Spoonbill',
+  'Limpkin', 'Bananaquit', 'Kagu', 'Akiapola\'au',
 ];
 
 const PREFIXES = [
-  'Naked', 'Fluffy', 'Greater', 'Lesser', 'Common', 'Bare-Faced',
-  'Horned', 'Tufted', 'Speckled', 'Bushy', 'Hairy', 'Sooty',
-  'Dusky', 'Pied', 'Spotted', 'Crested', 'Painted', 'Whiskered',
-  'Bald', 'Plumed', 'Snub-Nosed', 'Bug-Eyed', 'Magnificent',
-  'Resplendent', 'Drunken', 'Confused', 'Anxious', 'Suspicious',
-  'Sneaky', 'Bumbling', 'Disgruntled', 'Damp', 'Squat', 'Loud',
-  'Lonely', 'Hapless', 'Smug', 'Crusty', 'Wistful', 'Indignant',
-  'Befuddled', 'Modest', 'Greasy', 'Sticky', 'Wobbly',
+  // Mildly indecent.
+  'Naked', 'Bald', 'Bare-Bottomed', 'Bare-Faced', 'Bare-Cheeked',
+  'Snub-Nosed', 'Bug-Eyed', 'Bushy', 'Hairy', 'Greasy', 'Sticky',
+  'Sweaty', 'Soggy', 'Damp', 'Moist', 'Limp', 'Saggy', 'Droopy',
+  'Floppy', 'Wobbly', 'Clammy', 'Chunky', 'Lumpy', 'Plump',
+  // Moods of ill repute.
+  'Drunken', 'Hungover', 'Boozy', 'Belching', 'Snoring', 'Drooling',
+  'Slobbering', 'Dribbling', 'Flatulent', 'Gassy', 'Reeking', 'Pungent',
+  'Funky', 'Whiffy', 'Stinky', 'Musty', 'Ripe', 'Unwashed', 'Filthy',
+  'Grubby', 'Crusty', 'Smutty', 'Saucy', 'Cheeky', 'Brazen',
+  'Shameless', 'Suggestive', 'Flirtatious', 'Lecherous',
+  // Lazy / dim.
+  'Lazy', 'Loitering', 'Lurking', 'Bumbling', 'Befuddled',
+  'Confused', 'Suspicious', 'Sneaky', 'Disgruntled', 'Indignant',
+  'Hapless', 'Smug', 'Wistful', 'Anxious',
+  // Real-bird-name flavor.
+  'Greater', 'Lesser', 'Common', 'Magnificent', 'Resplendent',
+  'Tufted', 'Crested', 'Plumed', 'Whiskered', 'Mustached',
+  'Spotted', 'Speckled', 'Pied', 'Sooty', 'Dusky',
 ];
 
 const BODY_PARTS = [
   'Faced', 'Breasted', 'Bellied', 'Tailed', 'Legged', 'Beaked',
   'Necked', 'Winged', 'Crowned', 'Throated', 'Rumped', 'Browed',
-  'Cheeked', 'Bottomed', 'Chinned', 'Eared', 'Nosed', 'Toed',
-  'Whiskered', 'Mustached',
+  'Cheeked', 'Bottomed', 'Buttocked', 'Bummed', 'Chinned',
+  'Eared', 'Nosed', 'Toed', 'Whiskered', 'Mustached', 'Thighed',
+  'Hipped', 'Jowled', 'Knuckled', 'Pawed', 'Knee\'d', 'Backed',
+  'Ankled', 'Loined', 'Stomached',
 ];
 
 const COLORS = [
@@ -44,12 +66,17 @@ const LATIN_GENERA = [
   'Plumosus', 'Cantorus', 'Jocosus', 'Ridiculus', 'Floofus',
   'Squawkus', 'Bouncius', 'Goofus', 'Wobblus', 'Gribbletus',
   'Borbulus', 'Dramaticus', 'Confusius', 'Snorgulus', 'Hootensis',
+  'Buttockus', 'Booblerus', 'Tittarus', 'Coccyx', 'Saggidus',
+  'Floppulus', 'Nudipennis', 'Greasius', 'Crustulus', 'Gassius',
 ];
 
 const LATIN_SPECIES = [
   'absurdus', 'maximus', 'ridiculosus', 'snorticus', 'derpicus',
   'chonkus', 'noodleus', 'zoomicus', 'flappingtonii', 'bonkers',
   'magnificus', 'sleepicus', 'screamicus', 'pondereus', 'mysteriosa',
+  'inappropriatus', 'unwashedus', 'lecherosus', 'flatulens',
+  'indecorum', 'lubricus', 'bombasticus', 'nudibottomus',
+  'pretentiosus', 'questionabilis',
 ];
 
 export class BirdNameGenerator {
@@ -78,13 +105,16 @@ export class BirdNameGenerator {
   _generateBird() {
     const r = Math.random();
     let name;
-    if (r < 0.35) {
+    if (r < 0.25) {
       // Color + Body-Part + Real Bird
       name = `${this._pick(COLORS)}-${this._pick(BODY_PARTS)} ${this._pick(REAL_BIRDS)}`;
-    } else if (r < 0.7) {
+    } else if (r < 0.5) {
       // Prefix + Real Bird
       name = `${this._pick(PREFIXES)} ${this._pick(REAL_BIRDS)}`;
-    } else if (r < 0.9) {
+    } else if (r < 0.75) {
+      // Prefix + Color-Body-Part + Real Bird (the maximally absurd combo)
+      name = `${this._pick(PREFIXES)} ${this._pick(COLORS)}-${this._pick(BODY_PARTS)} ${this._pick(REAL_BIRDS)}`;
+    } else if (r < 0.92) {
       // Prefix + Color + Real Bird
       name = `${this._pick(PREFIXES)} ${this._pick(COLORS)} ${this._pick(REAL_BIRDS)}`;
     } else {
