@@ -8,6 +8,7 @@ import { Snake } from './snake/Snake';
 import { Pong } from './pong/Pong';
 import { RhythmCatcher } from './rhythm/RhythmCatcher';
 import { Centipede } from './centipede/Centipede';
+import { BirdNameGenerator } from './bird-name-generator/BirdNameGenerator';
 
 export const games = [
   {
@@ -119,5 +120,16 @@ export const games = [
       touch: ['left', 'right', 'up', 'down', 'fire'],
     },
     factory: () => new Centipede(),
+  },
+  {
+    id: 'bird-name-generator',
+    name: 'Bird Name Generator',
+    description: 'Discover absurd-but-real-sounding bird species',
+    accent: '#00f0ff',
+    controls: {
+      keyboard: { discover: 'Space' },
+      touch: ['fire'],
+    },
+    factory: () => new BirdNameGenerator(),
   },
 ];

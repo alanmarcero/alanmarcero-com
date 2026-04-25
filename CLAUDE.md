@@ -90,7 +90,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │       │   ├── GameCanvas.jsx    # Full-screen game wrapper: canvas, CRT overlay, HUD, game-over, TouchControls
 │       │   └── TouchControls.jsx # Mobile d-pad + action buttons (pointer: coarse only)
 │       └── games/
-│           ├── gameRegistry.js   # Game metadata + factory functions for all 10 games
+│           ├── gameRegistry.js   # Game metadata + factory functions for all 11 games
 │           ├── useGameLoop.js    # Shared requestAnimationFrame hook with delta-time clamping
 │           ├── palette.js        # Shared CRT palette constants (CYAN, VIOLET, ORANGE, BG, WHITE, MUTED)
 │           ├── space-invaders/
@@ -120,9 +120,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │           ├── rhythm/
 │           │   ├── RhythmCatcher.js      # Canvas game: 4 lanes, falling notes, timing, combo system
 │           │   └── RhythmCatcher.test.js
-│           └── centipede/
-│               ├── Centipede.js          # Canvas game: mushroom field, centipede chain, spider, splitting
-│               └── Centipede.test.js
+│           ├── centipede/
+│           │   ├── Centipede.js          # Canvas game: mushroom field, centipede chain, spider, splitting
+│           │   └── Centipede.test.js
+│           └── bird-name-generator/
+│               ├── BirdNameGenerator.js  # Canvas toy: press SPACE to discover funny real-bird-style names + pixel bird mascot
+│               └── BirdNameGenerator.test.js
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
 │   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
@@ -139,7 +142,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 558 tests across 26 suites**
+**Total: 583 tests across 27 suites**
 
 ## Key Files
 
@@ -304,7 +307,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (558 tests, 26 suites)
+npm test                       # Jest (583 tests, 27 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -387,7 +390,7 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 
 **Architecture:** Separate `arcade.html` entry + `src/arcade/main.jsx` React root. Zero impact on main page bundle size. Vite handles shared vendor chunks (React) automatically via `build.rollupOptions.input` in `vite.config.js`.
 
-**Games** (10 canvas-based games, Outrun CRT palette only):
+**Games** (11 canvas-based games/toys, Outrun CRT palette only):
 - **Space Invaders** — Cyan player ship, alien grid (cyan/violet/orange by row), destructible shields, levels increase alien speed
 - **Asteroids** — Vector-style outlines (violet ship, cyan asteroid polygons, orange thrust), wrap-around edges, asteroids split on hit
 - **Tetris** — 10x20 grid, 7 tetrominoes in palette colors, ghost piece, next-piece preview, line-clear flash, DAS key repeat
@@ -398,6 +401,7 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 - **Pong** — Player vs AI paddle, angle-based bounce, AI with reaction delay/imprecision, serve timer
 - **Rhythm Catcher** — 4 lanes (arrow keys), falling notes, perfect/good timing windows, combo multiplier, pattern generation
 - **Centipede** — Player in bottom zone, 10-segment centipede chain, mushroom field, spider enemy, segment splitting on hit
+- **Bird Name Generator** — Press SPACE to generate absurd-but-real-sounding bird species (Boobie, Bushtit, Smew, etc.) combined with prefixes/colors/body parts; pixel-style bird mascot with randomized body, wings, crest, beak, and Latin name
 
 **Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
 
