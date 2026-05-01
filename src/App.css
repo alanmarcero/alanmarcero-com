@@ -644,6 +644,7 @@ footer::before {
 .footer-copyright {
   margin: 0;
   letter-spacing: 0.5px;
+  color: var(--text-secondary);
 }
 
 /* ----------------------------------------------------
