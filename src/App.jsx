@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import './App.css';
 import Hero from './components/Hero';
 import PatchBankItem from './components/PatchBankItem';
@@ -25,8 +25,14 @@ const createSearchFilter = (query, ...fields) => (item) => {
 const revealClass = (isVisible, extra = '') =>
   `${extra ? extra + ' ' : ''}scroll-reveal${isVisible ? ' scroll-reveal--visible' : ''}`;
 
+const readSearchFromUrl = () => {
+  if (typeof window === 'undefined') return '';
+  const params = new URLSearchParams(window.location.search);
+  return params.get('q') || '';
+};
+
 function App() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(readSearchFromUrl);
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
   const { musicItems, musicLoading, musicError } = useMusicItems();
@@ -39,6 +45,30 @@ function App() {
     toastTimerRef.current = setTimeout(() => setToast(null), TOAST_DISMISS_MS);
   }, []);
 
+  // Sync ?q= query param with searchQuery state (preserves anchors).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const current = params.get('q') || '';
+    if (searchQuery === current) return;
+    if (searchQuery) {
+      params.set('q', searchQuery);
+    } else {
+      params.delete('q');
+    }
+    const qs = params.toString();
+    const next = `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`;
+    window.history.replaceState(null, '', next);
+  }, [searchQuery]);
+
+  // Restore searchQuery from URL when back/forward navigation fires popstate.
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const onPopstate = () => setSearchQuery(readSearchFromUrl());
+    window.addEventListener('popstate', onPopstate);
+    return () => window.removeEventListener('popstate', onPopstate);
+  }, []);
+
   const filteredPatchBanks = patchBanksData.filter(createSearchFilter(searchQuery, 'name', 'description'));
   const filteredMusicItems = musicItems.filter(createSearchFilter(searchQuery, 'title', 'description'));
 
@@ -47,10 +77,18 @@ function App() {
     && filteredMusicItems.length === 0
     && !musicLoading;
 
+  const resultsCount = searchQuery
+    ? { patches: filteredPatchBanks.length, music: filteredMusicItems.length }
+    : null;
+
   return (
     <>
       <a href="#main-content" className="skip-to-content">Skip to main content</a>
-      <Hero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+      <Hero
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        resultsCount={resultsCount}
+      />
 
       <main id="main-content">
         {hasNoResults && <NoResults query={searchQuery} />}

@@ -229,6 +229,17 @@
   border-radius: 4px;
 }
 
+/* Results count — shown below search when filtering */
+.hero-results-count {
+  margin: 12px 0 0;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 0.825rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  opacity: 0.85;
+}
+
 /* ----------------------------------------------------
    SCROLL REVEAL — title underline animation only
    (cards use their own fadeInUp via --card-index)

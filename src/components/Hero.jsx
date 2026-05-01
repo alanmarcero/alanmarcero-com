@@ -33,9 +33,18 @@ function useRandomGlitch(ref) {
   }, [ref]);
 }
 
-function Hero({ searchQuery, onSearchChange }) {
+function Hero({ searchQuery, onSearchChange, resultsCount }) {
   const nameRef = useRef(null);
+  const inputRef = useRef(null);
   useRandomGlitch(nameRef);
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape' && searchQuery) {
+      event.preventDefault();
+      onSearchChange('');
+      inputRef.current?.focus();
+    }
+  };
 
   return (
     <section className="hero">
@@ -47,6 +56,8 @@ function Hero({ searchQuery, onSearchChange }) {
           className="hero-image"
           loading="eager"
           fetchPriority="high"
+          width="260"
+          height="260"
         />
         <h1 ref={nameRef} className="hero-name" data-text="Alan Marcero" aria-label="Alan Marcero">Alan Marcero</h1>
         <p className="hero-tagline">Synthesizer Sound Designer & Producer</p>
@@ -73,11 +84,13 @@ function Hero({ searchQuery, onSearchChange }) {
         </div>
         <div className="hero-search">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Search patches and music..."
             aria-label="Search patches and music"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           {searchQuery && (
             <button
@@ -89,6 +102,12 @@ function Hero({ searchQuery, onSearchChange }) {
             </button>
           )}
         </div>
+        {resultsCount && (
+          <p className="hero-results-count" role="status" aria-live="polite">
+            {resultsCount.patches} {resultsCount.patches === 1 ? 'patch bank' : 'patch banks'},{' '}
+            {resultsCount.music} {resultsCount.music === 1 ? 'music item' : 'music items'}
+          </p>
+        )}
       </div>
     </section>
   );
