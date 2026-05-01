@@ -37,6 +37,8 @@ const mockFetchSuccess = (items = []) => {
 describe("App", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // App syncs ?q= to URL; reset between tests so state does not leak.
+    window.history.replaceState(null, "", window.location.pathname);
   });
 
   it("shows skeleton cards while fetching music", () => {
@@ -336,6 +338,108 @@ describe("App", () => {
 
     expect(screen.queryByText("Downloading now...")).not.toBeInTheDocument();
     jest.useRealTimers();
+  });
+
+  it("renders skip-to-content link targeting #main-content", async () => {
+    mockFetchSuccess();
+    const { container } = render(<App />);
+    const link = container.querySelector("a.skip-to-content");
+    expect(link).toBeTruthy();
+    expect(link.getAttribute("href")).toBe("#main-content");
+  });
+
+  it("ESC key clears search and refocuses input", async () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "Test" } });
+    expect(searchInput.value).toBe("Test");
+
+    fireEvent.keyDown(searchInput, { key: "Escape" });
+    expect(searchInput.value).toBe("");
+    expect(document.activeElement).toBe(searchInput);
+  });
+
+  it("syncs ?q= query param when search changes", async () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "prophet" } });
+    await waitFor(() => {
+      expect(window.location.search).toBe("?q=prophet");
+    });
+
+    fireEvent.change(searchInput, { target: { value: "" } });
+    await waitFor(() => {
+      expect(window.location.search).toBe("");
+    });
+  });
+
+  it("hydrates search query from ?q= URL param on load (deep link)", async () => {
+    window.history.replaceState(null, "", "/?q=prophet");
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    expect(searchInput.value).toBe("prophet");
+  });
+
+  it("URL-decodes special characters in ?q= param", async () => {
+    window.history.replaceState(null, "", "/?q=hi%20mom");
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    expect(searchInput.value).toBe("hi mom");
+  });
+
+  it("preserves bare anchor (#section) alongside ?q= filtering", async () => {
+    window.history.replaceState(null, "", "/#store");
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "synth" } });
+    await waitFor(() => {
+      expect(window.location.search).toBe("?q=synth");
+      expect(window.location.hash).toBe("#store");
+    });
+  });
+
+  it("popstate restores search query from URL (back-button navigation)", async () => {
+    mockFetchSuccess();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "abc" } });
+    await waitFor(() => expect(window.location.search).toBe("?q=abc"));
+
+    // Simulate back-button: change URL programmatically and dispatch popstate.
+    window.history.replaceState(null, "", "/?q=xyz");
+    act(() => {
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+    expect(searchInput.value).toBe("xyz");
+  });
+
+  it("renders results count when search is active", async () => {
+    mockFetchSuccess([
+      { title: "Track A", videoId: "v1", description: "" },
+    ]);
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Track A")).toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByPlaceholderText("Search patches and music...");
+    fireEvent.change(searchInput, { target: { value: "Test" } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/1 patch bank, 0 music items/)).toBeInTheDocument();
+    });
   });
 
 });
