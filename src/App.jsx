@@ -49,44 +49,49 @@ function App() {
 
   return (
     <>
+      <a href="#main-content" className="skip-to-content">Skip to main content</a>
       <Hero searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
-      {hasNoResults && <NoResults query={searchQuery} />}
+      <main id="main-content">
+        {hasNoResults && <NoResults query={searchQuery} />}
 
-      <section
-        id="store"
-        ref={storeRef}
-        className={revealClass(storeVisible)}
-      >
-        <h2 className="section-title">Patch Banks</h2>
-        <div className="content-grid">
-          {filteredPatchBanks.map((bank, index) => (
-            <PatchBankItem
-              key={bank.downloadLink}
-              bank={bank}
-              style={{ '--card-index': index }}
-              onDownload={() => showToast('Downloading now...')}
-            />
-          ))}
-        </div>
-      </section>
+        <section
+          id="store"
+          ref={storeRef}
+          className={revealClass(storeVisible)}
+          aria-labelledby="store-heading"
+        >
+          <h2 id="store-heading" className="section-title">Patch Banks</h2>
+          <div className="content-grid">
+            {filteredPatchBanks.map((bank, index) => (
+              <PatchBankItem
+                key={bank.downloadLink}
+                bank={bank}
+                style={{ '--card-index': index }}
+                onDownload={() => showToast('Downloading now...')}
+              />
+            ))}
+          </div>
+        </section>
 
-      <section
-        id="music-remixes"
-        ref={musicRef}
-        className={revealClass(musicVisible)}
-      >
-        <h2 className="section-title">Music and Remixes</h2>
-        <div className="content-grid">
-          {musicLoading && Array.from({ length: SKELETON_COUNT }, (_, i) => (
-            <SkeletonCard key={i} />
-          ))}
-          {musicError && <p className="error-message">Unable to load music. Please try again later.</p>}
-          {!musicLoading && !musicError && filteredMusicItems.map((item, index) => (
-            <MusicItem key={item.videoId} item={item} style={{ '--card-index': index }} />
-          ))}
-        </div>
-      </section>
+        <section
+          id="music-remixes"
+          ref={musicRef}
+          className={revealClass(musicVisible)}
+          aria-labelledby="music-heading"
+        >
+          <h2 id="music-heading" className="section-title">Music and Remixes</h2>
+          <div className="content-grid">
+            {musicLoading && Array.from({ length: SKELETON_COUNT }, (_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+            {musicError && <p className="error-message">Unable to load music. Please try again later.</p>}
+            {!musicLoading && !musicError && filteredMusicItems.map((item, index) => (
+              <MusicItem key={item.videoId} item={item} style={{ '--card-index': index }} />
+            ))}
+          </div>
+        </section>
+      </main>
 
       <Footer />
       <BackToTop />
