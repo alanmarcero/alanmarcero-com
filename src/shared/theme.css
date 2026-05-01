@@ -160,10 +160,42 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary:focus-visible,
-a:focus-visible {
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
   box-shadow: var(--focus-ring);
+}
+
+/* ----------------------------------------------------
+   SKIP TO CONTENT — visually hidden until focused
+---------------------------------------------------- */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--bg-surface);
+  color: var(--accent-cyan);
+  text-decoration: none;
+  border: 2px solid var(--accent-cyan);
+  border-radius: var(--radius-card);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  transition: top var(--transition-fast);
+}
+
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  top: 16px;
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+  box-shadow: var(--glow-cyan);
 }
 
 /* ----------------------------------------------------
