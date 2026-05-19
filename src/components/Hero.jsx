@@ -1,42 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
 
-const GLITCH_EFFECTS = [
-  { className: 'glitch-1', duration: 500 },
-  { className: 'glitch-2', duration: 700 },
-];
-
-function useRandomGlitch(ref) {
-  useEffect(() => {
-    if (typeof window.matchMedia === 'function' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    let delayTimer;
-    let durationTimer;
-
-    const schedule = () => {
-      const delay = (Math.random() * 6 + 4) * 1000;
-      delayTimer = setTimeout(() => {
-        const effect = GLITCH_EFFECTS[Math.floor(Math.random() * GLITCH_EFFECTS.length)];
-        const el = ref.current;
-        if (!el) return;
-        el.classList.add(effect.className);
-        durationTimer = setTimeout(() => {
-          el.classList.remove(effect.className);
-          schedule();
-        }, effect.duration);
-      }, delay);
-    };
-
-    schedule();
-    return () => { clearTimeout(delayTimer); clearTimeout(durationTimer); };
-  }, [ref]);
-}
-
 function Hero({ searchQuery, onSearchChange, resultsCount }) {
-  const nameRef = useRef(null);
   const inputRef = useRef(null);
-  useRandomGlitch(nameRef);
 
   const handleKeyDown = (event) => {
     if (event.key === 'Escape' && searchQuery) {
@@ -48,7 +14,15 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
 
   return (
     <section className="hero">
-      <div className="hero-backdrop" />
+      <svg
+        className="hero-signal"
+        viewBox="0 0 1200 240"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M -100,120 Q 50,40 200,120 T 500,120 T 800,120 T 1100,120 T 1300,120" />
+      </svg>
       <div className="hero-content">
         <img
           src="/about-me.webp"
@@ -56,11 +30,11 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
           className="hero-image"
           loading="eager"
           fetchPriority="high"
-          width="260"
-          height="260"
+          width="180"
+          height="180"
         />
-        <h1 ref={nameRef} className="hero-name" data-text="Alan Marcero" aria-label="Alan Marcero">Alan Marcero</h1>
-        <p className="hero-tagline">Synthesizer Sound Designer & Producer</p>
+        <h1 className="hero-name">Alan Marcero</h1>
+        <p className="hero-tagline">Synthesizer Sound Designer &amp; Producer</p>
         <div className="hero-bio">
           <p>
             Trance and electronic music producer from Boston, USA. Crafting original tracks,
@@ -78,7 +52,7 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
           >
             Subscribe on YouTube
           </a>
-          <a className="btn-primary hero-cta--arcade" href="/arcade.html">
+          <a className="btn-primary btn-primary--ghost hero-cta--arcade" href="/arcade.html">
             Arcade
           </a>
         </div>
