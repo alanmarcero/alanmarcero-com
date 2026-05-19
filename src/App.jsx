@@ -99,7 +99,7 @@ function App() {
           className={revealClass(storeVisible)}
           aria-labelledby="store-heading"
         >
-          <h2 id="store-heading" className="section-title">Patch Banks</h2>
+          <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
           <div className="content-grid">
             {filteredPatchBanks.map((bank, index) => (
               <PatchBankItem
@@ -118,7 +118,7 @@ function App() {
           className={revealClass(musicVisible)}
           aria-labelledby="music-heading"
         >
-          <h2 id="music-heading" className="section-title">Music and Remixes</h2>
+          <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
           <div className="content-grid">
             {musicLoading && Array.from({ length: SKELETON_COUNT }, (_, i) => (
               <SkeletonCard key={i} />

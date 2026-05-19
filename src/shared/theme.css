@@ -1,97 +1,49 @@
 /* ----------------------------------------------------
-   CSS CUSTOM PROPERTIES — Outrun CRT Theme
+   CSS CUSTOM PROPERTIES — Studio Theme
+   (editorial-quiet, single accent, single living moment)
 ---------------------------------------------------- */
 :root {
-  /* Backgrounds */
-  --bg-body: #10101f;
-  --bg-surface: rgba(18, 18, 36, 0.88);
-  --bg-surface-hover: rgba(24, 24, 48, 0.92);
-  --bg-footer: #080812;
+  /* Backgrounds — warm graphite */
+  --bg-body:      #0c0c0e;
+  --bg-surface:   #131316;
+  --bg-elevated:  #1a1a1f;
+  --bg-footer:    #08080a;
 
-  /* Accent Colors */
-  --accent-cyan: #00f0ff;
-  --accent-magenta: #c840ff;
-  --accent-orange: #ff5722;
+  /* Single accent — electric magenta */
+  --accent:        #ff2d7e;
+  --accent-soft:   rgba(255, 45, 126, 0.12);
+  --accent-strong: rgba(255, 45, 126, 0.42);
 
-  /* Gradients */
-  --gradient-accent: linear-gradient(135deg, #00f0ff, #c840ff);
-  --gradient-hero-text: linear-gradient(135deg, #00f0ff, #c840ff);
-
-  /* Text */
-  --text-primary: #f0eef8;
-  --text-secondary: #9a9abe;
-  --text-muted: #5c5c7a;
+  /* Text — warm white scale */
+  --text-primary:   #f5f3ee;
+  --text-secondary: #a8a59b;
+  --text-muted:     #6b6960;
 
   /* Borders */
-  --border-subtle: rgba(0, 240, 255, 0.10);
-  --border-medium: rgba(0, 240, 255, 0.25);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(255, 45, 126, 0.32);
 
-  /* Shadows & Glows */
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.35);
-  --shadow-card-hover: 0 8px 32px rgba(0, 240, 255, 0.14), 0 0 16px rgba(0, 240, 255, 0.07);
-  --glow-cyan: 0 0 14px rgba(0, 240, 255, 0.35), 0 0 44px rgba(0, 240, 255, 0.12);
-  --glow-magenta: 0 0 14px rgba(200, 64, 255, 0.35), 0 0 44px rgba(200, 64, 255, 0.12);
-  --focus-ring: 0 0 0 3px rgba(0, 240, 255, 0.30);
-  --error-color: #ef4444;
+  /* Shadows (minimal — flat aesthetic) */
+  --shadow-card:       0 1px 0 rgba(255, 255, 255, 0.02);
+  --shadow-card-hover: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --focus-ring:        0 0 0 3px rgba(255, 45, 126, 0.32);
+  --error-color:       #ef4444;
 
-  /* CRT */
-  --crt-line-opacity: 0.03;
-  --crt-line-spacing: 3px;
-  --crt-btn-line-spacing: 2px;
+  /* Typography (CSS-variable structure — serif swap is one line) */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Layout */
+  --max-width:      1100px;
+  --section-gap:    6rem;
 
   /* Shared */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
-  --radius-card: 8px;
-  --radius-btn: 50px;
-  --backdrop-blur: blur(12px);
-}
-
-/* ----------------------------------------------------
-   CRT BACKGROUND — phosphor dot pattern + vignette
----------------------------------------------------- */
-html, body {
-  background-image:
-    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.40) 100%),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(0, 240, 255, 0.015) 2px,
-      rgba(0, 240, 255, 0.015) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(200, 64, 255, 0.010) 2px,
-      rgba(200, 64, 255, 0.010) 4px
-    );
-  background-attachment: fixed;
-}
-
-/* ----------------------------------------------------
-   CRT SCANLINE OVERLAY — full viewport
----------------------------------------------------- */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, var(--crt-line-opacity)) 0px,
-    rgba(0, 0, 0, var(--crt-line-opacity)) 1px,
-    transparent 1px,
-    transparent var(--crt-line-spacing)
-  );
-  pointer-events: none;
-  z-index: 9999;
-  animation: crtFlicker 4s ease-in-out infinite;
-}
-
-@keyframes crtFlicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
+  --radius-card:     4px;
+  --radius-btn:      4px;
 }
 
 /* ----------------------------------------------------
@@ -104,59 +56,59 @@ html {
 html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--bg-body);
   color: var(--text-primary);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 /* ----------------------------------------------------
-   SHARED BUTTON — pill shape, gradient, CRT overlay
+   SHARED BUTTON — flat rectangle, single accent fill
 ---------------------------------------------------- */
 .btn-primary {
-  position: relative;
   display: inline-block;
-  background: var(--gradient-accent);
+  background: var(--accent);
   color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.95rem;
   text-decoration: none;
+  border: 1px solid var(--accent);
   border-radius: var(--radius-btn);
-  overflow: hidden;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-}
-
-.btn-primary::after,
-.back-to-top::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.06) 0px,
-    rgba(0, 0, 0, 0.06) 1px,
-    transparent 1px,
-    transparent var(--crt-btn-line-spacing)
-  );
-  border-radius: inherit;
-  pointer-events: none;
+  padding: 12px 24px;
+  transition:
+    background var(--transition-base),
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 22px rgba(0, 240, 255, 0.35), 0 0 44px rgba(200, 64, 255, 0.18);
+  background: #ff4d92;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--accent-soft);
 }
 
 .btn-primary:active {
-  transform: scale(0.96);
+  transform: translateY(0);
+}
+
+.btn-primary--ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn-primary--ghost:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .btn-primary:focus-visible,
@@ -164,7 +116,7 @@ a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   box-shadow: var(--focus-ring);
 }
@@ -179,23 +131,22 @@ input:focus-visible,
   z-index: 100;
   padding: 12px 20px;
   background: var(--bg-surface);
-  color: var(--accent-cyan);
+  color: var(--accent);
   text-decoration: none;
-  border: 2px solid var(--accent-cyan);
+  border: 1px solid var(--accent);
   border-radius: var(--radius-card);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   transition: top var(--transition-fast);
 }
 
 .skip-to-content:focus,
 .skip-to-content:focus-visible {
   top: 16px;
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  box-shadow: var(--glow-cyan);
 }
 
 /* ----------------------------------------------------
@@ -211,10 +162,5 @@ input:focus-visible,
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-  }
-
-  body::after {
-    animation: none;
-    opacity: 1;
   }
 }
