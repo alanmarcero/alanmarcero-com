@@ -55,6 +55,8 @@ export class LifePulse {
       ['growth-pulse-3', '/assets/arcade/life-pulse/growth-pulse-3.jpg'],
       ['growth-pulse-4', '/assets/arcade/life-pulse/growth-pulse-4.jpg'],
       ['growth-pulse-5', '/assets/arcade/life-pulse/growth-pulse-5.jpg'],
+      ['background', '/assets/arcade/life-pulse/background.jpg'],
+      ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
     let loaded = 0;
@@ -962,25 +964,35 @@ export class LifePulse {
   }
 
   _drawBackground(ctx) {
-    // Stars
-    ctx.fillStyle = MUTED;
-    for (let i = 0; i < 42; i++) {
-      const x = ((i * 37 + this._scroll * 0.6) % (GAME_W + 60)) - 30;
-      const y = 20 + (i * 8.3) % (GAME_H - 40);
-      ctx.fillRect(x, y, 1.5, 1.5);
+    const bg1 = this.assets.background;
+    const bg2 = this.assets['background-layer2'];
+
+    // Layer 1 - Distant organic background (slowest scroll)
+    if (bg1 && bg1.complete) {
+      const scroll1 = (this._scroll * 12) % GAME_W;
+      ctx.drawImage(bg1, -scroll1, 0, GAME_W, GAME_H);
+      ctx.drawImage(bg1, GAME_W - scroll1, 0, GAME_W, GAME_H);
+    } else {
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, GAME_W, GAME_H);
     }
 
-    // Subtle organic background lines (Life Force feel)
-    ctx.strokeStyle = 'rgba(180, 140, 220, 0.12)';
-    ctx.lineWidth = 1.5;
-    for (let i = 0; i < 5; i++) {
-      const y = 30 + i * 65 + Math.sin(this._scroll * 0.02 + i) * 12;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.quadraticCurveTo(GAME_W * 0.4, y + 18, GAME_W, y - 10);
-      ctx.stroke();
+    // Layer 2 - Closer organic details (faster parallax)
+    if (bg2 && bg2.complete) {
+      ctx.globalAlpha = 0.55;
+      const scroll2 = (this._scroll * 28) % GAME_W;
+      ctx.drawImage(bg2, -scroll2, 0, GAME_W, GAME_H);
+      ctx.drawImage(bg2, GAME_W - scroll2, 0, GAME_W, GAME_H);
+      ctx.globalAlpha = 1;
     }
-    ctx.lineWidth = 1;
+
+    // Distant stars (very slow)
+    ctx.fillStyle = 'rgba(240, 238, 248, 0.28)';
+    for (let i = 0; i < 36; i++) {
+      const x = ((i * 39 + this._scroll * 0.22) % (GAME_W + 60)) - 30;
+      const y = 18 + ((i * 10.1) % (GAME_H - 36));
+      ctx.fillRect(x, y, 1, 1);
+    }
   }
 
   destroy() {
