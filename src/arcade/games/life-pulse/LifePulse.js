@@ -45,6 +45,16 @@ export class LifePulse {
       ['boss-anim-2', '/assets/arcade/life-pulse/boss-anim-2.jpg'],
       ['boss-anim-3', '/assets/arcade/life-pulse/boss-anim-3.jpg'],
       ['boss-anim-4', '/assets/arcade/life-pulse/boss-anim-4.jpg'],
+      // 3rd set - power states and growth pulsing
+      ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
+      ['player-powered2', '/assets/arcade/life-pulse/player-powered2.jpg'],
+      ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
+      ['player-shield', '/assets/arcade/life-pulse/player-shield.jpg'],
+      ['growth-pulse-1', '/assets/arcade/life-pulse/growth-pulse-1.jpg'],
+      ['growth-pulse-2', '/assets/arcade/life-pulse/growth-pulse-2.jpg'],
+      ['growth-pulse-3', '/assets/arcade/life-pulse/growth-pulse-3.jpg'],
+      ['growth-pulse-4', '/assets/arcade/life-pulse/growth-pulse-4.jpg'],
+      ['growth-pulse-5', '/assets/arcade/life-pulse/growth-pulse-5.jpg'],
     ];
 
     let loaded = 0;
@@ -793,35 +803,52 @@ export class LifePulse {
       const alpha = p.invuln > 0 ? (Math.floor(p.invuln * 10) % 2 === 0 ? 0.45 : 1) : 1;
       ctx.globalAlpha = alpha;
 
-      const playerImg = this.assets.player;
-      if (playerImg && playerImg.complete) {
-        const w = 28;
-        const h = 18;
-        ctx.drawImage(playerImg, p.x - w/2, p.y - h/2, w, h);
+      // Player ship with power state visuals (3rd set)
+      let playerImg = this.assets.player;
+      let pw = 28, ph = 18;
 
-        // Thruster animation (2nd set)
-        const thrusterFrame = Math.floor((this._time * 12) % 4) + 1;
-        const thrusterImg = this.assets[`player-thruster-${thrusterFrame}`];
-        if (thrusterImg && thrusterImg.complete) {
-          ctx.drawImage(thrusterImg, p.x - 18, p.y - 5, 12, 10);
+      if (this._powerLevel >= 2) {
+        const spreadImg = this.assets['player-powered-spread'];
+        if (spreadImg && spreadImg.complete) {
+          playerImg = spreadImg;
+          pw = 32; ph = 20;
         }
+      } else if (this._powerLevel >= 1) {
+        const poweredImg = this.assets['player-powered1'];
+        if (poweredImg && poweredImg.complete) {
+          playerImg = poweredImg;
+          pw = 30; ph = 18;
+        }
+      }
+
+      if (playerImg && playerImg.complete) {
+        ctx.drawImage(playerImg, p.x - pw/2, p.y - ph/2, pw, ph);
       } else {
-        // Fallback
+        // Fallback basic ship
         ctx.fillStyle = this._powerLevel > 0 ? '#7cffe0' : CYAN;
         ctx.fillRect(p.x - 8, p.y - 5, 18, 10);
         ctx.fillStyle = WHITE;
         ctx.fillRect(p.x + 2, p.y - 2, 6, 4);
       }
 
-      // Power level visual upgrades
-      if (this._powerLevel >= 1) {
-        ctx.fillStyle = ORANGE;
-        ctx.fillRect(p.x - 16, p.y - 2, 5, 4);
+      // Thruster animation (2nd set)
+      const thrusterFrame = Math.floor((this._time * 12) % 4) + 1;
+      const thrusterImg = this.assets[`player-thruster-${thrusterFrame}`];
+      if (thrusterImg && thrusterImg.complete) {
+        ctx.drawImage(thrusterImg, p.x - 18, p.y - 5, 12, 10);
       }
-      if (this._powerLevel >= 2) {
-        ctx.fillStyle = VIOLET;
-        ctx.fillRect(p.x - 19, p.y - 6, 3, 3);
-        ctx.fillRect(p.x - 19, p.y + 3, 3, 3);
+
+      // Power level visual upgrades (fallback only)
+      if (!playerImg || !playerImg.complete) {
+        if (this._powerLevel >= 1) {
+          ctx.fillStyle = ORANGE;
+          ctx.fillRect(p.x - 16, p.y - 2, 5, 4);
+        }
+        if (this._powerLevel >= 2) {
+          ctx.fillStyle = VIOLET;
+          ctx.fillRect(p.x - 19, p.y - 6, 3, 3);
+          ctx.fillRect(p.x - 19, p.y + 3, 3, 3);
+        }
       }
 
       // Shield effect
@@ -863,7 +890,9 @@ export class LifePulse {
         img = this.assets[`enemy-drone-wing-${wingFrame}`];
         w = 18; h = 14;
       } else if (e.type === 'growth') {
-        img = this.assets.turret; // reuse turret for now
+        // Use pulsing animation for growth enemy (3rd set)
+        const pulseFrame = Math.floor((this._time * 8) % 5) + 1;
+        img = this.assets[`growth-pulse-${pulseFrame}`];
         w = 24; h = 20;
       } else {
         img = this.assets.drone;
