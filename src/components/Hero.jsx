@@ -21,7 +21,7 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
         aria-hidden="true"
         focusable="false"
       >
-        <path d="M -100,120 Q 50,40 200,120 T 500,120 T 800,120 T 1100,120 T 1300,120" />
+        <path d="M -220,120 Q -100,46 20,120 Q 140,194 260,120 Q 380,46 500,120 L 560,46 L 620,194 L 680,46 L 740,194 L 800,46 L 860,194 L 900,46 L 900,194 L 950,194 L 950,46 L 1000,46 L 1000,194 L 1050,194 L 1050,46 L 1100,46 L 1100,194 L 1150,194 L 1150,46 L 1190,120 L 1260,46 L 1330,194 L 1400,46 L 1470,194 L 1540,46" />
       </svg>
       <div className="hero-content">
         <img
