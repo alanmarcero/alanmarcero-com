@@ -1,53 +1,55 @@
 /* ----------------------------------------------------
-   CSS CUSTOM PROPERTIES — Studio Theme
-   (editorial-quiet, single accent, single living moment)
+   ECLIPSE — Sophisticated dark synth aesthetic
+   Deep, confident, modern electronic music feel
 ---------------------------------------------------- */
 :root {
-  /* Backgrounds — warm graphite */
-  --bg-body:      #0c0c0e;
-  --bg-surface:   #131316;
-  --bg-elevated:  #1a1a1f;
-  --bg-footer:    #08080a;
+  /* Backgrounds — rich near-black with subtle warmth */
+  --bg-body:      #0a0a0d;
+  --bg-surface:   #121216;
+  --bg-elevated:  #1a1a20;
+  --bg-footer:    #070709;
 
-  /* Single accent — electric magenta */
-  --accent:        #ff2d7e;
-  --accent-soft:   rgba(255, 45, 126, 0.12);
-  --accent-strong: rgba(255, 45, 126, 0.42);
+  /* Primary accent — sophisticated teal */
+  --accent:        #00d4c8;
+  --accent-soft:   rgba(0, 212, 200, 0.12);
+  --accent-strong: rgba(0, 212, 200, 0.28);
 
-  /* Text — warm white scale */
-  --text-primary:   #f5f3ee;
-  --text-secondary: #a8a59b;
-  --text-muted:     #6b6960;
+  /* Warm secondary accent — copper / burnt orange */
+  --accent-warm:   #ff8a5f;
+  --accent-warm-soft: rgba(255, 138, 95, 0.14);
+
+  /* Text — warm off-white scale */
+  --text-primary:   #f4f3f0;
+  --text-secondary: #a8a6a0;
+  --text-muted:     #68665f;
 
   /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-accent: rgba(255, 45, 126, 0.32);
+  --border-subtle:  rgba(255, 255, 255, 0.07);
+  --border-medium:  rgba(255, 255, 255, 0.13);
+  --border-strong:  rgba(255, 255, 255, 0.18);
 
-  /* Shadows (minimal — flat aesthetic) */
-  --shadow-card:       0 1px 0 rgba(255, 255, 255, 0.02);
-  --shadow-card-hover: 0 6px 24px rgba(0, 0, 0, 0.35);
-  --focus-ring:        0 0 0 3px rgba(255, 45, 126, 0.32);
-  --error-color:       #ef4444;
+  /* Focus & states */
+  --focus-ring:     0 0 0 3px rgba(0, 212, 200, 0.35);
+  --error-color:    #ff6b6b;
 
-  /* Typography (CSS-variable structure — serif swap is one line) */
+  /* Typography */
   --font-display: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-body:    'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Layout */
-  --max-width:      1100px;
-  --section-gap:    6rem;
+  --max-width:      1120px;
+  --section-gap:    5.5rem;
 
-  /* Shared */
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --radius-card:     4px;
-  --radius-btn:      4px;
+  /* Motion & shape */
+  --transition:     200ms cubic-bezier(0.23, 1, 0.32, 1);
+  --transition-fast: 120ms ease;
+  --radius:         8px;
+  --radius-sm:      4px;
 }
 
 /* ----------------------------------------------------
-   GENERAL STYLES
+   GLOBAL BASE
 ---------------------------------------------------- */
 html {
   scroll-behavior: smooth;
@@ -59,42 +61,44 @@ html, body {
   font-family: var(--font-body);
   background-color: var(--bg-body);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
 /* ----------------------------------------------------
-   SHARED BUTTON — flat rectangle, single accent fill
+   BUTTONS — substantial, confident
 ---------------------------------------------------- */
 .btn-primary {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--accent);
   color: #fff;
   font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.95rem;
+  font-weight: 600;
+  font-size: 0.92rem;
   text-decoration: none;
   border: 1px solid var(--accent);
-  border-radius: var(--radius-btn);
-  padding: 12px 24px;
-  transition:
-    background var(--transition-base),
-    transform var(--transition-fast),
-    box-shadow var(--transition-base);
+  border-radius: var(--radius);
+  padding: 13px 26px;
+  letter-spacing: 0.01em;
+  transition: all var(--transition);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .btn-primary:hover {
-  background: #ff4d92;
+  background: #00e8d9;
+  border-color: #00e8d9;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px var(--accent-soft);
+  box-shadow: 0 6px 20px var(--accent-soft);
 }
 
 .btn-primary:active {
@@ -104,62 +108,69 @@ h1, h2, h3, h4 {
 .btn-primary--ghost {
   background: transparent;
   color: var(--accent);
+  border-color: var(--border-medium);
 }
 
 .btn-primary--ghost:hover {
   background: var(--accent-soft);
+  border-color: var(--accent);
   color: var(--accent);
 }
 
+.btn-primary--warm {
+  background: var(--accent-warm);
+  border-color: var(--accent-warm);
+  color: #1a140f;
+}
+
+.btn-primary--warm:hover {
+  background: #ff9f75;
+  border-color: #ff9f75;
+}
+
+/* Focus states */
 .btn-primary:focus-visible,
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: none;
   box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
 }
 
 /* ----------------------------------------------------
-   SKIP TO CONTENT — visually hidden until focused
+   SKIP LINK
 ---------------------------------------------------- */
 .skip-to-content {
   position: absolute;
   top: -100px;
   left: 16px;
-  z-index: 100;
+  z-index: 200;
   padding: 12px 20px;
-  background: var(--bg-surface);
+  background: var(--bg-elevated);
   color: var(--accent);
   text-decoration: none;
   border: 1px solid var(--accent);
-  border-radius: var(--radius-card);
-  font-weight: 500;
+  border-radius: var(--radius);
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   transition: top var(--transition-fast);
 }
 
 .skip-to-content:focus,
 .skip-to-content:focus-visible {
   top: 16px;
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 /* ----------------------------------------------------
    REDUCED MOTION
 ---------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
