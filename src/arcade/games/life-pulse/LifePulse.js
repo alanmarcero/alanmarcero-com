@@ -857,11 +857,13 @@ export class LifePulse {
       if (e.type === 'turret') {
         img = this.assets.turret;
         w = 22; h = 18;
-      } else if (e.type === 'swooper') {
-        img = this.assets.drone; // reuse drone for now
-        w = 16; h = 14;
+      } else if (e.type === 'swooper' || e.type === 'drone') {
+        // Use wing flap animation (2nd set)
+        const wingFrame = Math.floor((this._time * 10) % 4) + 1;
+        img = this.assets[`enemy-drone-wing-${wingFrame}`];
+        w = 18; h = 14;
       } else if (e.type === 'growth') {
-        img = this.assets.turret; // temporary until better organic sprite
+        img = this.assets.turret; // reuse turret for now
         w = 24; h = 20;
       } else {
         img = this.assets.drone;
