@@ -95,6 +95,7 @@ export class LifePulse {
     this._enemyBullets = [];
     this._enemies = [];
     this._particles = [];
+    this._explosions = [];
     this._powerups = [];
     this._powerLevel = 0;
     this._powerTimer = 0;
@@ -175,6 +176,7 @@ export class LifePulse {
     this._updateEnemies(dt);
     this._updateEnemyBullets(dt);
     this._updateParticles(dt);
+    this._updateExplosions(dt);
     this._updatePowerups(dt);
     this._spawnEnemies(dt);
     this._updateBoss(dt);
@@ -407,6 +409,21 @@ export class LifePulse {
       p.vy *= 0.98;
 
       if (p.life <= 0) this._particles.splice(i, 1);
+    }
+  }
+
+  _updateExplosions(dt) {
+    for (let i = this._explosions.length - 1; i >= 0; i--) {
+      const ex = this._explosions[i];
+      ex.age += dt;
+
+      // Map age to frame (1-6)
+      const progress = ex.age / ex.duration;
+      ex.frame = Math.min(6, Math.max(1, Math.floor(progress * 6) + 1));
+
+      if (ex.age >= ex.duration) {
+        this._explosions.splice(i, 1);
+      }
     }
   }
 
@@ -692,19 +709,33 @@ export class LifePulse {
   }
 
   _createExplosion(x, y, size = 16) {
-    const count = size > 25 ? 22 : 14;
-    for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
-      const speed = (size > 25 ? 45 : 55) + Math.random() * (size > 25 ? 140 : 100);
-      this._particles.push({
-        x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: 0.35 + Math.random() * 0.4,
-        size: size > 25 ? 2.5 + Math.random() * 3 : 2 + Math.random() * 2,
+    const isBig = size > 25;
+
+    // Use animated sprite explosion for big ones (3rd set)
+    if (isBig) {
+      this._explosions.push({
+        x,
+        y,
+        frame: 1,
+        age: 0,
+        duration: 0.45, // 6 frames over ~0.45s
       });
+      this._shake = Math.max(this._shake, 14);
+    } else {
+      // Keep small particle explosions for regular hits
+      const count = 10;
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.6;
+        const speed = 50 + Math.random() * 90;
+        this._particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 0.22 + Math.random() * 0.25,
+          size: 1.8 + Math.random() * 2,
+        });
+      }
     }
-    if (size > 25) this._shake = Math.max(this._shake, 11);
   }
 
   _createHitParticle(x, y) {
@@ -879,7 +910,16 @@ export class LifePulse {
       }
     }
 
-    // Particles
+    // Animated explosions (3rd set - 6 frames)
+    for (const ex of this._explosions) {
+      const img = this.assets[`explosion-${ex.frame}`];
+      if (img && img.complete) {
+        const size = 36 + (ex.frame - 1) * 4; // grow slightly with frame
+        ctx.drawImage(img, ex.x - size/2, ex.y - size/2, size, size);
+      }
+    }
+
+    // Particles (small hits)
     ctx.fillStyle = WHITE;
     for (const p of this._particles) {
       ctx.globalAlpha = Math.max(0.1, p.life / 0.6);
