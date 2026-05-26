@@ -26,6 +26,25 @@ export class LifePulse {
       ['turret', '/assets/arcade/life-pulse/enemy-turret.jpg'],
       ['powerDouble', '/assets/arcade/life-pulse/powerup-double.jpg'],
       ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
+      // Animation frames (2nd + 3rd sets)
+      ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
+      ['player-thruster-2', '/assets/arcade/life-pulse/player-thruster-2.jpg'],
+      ['player-thruster-3', '/assets/arcade/life-pulse/player-thruster-3.jpg'],
+      ['player-thruster-4', '/assets/arcade/life-pulse/player-thruster-4.jpg'],
+      ['enemy-drone-wing-1', '/assets/arcade/life-pulse/enemy-drone-wing-1.jpg'],
+      ['enemy-drone-wing-2', '/assets/arcade/life-pulse/enemy-drone-wing-2.jpg'],
+      ['enemy-drone-wing-3', '/assets/arcade/life-pulse/enemy-drone-wing-3.jpg'],
+      ['enemy-drone-wing-4', '/assets/arcade/life-pulse/enemy-drone-wing-4.jpg'],
+      ['explosion-1', '/assets/arcade/life-pulse/explosion-1.jpg'],
+      ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
+      ['explosion-3', '/assets/arcade/life-pulse/explosion-3.jpg'],
+      ['explosion-4', '/assets/arcade/life-pulse/explosion-4.jpg'],
+      ['explosion-5', '/assets/arcade/life-pulse/explosion-5.jpg'],
+      ['explosion-6', '/assets/arcade/life-pulse/explosion-6.jpg'],
+      ['boss-anim-1', '/assets/arcade/life-pulse/boss-anim-1.jpg'],
+      ['boss-anim-2', '/assets/arcade/life-pulse/boss-anim-2.jpg'],
+      ['boss-anim-3', '/assets/arcade/life-pulse/boss-anim-3.jpg'],
+      ['boss-anim-4', '/assets/arcade/life-pulse/boss-anim-4.jpg'],
     ];
 
     let loaded = 0;
@@ -748,6 +767,13 @@ export class LifePulse {
         const w = 28;
         const h = 18;
         ctx.drawImage(playerImg, p.x - w/2, p.y - h/2, w, h);
+
+        // Thruster animation (2nd set)
+        const thrusterFrame = Math.floor((this._time * 12) % 4) + 1;
+        const thrusterImg = this.assets[`player-thruster-${thrusterFrame}`];
+        if (thrusterImg && thrusterImg.complete) {
+          ctx.drawImage(thrusterImg, p.x - 18, p.y - 5, 12, 10);
+        }
       } else {
         // Fallback
         ctx.fillStyle = this._powerLevel > 0 ? '#7cffe0' : CYAN;
