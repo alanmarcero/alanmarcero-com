@@ -9,6 +9,7 @@ import { Pong } from './pong/Pong';
 import { RhythmCatcher } from './rhythm/RhythmCatcher';
 import { Centipede } from './centipede/Centipede';
 import { BirdNameGenerator } from './bird-name-generator/BirdNameGenerator';
+import { LifePulse } from './life-pulse/LifePulse';
 
 export const games = [
   {
@@ -131,5 +132,16 @@ export const games = [
       touch: ['fire'],
     },
     factory: () => new BirdNameGenerator(),
+  },
+  {
+    id: 'life-pulse',
+    name: 'Life Pulse',
+    description: 'Side-scrolling biological shooter in the spirit of Life Force',
+    accent: '#ff5722',
+    controls: {
+      keyboard: { left: 'ArrowLeft', right: 'ArrowRight', up: 'ArrowUp', down: 'ArrowDown', fire: 'Space', secondary: 'X' },
+      touch: ['left', 'right', 'up', 'down', 'fire'],
+    },
+    factory: () => new LifePulse(),
   },
 ];
