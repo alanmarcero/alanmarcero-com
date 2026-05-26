@@ -12,6 +12,36 @@ const STARTING_LIVES = 3;
 export class LifePulse {
   onHudUpdate = null;
 
+  constructor() {
+    this.assets = {};
+    this.assetsLoaded = false;
+    this._loadAssets();
+  }
+
+  _loadAssets() {
+    const assetList = [
+      ['player', '/assets/arcade/life-pulse/player-ship.jpg'],
+      ['boss', '/assets/arcade/life-pulse/boss.jpg'],
+      ['drone', '/assets/arcade/life-pulse/enemy-drone.jpg'],
+      ['turret', '/assets/arcade/life-pulse/enemy-turret.jpg'],
+      ['powerDouble', '/assets/arcade/life-pulse/powerup-double.jpg'],
+      ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
+    ];
+
+    let loaded = 0;
+    const total = assetList.length;
+
+    assetList.forEach(([key, src]) => {
+      const img = new Image();
+      img.onload = () => {
+        loaded++;
+        if (loaded === total) this.assetsLoaded = true;
+      };
+      img.src = src;
+      this.assets[key] = img;
+    });
+  }
+
   init(width, height) {
     this.canvasW = width;
     this.canvasH = height;
@@ -697,6 +727,9 @@ export class LifePulse {
     ctx.translate(this.offsetX + shakeX, this.offsetY + shakeY);
     ctx.scale(this.scale, this.scale);
 
+    // Crisp pixel art rendering
+    ctx.imageSmoothingEnabled = false;
+
     // Background
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, GAME_W, GAME_H);
@@ -707,33 +740,39 @@ export class LifePulse {
     // Player
     if (this._player.alive) {
       const p = this._player;
-      const alpha = p.invuln > 0 ? (Math.floor(p.invuln * 10) % 2 === 0 ? 0.4 : 1) : 1;
+      const alpha = p.invuln > 0 ? (Math.floor(p.invuln * 10) % 2 === 0 ? 0.45 : 1) : 1;
       ctx.globalAlpha = alpha;
 
-      // Ship body
-      ctx.fillStyle = this._powerLevel > 0 ? '#7cffe0' : CYAN;
-      ctx.fillRect(p.x - 8, p.y - 5, 18, 10);
+      const playerImg = this.assets.player;
+      if (playerImg && playerImg.complete) {
+        const w = 28;
+        const h = 18;
+        ctx.drawImage(playerImg, p.x - w/2, p.y - h/2, w, h);
+      } else {
+        // Fallback
+        ctx.fillStyle = this._powerLevel > 0 ? '#7cffe0' : CYAN;
+        ctx.fillRect(p.x - 8, p.y - 5, 18, 10);
+        ctx.fillStyle = WHITE;
+        ctx.fillRect(p.x + 2, p.y - 2, 6, 4);
+      }
 
-      // Cockpit
-      ctx.fillStyle = WHITE;
-      ctx.fillRect(p.x + 2, p.y - 2, 6, 4);
-
-      // Thruster glow
-      ctx.fillStyle = this._powerLevel > 0 ? ORANGE : '#ff8a5f';
-      ctx.fillRect(p.x - 14, p.y - 2, 7, 4);
-
+      // Power level visual upgrades
+      if (this._powerLevel >= 1) {
+        ctx.fillStyle = ORANGE;
+        ctx.fillRect(p.x - 16, p.y - 2, 5, 4);
+      }
       if (this._powerLevel >= 2) {
         ctx.fillStyle = VIOLET;
-        ctx.fillRect(p.x - 11, p.y - 7, 4, 3);
-        ctx.fillRect(p.x - 11, p.y + 4, 4, 3);
+        ctx.fillRect(p.x - 19, p.y - 6, 3, 3);
+        ctx.fillRect(p.x - 19, p.y + 3, 3, 3);
       }
 
       // Shield effect
-      if (p.invuln > 3.5) {
+      if (p.invuln > 3.2) {
         ctx.strokeStyle = '#7cffe0';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
-        ctx.arc(p.x + 1, p.y, 16, 0, Math.PI * 2);
+        ctx.arc(p.x + 1, p.y, 17, 0, Math.PI * 2);
         ctx.stroke();
         ctx.lineWidth = 1;
       }
@@ -755,25 +794,28 @@ export class LifePulse {
 
     // Enemies
     for (const e of this._enemies) {
+      let img = null;
+      let w = 18, h = 14;
+
       if (e.type === 'turret') {
-        ctx.fillStyle = VIOLET;
-        ctx.fillRect(e.x - 8, e.y - 8, 16, 16);
-        ctx.fillStyle = ORANGE;
-        ctx.fillRect(e.x - 3, e.y - 3, 6, 6);
+        img = this.assets.turret;
+        w = 22; h = 18;
       } else if (e.type === 'swooper') {
-        ctx.fillStyle = ORANGE;
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, 8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = CYAN;
-        ctx.fillRect(e.x - 3, e.y - 3, 6, 6);
+        img = this.assets.drone; // reuse drone for now
+        w = 16; h = 14;
       } else if (e.type === 'growth') {
-        ctx.fillStyle = '#9c4dff';
-        ctx.fillRect(e.x - 9, e.y - 9, 18, 18);
-        ctx.fillStyle = ORANGE;
-        ctx.fillRect(e.x - 4, e.y - 4, 8, 8);
+        img = this.assets.turret; // temporary until better organic sprite
+        w = 24; h = 20;
       } else {
-        ctx.fillStyle = CYAN;
+        img = this.assets.drone;
+        w = 18; h = 14;
+      }
+
+      if (img && img.complete) {
+        ctx.drawImage(img, e.x - w/2, e.y - h/2, w, h);
+      } else {
+        // Fallback procedural
+        ctx.fillStyle = e.type === 'turret' ? VIOLET : CYAN;
         ctx.fillRect(e.x - 6, e.y - 5, 12, 10);
       }
     }
@@ -781,35 +823,32 @@ export class LifePulse {
     // Boss
     if (this._boss) {
       const b = this._boss;
-      const healthRatio = Math.max(0.1, b.hp / b.maxHp);
+      const bossImg = this.assets.boss;
 
-      ctx.fillStyle = VIOLET;
-      ctx.fillRect(b.x - 28, b.y - 22, 56, 44);
-
-      // Organic core
-      ctx.fillStyle = ORANGE;
-      ctx.fillRect(b.x - 14, b.y - 10, 28 * healthRatio, 20);
-
-      // Eyes / vents
-      ctx.fillStyle = CYAN;
-      ctx.fillRect(b.x - 18, b.y - 14, 6, 6);
-      ctx.fillRect(b.x - 18, b.y + 8, 6, 6);
+      if (bossImg && bossImg.complete) {
+        const w = 72;
+        const h = 54;
+        ctx.drawImage(bossImg, b.x - w/2, b.y - h/2, w, h);
+      } else {
+        // Fallback
+        ctx.fillStyle = VIOLET;
+        ctx.fillRect(b.x - 28, b.y - 22, 56, 44);
+        ctx.fillStyle = ORANGE;
+        ctx.fillRect(b.x - 14, b.y - 10, 28, 20);
+      }
     }
 
     // Powerups
     for (const p of this._powerups) {
-      if (p.type === 'shield') {
-        ctx.fillStyle = '#7cffe0';
-        ctx.strokeStyle = WHITE;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+      const img = p.type === 'shield' ? this.assets.powerShield : this.assets.powerDouble;
+      const size = p.type === 'shield' ? 14 : 13;
+
+      if (img && img.complete) {
+        ctx.drawImage(img, p.x - size/2, p.y - size/2, size, size);
       } else {
-        ctx.fillStyle = '#ffeb3b';
+        ctx.fillStyle = p.type === 'shield' ? '#7cffe0' : '#ffeb3b';
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, size/2, 0, Math.PI * 2);
         ctx.fill();
       }
     }
