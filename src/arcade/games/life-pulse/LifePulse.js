@@ -34,6 +34,8 @@ export class LifePulse {
     this._player = {
       x: 90,
       y: GAME_H / 2,
+      vx: 0,
+      vy: 0,
       w: 18,
       h: 10,
       alive: true,
@@ -54,6 +56,7 @@ export class LifePulse {
     this._bossActive = false;
     this._boss = null;
     this._time = 0;
+    this._shake = 0;
 
     this._emitHud();
   }
@@ -132,6 +135,9 @@ export class LifePulse {
 
     this._difficulty = Math.min(3.5, 1 + this.score / 2400);
 
+    // Screen shake decay
+    if (this._shake > 0) this._shake *= 0.82;
+
     // Spawn boss after some time or high score
     if (!this._bossActive && !this._boss && this._time > 52 && Math.random() < 0.012) {
       this._spawnBoss();
@@ -143,27 +149,55 @@ export class LifePulse {
   _updatePlayer(dt) {
     if (!this._player.alive) return;
 
-    let dx = 0, dy = 0;
-    if (this._keys.left) dx -= 1;
-    if (this._keys.right) dx += 1;
-    if (this._keys.up) dy -= 1;
-    if (this._keys.down) dy += 1;
+    const p = this._player;
+    const accel = 1450;
+    const friction = 6.5;
+    const maxSpeed = 265;
 
-    if (dx !== 0 && dy !== 0) {
-      const len = Math.sqrt(dx * dx + dy * dy);
-      dx /= len; dy /= len;
+    let ax = 0, ay = 0;
+    if (this._keys.left) ax -= 1;
+    if (this._keys.right) ax += 1;
+    if (this._keys.up) ay -= 1;
+    if (this._keys.down) ay += 1;
+
+    // Normalize diagonal
+    if (ax !== 0 && ay !== 0) {
+      const len = Math.sqrt(ax * ax + ay * ay);
+      ax /= len; ay /= len;
     }
 
-    this._player.x += dx * PLAYER_SPEED * dt;
-    this._player.y += dy * PLAYER_SPEED * dt;
+    p.vx += ax * accel * dt;
+    p.vy += ay * accel * dt;
 
-    // Keep player in reasonable play area
-    this._player.x = Math.max(40, Math.min(220, this._player.x));
-    this._player.y = Math.max(20, Math.min(GAME_H - 20, this._player.y));
+    // Friction
+    p.vx *= (1 - friction * dt);
+    p.vy *= (1 - friction * dt);
+
+    // Clamp speed
+    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+    if (speed > maxSpeed) {
+      const s = maxSpeed / speed;
+      p.vx *= s;
+      p.vy *= s;
+    }
+
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+
+    // Bounds with soft walls
+    const leftBound = 32;
+    const rightBound = 235;
+    const top = 22;
+    const bottom = GAME_H - 22;
+
+    if (p.x < leftBound) { p.x = leftBound; p.vx *= -0.3; }
+    if (p.x > rightBound) { p.x = rightBound; p.vx *= -0.3; }
+    if (p.y < top) { p.y = top; p.vy *= -0.35; }
+    if (p.y > bottom) { p.y = bottom; p.vy *= -0.35; }
 
     // Firing
     this._fireCooldown -= dt;
-    const fireRate = this._powerLevel > 0 ? 0.07 : 0.12;
+    const fireRate = this._powerLevel > 0 ? 0.065 : 0.115;
     if (this._keys.fire && this._fireCooldown <= 0) {
       this._fireCooldown = fireRate;
       this._shoot();
@@ -174,7 +208,7 @@ export class LifePulse {
 
     this._secondaryCooldown -= dt;
     if (this._keys.secondary && this._secondaryCooldown <= 0) {
-      this._secondaryCooldown = 0.35;
+      this._secondaryCooldown = 0.32;
       this._shootSecondary();
     }
 
@@ -278,6 +312,23 @@ export class LifePulse {
       // Remove if dead
       if (e.hp <= 0) {
         this._createExplosion(e.x, e.y, e.size || 14);
+
+        // Growth splits into smaller threats
+        if (e.split) {
+          for (let s = 0; s < 2; s++) {
+            this._enemies.push({
+              x: e.x + (Math.random() - 0.5) * 18,
+              y: e.y + (Math.random() - 0.5) * 18,
+              vx: -ENEMY_SPEED * (0.7 + Math.random() * 0.5),
+              vy: (Math.random() - 0.5) * 55,
+              hp: 1,
+              points: 55,
+              size: 9,
+              type: 'drone',
+            });
+          }
+        }
+
         this.score += e.points || 80;
         this._enemies.splice(i, 1);
       }
@@ -359,7 +410,7 @@ export class LifePulse {
           size: 12,
           type: 'swooper',
         });
-      } else {
+      } else if (roll < 0.88) {
         // Turret / spawner
         this._enemies.push({
           x: GAME_W + 25,
@@ -371,15 +422,29 @@ export class LifePulse {
           size: 16,
           type: 'turret',
         });
+      } else {
+        // Biological growth (splits into smaller enemies when destroyed)
+        this._enemies.push({
+          x: GAME_W + 30,
+          y,
+          vx: -ENEMY_SPEED * 0.55,
+          vy: (Math.random() - 0.5) * 18,
+          hp: 5,
+          points: 210,
+          size: 19,
+          type: 'growth',
+          split: true,
+        });
       }
     }
 
     // Occasional power-up
-    if (Math.random() < 0.008) {
+    if (Math.random() < 0.0075) {
+      const type = Math.random() < 0.65 ? 'double' : 'shield';
       this._powerups.push({
         x: GAME_W + 10,
         y: 50 + Math.random() * (GAME_H - 100),
-        type: 'double',
+        type,
       });
     }
   }
@@ -411,34 +476,76 @@ export class LifePulse {
 
     b.vx = 0;
 
-    // Simple boss movement
-    b.y = GAME_H / 2 + Math.sin(b.timer * 1.6) * 68;
+    const healthRatio = b.hp / b.maxHp;
 
-    // Boss attacks
-    if (b.timer % 1.1 < 0.06) {
-      // Spread shot
-      for (let i = -1; i <= 1; i++) {
-        this._enemyBullets.push({
-          x: b.x - 20,
-          y: b.y + i * 18,
-          vx: -170,
-          vy: i * 35,
-        });
-      }
+    // Phase change
+    if (b.phase === 0 && healthRatio < 0.45) {
+      b.phase = 1;
+      b.timer = 0;
     }
 
-    if (b.timer % 2.8 < 0.05 && Math.random() < 0.7) {
-      // Summon helpers
-      this._enemies.push({
-        x: b.x - 30,
-        y: b.y + (Math.random() - 0.5) * 80,
-        vx: -110,
-        vy: (Math.random() - 0.5) * 60,
-        hp: 2,
-        points: 120,
-        size: 13,
-        type: 'swooper',
-      });
+    // Movement
+    const freq = b.phase === 0 ? 1.55 : 2.1;
+    const amp = b.phase === 0 ? 62 : 48;
+    b.y = GAME_H / 2 + Math.sin(b.timer * freq) * amp + (b.phase === 1 ? Math.sin(b.timer * 3.2) * 18 : 0);
+
+    // Attacks
+    if (b.phase === 0) {
+      if (b.timer % 1.05 < 0.05) {
+        for (let i = -1; i <= 1; i++) {
+          this._enemyBullets.push({
+            x: b.x - 22,
+            y: b.y + i * 16,
+            vx: -175,
+            vy: i * 38,
+          });
+        }
+      }
+      if (b.timer % 2.6 < 0.04 && Math.random() < 0.75) {
+        this._enemies.push({
+          x: b.x - 25,
+          y: b.y + (Math.random() - 0.5) * 70,
+          vx: -105,
+          vy: (Math.random() - 0.5) * 50,
+          hp: 2,
+          points: 95,
+          size: 12,
+          type: 'swooper',
+        });
+      }
+    } else {
+      // Phase 2 — more aggressive
+      if (b.timer % 0.65 < 0.05) {
+        this._enemyBullets.push({
+          x: b.x - 20,
+          y: b.y,
+          vx: -195,
+          vy: (Math.random() - 0.5) * 70,
+        });
+      }
+      if (b.timer % 1.9 < 0.06) {
+        for (let i = -2; i <= 2; i += 2) {
+          this._enemyBullets.push({
+            x: b.x - 18,
+            y: b.y + i * 12,
+            vx: -160,
+            vy: i * 32,
+          });
+        }
+      }
+      if (b.timer % 3.1 < 0.05) {
+        this._enemies.push({
+          x: b.x - 18,
+          y: b.y,
+          vx: -85,
+          vy: (Math.random() - 0.5) * 30,
+          hp: 3,
+          points: 160,
+          size: 14,
+          type: 'growth',
+          split: true,
+        });
+      }
     }
   }
 
@@ -499,7 +606,8 @@ export class LifePulse {
           this._bullets.splice(i, 1);
 
           if (this._boss.hp <= 0) {
-            this._createExplosion(this._boss.x, this._boss.y, 38);
+            this._createExplosion(this._boss.x, this._boss.y, 42);
+            this._shake = 18;
             this.score += 850;
             this._boss = null;
             this._bossActive = false;
@@ -513,6 +621,7 @@ export class LifePulse {
     this._player.invuln = 1.8;
     this.lives -= 1;
     this._createExplosion(this._player.x, this._player.y, 22);
+    this._shake = Math.max(this._shake, 7);
 
     if (this.lives <= 0) {
       this.gameOver = true;
@@ -527,21 +636,26 @@ export class LifePulse {
       this._powerLevel = Math.min(2, this._powerLevel + 1);
       this._powerTimer = 18;
       this.score += 180;
+    } else if (type === 'shield') {
+      this._player.invuln = Math.max(this._player.invuln, 6.5);
+      this.score += 220;
     }
   }
 
   _createExplosion(x, y, size = 16) {
-    for (let i = 0; i < 14; i++) {
-      const angle = (i / 14) * Math.PI * 2;
-      const speed = 60 + Math.random() * 110;
+    const count = size > 25 ? 22 : 14;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+      const speed = (size > 25 ? 45 : 55) + Math.random() * (size > 25 ? 140 : 100);
       this._particles.push({
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        life: 0.4 + Math.random() * 0.35,
-        size: 2 + Math.random() * 2.5,
+        life: 0.35 + Math.random() * 0.4,
+        size: size > 25 ? 2.5 + Math.random() * 3 : 2 + Math.random() * 2,
       });
     }
+    if (size > 25) this._shake = Math.max(this._shake, 11);
   }
 
   _createHitParticle(x, y) {
@@ -555,19 +669,32 @@ export class LifePulse {
   }
 
   _rectsOverlap(a, b) {
-    return !(a.x + (a.w || 12) < b.x || b.x + (b.size || 12) < a.x ||
-             a.y + (a.h || 8) < b.y || b.y + (b.size || 12) < a.y);
+    const aw = a.w || 11;
+    const ah = a.h || 7;
+    const bw = b.size || b.w || 11;
+    const bh = b.size || b.h || 11;
+
+    return !(a.x + aw * 0.5 < b.x - bw * 0.5 ||
+             b.x + bw * 0.5 < a.x - aw * 0.5 ||
+             a.y + ah * 0.5 < b.y - bh * 0.5 ||
+             b.y + bh * 0.5 < a.y - ah * 0.5);
   }
 
   _pointInRect(px, py, r) {
-    return px > r.x - 6 && px < r.x + (r.w || 16) + 6 &&
-           py > r.y - 6 && py < r.y + (r.h || 10) + 6;
+    const rw = r.w || r.size || 12;
+    const rh = r.h || r.size || 12;
+    return px > r.x - rw * 0.45 && px < r.x + rw * 0.45 &&
+           py > r.y - rh * 0.45 && py < r.y + rh * 0.45;
   }
 
   // ==================== RENDER ====================
   render(ctx) {
     ctx.save();
-    ctx.translate(this.offsetX, this.offsetY);
+
+    // Apply screen shake
+    const shakeX = (Math.random() - 0.5) * this._shake * 0.9;
+    const shakeY = (Math.random() - 0.5) * this._shake * 0.9;
+    ctx.translate(this.offsetX + shakeX, this.offsetY + shakeY);
     ctx.scale(this.scale, this.scale);
 
     // Background
@@ -601,6 +728,16 @@ export class LifePulse {
         ctx.fillRect(p.x - 11, p.y + 4, 4, 3);
       }
 
+      // Shield effect
+      if (p.invuln > 3.5) {
+        ctx.strokeStyle = '#7cffe0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x + 1, p.y, 16, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
+
       ctx.globalAlpha = 1;
     }
 
@@ -630,6 +767,11 @@ export class LifePulse {
         ctx.fill();
         ctx.fillStyle = CYAN;
         ctx.fillRect(e.x - 3, e.y - 3, 6, 6);
+      } else if (e.type === 'growth') {
+        ctx.fillStyle = '#9c4dff';
+        ctx.fillRect(e.x - 9, e.y - 9, 18, 18);
+        ctx.fillStyle = ORANGE;
+        ctx.fillRect(e.x - 4, e.y - 4, 8, 8);
       } else {
         ctx.fillStyle = CYAN;
         ctx.fillRect(e.x - 6, e.y - 5, 12, 10);
@@ -655,11 +797,21 @@ export class LifePulse {
     }
 
     // Powerups
-    ctx.fillStyle = '#ffeb3b';
     for (const p of this._powerups) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-      ctx.fill();
+      if (p.type === 'shield') {
+        ctx.fillStyle = '#7cffe0';
+        ctx.strokeStyle = WHITE;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = '#ffeb3b';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     // Particles
