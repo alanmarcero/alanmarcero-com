@@ -730,7 +730,7 @@ export class LifePulse {
         y,
         frame: 1,
         age: 0,
-        duration: 0.45, // 6 frames over ~0.45s
+        duration: 0.65, // 6 frames over ~0.65s (slower, more readable)
       });
       this._shake = Math.max(this._shake, 14);
     } else {
@@ -834,7 +834,7 @@ export class LifePulse {
       }
 
       // Thruster animation (2nd set)
-      const thrusterFrame = Math.floor((this._time * 12) % 4) + 1;
+      const thrusterFrame = Math.floor((this._time * 7) % 4) + 1;
       const thrusterImg = this.assets[`player-thruster-${thrusterFrame}`];
       if (thrusterImg && thrusterImg.complete) {
         ctx.drawImage(thrusterImg, p.x - 18, p.y - 5, 12, 10);
@@ -888,12 +888,12 @@ export class LifePulse {
         w = 22; h = 18;
       } else if (e.type === 'swooper' || e.type === 'drone') {
         // Use wing flap animation (2nd set)
-        const wingFrame = Math.floor((this._time * 10) % 4) + 1;
+        const wingFrame = Math.floor((this._time * 5.5) % 4) + 1;
         img = this.assets[`enemy-drone-wing-${wingFrame}`];
         w = 18; h = 14;
       } else if (e.type === 'growth') {
         // Use pulsing animation for growth enemy (3rd set)
-        const pulseFrame = Math.floor((this._time * 8) % 5) + 1;
+        const pulseFrame = Math.floor((this._time * 4.5) % 5) + 1;
         img = this.assets[`growth-pulse-${pulseFrame}`];
         w = 24; h = 20;
       } else {
