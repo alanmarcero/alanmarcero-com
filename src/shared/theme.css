@@ -1,177 +1,221 @@
-/* ----------------------------------------------------
-   ECLIPSE — Sophisticated dark synth aesthetic
-   Deep, confident, modern electronic music feel
----------------------------------------------------- */
+/* ==========================================================================
+   theme.css — design tokens + base styles
+   Direction: "signal path" — a modular synthesizer panel, not a webpage.
+   Dark studio chassis, phosphor-scope accents, machined-panel modules.
+   Every component in App.css consumes ONLY these tokens.
+   ========================================================================== */
+
 :root {
-  /* Backgrounds — rich near-black with subtle warmth */
-  --bg-body:      #0a0a0d;
-  --bg-surface:   #121216;
-  --bg-elevated:  #1a1a20;
-  --bg-footer:    #070709;
+  /* -- chassis (surfaces) ------------------------------------------------ */
+  --bg: #0a0c0d;                 /* studio dark; near-black, warm */
+  --bg-rail: #0e1112;            /* mounting-rail stripe */
+  --panel: #14181a;              /* module faceplate */
+  --panel-raised: #191e21;       /* hovered/raised faceplate */
+  --panel-inset: #0c0f10;        /* recessed wells (inputs, scope) */
 
-  /* Primary accent — sophisticated teal */
-  --accent:        #00d4c8;
-  --accent-soft:   rgba(0, 212, 200, 0.12);
-  --accent-strong: rgba(0, 212, 200, 0.28);
+  /* -- signal (accents) -------------------------------------------------- */
+  --phosphor: #4af2a4;           /* scope-green: primary signal */
+  --phosphor-dim: #2c9a68;
+  --phosphor-glow: rgba(74, 242, 164, 0.16);
+  --amber: #ffb454;              /* VU amber: secondary signal */
+  --amber-glow: rgba(255, 180, 84, 0.14);
+  --led-off: #2a3236;
 
-  /* Warm secondary accent — copper / burnt orange */
-  --accent-warm:   #ff8a5f;
-  --accent-warm-soft: rgba(255, 138, 95, 0.14);
+  /* -- ink (text) --------------------------------------------------------- */
+  --ink: #e8edee;
+  --ink-muted: #99a6ab;
+  --ink-faint: #5c686d;
 
-  /* Text — warm off-white scale */
-  --text-primary:   #f4f3f0;
-  --text-secondary: #a8a6a0;
-  --text-muted:     #68665f;
+  /* -- lines -------------------------------------------------------------- */
+  --line: #232a2e;               /* panel seams */
+  --line-strong: #2f383d;
+  --focus-ring: var(--phosphor);
 
-  /* Borders */
-  --border-subtle:  rgba(255, 255, 255, 0.07);
-  --border-medium:  rgba(255, 255, 255, 0.13);
-  --border-strong:  rgba(255, 255, 255, 0.18);
+  /* -- type --------------------------------------------------------------- */
+  --font-display: 'Archivo', 'Helvetica Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+  --font-body: 'Archivo', system-ui, sans-serif;
 
-  /* Focus & states */
-  --focus-ring:     0 0 0 3px rgba(0, 212, 200, 0.35);
-  --error-color:    #ff6b6b;
+  --text-xs: 0.72rem;
+  --text-sm: 0.86rem;
+  --text-base: 1rem;
+  --text-lg: 1.18rem;
+  --text-xl: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+  --text-hero: clamp(2.6rem, 1.8rem + 4vw, 4.6rem);
 
-  /* Typography */
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
+  /* -- rhythm ------------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+  --space-7: 6.5rem;
 
-  /* Layout */
-  --max-width:      1120px;
-  --section-gap:    5.5rem;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
 
-  /* Motion & shape */
-  --transition:     200ms cubic-bezier(0.23, 1, 0.32, 1);
-  --transition-fast: 120ms ease;
-  --radius:         8px;
-  --radius-sm:      4px;
+  --content-max: 72rem;
+
+  /* -- motion ------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 700ms;
+
+  /* -- elevation ---------------------------------------------------------- */
+  --shadow-module:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 0 0 1px var(--line),
+    0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-module-raised:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 0 0 1px var(--line-strong),
+    0 18px 44px rgba(0, 0, 0, 0.55),
+    0 0 24px var(--phosphor-glow);
 }
 
-/* ----------------------------------------------------
-   GLOBAL BASE
----------------------------------------------------- */
+/* ==========================================================================
+   base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-html, body {
+body {
   margin: 0;
-  padding: 0;
+  background-color: var(--bg);
+  /* chassis: faint mounting rails every 96px + a phosphor wash at the top */
+  background-image:
+    radial-gradient(120% 80% at 50% 0%, rgba(74, 242, 164, 0.045), transparent 60%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 95px,
+      var(--bg-rail) 95px,
+      var(--bg-rail) 96px
+    );
+  color: var(--ink);
   font-family: var(--font-body);
-  background-color: var(--bg-body);
-  color: var(--text-primary);
-  line-height: 1.65;
+  font-size: var(--text-base);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0;
 }
 
-/* ----------------------------------------------------
-   BUTTONS — substantial, confident
----------------------------------------------------- */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.92rem;
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--phosphor);
   text-decoration: none;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 13px 26px;
-  letter-spacing: 0.01em;
-  transition: all var(--transition);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
-.btn-primary:hover {
-  background: #00e8d9;
-  border-color: #00e8d9;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--accent-soft);
+a:hover {
+  color: var(--ink);
 }
 
-.btn-primary:active {
-  transform: translateY(0);
+img, svg {
+  display: block;
+  max-width: 100%;
 }
 
-.btn-primary--ghost {
-  background: transparent;
-  color: var(--accent);
-  border-color: var(--border-medium);
+button {
+  font: inherit;
+  cursor: pointer;
 }
 
-.btn-primary--ghost:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
+::selection {
+  background: var(--phosphor);
+  color: var(--bg);
 }
 
-.btn-primary--warm {
-  background: var(--accent-warm);
-  border-color: var(--accent-warm);
-  color: #1a140f;
+/* one focus language everywhere */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
 }
 
-.btn-primary--warm:hover {
-  background: #ff9f75;
-  border-color: #ff9f75;
+/* ==========================================================================
+   shared utilities
+   ========================================================================== */
+
+/* mono label — the little machined engraving above things */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
-/* Focus states */
-.btn-primary:focus-visible,
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-[tabindex]:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-  border-radius: var(--radius);
-}
-
-/* ----------------------------------------------------
-   SKIP LINK
----------------------------------------------------- */
 .skip-to-content {
   position: absolute;
   top: -100px;
-  left: 16px;
-  z-index: 200;
-  padding: 12px 20px;
-  background: var(--bg-elevated);
-  color: var(--accent);
-  text-decoration: none;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  transition: top var(--transition-fast);
+  left: var(--space-3);
+  z-index: 100;
+  padding: var(--space-2) var(--space-3);
+  background: var(--panel);
+  border: 1px solid var(--phosphor);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  transition: top var(--dur-fast) var(--ease-out);
 }
 
-.skip-to-content:focus,
-.skip-to-content:focus-visible {
-  top: 16px;
+.skip-to-content:focus {
+  top: var(--space-3);
 }
 
-/* ----------------------------------------------------
-   REDUCED MOTION
----------------------------------------------------- */
+/* scroll reveal — consumed by useScrollReveal */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.scroll-reveal--visible {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
   }
 }
