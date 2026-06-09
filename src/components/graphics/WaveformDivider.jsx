@@ -23,7 +23,7 @@ export default function WaveformDivider({ variant = "sine", className = "" }) {
       <path
         d={trace}
         fill="none"
-        stroke="var(--graphic-phosphor, #41ff8a)"
+        stroke="var(--graphic-phosphor, #4af2a4)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
