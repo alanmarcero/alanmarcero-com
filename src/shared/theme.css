@@ -21,6 +21,10 @@
   --amber-glow: rgba(255, 180, 84, 0.14);
   --led-off: #2a3236;
 
+  /* graphics coupling (S2 inline SVG components read these) */
+  --graphic-phosphor: var(--phosphor);
+  --graphic-amber: var(--amber);
+
   /* -- ink (text) --------------------------------------------------------- */
   --ink: #e8edee;
   --ink-muted: #99a6ab;
