@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" preserveAspectRatio="xMidYMid slice">
+  <!-- S2 (signal-path theme): hero/section backdrop. Patch-cable bezier
+       bundle between jack sockets, fading toward center so foreground
+       content stays readable. Baked palette per coord-thread contract. -->
+  <defs>
+    <radialGradient id="vignette" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#0b0d0b" stop-opacity="0.92"/>
+      <stop offset="55%" stop-color="#0b0d0b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0b0d0b" stop-opacity="0"/>
+    </radialGradient>
+    <g id="jack">
+      <circle r="14" fill="none" stroke="#2a3a2e" stroke-width="3"/>
+      <circle r="7" fill="#0b0d0b" stroke="#41ff8a" stroke-width="1.5" opacity="0.8"/>
+      <circle r="2.5" fill="#41ff8a" opacity="0.9"/>
+    </g>
+  </defs>
+  <rect width="1600" height="900" fill="#0b0d0b"/>
+  <!-- cable runs: green bundle left, amber crossing right -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M120 90 C 220 380, 80 560, 230 800" stroke="#41ff8a" stroke-width="5" opacity="0.16"/>
+    <path d="M180 70 C 320 360, 160 600, 330 830" stroke="#41ff8a" stroke-width="5" opacity="0.12"/>
+    <path d="M70 250 C 260 420, 140 680, 420 760" stroke="#41ff8a" stroke-width="4" opacity="0.10"/>
+    <path d="M1480 120 C 1300 360, 1500 540, 1290 820" stroke="#ffb35c" stroke-width="5" opacity="0.13"/>
+    <path d="M1530 300 C 1340 470, 1480 640, 1240 770" stroke="#ffb35c" stroke-width="4" opacity="0.09"/>
+    <path d="M1420 60 C 1260 300, 1430 520, 1180 730" stroke="#41ff8a" stroke-width="4" opacity="0.08"/>
+  </g>
+  <!-- jack sockets at cable endpoints -->
+  <use href="#jack" x="120" y="90"/>
+  <use href="#jack" x="180" y="70"/>
+  <use href="#jack" x="70" y="250"/>
+  <use href="#jack" x="230" y="800"/>
+  <use href="#jack" x="330" y="830"/>
+  <use href="#jack" x="420" y="760"/>
+  <use href="#jack" x="1480" y="120"/>
+  <use href="#jack" x="1530" y="300"/>
+  <use href="#jack" x="1420" y="60"/>
+  <use href="#jack" x="1290" y="820"/>
+  <use href="#jack" x="1240" y="770"/>
+  <use href="#jack" x="1180" y="730"/>
+  <!-- faint amber LEDs along the top rail -->
+  <g fill="#ffb35c">
+    <circle cx="500" cy="40" r="3" opacity="0.25"/>
+    <circle cx="800" cy="40" r="3" opacity="0.15"/>
+    <circle cx="1100" cy="40" r="3" opacity="0.22"/>
+  </g>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+</svg>
