@@ -62,7 +62,7 @@ describe("PatchBankItem", () => {
       <PatchBankItem bank={mockBank} style={{ '--card-index': 2 }} />
     );
 
-    const card = container.querySelector(".store-item");
+    const card = container.querySelector(".module");
     expect(card.style.getPropertyValue("--card-index")).toBe("2");
   });
 
@@ -75,19 +75,11 @@ describe("PatchBankItem", () => {
     expect(onDownload).toHaveBeenCalledTimes(1);
   });
 
-  it("has mouse event handlers for card glow", () => {
-    jest.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => { cb(0); return 1; });
+  it("renders as a module panel with LED indicator", () => {
     const { container } = render(<PatchBankItem bank={mockBank} />);
 
-    const card = container.querySelector(".store-item");
-    card.getBoundingClientRect = () => ({ left: 0, top: 0 });
-
-    fireEvent.mouseMove(card, { clientX: 50, clientY: 30 });
-    expect(card.style.getPropertyValue("--mouse-x")).toBe("50px");
-    expect(card.style.getPropertyValue("--mouse-y")).toBe("30px");
-
-    fireEvent.mouseLeave(card);
-    expect(card.style.getPropertyValue("--mouse-x")).toBe("");
-    window.requestAnimationFrame.mockRestore();
+    expect(container.querySelector("article.module")).toBeInTheDocument();
+    expect(container.querySelector(".module__led")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector(".module__title")).toHaveTextContent("Test Synth Patches");
   });
 });

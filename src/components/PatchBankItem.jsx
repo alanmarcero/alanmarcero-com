@@ -1,22 +1,24 @@
 import YouTubeEmbed from './YouTubeEmbed';
-import { cardGlowHandlers } from '../utils/cardGlow';
+import ModulePanel from './ModulePanel';
 
 function PatchBankItem({ bank, style, onDownload }) {
   return (
-    <div className="store-item" style={style} {...cardGlowHandlers}>
-      <h3>{bank.name}</h3>
-      <p>{bank.description}</p>
+    <ModulePanel style={style}>
+      <h3 className="module__title">{bank.name}</h3>
+      <p className="module__desc">{bank.description}</p>
 
       {bank.audioDemo?.filter(Boolean).map((videoId) => (
-        <div key={videoId} className="youtube-embed-container">
+        <div key={videoId} className="module__media">
           <YouTubeEmbed videoId={videoId} />
         </div>
       ))}
 
-      <a className="btn-primary download-btn" href={bank.downloadLink} onClick={onDownload}>
-        Download
-      </a>
-    </div>
+      <div className="module__actions">
+        <a className="btn" href={bank.downloadLink} onClick={onDownload}>
+          Download
+        </a>
+      </div>
+    </ModulePanel>
   );
 }
 

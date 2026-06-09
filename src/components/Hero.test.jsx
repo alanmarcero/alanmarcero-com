@@ -22,12 +22,13 @@ describe("Hero", () => {
     expect(screen.getByText("Synthesizer Sound Designer & Producer")).toBeInTheDocument();
   });
 
-  it("renders hero image", () => {
+  it("renders the synthesist mark in place of a photo", () => {
     render(<Hero {...defaultProps} />);
 
-    const img = screen.getByAltText("Alan Marcero");
-    expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute("src", "/about-me.webp");
+    const mark = screen.getByRole("img", {
+      name: "Alan Marcero — synthesist at the console",
+    });
+    expect(mark).toBeInTheDocument();
   });
 
   it("renders YouTube subscribe link with security attributes", () => {

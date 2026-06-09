@@ -1,21 +1,25 @@
 import YouTubeEmbed from './YouTubeEmbed';
-import { cardGlowHandlers } from '../utils/cardGlow';
+import ModulePanel from './ModulePanel';
 
 function MusicItem({ item, style }) {
   return (
-    <div className="store-item" style={style} {...cardGlowHandlers}>
-      <h3>{item.title}</h3>
-      <YouTubeEmbed videoId={item.videoId} />
-      <p>{item.description}</p>
-      <a
-        href={`https://www.youtube.com/watch?v=${item.videoId}`}
-        className="btn-primary youtube-button"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Listen on YouTube
-      </a>
-    </div>
+    <ModulePanel style={style}>
+      <h3 className="module__title">{item.title}</h3>
+      <div className="module__media">
+        <YouTubeEmbed videoId={item.videoId} />
+      </div>
+      <p className="module__desc">{item.description}</p>
+      <div className="module__actions">
+        <a
+          href={`https://www.youtube.com/watch?v=${item.videoId}`}
+          className="btn btn--ghost"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Listen on YouTube
+        </a>
+      </div>
+    </ModulePanel>
   );
 }
 

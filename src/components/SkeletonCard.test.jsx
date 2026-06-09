@@ -12,26 +12,10 @@ describe("SkeletonCard", () => {
     expect(card).toHaveAttribute("aria-hidden", "true");
   });
 
-  it("renders title, description, and button bars", () => {
+  it("renders the shimmer panel", () => {
     const { container } = render(<SkeletonCard />);
 
-    expect(container.querySelector(".skeleton-bar--title")).toBeInTheDocument();
-    expect(container.querySelector(".skeleton-bar--desc")).toBeInTheDocument();
-    expect(container.querySelector(".skeleton-bar--button")).toBeInTheDocument();
-  });
-
-  it("renders exactly 4 shimmer bars", () => {
-    const { container } = render(<SkeletonCard />);
-
-    const bars = container.querySelectorAll(".skeleton-bar");
-    expect(bars).toHaveLength(4);
-  });
-
-  it("renders 2 description bars", () => {
-    const { container } = render(<SkeletonCard />);
-
-    const descBars = container.querySelectorAll(".skeleton-bar--desc");
-    expect(descBars).toHaveLength(2);
+    expect(container.querySelector(".skeleton")).toBeInTheDocument();
   });
 
   it("contains no interactive elements", () => {
