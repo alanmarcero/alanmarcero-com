@@ -16,16 +16,16 @@ export default function PatchCableOrnament({ className = "", flip = false }) {
       <path
         d="M20 24 C 60 80 110 80 140 40"
         fill="none"
-        stroke="var(--graphic-amber, #ffb35c)"
+        stroke="var(--graphic-amber, #ffb454)"
         strokeWidth="4"
         strokeLinecap="round"
         opacity="0.85"
       />
-      <g fill="none" stroke="var(--graphic-panel-edge, #2a3a2e)" strokeWidth="3">
+      <g fill="none" stroke="var(--graphic-panel-edge, #232a2e)" strokeWidth="3">
         <circle cx="20" cy="20" r="11" />
         <circle cx="140" cy="36" r="11" />
       </g>
-      <g fill="var(--graphic-phosphor, #41ff8a)">
+      <g fill="var(--graphic-phosphor, #4af2a4)">
         <circle cx="20" cy="20" r="3" />
         <circle cx="140" cy="36" r="3" />
       </g>
