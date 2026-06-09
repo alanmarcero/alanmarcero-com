@@ -11,6 +11,7 @@ const PANEL_EDGE = "var(--graphic-panel-edge, #232a2e)";
 export default function SynthesistMark({
   size = 180,
   title = "Alan Marcero — synthesist at the console",
+  className = "",
 }) {
   return (
     <svg
@@ -18,7 +19,7 @@ export default function SynthesistMark({
       width={size}
       height={size}
       viewBox="0 0 180 180"
-      className="synthesist-mark"
+      className={`synthesist-mark ${className}`.trim()}
     >
       <title>{title}</title>
       <circle cx="90" cy="90" r="88" fill={PANEL} stroke={PANEL_EDGE} strokeWidth="2" />
