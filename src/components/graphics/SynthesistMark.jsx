@@ -1,7 +1,7 @@
-const PHOSPHOR = "var(--graphic-phosphor, #41ff8a)";
-const AMBER = "var(--graphic-amber, #ffb35c)";
-const PANEL = "var(--graphic-panel, #131713)";
-const PANEL_EDGE = "var(--graphic-panel-edge, #2a3a2e)";
+const PHOSPHOR = "var(--graphic-phosphor, #4af2a4)";
+const AMBER = "var(--graphic-amber, #ffb454)";
+const PANEL = "var(--graphic-panel, #14181a)";
+const PANEL_EDGE = "var(--graphic-panel-edge, #232a2e)";
 
 /**
  * Hero portrait substitute: stylized synthesist at a modular console,
