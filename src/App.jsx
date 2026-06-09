@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Toast from './components/Toast';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollReveal from './hooks/useScrollReveal';
+import { WaveformDivider } from './components/graphics';
 import { patchBanks as patchBanksData } from './data/patchBanks';
 import { TOAST_DISMISS_MS } from './config';
 
@@ -99,8 +100,11 @@ function App() {
           className={revealClass(storeVisible)}
           aria-labelledby="store-heading"
         >
-          <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
-          <div className="content-grid">
+          <div className="section-head">
+            <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
+            <WaveformDivider variant="saw" className="cable-rule" />
+          </div>
+          <div className="module-grid">
             {filteredPatchBanks.map((bank, index) => (
               <PatchBankItem
                 key={bank.downloadLink}
@@ -118,8 +122,11 @@ function App() {
           className={revealClass(musicVisible)}
           aria-labelledby="music-heading"
         >
-          <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
-          <div className="content-grid">
+          <div className="section-head">
+            <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
+            <WaveformDivider variant="sine" className="cable-rule" />
+          </div>
+          <div className="module-grid">
             {musicLoading && Array.from({ length: SKELETON_COUNT }, (_, i) => (
               <SkeletonCard key={i} />
             ))}

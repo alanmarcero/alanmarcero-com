@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import MusicItem from "./MusicItem";
 
 describe("MusicItem", () => {
@@ -52,23 +52,15 @@ describe("MusicItem", () => {
       <MusicItem item={mockItem} style={{ '--card-index': 3 }} />
     );
 
-    const card = container.querySelector(".store-item");
+    const card = container.querySelector(".module");
     expect(card.style.getPropertyValue("--card-index")).toBe("3");
   });
 
-  it("has mouse event handlers for card glow", () => {
-    jest.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => { cb(0); return 1; });
+  it("renders as a module panel with LED indicator", () => {
     const { container } = render(<MusicItem item={mockItem} />);
 
-    const card = container.querySelector(".store-item");
-    card.getBoundingClientRect = () => ({ left: 0, top: 0 });
-
-    fireEvent.mouseMove(card, { clientX: 80, clientY: 40 });
-    expect(card.style.getPropertyValue("--mouse-x")).toBe("80px");
-    expect(card.style.getPropertyValue("--mouse-y")).toBe("40px");
-
-    fireEvent.mouseLeave(card);
-    expect(card.style.getPropertyValue("--mouse-x")).toBe("");
-    window.requestAnimationFrame.mockRestore();
+    expect(container.querySelector("article.module")).toBeInTheDocument();
+    expect(container.querySelector(".module__led")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector(".module__title")).toHaveTextContent("Test Track");
   });
 });
