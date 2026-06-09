@@ -278,7 +278,7 @@ describe("App", () => {
     const { container } = render(<App />);
 
     await waitFor(() => {
-      const card = container.querySelector(".store-item");
+      const card = container.querySelector(".module");
       expect(card.style.getPropertyValue("--card-index")).toBe("0");
     });
   });

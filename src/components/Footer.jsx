@@ -5,7 +5,7 @@ function Footer() {
     <footer>
       <div className="footer-inner">
         <p className="footer-copyright">&copy; {new Date().getFullYear()} Alan Marcero</p>
-        <nav className="footer-links" aria-label="Social links">
+        <nav className="footer-links" aria-label="Site links">
           <a
             href={YOUTUBE_CHANNEL_URL}
             target="_blank"
@@ -20,6 +20,7 @@ function Footer() {
           >
             GitHub
           </a>
+          <a href="/arcade.html">Arcade</a>
         </nav>
       </div>
     </footer>
