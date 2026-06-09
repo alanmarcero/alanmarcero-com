@@ -36,3 +36,14 @@ describe("SynthesistMark", () => {
     expect(img).toHaveAttribute("height", "96");
   });
 });
+
+describe("SynthesistMark className", () => {
+  it("appends a custom className", () => {
+    const { container } = render(<SynthesistMark className="hero-mark-art" />);
+
+    expect(container.querySelector("svg")).toHaveClass(
+      "synthesist-mark",
+      "hero-mark-art"
+    );
+  });
+});
