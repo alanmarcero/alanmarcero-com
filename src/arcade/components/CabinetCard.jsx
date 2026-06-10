@@ -58,7 +58,6 @@ function CabinetCard({ game, onSelect }) {
     <button
       className="crt-monitor"
       onClick={() => onSelect(game.id)}
-      style={{ '--monitor-accent': game.accent }}
     >
       <div className="crt-monitor-bezel">
         <div className="crt-monitor-screen">
