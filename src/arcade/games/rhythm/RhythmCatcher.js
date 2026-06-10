@@ -291,7 +291,7 @@ export class RhythmCatcher {
     if (this._combo >= 2) {
       ctx.save();
       ctx.textAlign = 'right';
-      ctx.font = '700 18px "Space Grotesk", sans-serif';
+      ctx.font = '700 18px "IBM Plex Mono", monospace';
       ctx.shadowColor = ORANGE;
       ctx.shadowBlur = 6;
       ctx.fillStyle = ORANGE;

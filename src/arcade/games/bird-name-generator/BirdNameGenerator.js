@@ -218,7 +218,7 @@ export class BirdNameGenerator {
   _renderHeader(ctx) {
     ctx.save();
     ctx.fillStyle = MUTED;
-    ctx.font = '600 11px "Space Grotesk", sans-serif';
+    ctx.font = '600 11px "IBM Plex Mono", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText('— FIELD GUIDE: BIRDOPEDIA —', GAME_W / 2, 14);
@@ -345,10 +345,10 @@ export class BirdNameGenerator {
 
     // shrink to fit
     let fontSize = 28;
-    ctx.font = `700 ${fontSize}px "Space Grotesk", sans-serif`;
+    ctx.font = `700 ${fontSize}px "IBM Plex Mono", monospace`;
     while (ctx.measureText(name).width > GAME_W - 40 && fontSize > 12) {
       fontSize -= 1;
-      ctx.font = `700 ${fontSize}px "Space Grotesk", sans-serif`;
+      ctx.font = `700 ${fontSize}px "IBM Plex Mono", monospace`;
     }
 
     const y = 230;
@@ -367,7 +367,7 @@ export class BirdNameGenerator {
   _renderLatin(ctx) {
     ctx.save();
     ctx.fillStyle = MUTED;
-    ctx.font = 'italic 12px "Space Grotesk", sans-serif';
+    ctx.font = 'italic 12px "IBM Plex Mono", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(this._currentBird.latin, GAME_W / 2, 258);

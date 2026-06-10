@@ -542,7 +542,7 @@ export class Tetris {
       ctx.fillRect(this.boardX, this.boardY, boardW, boardH);
 
       ctx.fillStyle = WHITE;
-      ctx.font = `bold ${Math.max(14, cs * 1.2)}px "Space Grotesk", sans-serif`;
+      ctx.font = `bold ${Math.max(14, cs * 1.2)}px "IBM Plex Mono", monospace`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('GAME OVER', this.boardX + boardW / 2, this.boardY + boardH / 2);
@@ -597,7 +597,7 @@ export class Tetris {
 
     // "NEXT" label
     ctx.fillStyle = 'rgba(0, 240, 255, 0.5)';
-    ctx.font = `bold ${Math.max(9, previewCellSize * 0.55)}px "Space Grotesk", sans-serif`;
+    ctx.font = `bold ${Math.max(9, previewCellSize * 0.55)}px "IBM Plex Mono", monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText('NEXT', boxX + boxW / 2, boxY - 4);
