@@ -1,161 +1,176 @@
 @import '../shared/theme.css';
 
-/* ----------------------------------------------------
-   ARCADE PAGE LAYOUT
----------------------------------------------------- */
+/* ==========================================================================
+   ArcadeApp.css — the arcade as a rack of game modules ("signal path")
+   Each game is a machined module faceplate with a recessed scope screen;
+   the live demo is the signal running through it. Consumes ONLY theme
+   tokens (phosphor/amber/panel/ink/line/space/radius/motion).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   PAGE — sits on the shared studio chassis (body rails + phosphor wash)
+   -------------------------------------------------------------------------- */
 .arcade-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 24px 60px;
-  background: #0a0a0d;
+  padding: var(--space-7) var(--space-4) var(--space-7);
 }
 
-/* ----------------------------------------------------
-   ARCADE HEADER — lightly connected to new main site
----------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   HEADER — the rack label
+   -------------------------------------------------------------------------- */
 .arcade-header {
-  text-align: center;
-  margin-bottom: 36px;
   width: 100%;
-  max-width: 920px;
+  max-width: var(--content-max);
+  text-align: center;
+  margin-bottom: var(--space-6);
 }
 
 .arcade-back {
   display: inline-block;
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  margin-bottom: 14px;
-  transition: color var(--transition-fast);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin-bottom: var(--space-4);
 }
 
 .arcade-back:hover {
-  color: var(--accent);
+  color: var(--phosphor);
+}
+
+.arcade-kicker {
+  display: block;
+  margin-bottom: var(--space-2);
 }
 
 .arcade-title {
-  font-size: 3.65rem;
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--phosphor);
   margin: 0;
-  background: linear-gradient(90deg, #00d4c8, #ff8a5f, #00d4c8);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: arcadeGradientFlow 7s ease-in-out infinite;
-  letter-spacing: 0.12em;
-  font-weight: 700;
 }
 
-@keyframes arcadeGradientFlow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.arcade-divider {
+  width: min(28rem, 70%);
+  height: 34px;
+  margin: var(--space-3) auto 0;
+  color: var(--phosphor-dim);
+  opacity: 0.7;
 }
 
-/* ----------------------------------------------------
-   GAME PICKER
----------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   PICKER — the module grid
+   -------------------------------------------------------------------------- */
 .game-picker {
   width: 100%;
-  max-width: 1540px;
+  max-width: var(--content-max);
 }
 
 .picker-subtitle {
   text-align: center;
-  color: var(--text-secondary);
-  font-size: 1rem;
-  margin: 0 0 32px;
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 500;
+  color: var(--ink-faint);
 }
 
 .picker-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 280px);
-  gap: 48px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-4);
 }
 
-/* ----------------------------------------------------
-   CRT MONITOR CARD — looks like a real CRT screen
----------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   MODULE CARD — machined faceplate + recessed scope screen
+   (class names retained from the JSX; restyled to the panel vocabulary)
+   -------------------------------------------------------------------------- */
 .crt-monitor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 280px;
+  display: block;
+  width: 100%;
   padding: 0;
   background: none;
   border: none;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  color: var(--text-primary);
-  text-align: center;
-  transition: transform var(--transition-base);
-}
-
-.crt-monitor:hover {
-  transform: translateY(-4px);
+  text-align: left;
+  color: var(--ink);
+  transition: transform var(--dur) var(--ease-out);
 }
 
 .crt-monitor:active {
-  transform: scale(0.97);
+  transform: scale(0.99);
 }
 
 .crt-monitor:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 6px;
-  border-radius: 20px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--radius);
 }
 
-/* Thick bezel frame */
+/* faceplate */
 .crt-monitor-bezel {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(160deg, #1a1a2e, #0c0c18 40%, #161628);
-  border-radius: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.04);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.6),
-    0 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: box-shadow var(--transition-base);
+  position: relative;
+  padding: var(--space-3);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 38%),
+    var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-module);
+  transition:
+    transform var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
 }
+
+/* corner screws (match the main-page module faceplate) */
+.crt-monitor-bezel::before,
+.crt-monitor-bezel::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3a4449 45%, #20282c 55%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55) inset;
+  z-index: 6;
+}
+
+.crt-monitor-bezel::before { left: 9px; }
+.crt-monitor-bezel::after { right: 9px; }
 
 .crt-monitor:hover .crt-monitor-bezel {
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.6),
-    0 0 30px color-mix(in srgb, var(--monitor-accent, #00d4c8) 15%, transparent),
-    0 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-module-raised);
 }
 
-/* Glass screen area */
+/* recessed scope well */
 .crt-monitor-screen {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: #020208;
-  border-radius: 12px;
+  background: var(--panel-inset);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   box-shadow:
-    inset 0 0 60px 15px rgba(0, 0, 0, 0.8),
-    inset 0 0 4px 1px rgba(0, 240, 255, 0.05);
+    0 0 0 1px var(--line),
+    inset 0 0 48px 8px rgba(0, 0, 0, 0.7),
+    inset 0 0 3px 1px var(--phosphor-glow);
 }
 
-/* Scanlines on picker screen */
+/* scanlines */
 .crt-monitor-scanlines {
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.15) 0px,
-    rgba(0, 0, 0, 0.15) 1px,
+    rgba(0, 0, 0, 0.16) 0px,
+    rgba(0, 0, 0, 0.16) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -164,40 +179,35 @@
   animation: crtFlicker 4s ease-in-out infinite;
 }
 
-/* Rounded vignette on picker screen */
+/* tube vignette */
 .crt-monitor-vignette {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   background: radial-gradient(
     ellipse at center,
-    transparent 40%,
-    rgba(0, 0, 0, 0.4) 70%,
+    transparent 42%,
+    rgba(0, 0, 0, 0.45) 74%,
     rgba(0, 0, 0, 0.85) 100%
   );
   pointer-events: none;
   z-index: 3;
 }
 
-/* Glossy reflection */
+/* faint glass highlight */
 .crt-monitor-reflection {
   position: absolute;
   top: 6%;
   left: 8%;
-  width: 40%;
-  height: 30%;
+  width: 38%;
+  height: 28%;
   border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, 0.06) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
   transform: rotate(-12deg);
   pointer-events: none;
   z-index: 4;
 }
 
-/* Live demo canvas fills the screen */
 .crt-monitor-demo {
   position: absolute;
   inset: 0;
@@ -207,7 +217,7 @@
   z-index: 0;
 }
 
-/* Title + INSERT COIN overlay on top of demo */
+/* title plate over the demo; lifts away on hover to reveal the signal */
 .crt-monitor-overlay {
   position: absolute;
   inset: 0;
@@ -216,10 +226,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background: rgba(2, 2, 8, 0.45);
-  opacity: 1;
-  transition: opacity var(--transition-base);
+  gap: var(--space-2);
+  background: linear-gradient(180deg, rgba(10, 12, 13, 0.35), rgba(10, 12, 13, 0.78));
+  transition: opacity var(--dur) var(--ease-out);
 }
 
 .crt-monitor:hover .crt-monitor-overlay {
@@ -227,24 +236,25 @@
 }
 
 .crt-monitor-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.08em;
-  color: var(--monitor-accent, var(#00d4c8));
-  text-shadow:
-    0 0 10px var(--monitor-accent, var(#00d4c8)),
-    0 0 30px color-mix(in srgb, var(--monitor-accent, #00d4c8) 40%, transparent);
+  font-size: var(--text-lg);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--phosphor);
+  text-shadow: 0 0 14px var(--phosphor-glow);
+  text-align: center;
+  padding: 0 var(--space-2);
 }
 
 .crt-monitor-insert {
-  font-family: 'Space Grotesk', monospace;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(#ff8a5f);
-  letter-spacing: 3px;
-  text-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
-  animation: blinkCoin 1.2s step-end infinite;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--amber);
+  text-shadow: 0 0 10px var(--amber-glow);
+  animation: blinkCoin 1.4s step-end infinite;
 }
 
 @keyframes blinkCoin {
@@ -252,14 +262,20 @@
   50% { opacity: 0; }
 }
 
-/* ----------------------------------------------------
-   GAME CANVAS — full-screen wrapper
----------------------------------------------------- */
+@keyframes crtFlicker {
+  0%, 100% { opacity: 1; }
+  48% { opacity: 0.92; }
+  52% { opacity: 0.97; }
+}
+
+/* --------------------------------------------------------------------------
+   GAME VIEW — full-screen module take-over
+   -------------------------------------------------------------------------- */
 .game-wrapper {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: var(--bg-body);
+  background: var(--bg);
   display: flex;
   flex-direction: column;
 }
@@ -268,64 +284,64 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
-  background: rgba(6, 6, 14, 0.9);
-  border-bottom: 1px solid var(--border-subtle);
-  font-family: 'Space Grotesk', monospace;
-  font-size: 0.9rem;
+  padding: var(--space-2) var(--space-4);
+  background: var(--panel-inset);
+  border-bottom: 1px solid var(--line);
   z-index: 2;
 }
 
 .game-hud-stats {
   display: flex;
-  gap: 24px;
+  gap: var(--space-4);
 }
 
 .game-hud-stat {
-  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
 .game-hud-stat span {
-  color: var(#00d4c8);
-  font-weight: 700;
+  margin-left: var(--space-1);
+  color: var(--phosphor);
+  font-weight: 600;
 }
 
 .game-exit-btn {
-  background: none;
-  border: 1px solid var(--border-medium);
-  color: var(--text-secondary);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 6px 16px;
-  border-radius: var(--radius-btn);
-  cursor: pointer;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .game-exit-btn:hover {
-  color: var(#00d4c8);
-  border-color: var(#00d4c8);
-}
-
-.game-exit-btn:focus-visible {
-  outline: 2px solid var(#00d4c8);
-  outline-offset: 2px;
+  color: var(--amber);
+  border-color: var(--amber);
+  box-shadow: 0 0 16px var(--amber-glow);
 }
 
 .game-canvas-area {
   flex: 1;
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  margin: 8px 16px 16px;
-  border: 3px solid rgba(255, 255, 255, 0.05);
-  background: #020208;
+  border-radius: var(--radius);
+  margin: var(--space-2) var(--space-3) var(--space-3);
+  background: var(--panel-inset);
   box-shadow:
+    0 0 0 1px var(--line),
     inset 0 0 120px 40px rgba(0, 0, 0, 0.7),
-    inset 0 0 6px 2px rgba(0, 240, 255, 0.06),
-    0 0 40px rgba(0, 0, 0, 0.6),
-    0 0 2px rgba(255, 255, 255, 0.04);
+    inset 0 0 6px 2px var(--phosphor-glow);
 }
 
 .game-canvas-area canvas {
@@ -334,23 +350,21 @@
   height: 100%;
 }
 
-/* CRT heavy rounded vignette — dark curved edges like a CRT tube */
 .game-crt-vignette {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   background: radial-gradient(
     ellipse at center,
-    transparent 40%,
-    rgba(0, 0, 0, 0.3) 65%,
-    rgba(0, 0, 0, 0.7) 85%,
+    transparent 42%,
+    rgba(0, 0, 0, 0.32) 66%,
+    rgba(0, 0, 0, 0.72) 86%,
     rgba(0, 0, 0, 0.95) 100%
   );
   pointer-events: none;
   z-index: 3;
 }
 
-/* CRT scanline overlay on game — visible lines */
 .game-crt-overlay {
   position: absolute;
   inset: 0;
@@ -367,25 +381,22 @@
   animation: crtFlicker 4s ease-in-out infinite;
 }
 
-/* CRT screen reflection — glossy highlight on the glass */
 .game-crt-reflection {
   position: absolute;
   top: 4%;
   left: 6%;
-  width: 40%;
-  height: 30%;
+  width: 38%;
+  height: 28%;
   border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, 0.07) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
   transform: rotate(-15deg);
   pointer-events: none;
   z-index: 4;
 }
 
-/* Game over overlay */
+/* --------------------------------------------------------------------------
+   GAME OVER
+   -------------------------------------------------------------------------- */
 .game-over-overlay {
   position: absolute;
   inset: 0;
@@ -393,76 +404,89 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(14, 14, 26, 0.85);
+  background: rgba(10, 12, 13, 0.86);
   z-index: 10;
 }
 
 .game-over-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(#ff8a5f);
-  margin: 0 0 8px;
-  text-shadow: 0 0 30px rgba(255, 87, 34, 0.5);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 3vw, 3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+  text-shadow: 0 0 30px var(--amber-glow);
+  margin: 0 0 var(--space-2);
 }
 
 .game-over-score {
-  font-family: 'Space Grotesk', monospace;
-  font-size: 1.2rem;
-  color: var(#00d4c8);
-  margin-bottom: 24px;
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  letter-spacing: 0.1em;
+  color: var(--phosphor);
+  margin-bottom: var(--space-4);
 }
 
 .game-over-actions {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
 }
 
+/* reuse the main-page button language */
 .game-over-actions button {
-  padding: 10px 24px;
-  border-radius: var(--radius-btn);
-  font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-}
-
-.game-over-actions button:active {
-  transform: scale(0.96);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .game-restart-btn {
-  background: var(--gradient-accent);
-  color: #fff;
-  border: none;
+  border: 1px solid var(--phosphor);
+  background: var(--phosphor);
+  color: var(--bg);
 }
 
 .game-restart-btn:hover {
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(200, 64, 255, 0.15);
+  background: transparent;
+  color: var(--phosphor);
+  box-shadow: 0 0 20px var(--phosphor-glow);
 }
 
 .game-back-btn {
+  border: 1px solid var(--line-strong);
   background: transparent;
-  color: var(#00d4c8);
-  border: 2px solid var(#00d4c8);
+  color: var(--ink-muted);
 }
 
 .game-back-btn:hover {
-  background: rgba(0, 240, 255, 0.08);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  border-color: var(--amber);
+  color: var(--amber);
+  box-shadow: 0 0 20px var(--amber-glow);
 }
 
-/* ----------------------------------------------------
-   TOUCH CONTROLS — mobile only
----------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   TOUCH CONTROLS — machined panel buttons (coarse pointers only)
+   -------------------------------------------------------------------------- */
 .touch-controls {
   display: none;
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 16px 24px 24px;
+  padding: var(--space-3) var(--space-4) var(--space-4);
   z-index: 5;
   justify-content: space-between;
   align-items: flex-end;
@@ -479,35 +503,34 @@
   display: grid;
   grid-template-columns: 56px 56px 56px;
   grid-template-rows: 56px 56px;
-  gap: 4px;
+  gap: var(--space-1);
   pointer-events: auto;
 }
 
 .touch-btn {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
-  border: 2px solid rgba(0, 240, 255, 0.3);
-  background: rgba(14, 14, 26, 0.7);
-  color: var(#00d4c8);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--panel-raised);
+  color: var(--phosphor);
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
   pointer-events: auto;
+  box-shadow: var(--shadow-module);
 }
 
 .touch-btn:active,
 .touch-btn--active {
-  background: rgba(0, 240, 255, 0.15);
-  border-color: var(#00d4c8);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+  border-color: var(--phosphor);
+  box-shadow: 0 0 14px var(--phosphor-glow);
 }
 
 .touch-btn--spacer {
@@ -517,7 +540,7 @@
 
 .touch-action-buttons {
   display: flex;
-  gap: 12px;
+  gap: var(--space-3);
   pointer-events: auto;
 }
 
@@ -525,80 +548,46 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  border: 2px solid rgba(200, 64, 255, 0.4);
-  background: rgba(14, 14, 26, 0.7);
-  color: var(#b66eff);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  border: 1px solid var(--amber);
+  background: var(--panel-raised);
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
   pointer-events: auto;
+  box-shadow: var(--shadow-module);
 }
 
 .touch-action-btn:active,
 .touch-action-btn--active {
-  background: rgba(200, 64, 255, 0.15);
-  border-color: var(#b66eff);
-  box-shadow: 0 0 12px rgba(200, 64, 255, 0.3);
+  box-shadow: 0 0 14px var(--amber-glow);
 }
 
-/* ----------------------------------------------------
-   RESPONSIVE — TABLET
----------------------------------------------------- */
-@media (max-width: 1024px) {
-  .arcade-title {
-    font-size: 3rem;
-  }
-
-  .crt-monitor {
-    width: 240px;
-  }
-
-  .picker-grid {
-    grid-template-columns: repeat(auto-fill, 240px);
-  }
-}
-
-/* ----------------------------------------------------
-   RESPONSIVE — MOBILE
----------------------------------------------------- */
-@media (max-width: 767px) {
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 40rem) {
   .arcade-page {
-    padding: 24px 16px 40px;
-  }
-
-  .arcade-title {
-    font-size: 2.5rem;
+    padding: var(--space-6) var(--space-3);
   }
 
   .picker-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    justify-items: center;
-  }
-
-  .crt-monitor {
-    width: 100%;
-    max-width: 300px;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--space-3);
   }
 
   .game-hud {
-    padding: 8px 12px;
-    font-size: 0.75rem;
+    padding: var(--space-2) var(--space-3);
   }
 
   .game-hud-stats {
-    gap: 12px;
-  }
-
-  .game-over-title {
-    font-size: 2rem;
+    gap: var(--space-3);
   }
 }
