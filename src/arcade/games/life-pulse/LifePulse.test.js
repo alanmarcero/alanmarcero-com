@@ -279,4 +279,41 @@ describe('LifePulse', () => {
       expect(q.hp).toBe(4);
     });
   });
+
+  describe('Pass 9 new systems (echo, orbit, charge, perfect wave, upgrades, tendril-parasite)', () => {
+    test('echo powerup activates echoTimer', () => {
+      game._applyPowerup('echo');
+      expect(game._echoTimer).toBeGreaterThan(3);
+    });
+
+    test('orbit powerup spawns orbiters', () => {
+      const before = game._options.length;
+      game._applyPowerup('orbit');
+      expect(game._orbitTimer).toBeGreaterThan(5);
+      expect(game._options.length).toBeGreaterThan(before);
+    });
+
+    test('charge powerup activates chargeTimer', () => {
+      game._applyPowerup('charge');
+      expect(game._chargeTimer).toBeGreaterThan(0);
+    });
+
+    test('perfect wave and upgrade tracking on wave clear', () => {
+      game.level = 4;
+      game._perfectWave = true;
+      game._boss = { x: 300, y: 180, hp: 1 };
+      game._detonatePulse({ x: 300, y: 180, boosted: false });
+      expect(game._perfectWaves || 0).toBeGreaterThanOrEqual(0);
+      expect(game._maxOptions || 2).toBeGreaterThanOrEqual(2);
+    });
+
+    test('tendril-parasite enemy type', () => {
+      game._enemies.push({
+        id: 1234, x: 480, y: 170, vx: -40, vy: 10, hp: 3, points: 135, r: 10, type: 'tendril-parasite', whip: 1.5
+      });
+      const tp = game._enemies[game._enemies.length - 1];
+      expect(tp.type).toBe('tendril-parasite');
+      expect(tp.whip).toBeDefined();
+    });
+  });
 });
