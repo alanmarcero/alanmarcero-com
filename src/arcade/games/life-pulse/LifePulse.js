@@ -25,8 +25,9 @@ export class LifePulse {
     this._loadAssets();
   }
 
-  // Loop pass 3: Alpha-keyed Grok Imagine sprites + combo + option drones + spiker enemies + graze + high scores.
-  // Direct fix for white boxes via runtime alpha keying on dark JPG surrounds.
+  // Loop pass 4: Refined alpha keying (lum + soft feather), LASER + BOMB powerups, tendril enemy,
+  // piercing bullets, boss core weakpoint synergy, level clear bonuses, more explosion frames + overdrive art.
+  // Collision, visuals, progression, and "point" all escalated again. White boxes aggressively suppressed.
 
   _loadAssets() {
     // Assets from Grok Imagine + previous. All main sprites get alpha keying (dark pixels -> transparent).
@@ -37,19 +38,29 @@ export class LifePulse {
       ['turret', '/assets/arcade/life-pulse/enemy-turret.jpg'],
       ['growth', '/assets/arcade/life-pulse/growth-pulse-1.jpg'],
       ['spiker', '/assets/arcade/life-pulse/enemy-spiker.jpg'],
+      ['tendril', '/assets/arcade/life-pulse/enemy-tendril.jpg'],
       ['powerDouble', '/assets/arcade/life-pulse/powerup-double.jpg'],
       ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
+      ['powerLaser', '/assets/arcade/life-pulse/powerup-laser.jpg'],
       ['option', '/assets/arcade/life-pulse/option-drone.jpg'],
       ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
       ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
+      ['player-overdrive', '/assets/arcade/life-pulse/player-overdrive.jpg'],
       ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
       ['explosion-1', '/assets/arcade/life-pulse/explosion-1.jpg'],
       ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
+      ['explosion-3', '/assets/arcade/life-pulse/explosion-3.jpg'],
+      ['bossCore', '/assets/arcade/life-pulse/boss-core.jpg'],
       ['background', '/assets/arcade/life-pulse/background.jpg'],
       ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
-    const spriteKeys = new Set(['player','boss','drone','turret','growth','spiker','powerDouble','powerShield','option','player-powered1','player-powered-spread','player-thruster-1','explosion-1','explosion-2']);
+    const spriteKeys = new Set([
+      'player','boss','drone','turret','growth','spiker','tendril',
+      'powerDouble','powerShield','powerLaser','option',
+      'player-powered1','player-powered-spread','player-overdrive','player-thruster-1',
+      'explosion-1','explosion-2','explosion-3','bossCore'
+    ]);
 
     let loaded = 0;
     const total = assetList.length;
@@ -72,8 +83,9 @@ export class LifePulse {
   }
 
   _createAlphaKeyedImage(sourceImg) {
-    // Strip near-black pixels (the JPG "box" from generation) to real transparency.
-    // This eliminates white (or dark rectangular) boxes around sprites.
+    // Improved alpha keying (pass 4): aggressively removes dark JPG "box" surrounds while preserving sprite detail.
+    // Uses luminosity for better organic edges + slight feather on borderline pixels.
+    // This pass focuses on finally killing any remaining white/dark rectangular artifacts around sprites.
     if (!sourceImg || !sourceImg.complete) return sourceImg;
     const w = sourceImg.naturalWidth || sourceImg.width;
     const h = sourceImg.naturalHeight || sourceImg.height;
@@ -92,11 +104,22 @@ export class LifePulse {
 
     const imageData = cx.getImageData(0, 0, w, h);
     const d = imageData.data;
-    const thresh = 32; // tune: anything this dark or darker in all channels becomes transparent
+    const hardThresh = 28;
+    const softThresh = 48;
 
     for (let i = 0; i < d.length; i += 4) {
-      if (d[i] < thresh && d[i + 1] < thresh && d[i + 2] < thresh) {
+      const r = d[i];
+      const g = d[i + 1];
+      const b = d[i + 2];
+      // Luminosity-based key (better for colored but dark backgrounds)
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+
+      if (lum < hardThresh) {
         d[i + 3] = 0;
+      } else if (lum < softThresh) {
+        // Soft feather for cleaner edges instead of hard cut
+        const fade = (lum - hardThresh) / (softThresh - hardThresh);
+        d[i + 3] = Math.floor(255 * fade * fade);
       }
     }
     cx.putImageData(imageData, 0, 0);
@@ -155,6 +178,10 @@ export class LifePulse {
 
     this._powerLevel = 0;       // 0 = normal, 1 = double, 2 = spread
     this._powerTimer = 0;
+
+    // Pass 4 new temporary power states for progression depth
+    this._laserTimer = 0;       // LASER powerup: piercing primary fire
+    this._pulseStock = 0;       // BOMB stock: extra Life Pulse charges from powerups (gives tangible "point")
 
     this._scroll = 0;
     this._spawnTimer = 0.6;
@@ -251,6 +278,9 @@ export class LifePulse {
     const targetLevel = Math.min(9, 1 + Math.floor(this.score / 5200) + Math.floor(this._wave / 3));
     if (targetLevel > this.level) {
       this.level = targetLevel;
+      const levelBonus = 180 + this.level * 35;
+      this.score += levelBonus;
+      this._spawnScorePopup(this._player.x + 30, this._player.y - 22, levelBonus);
       this._onLevelUp();
       this._emitHud();
     }
@@ -336,11 +366,23 @@ export class LifePulse {
     this._powerTimer -= dt;
     if (this._powerTimer <= 0) this._powerLevel = 0;
 
+    // Laser temporary mode (new powerful powerup)
+    this._laserTimer -= dt;
+    if (this._laserTimer <= 0) this._laserTimer = 0;
+
     // Secondary = LIFE PULSE bomb (thematic special weapon)
+    // Now respects pulseStock for extra charges (new BOMB powerup gives "point" and resource management)
     this._pulseCooldown -= dt;
-    if (this._keys.secondary && this._pulseCooldown <= 0) {
-      this._pulseCooldown = 0.95; // fairly strong, not spammy
-      this._firePulseBomb();
+    const canFirePulse = this._keys.secondary && this._pulseCooldown <= 0;
+    if (canFirePulse) {
+      if (this._pulseStock > 0) {
+        this._pulseStock--;
+        this._pulseCooldown = 0.55; // faster when using stock
+        this._firePulseBomb(true);
+      } else {
+        this._pulseCooldown = 0.95;
+        this._firePulseBomb(false);
+      }
     }
 
     if (this._player.invuln > 0) this._player.invuln -= dt;
@@ -350,13 +392,20 @@ export class LifePulse {
     const p = this._player;
     const baseX = p.x + 13;
     const baseY = p.y;
+    const isLaser = this._laserTimer > 0;
 
-    // Always fire center
+    const speed = isLaser ? BULLET_SPEED * 1.15 : BULLET_SPEED;
+    const life = isLaser ? 2.2 : 1.65;
+    const r = isLaser ? BULLET_HIT_R * 1.1 : BULLET_HIT_R;
+
+    // Center shot (piercing when laser active)
     this._bullets.push({
       x: baseX, y: baseY,
-      vx: BULLET_SPEED, vy: 0,
-      r: BULLET_HIT_R,
-      life: 1.65,
+      vx: speed, vy: 0,
+      r,
+      life,
+      pierce: isLaser,
+      laser: isLaser,
     });
 
     if (this._powerLevel >= 1) {
@@ -364,30 +413,37 @@ export class LifePulse {
       const spreadSpeedY = (this._powerLevel >= 2) ? 38 : 22;
       this._bullets.push({
         x: baseX - 1, y: baseY - spread,
-        vx: BULLET_SPEED * 0.98, vy: -spreadSpeedY,
-        r: BULLET_HIT_R * 0.9,
-        life: 1.35,
+        vx: speed * 0.98, vy: -spreadSpeedY,
+        r: r * 0.9,
+        life: isLaser ? 1.8 : 1.35,
+        pierce: isLaser,
+        laser: isLaser,
       });
       this._bullets.push({
         x: baseX - 1, y: baseY + spread,
-        vx: BULLET_SPEED * 0.98, vy: spreadSpeedY,
-        r: BULLET_HIT_R * 0.9,
-        life: 1.35,
+        vx: speed * 0.98, vy: spreadSpeedY,
+        r: r * 0.9,
+        life: isLaser ? 1.8 : 1.35,
+        pierce: isLaser,
+        laser: isLaser,
       });
     }
   }
 
-  _firePulseBomb() {
+  _firePulseBomb(fromStock = false) {
     const p = this._player;
-    // Launch a slow, pulsing "Life Pulse" projectile that detonates after a short distance/time
+    // Launch a slow, pulsing "Life Pulse" projectile
+    const life = fromStock ? 0.82 : 0.72;
+    const r = fromStock ? 8.5 : 7.5;
     this._pulses.push({
       x: p.x + 10,
       y: p.y,
       vx: 195,
       vy: (Math.random() - 0.5) * 12,
-      r: 7.5,
-      life: 0.72,       // flight time before auto-detonate
+      r,
+      life,
       detonated: false,
+      boosted: fromStock,
     });
     // Small launch effect
     this._createHitParticle(p.x + 14, p.y);
@@ -432,6 +488,11 @@ export class LifePulse {
       if (e.type === 'growth') {
         // gentle organic pulse bob
         e.vy = Math.sin(this._time * 2.2 + e.id * 0.7) * 18;
+      }
+      if (e.type === 'tendril' && e.weave) {
+        // Slow weaving long threat - hard to predict
+        e.vy = Math.sin(this._time * 1.6 + (e.id || 0)) * (38 * Math.abs(e.weave));
+        e.vx *= 0.985; // drag
       }
 
       // Turrets fire predictively (with telegraph via random chance)
@@ -549,9 +610,11 @@ export class LifePulse {
 
   _detonatePulse(pulse) {
     // Big satisfying radial Life Pulse blast — damages enemies + boss in radius
-    const radius = 78;
-    this._createExplosion(pulse.x, pulse.y, 46);
-    this._shake = Math.max(this._shake, 11);
+    const radius = pulse.boosted ? 95 : 78;
+    const baseDmg = pulse.boosted ? 4 : 3;
+    const bossDmg = pulse.boosted ? 16 : 11;
+    this._createExplosion(pulse.x, pulse.y, pulse.boosted ? 54 : 46);
+    this._shake = Math.max(this._shake, pulse.boosted ? 15 : 11);
 
     // Area damage to regular enemies
     for (let j = this._enemies.length - 1; j >= 0; j--) {
@@ -559,7 +622,7 @@ export class LifePulse {
       const dx = e.x - pulse.x;
       const dy = e.y - pulse.y;
       if (dx * dx + dy * dy < (radius + (e.r || 10)) * (radius + (e.r || 10))) {
-        e.hp = (e.hp || 1) - 3;
+        e.hp = (e.hp || 1) - baseDmg;
         this._createHitParticle(e.x, e.y);
         if ((e.hp || 0) <= 0) {
           this.score += (e.points || 70) * 0.6 | 0;
@@ -568,28 +631,36 @@ export class LifePulse {
       }
     }
 
-    // Hit boss too
+    // Hit boss too (core weakpoint bonus if we have the art)
     if (this._boss) {
       const dx = this._boss.x - pulse.x;
       const dy = this._boss.y - pulse.y;
+      let dmg = bossDmg;
+      // Bonus if near the core (pass 4 visual + mechanical synergy with new bossCore art)
+      if (this.assets.bossCore) {
+        const coreDx = dx - 4;
+        const coreDy = dy + 2;
+        if (coreDx * coreDx + coreDy * coreDy < 380) dmg += 5;
+      }
       if (dx * dx + dy * dy < (radius + BOSS_HIT_R) * (radius + BOSS_HIT_R)) {
-        this._boss.hp -= 11;
+        this._boss.hp -= dmg;
         this._createHitParticle(this._boss.x, this._boss.y);
         if (this._boss.hp <= 0) {
-          this._createExplosion(this._boss.x, this._boss.y, 58);
-          this.score += 920;
-          this._spawnScorePopup(this._boss.x, this._boss.y - 10, 920);
-          this._shake = 22;
+          this._createExplosion(this._boss.x, this._boss.y, pulse.boosted ? 64 : 58);
+          this.score += pulse.boosted ? 1250 : 920;
+          this._spawnScorePopup(this._boss.x, this._boss.y - 10, pulse.boosted ? 1250 : 920);
+          this._shake = 24;
           this._boss = null;
           this._bossActive = false;
         }
       }
     }
 
-    // Nice expanding ring particles
-    for (let k = 0; k < 18; k++) {
-      const ang = (k / 18) * Math.PI * 2;
-      const sp = 38 + Math.random() * 55;
+    // Nice expanding ring particles (more when boosted)
+    const particleCount = pulse.boosted ? 26 : 18;
+    for (let k = 0; k < particleCount; k++) {
+      const ang = (k / particleCount) * Math.PI * 2;
+      const sp = (pulse.boosted ? 46 : 38) + Math.random() * 55;
       this._particles.push({
         x: pulse.x, y: pulse.y,
         vx: Math.cos(ang) * sp,
@@ -664,7 +735,7 @@ export class LifePulse {
           r: ENEMY_BASE_R * 1.25,
           type: 'turret',
         });
-      } else if (roll < 0.88) {
+      } else if (roll < 0.82) {
         // Growth / splitter (core of the "Life" theme)
         this._enemies.push({
           id: Math.random() * 99999 | 0,
@@ -677,7 +748,7 @@ export class LifePulse {
           type: 'growth',
           split: true,
         });
-      } else if (roll < 0.96 || d > 2.2) {
+      } else if (roll < 0.90) {
         // New fast spiker (armored aggressive, from new Grok Imagine asset)
         this._enemies.push({
           id: Math.random() * 99999 | 0,
@@ -688,6 +759,19 @@ export class LifePulse {
           points: 115,
           r: ENEMY_BASE_R * 0.95,
           type: 'spiker',
+        });
+      } else if (roll < 0.96 || d > 2.5) {
+        // Tendril - long weaving biological threat (new Grok Imagine asset + unique behavior)
+        this._enemies.push({
+          id: Math.random() * 99999 | 0,
+          x: GAME_W + 32, y,
+          vx: -ENEMY_SPEED * 0.38,
+          vy: (Math.random() - 0.5) * 9,
+          hp: 6,
+          points: 165,
+          r: ENEMY_BASE_R * 1.25,
+          type: 'tendril',
+          weave: (Math.random() - 0.5) * 2.2,
         });
       } else {
         // Fast aggressive "cell" at higher levels
@@ -718,15 +802,17 @@ export class LifePulse {
       }
     }
 
-    // More generous + varied powerups (the original complaint)
-    if (Math.random() < 0.021) {
+    // More generous + varied powerups (the original complaint) - pass 4 adds laser (piercing) and bomb (stocked pulses)
+    if (Math.random() < 0.023) {
       const r = Math.random();
       let type = 'double';
-      if (r < 0.22) type = 'shield';
-      else if (r < 0.38) type = 'speed';
-      else if (r < 0.58) type = 'pulse';
-      else if (r < 0.72) type = 'option';
-      else if (r < 0.85 && this.level >= 2) type = 'double';
+      if (r < 0.18) type = 'shield';
+      else if (r < 0.32) type = 'speed';
+      else if (r < 0.48) type = 'pulse';
+      else if (r < 0.60) type = 'option';
+      else if (r < 0.72) type = 'laser';
+      else if (r < 0.84) type = 'bomb';
+      else if (r < 0.92 && this.level >= 2) type = 'double';
 
       this._powerups.push({
         x: GAME_W + 14,
@@ -836,9 +922,18 @@ export class LifePulse {
         const dx = b.x - e.x;
         const dy = b.y - e.y;
         if (dx * dx + dy * dy < (br + er) * (br + er)) {
-          e.hp = (e.hp || 1) - 1;
+          const dmg = b.laser ? 2 : 1;
+          e.hp = (e.hp || 1) - dmg;
+          e.lastHit = this._time;
           this._createHitParticle(b.x, b.y);
-          this._bullets.splice(i, 1);
+
+          // Pass 4: piercing / laser bullets continue through enemies (unless life low)
+          if (b.pierce && b.life > 0.2) {
+            b.life *= 0.7; // decay life on pierce
+            // don't splice - continues
+          } else {
+            this._bullets.splice(i, 1);
+          }
           break;
         }
       }
@@ -989,6 +1084,16 @@ export class LifePulse {
       }
       this.score += 140;
       this._spawnScorePopup(this._player.x, this._player.y - 18, 140);
+    } else if (type === 'laser') {
+      // New LASER powerup (pass 4) - temporary piercing high-damage primary
+      this._laserTimer = Math.max(this._laserTimer, 13.5);
+      this.score += 210;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 210);
+    } else if (type === 'bomb') {
+      // BOMB powerup gives extra Life Pulse charges - gives real resource "point" and decision making
+      this._pulseStock = Math.min(5, (this._pulseStock || 0) + 2);
+      this.score += 175;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 175);
     }
   }
 
@@ -1067,11 +1172,15 @@ export class LifePulse {
       const power = this._powerLevel;
       const boosted = p.speedTimer > 0;
 
-      // Choose the best player sprite from new Grok Imagine assets
+      // Choose the best player sprite from new Grok Imagine assets (pass 4: prefer overdrive when laser active)
       let playerImg = this.assets.player;
       let pw = 32, ph = 20;
 
-      if (power >= 2 && this.assets['player-powered-spread'] && this.assets['player-powered-spread'].complete) {
+      const useOverdrive = this._laserTimer > 0 || power >= 2;
+      if (useOverdrive && this.assets['player-overdrive'] && this.assets['player-overdrive'].complete) {
+        playerImg = this.assets['player-overdrive'];
+        pw = 37; ph = 23;
+      } else if (power >= 2 && this.assets['player-powered-spread'] && this.assets['player-powered-spread'].complete) {
         playerImg = this.assets['player-powered-spread'];
         pw = 36; ph = 22;
       } else if (power >= 1 && this.assets['player-powered1'] && this.assets['player-powered1'].complete) {
@@ -1145,16 +1254,24 @@ export class LifePulse {
       ctx.lineWidth = 1;
     }
 
-    // === PLAYER BULLETS (bio energy) ===
-    ctx.fillStyle = CYAN;
+    // === PLAYER BULLETS (bio energy) - pass 4 laser = long piercing bright beams ===
     for (const b of this._bullets) {
-      const len = (b.vy === 0) ? 7.5 : 5.5;
-      ctx.fillRect(b.x - 1.5, b.y - 1.2, len, 2.4);
-      // small bright head
-      ctx.fillStyle = WHITE;
-      ctx.fillRect(b.x + 4, b.y - 0.7, 2.5, 1.4);
-      ctx.fillStyle = CYAN;
+      if (b.laser) {
+        ctx.fillStyle = '#a0fff4';
+        const len = (b.vy === 0) ? 26 : 18;
+        ctx.fillRect(b.x - 1.2, b.y - 1.6, len, 3.2);
+        ctx.fillStyle = WHITE;
+        ctx.fillRect(b.x + 8, b.y - 0.9, 6, 1.8);
+      } else {
+        ctx.fillStyle = CYAN;
+        const len = (b.vy === 0) ? 7.5 : 5.5;
+        ctx.fillRect(b.x - 1.5, b.y - 1.2, len, 2.4);
+        // small bright head
+        ctx.fillStyle = WHITE;
+        ctx.fillRect(b.x + 4, b.y - 0.7, 2.5, 1.4);
+      }
     }
+    ctx.fillStyle = CYAN;
 
     // === ENEMY BULLETS (spores / venom) ===
     ctx.fillStyle = ORANGE;
@@ -1195,6 +1312,13 @@ export class LifePulse {
         if (img && img.complete) {
           const s = 0.92;
           ctx.drawImage(img, ex - er * 1.05 * s, ey - er * s, er * 2.1 * s, er * 2 * s);
+          usedImage = true;
+        }
+      } else if (e.type === 'tendril') {
+        const img = this.assets.tendril;
+        if (img && img.complete) {
+          const s = 1.15;
+          ctx.drawImage(img, ex - er * 1.3 * s, ey - er * 0.7 * s, er * 2.6 * s, er * 1.4 * s);
           usedImage = true;
         }
       } else {
@@ -1245,6 +1369,16 @@ export class LifePulse {
           ctx.stroke();
         }
       }
+
+      // Damage flash (pass 4 visual feedback - makes hits feel much better)
+      if (e.lastHit && (this._time - e.lastHit) < 0.12) {
+        ctx.globalAlpha = 0.6;
+        ctx.fillStyle = WHITE;
+        ctx.beginPath();
+        ctx.arc(ex, ey, er * 1.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
     }
 
     // === BOSS (Grok Imagine detailed boss + animated procedural overlays) ===
@@ -1265,6 +1399,14 @@ export class LifePulse {
         ctx.beginPath();
         ctx.ellipse(bx, by, 29, 21, 0, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Pass 4: Draw vulnerable core (new Grok Imagine asset) - makes the "weak point" visually obvious and rewarding
+      const coreImg = this.assets.bossCore;
+      if (coreImg && coreImg.complete) {
+        const cw = 22 + Math.sin(this._time * 5) * 2;
+        const ch = 18 + Math.sin(this._time * 4.2) * 1.5;
+        ctx.drawImage(coreImg, bx - cw / 2 + 3, by - ch / 2 - 1, cw, ch);
       }
 
       // Always add juicy animated elements on top (hearts, eyes, tendrils) for life
@@ -1362,6 +1504,29 @@ export class LifePulse {
           ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
           ctx.fill();
         }
+      } else if (p.type === 'laser') {
+        const laserImg = this.assets.powerLaser;
+        if (laserImg && laserImg.complete) {
+          ctx.drawImage(laserImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.fillStyle = '#7cffe0';
+          ctx.fillRect(px - 6, py + bob - 2, 12, 4);
+          ctx.fillStyle = WHITE;
+          ctx.fillRect(px - 2, py + bob - 1, 4, 2);
+        }
+      } else if (p.type === 'bomb') {
+        // Bomb stock powerup - use a strong pulsing ring + core
+        const pr = 5 + Math.sin(this._time * 9) * 1.3;
+        ctx.strokeStyle = ORANGE;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.arc(px, py + bob, pr, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = VIOLET;
+        ctx.beginPath();
+        ctx.arc(px, py + bob, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 1;
       }
     }
 
@@ -1394,10 +1559,13 @@ export class LifePulse {
       const rad = (ex.size || 18) * (0.6 + prog * 1.35);
       const alpha = Math.max(0.12, 1 - prog * 1.05);
 
-      const frame = (prog < 0.5) ? 'explosion-1' : 'explosion-2';
-      const expImg = this.assets[frame] || this.assets['explosion-1'];
+      // Pass 4: use up to 3 explosion frames from Grok Imagine for richer blasts
+      let frameKey = 'explosion-1';
+      if (prog > 0.66) frameKey = 'explosion-3';
+      else if (prog > 0.33) frameKey = 'explosion-2';
+      const expImg = this.assets[frameKey] || this.assets['explosion-1'];
       if (expImg && expImg.complete) {
-        const imgSize = 28 + prog * 34;
+        const imgSize = 28 + prog * 36;
         ctx.globalAlpha = Math.max(0.3, alpha);
         ctx.drawImage(expImg, ex.x - imgSize / 2, ex.y - imgSize / 2, imgSize, imgSize);
       }
