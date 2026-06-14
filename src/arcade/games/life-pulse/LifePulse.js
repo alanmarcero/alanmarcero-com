@@ -25,21 +25,21 @@ export class LifePulse {
     this._loadAssets();
   }
 
-  // Loop pass 2: Integrated fresh high-quality sprites generated with Grok Imagine.
-  // Hybrid rendering: prefers detailed art assets for player/enemies/boss/powerups/backgrounds/explosions
-  // while preserving all the strong gameplay (circle collisions, Life Pulse bomb, progression, juice, score popups).
+  // Loop pass 3: Alpha-keyed Grok Imagine sprites + combo + option drones + spiker enemies + graze + high scores.
+  // Direct fix for white boxes via runtime alpha keying on dark JPG surrounds.
 
   _loadAssets() {
-    // Fresh assets generated with Grok Imagine (higher quality, better themed)
-    // Using JPG for now; new art has dark/black surrounds so no harsh white boxes
+    // Assets from Grok Imagine + previous. All main sprites get alpha keying (dark pixels -> transparent).
     const assetList = [
       ['player', '/assets/arcade/life-pulse/player-ship.jpg'],
       ['boss', '/assets/arcade/life-pulse/boss.jpg'],
       ['drone', '/assets/arcade/life-pulse/enemy-drone.jpg'],
       ['turret', '/assets/arcade/life-pulse/enemy-turret.jpg'],
       ['growth', '/assets/arcade/life-pulse/growth-pulse-1.jpg'],
+      ['spiker', '/assets/arcade/life-pulse/enemy-spiker.jpg'],
       ['powerDouble', '/assets/arcade/life-pulse/powerup-double.jpg'],
       ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
+      ['option', '/assets/arcade/life-pulse/option-drone.jpg'],
       ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
       ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
       ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
@@ -49,6 +49,8 @@ export class LifePulse {
       ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
+    const spriteKeys = new Set(['player','boss','drone','turret','growth','spiker','powerDouble','powerShield','option','player-powered1','player-powered-spread','player-thruster-1','explosion-1','explosion-2']);
+
     let loaded = 0;
     const total = assetList.length;
 
@@ -56,11 +58,52 @@ export class LifePulse {
       const img = new Image();
       img.onload = () => {
         loaded++;
+        if (spriteKeys.has(key)) {
+          this.assets[key] = this._createAlphaKeyedImage(img);
+        } else {
+          this.assets[key] = img;
+        }
         if (loaded === total) this.assetsLoaded = true;
       };
       img.src = src;
+      // temporary placeholder so render checks pass during load
       this.assets[key] = img;
     });
+  }
+
+  _createAlphaKeyedImage(sourceImg) {
+    // Strip near-black pixels (the JPG "box" from generation) to real transparency.
+    // This eliminates white (or dark rectangular) boxes around sprites.
+    if (!sourceImg || !sourceImg.complete) return sourceImg;
+    const w = sourceImg.naturalWidth || sourceImg.width;
+    const h = sourceImg.naturalHeight || sourceImg.height;
+    if (!w || !h) return sourceImg;
+
+    // Guard for test environment (node) where document/canvas may be absent
+    if (typeof document === 'undefined' || !document.createElement) {
+      return sourceImg;
+    }
+
+    const c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    const cx = c.getContext('2d', { willReadFrequently: true });
+    cx.drawImage(sourceImg, 0, 0, w, h);
+
+    const imageData = cx.getImageData(0, 0, w, h);
+    const d = imageData.data;
+    const thresh = 32; // tune: anything this dark or darker in all channels becomes transparent
+
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i] < thresh && d[i + 1] < thresh && d[i + 2] < thresh) {
+        d[i + 3] = 0;
+      }
+    }
+    cx.putImageData(imageData, 0, 0);
+
+    const out = new Image();
+    out.src = c.toDataURL('image/png');
+    return out;
   }
 
   init(width, height) {
@@ -94,6 +137,8 @@ export class LifePulse {
       speedTimer: 0,
     };
 
+    this._wave = 1;
+
     this._bullets = [];
     this._enemyBullets = [];
     this._enemies = [];
@@ -102,6 +147,11 @@ export class LifePulse {
     this._powerups = [];
     this._pulses = [];          // Life Pulse bombs (secondary special)
     this._scorePopups = [];     // floating +N scores
+    this._options = [];         // auto-firing companion drones (from 'option' powerup)
+    this._combo = 0;
+    this._comboTimer = 0;
+    this._highScore = this._loadHighScore();
+    this._lastGrazeTime = 0;
 
     this._powerLevel = 0;       // 0 = normal, 1 = double, 2 = spread
     this._powerTimer = 0;
@@ -187,6 +237,10 @@ export class LifePulse {
     this._updatePowerups(dt);
     this._updatePulses(dt);
     this._updateScorePopups(dt);
+    this._updateOptions(dt);
+    this._updateCombo(dt);
+    this._checkGraze(dt);
+
     this._spawnEnemies(dt);
     this._updateBoss(dt);
     this._checkCollisions();
@@ -197,6 +251,7 @@ export class LifePulse {
     const targetLevel = Math.min(9, 1 + Math.floor(this.score / 5200) + Math.floor(this._wave / 3));
     if (targetLevel > this.level) {
       this.level = targetLevel;
+      this._onLevelUp();
       this._emitHud();
     }
     this._difficulty = Math.min(4.2, 1.0 + (this.level - 1) * 0.55 + this.score / 18500);
@@ -392,8 +447,12 @@ export class LifePulse {
       if ((e.hp || 0) <= 0) {
         const size = e.r || e.size || 13;
         this._createExplosion(e.x, e.y, size * 1.15);
-        this.score += (e.points || 70);
-        this._spawnScorePopup(e.x, e.y - 6, e.points || 70);
+        const comboMul = 1 + Math.min(4, Math.floor(this._combo / 3)) * 0.2;
+        const gained = Math.floor((e.points || 70) * comboMul);
+        this.score += gained;
+        this._combo = Math.min(12, this._combo + 1);
+        this._comboTimer = 1.9;
+        this._spawnScorePopup(e.x, e.y - 6, gained);
 
         // Splitting growths (biological theme)
         if (e.split) {
@@ -605,7 +664,7 @@ export class LifePulse {
           r: ENEMY_BASE_R * 1.25,
           type: 'turret',
         });
-      } else if (roll < 0.94) {
+      } else if (roll < 0.88) {
         // Growth / splitter (core of the "Life" theme)
         this._enemies.push({
           id: Math.random() * 99999 | 0,
@@ -617,6 +676,18 @@ export class LifePulse {
           r: ENEMY_BASE_R * 1.55,
           type: 'growth',
           split: true,
+        });
+      } else if (roll < 0.96 || d > 2.2) {
+        // New fast spiker (armored aggressive, from new Grok Imagine asset)
+        this._enemies.push({
+          id: Math.random() * 99999 | 0,
+          x: GAME_W + 14, y,
+          vx: -ENEMY_SPEED * (1.65 + d * 0.08),
+          vy: (Math.random() - 0.5) * 22,
+          hp: 2,
+          points: 115,
+          r: ENEMY_BASE_R * 0.95,
+          type: 'spiker',
         });
       } else {
         // Fast aggressive "cell" at higher levels
@@ -648,13 +719,14 @@ export class LifePulse {
     }
 
     // More generous + varied powerups (the original complaint)
-    if (Math.random() < 0.019) {
+    if (Math.random() < 0.021) {
       const r = Math.random();
       let type = 'double';
-      if (r < 0.28) type = 'shield';
-      else if (r < 0.48) type = 'speed';
-      else if (r < 0.68) type = 'pulse';
-      else if (r < 0.82 && this.level >= 3) type = 'double';
+      if (r < 0.22) type = 'shield';
+      else if (r < 0.38) type = 'speed';
+      else if (r < 0.58) type = 'pulse';
+      else if (r < 0.72) type = 'option';
+      else if (r < 0.85 && this.level >= 2) type = 'double';
 
       this._powerups.push({
         x: GAME_W + 14,
@@ -800,6 +872,23 @@ export class LifePulse {
       }
     }
 
+    // Options are fragile — contact with enemies destroys the drone but hurts the enemy
+    for (let i = this._options.length - 1; i >= 0; i--) {
+      const o = this._options[i];
+      for (let j = this._enemies.length - 1; j >= 0; j--) {
+        const e = this._enemies[j];
+        const er = e.r || ENEMY_BASE_R;
+        const dx = e.x - o.x;
+        const dy = e.y - o.y;
+        if (dx * dx + dy * dy < (er + 5) * (er + 5)) {
+          this._options.splice(i, 1);
+          e.hp = (e.hp || 1) - 1;
+          this._createHitParticle(o.x, o.y);
+          break;
+        }
+      }
+    }
+
     // Player collects powerups (nice + audible feel via particles)
     for (let i = this._powerups.length - 1; i >= 0; i--) {
       const p = this._powerups[i];
@@ -856,6 +945,7 @@ export class LifePulse {
 
     if (this.lives <= 0) {
       this.gameOver = true;
+      this._saveHighScore(this.score);
       this._emitHud();
     } else {
       this._emitHud();
@@ -888,6 +978,17 @@ export class LifePulse {
         detonated: false,
       });
       this.score += 90;
+    } else if (type === 'option') {
+      // Spawn a companion drone (classic powerup fantasy)
+      if (this._options.length < 2) {
+        this._options.push({
+          x: this._player.x - 28,
+          y: this._player.y + (this._options.length - 0.5) * 16,
+          fireTimer: 0.2,
+        });
+      }
+      this.score += 140;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 140);
     }
   }
 
@@ -1089,6 +1190,13 @@ export class LifePulse {
           ctx.drawImage(img, ex - er * pScale, ey - er * pScale, er * 2 * pScale, er * 2 * pScale);
           usedImage = true;
         }
+      } else if (e.type === 'spiker') {
+        const img = this.assets.spiker;
+        if (img && img.complete) {
+          const s = 0.92;
+          ctx.drawImage(img, ex - er * 1.05 * s, ey - er * s, er * 2.1 * s, er * 2 * s);
+          usedImage = true;
+        }
       } else {
         // drone / swooper
         const img = this.assets.drone;
@@ -1244,6 +1352,16 @@ export class LifePulse {
         ctx.arc(px, py + bob, 2.2, 0, Math.PI * 2);
         ctx.fill();
         ctx.lineWidth = 1;
+      } else if (p.type === 'option') {
+        const optImg = this.assets.option;
+        if (optImg && optImg.complete) {
+          ctx.drawImage(optImg, px - 7, py + bob - 7, 14, 14);
+        } else {
+          ctx.fillStyle = CYAN;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
 
@@ -1327,6 +1445,46 @@ export class LifePulse {
     ctx.globalAlpha = 1;
     ctx.textAlign = 'left';
 
+    // === OPTION DRONES (Grok Imagine asset + small glow) ===
+    for (const o of this._options) {
+      const img = this.assets.option;
+      const ow = 11, oh = 9;
+      if (img && img.complete) {
+        ctx.drawImage(img, o.x - ow / 2, o.y - oh / 2, ow, oh);
+      } else {
+        ctx.fillStyle = CYAN;
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // subtle companion glow
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(o.x + 1, o.y, 7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+
+    // === COMBO + HIGH SCORE (gives "point" and feedback) ===
+    if (this._combo > 1) {
+      const comboAlpha = Math.min(1, this._comboTimer / 0.6 + 0.3);
+      ctx.globalAlpha = comboAlpha;
+      ctx.fillStyle = this._combo > 6 ? VIOLET : ORANGE;
+      ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+      ctx.fillText('COMBO x' + this._combo, 18, 22);
+      ctx.globalAlpha = 1;
+    }
+
+    // Persistent high score (top right)
+    if (this._highScore > 0) {
+      ctx.fillStyle = 'rgba(160, 158, 180, 0.7)';
+      ctx.font = '10px "Inter", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('HI ' + this._highScore, GAME_W - 10, 16);
+      ctx.textAlign = 'left';
+    }
+
     ctx.restore();
   }
 
@@ -1389,5 +1547,122 @@ export class LifePulse {
 
   destroy() {
     // No timers or listeners to clean
+  }
+
+  // ==================== NEW SYSTEMS (pass 3) ====================
+
+  _loadHighScore() {
+    try {
+      const v = localStorage.getItem('lifePulseHighScore');
+      return v ? parseInt(v, 10) : 0;
+    } catch (e) { return 0; }
+  }
+
+  _saveHighScore(score) {
+    try {
+      if (score > (this._highScore || 0)) {
+        this._highScore = score;
+        localStorage.setItem('lifePulseHighScore', String(score));
+      }
+    } catch (e) {}
+  }
+
+  _updateCombo(dt) {
+    if (this._comboTimer > 0) {
+      this._comboTimer -= dt;
+    } else if (this._combo > 0) {
+      this._combo = Math.max(0, this._combo - 1);
+      if (this._combo === 0) this._comboTimer = 0;
+    }
+  }
+
+  _updateOptions(dt) {
+    const p = this._player;
+    for (let i = this._options.length - 1; i >= 0; i--) {
+      const o = this._options[i];
+      // Trail / follow player with lag and slight sine orbit
+      const targetX = p.x - 22;
+      const targetY = p.y + Math.sin(this._time * 4 + i) * 18;
+      o.x += (targetX - o.x) * 0.12;
+      o.y += (targetY - o.y) * 0.12;
+
+      // Auto fire weak shots
+      o.fireTimer = (o.fireTimer || 0) - dt;
+      if (o.fireTimer <= 0) {
+        o.fireTimer = 0.38;
+        this._bullets.push({
+          x: o.x + 6,
+          y: o.y,
+          vx: BULLET_SPEED * 0.82,
+          vy: 0,
+          r: BULLET_HIT_R * 0.7,
+          life: 1.1,
+          fromOption: true,
+        });
+      }
+
+      // Cull if too far or player dead
+      if (!p.alive || o.x < -30) {
+        this._options.splice(i, 1);
+      }
+    }
+  }
+
+  _checkGraze(dt) {
+    // Small bonus + visual for near-misses (gives "point" and skill feel)
+    if (!this._player.alive || this._player.invuln > 0) return;
+    const now = this._time;
+    if (now - this._lastGrazeTime < 0.12) return;
+
+    const px = this._player.x;
+    const py = this._player.y;
+    let grazed = false;
+
+    for (const e of this._enemies) {
+      const er = (e.r || ENEMY_BASE_R) * 1.65;
+      const dx = e.x - px;
+      const dy = e.y - py;
+      const dist2 = dx * dx + dy * dy;
+      if (dist2 > (PLAYER_HIT_R + 3) * (PLAYER_HIT_R + 3) && dist2 < er * er) {
+        grazed = true;
+        break;
+      }
+    }
+
+    if (!grazed) {
+      for (const b of this._enemyBullets) {
+        const br = b.r || 3.5;
+        const dx = b.x - px;
+        const dy = b.y - py;
+        const dist2 = dx * dx + dy * dy;
+        if (dist2 > (PLAYER_HIT_R + 2) * (PLAYER_HIT_R + 2) && dist2 < (br + 18) * (br + 18)) {
+          grazed = true;
+          break;
+        }
+      }
+    }
+
+    if (grazed) {
+      this._lastGrazeTime = now;
+      this.score += 4;
+      this._createHitParticle(px + 12 + Math.random() * 6, py + (Math.random() - 0.5) * 8);
+    }
+  }
+
+  _onLevelUp() {
+    // Juice on level up
+    this._shake = Math.max(this._shake || 0, 6);
+    for (let i = 0; i < 14; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      this._particles.push({
+        x: this._player.x + 10,
+        y: this._player.y,
+        vx: Math.cos(ang) * (40 + Math.random() * 50),
+        vy: Math.sin(ang) * (40 + Math.random() * 50),
+        life: 0.5 + Math.random() * 0.3,
+        size: 2.2,
+        color: (i % 2 === 0) ? CYAN : VIOLET,
+      });
+    }
   }
 }
