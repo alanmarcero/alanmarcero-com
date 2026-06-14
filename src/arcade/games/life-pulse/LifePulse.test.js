@@ -181,4 +181,27 @@ describe('LifePulse', () => {
       expect(game._bullets.length).toBeGreaterThanOrEqual(beforeBullets - 1);
     });
   });
+
+  describe('Pass 5 new mechanics (homing, overcharge, parasite)', () => {
+    test('homing powerup sets homingTimer', () => {
+      game._applyPowerup('homing');
+      expect(game._homingTimer).toBeGreaterThan(5);
+    });
+
+    test('overcharge powerup activates multiple boosts', () => {
+      game._applyPowerup('overcharge');
+      expect(game._overchargeTimer).toBeGreaterThan(5);
+      expect(game._powerLevel).toBe(3);
+      expect(game._laserTimer).toBeGreaterThan(5);
+    });
+
+    test('parasite enemy type spawns and has chase properties', () => {
+      game._enemies.push({
+        id: 555, x: 500, y: 180, vx: -180, vy: 0, hp: 1, points: 80, r: 6, type: 'parasite', targetOption: false
+      });
+      const p = game._enemies[game._enemies.length-1];
+      expect(p.type).toBe('parasite');
+      expect(p.r).toBeLessThan(9);
+    });
+  });
 });
