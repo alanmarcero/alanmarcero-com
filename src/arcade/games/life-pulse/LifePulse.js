@@ -49,6 +49,8 @@ export class LifePulse {
       ['powerFocus', '/assets/arcade/life-pulse/powerup-focus.jpg'],
       ['powerChain', '/assets/arcade/life-pulse/powerup-chain.jpg'],
       ['powerReflect', '/assets/arcade/life-pulse/powerup-reflect.jpg'],
+      ['powerSwarm', '/assets/arcade/life-pulse/powerup-swarm.jpg'],
+      ['powerVortex', '/assets/arcade/life-pulse/powerup-vortex.jpg'],
       ['option', '/assets/arcade/life-pulse/option-drone.jpg'],
       ['option-upgraded', '/assets/arcade/life-pulse/option-upgraded.jpg'],
       ['option-upgraded-chain', '/assets/arcade/life-pulse/option-upgraded-chain.jpg'],
@@ -58,27 +60,31 @@ export class LifePulse {
       ['player-overcharge', '/assets/arcade/life-pulse/player-overcharge.jpg'],
       ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
       ['focus-aura', '/assets/arcade/life-pulse/focus-aura.jpg'],
+      ['focus-phase', '/assets/arcade/life-pulse/focus-phase.jpg'],
       ['explosion-1', '/assets/arcade/life-pulse/explosion-1.jpg'],
       ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
       ['explosion-3', '/assets/arcade/life-pulse/explosion-3.jpg'],
       ['explosion-core', '/assets/arcade/life-pulse/explosion-core.jpg'],
       ['explosion-chain', '/assets/arcade/life-pulse/explosion-chain.jpg'],
       ['explosion-chain-core', '/assets/arcade/life-pulse/explosion-chain-core.jpg'],
+      ['explosion-surge', '/assets/arcade/life-pulse/explosion-surge.jpg'],
       ['bossCore', '/assets/arcade/life-pulse/boss-core.jpg'],
       ['weakpoint', '/assets/arcade/life-pulse/weakpoint-highlight.jpg'],
+      ['weakpoint-crit', '/assets/arcade/life-pulse/weakpoint-crit.jpg'],
       ['parasite', '/assets/arcade/life-pulse/enemy-parasite.jpg'],
       ['parasite-swarm', '/assets/arcade/life-pulse/enemy-parasite-swarm.jpg'],
       ['parasite-cluster', '/assets/arcade/life-pulse/enemy-parasite-cluster.jpg'],
+      ['parasite-queen', '/assets/arcade/life-pulse/enemy-parasite-queen.jpg'],
       ['background', '/assets/arcade/life-pulse/background.jpg'],
       ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
     const spriteKeys = new Set([
-      'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm','parasite-cluster',
-      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','powerChain','powerReflect',
+      'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm','parasite-cluster','parasite-queen',
+      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','powerChain','powerReflect','powerSwarm','powerVortex',
       'option','option-upgraded','option-upgraded-chain',
-      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1','focus-aura',
-      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','explosion-chain-core','bossCore','weakpoint'
+      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1','focus-aura','focus-phase',
+      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','explosion-chain-core','explosion-surge','bossCore','weakpoint','weakpoint-crit'
     ]);
 
     let loaded = 0;
@@ -102,8 +108,8 @@ export class LifePulse {
   }
 
   _createAlphaKeyedImage(sourceImg) {
-    // Pass 6: Even stronger alpha keying for Grok Imagine JPGs.
-    // Adaptive luminosity + extra edge softening + slight morphological clean to eliminate white boxes.
+    // Pass 8: Aggressive alpha keying tuned for detailed Grok Imagine cutouts.
+    // Stronger hard threshold + cubic soft feather + extra near-black cleanup pass to eliminate any remaining white box artifacts around sprites.
     if (!sourceImg || !sourceImg.complete) return sourceImg;
     const w = sourceImg.naturalWidth || sourceImg.width;
     const h = sourceImg.naturalHeight || sourceImg.height;
@@ -121,20 +127,28 @@ export class LifePulse {
 
     const imageData = cx.getImageData(0, 0, w, h);
     const d = imageData.data;
-    const hard = 26;
-    const soft = 52;
+    const hard = 24;
+    const soft = 55;
 
     for (let i = 0; i < d.length; i += 4) {
       const r = d[i], g = d[i+1], b = d[i+2];
-      const lum = 0.299*r + 0.587*g + 0.114*b;
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
 
       if (lum < hard) {
-        d[i+3] = 0;
+        d[i + 3] = 0;
       } else if (lum < soft) {
         const f = (lum - hard) / (soft - hard);
-        d[i+3] = Math.floor(255 * f * f * f); // stronger curve for cleaner cut
+        d[i + 3] = Math.floor(255 * f * f * f * f); // even stronger curve + extra cleanup
       }
     }
+
+    // Second pass: zero any remaining very dark edge pixels for ultra-clean cutouts on complex sprites
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i] < 30 && d[i + 1] < 30 && d[i + 2] < 30 && d[i + 3] > 0 && d[i + 3] < 180) {
+        d[i + 3] = 0;
+      }
+    }
+
     cx.putImageData(imageData, 0, 0);
 
     const out = new Image();
@@ -202,6 +216,9 @@ export class LifePulse {
     this._novaReady = false;    // NOVA one-shot clear (pass 6) - powerful screen-clear style ability
     this._chainTimer = 0;       // CHAIN powerup (pass 7): linked hits, score chains, visual links
     this._reflectTimer = 0;     // REFLECT powerup (pass 7): reflects enemy bullets back as player shots for a time
+    this._swarmTimer = 0;       // SWARM powerup (pass 8): spawns aggressive mini-parasites
+    this._vortexTimer = 0;      // VORTEX powerup (pass 8): pulls enemies in + damage/score amp
+    this._surgeTimer = 0;       // SURGE mode (pass 8): high difficulty ramp after milestones for endless feel + multipliers
     this._maxCombo = 0;
     this._gameStartTime = this._time;
     this._kills = 0;
@@ -290,6 +307,7 @@ export class LifePulse {
     this._updateOptions(dt);
     this._updateCombo(dt);
     this._checkGraze(dt);
+    this._updateSwarm(dt);
 
     this._spawnEnemies(dt);
     this._updateBoss(dt);
@@ -307,7 +325,7 @@ export class LifePulse {
       this._onLevelUp();
       this._emitHud();
     }
-    this._difficulty = Math.min(4.2, 1.0 + (this.level - 1) * 0.55 + this.score / 18500);
+    this._difficulty = Math.min(5.5, 1.0 + (this.level - 1) * 0.55 + this.score / 18500 + (this._surgeTimer > 0 ? 1.4 : 0)); // SURGE ramp (pass 8)
 
     // Pass 5: survival time gives steady "point" at higher levels (rewards not dying)
     this._surviveAccum += dt;
@@ -413,6 +431,12 @@ export class LifePulse {
     if (this._chainTimer <= 0) this._chainTimer = 0;
     this._reflectTimer -= dt;
     if (this._reflectTimer <= 0) this._reflectTimer = 0;
+    this._swarmTimer -= dt;
+    if (this._swarmTimer <= 0) this._swarmTimer = 0;
+    this._vortexTimer -= dt;
+    if (this._vortexTimer <= 0) this._vortexTimer = 0;
+    this._surgeTimer -= dt;
+    if (this._surgeTimer <= 0) this._surgeTimer = 0;
 
     // Secondary = LIFE PULSE bomb + new NOVA (pass 6)
     this._pulseCooldown -= dt;
@@ -648,6 +672,17 @@ export class LifePulse {
           e.vy = (dy / dist) * chase;
         }
       }
+      if (this._vortexTimer > 0 && e.type !== 'boss') {
+        // Pass 8 VORTEX: pull enemies toward player (makes positioning matter for collision and clears)
+        const dx = this._player.x - e.x;
+        const dy = this._player.y - e.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const pull = 95;
+        e.vx += (dx / dist) * pull * dt * 8;
+        e.vy += (dy / dist) * pull * dt * 8;
+        // slight damage amp while in vortex
+        if (dist < 80) e.vortexAmp = (e.vortexAmp || 1) + dt * 0.8;
+      }
 
       // Turrets fire predictively (with telegraph via random chance)
       if (e.type === 'turret' && Math.random() < 0.021 * this._difficulty) {
@@ -667,6 +702,9 @@ export class LifePulse {
         if (this._chainTimer > 0) {
           gained = Math.floor(gained * 1.6); // CHAIN powerup (pass 7) dramatically boosts chained kills for "point"
           this._combo = Math.min(15, this._combo + 1); // stronger combo feed
+        }
+        if (e.vortexAmp && e.vortexAmp > 1) {
+          gained = Math.floor(gained * Math.min(2.2, 1 + e.vortexAmp * 0.4)); // VORTEX amp
         }
         this.score += gained;
         this._combo = Math.min(12, this._combo + 1);
@@ -688,6 +726,23 @@ export class LifePulse {
               points: 45,
               r: sr,
               type: 'drone',
+            });
+          }
+        }
+        if (e.isQueen) {
+          // Pass 8 parasite queen death spawns swarm
+          for (let s = 0; s < 4; s++) {
+            this._enemies.push({
+              id: Math.random() * 99999 | 0,
+              x: e.x + (Math.random() - 0.5) * 18,
+              y: e.y + (Math.random() - 0.5) * 18,
+              vx: -ENEMY_SPEED * (0.7 + Math.random() * 0.5),
+              vy: (Math.random() - 0.5) * 55,
+              hp: 1,
+              points: 30,
+              r: 4.5,
+              type: 'parasite',
+              isSwarm: true,
             });
           }
         }
@@ -833,6 +888,7 @@ export class LifePulse {
           if (this._runUpgrades % 2 === 1) {
             this._pulseStock = (this._pulseStock || 0) + 1;
           }
+          this._surgeTimer = Math.max(this._surgeTimer || 0, 22); // SURGE mode activated (pass 8)
         }
       }
     }
@@ -871,6 +927,7 @@ export class LifePulse {
 
     if (this._spawnTimer <= 0) {
       this._spawnTimer = spawnInterval;
+      if (this._surgeTimer > 0) this._spawnTimer *= 0.55; // SURGE (pass 8): much faster spawns during surge for challenge + point
       this._wave += 0.08; // slow wave progress even without kills
 
       const y = 32 + Math.random() * (GAME_H - 64);
@@ -957,17 +1014,19 @@ export class LifePulse {
           weave: (Math.random() - 0.5) * 2.2,
         });
       } else if (d > 2.8 && Math.random() < 0.6) {
-        // Parasite (pass 5): small fast chaser, annoying, targets player/options, from new Imagine asset
+        // Parasite (pass 5/8): small fast chaser, annoying, targets player/options. Rare queen variant (bigger, spawns on death)
+        const isQueen = d > 3.2 && Math.random() < 0.18;
         this._enemies.push({
           id: Math.random() * 99999 | 0,
           x: GAME_W + 12, y,
           vx: -ENEMY_SPEED * (1.9 + d * 0.1),
           vy: (Math.random() - 0.5) * 30,
-          hp: 1,
-          points: 80,
-          r: ENEMY_BASE_R * 0.65,
+          hp: isQueen ? 4 : 1,
+          points: isQueen ? 210 : 80,
+          r: isQueen ? ENEMY_BASE_R * 1.35 : ENEMY_BASE_R * 0.65,
           type: 'parasite',
           targetOption: Math.random() < 0.4,
+          isQueen,
         });
       } else {
         // Fast aggressive "cell" at higher levels
@@ -998,22 +1057,24 @@ export class LifePulse {
       }
     }
 
-    // More generous + varied powerups (the original complaint) - pass 7 adds chain (linked scoring) and reflect (defense/offense)
-    if (Math.random() < 0.026) {
+    // More generous + varied powerups (the original complaint) - pass 8 adds SWARM (mini parasites) and VORTEX (pull + amp)
+    if (Math.random() < 0.027) {
       const r = Math.random();
       let type = 'double';
-      if (r < 0.11) type = 'shield';
-      else if (r < 0.21) type = 'speed';
-      else if (r < 0.31) type = 'pulse';
-      else if (r < 0.40) type = 'option';
-      else if (r < 0.48) type = 'laser';
-      else if (r < 0.56) type = 'bomb';
-      else if (r < 0.64) type = 'homing';
-      else if (r < 0.71) type = 'overcharge';
-      else if (r < 0.77) type = 'nova';
-      else if (r < 0.83) type = 'focus';
-      else if (r < 0.88) type = 'chain';
-      else if (r < 0.93) type = 'reflect';
+      if (r < 0.10) type = 'shield';
+      else if (r < 0.19) type = 'speed';
+      else if (r < 0.28) type = 'pulse';
+      else if (r < 0.36) type = 'option';
+      else if (r < 0.44) type = 'laser';
+      else if (r < 0.52) type = 'bomb';
+      else if (r < 0.59) type = 'homing';
+      else if (r < 0.66) type = 'overcharge';
+      else if (r < 0.72) type = 'nova';
+      else if (r < 0.78) type = 'focus';
+      else if (r < 0.83) type = 'chain';
+      else if (r < 0.88) type = 'reflect';
+      else if (r < 0.92) type = 'swarm';
+      else if (r < 0.96) type = 'vortex';
       else if (this.level >= 2) type = 'double';
 
       this._powerups.push({
@@ -1131,6 +1192,12 @@ export class LifePulse {
             dmg += 1;
             this.score += 8; // small precision bonus
             this._shake = Math.max(this._shake || 0, 2.5); // hitstop feel for precision
+            // Pass 8 crit zone bonus for biological enemies (growth/tendril/parasite) using weakpoint art
+            if (['growth', 'tendril', 'parasite'].includes(e.type)) {
+              dmg += 1;
+              this.score += 12;
+              this._createHitParticle(b.x, b.y); // extra pop on crit
+            }
           }
           e.hp = (e.hp || 1) - dmg;
           e.lastHit = this._time;
@@ -1177,7 +1244,8 @@ export class LifePulse {
         const br = b.r || 3;
         const dx = b.x - this._player.x;
         const dy = b.y - this._player.y;
-        if (dx * dx + dy * dy < (br + playerHitR) * (br + playerHitR)) {
+        const d2 = dx * dx + dy * dy;
+        if (d2 < (br + playerHitR) * (br + playerHitR)) {
           if (this._reflectTimer > 0) {
             // Pass 7 REFLECT: turn enemy bullet into friendly piercing shot going back
             this._bullets.push({
@@ -1196,6 +1264,11 @@ export class LifePulse {
             this._hitPlayer();
             this._enemyBullets.splice(i, 1);
           }
+        } else if (this._focusTimer > 5 && d2 < (br + 22) * (br + 22)) {
+          // Pass 8 FOCUS PHASE: at high focus, phase through and destroy nearby enemy bullets (skill expression, no hit)
+          this._enemyBullets.splice(i, 1);
+          this.score += 3;
+          this._createHitParticle(b.x, b.y);
         }
       }
     }
@@ -1296,6 +1369,7 @@ export class LifePulse {
             if (this._runUpgrades % 2 === 1) {
               this._pulseStock = (this._pulseStock || 0) + 1;
             }
+            this._surgeTimer = Math.max(this._surgeTimer || 0, 22); // SURGE mode activated (pass 8)
           }
         }
       }
@@ -1311,6 +1385,12 @@ export class LifePulse {
     if (this.lives <= 0) {
       this.gameOver = true;
       this._saveHighScore(this.score);
+      // Pass 8: final rank bonus score for "point"
+      const g = this._computeGrade();
+      const rankMul = (g === 'S' ? 0.35 : g === 'A' ? 0.22 : g === 'B' ? 0.12 : g === 'C' ? 0.05 : 0);
+      const rankBonus = Math.floor(this.score * rankMul);
+      this.score += rankBonus;
+      this._spawnScorePopup(this._player.x, this._player.y - 30, rankBonus);
       this._emitHud();
     } else {
       this._emitHud();
@@ -1397,6 +1477,31 @@ export class LifePulse {
       this._reflectTimer = Math.max(this._reflectTimer, 10);
       this.score += 160;
       this._spawnScorePopup(this._player.x, this._player.y - 18, 160);
+    } else if (type === 'swarm') {
+      // SWARM (pass 8): spawns 3-4 aggressive mini-parasites that hunt enemies (great for clearing + point)
+      this._swarmTimer = Math.max(this._swarmTimer, 9);
+      this.score += 140;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 140);
+      // immediate mini spawns for feel
+      for (let s = 0; s < 3; s++) {
+        this._enemies.push({
+          id: Math.random() * 99999 | 0,
+          x: this._player.x + 10 + (s - 1) * 8,
+          y: this._player.y + (Math.random() - 0.5) * 12,
+          vx: -60,
+          vy: (Math.random() - 0.5) * 40,
+          hp: 1,
+          points: 25,
+          r: 4,
+          type: 'parasite',
+          isSwarm: true,
+        });
+      }
+    } else if (type === 'vortex') {
+      // VORTEX (pass 8): pulls enemies toward player + amp damage/score when close (risk/reward + collision skill)
+      this._vortexTimer = Math.max(this._vortexTimer, 8);
+      this.score += 155;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 155);
     }
   }
 
@@ -1663,9 +1768,10 @@ export class LifePulse {
           usedImage = true;
         }
       } else if (e.type === 'parasite') {
-        const img = this.assets['parasite-cluster'] || this.assets['parasite-swarm'] || this.assets.parasite;
+        let img = this.assets['parasite-cluster'] || this.assets['parasite-swarm'] || this.assets.parasite;
+        if (e.isQueen) img = this.assets['parasite-queen'] || img;
         if (img && img.complete) {
-          const s = 0.9;
+          const s = e.isQueen ? 1.35 : 0.9;
           ctx.drawImage(img, ex - er * 1.15 * s, ey - er * 1.15 * s, er * 2.3 * s, er * 2.3 * s);
           usedImage = true;
         }
@@ -1738,10 +1844,16 @@ export class LifePulse {
         ctx.lineWidth = 1;
       }
 
-      // Weakpoint highlight (pass 6) on certain biological enemies for clear "aim here" feedback
-      if ((e.type === 'growth' || e.type === 'tendril') && this.assets.weakpoint && this.assets.weakpoint.complete) {
-        const w = 12;
-        ctx.drawImage(this.assets.weakpoint, ex - w/2, ey - w/2, w, w);
+      // Weakpoint highlight (pass 6/8) on certain biological enemies for clear "aim here" feedback + crit art
+      const critTypes = ['growth', 'tendril', 'parasite'];
+      if (critTypes.includes(e.type)) {
+        if (this.assets['weakpoint-crit'] && this.assets['weakpoint-crit'].complete) {
+          const w = 11 + (e.elite ? 2 : 0);
+          ctx.drawImage(this.assets['weakpoint-crit'], ex - w/2, ey - w/2, w, w);
+        } else if (this.assets.weakpoint && this.assets.weakpoint.complete) {
+          const w = 12;
+          ctx.drawImage(this.assets.weakpoint, ex - w/2, ey - w/2, w, w);
+        }
       }
     }
 
@@ -1984,6 +2096,30 @@ export class LifePulse {
           ctx.stroke();
           ctx.lineWidth = 1;
         }
+      } else if (p.type === 'swarm') {
+        const sImg = this.assets.powerSwarm;
+        if (sImg && sImg.complete) {
+          ctx.drawImage(sImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.fillStyle = '#9a2a4a';
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = CYAN;
+          for (let i = 0; i < 3; i++) ctx.fillRect(px - 6 + i * 5, py + bob - 1, 2, 2);
+        }
+      } else if (p.type === 'vortex') {
+        const vImg = this.assets.powerVortex;
+        if (vImg && vImg.complete) {
+          ctx.drawImage(vImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.strokeStyle = '#a0fff4';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 6 + Math.sin(this._time * 14) * 1.5, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
       }
     }
 
@@ -2021,8 +2157,10 @@ export class LifePulse {
       if (prog > 0.66) frameKey = 'explosion-3';
       else if (prog > 0.33) frameKey = 'explosion-2';
       let expImg = this.assets[frameKey] || this.assets['explosion-1'];
-      // Pass 5/7: prefer chain-core or big chain for massive clears (nova etc)
-      if ((ex.size || 18) > 55 && this.assets['explosion-chain-core'] && this.assets['explosion-chain-core'].complete) {
+      // Pass 5/7/8: prefer surge or chain-core for massive clears (nova, surge mode etc)
+      if ((ex.size || 18) > 55 && this.assets['explosion-surge'] && this.assets['explosion-surge'].complete) {
+        expImg = this.assets['explosion-surge'];
+      } else if ((ex.size || 18) > 55 && this.assets['explosion-chain-core'] && this.assets['explosion-chain-core'].complete) {
         expImg = this.assets['explosion-chain-core'];
       } else if ((ex.size || 18) > 45 && this.assets['explosion-core'] && this.assets['explosion-core'].complete) {
         expImg = this.assets['explosion-core'];
@@ -2255,6 +2393,29 @@ export class LifePulse {
       // Cull if too far or player dead
       if (!p.alive || o.x < -30) {
         this._options.splice(i, 1);
+      }
+    }
+  }
+
+  _updateSwarm(dt) {
+    // Pass 8 SWARM: while active, periodically spawn aggressive mini parasites that hunt (reuse parasite type with isSwarm flag)
+    if (this._swarmTimer <= 0) return;
+    // simple periodic spawns (3-4 total feel, not spammy)
+    if (Math.random() < 0.18 * dt * 12) {
+      const count = 1 + (this._overchargeTimer > 0 ? 1 : 0);
+      for (let s = 0; s < count; s++) {
+        this._enemies.push({
+          id: Math.random() * 99999 | 0,
+          x: this._player.x - 15 - s * 6,
+          y: this._player.y + (s - 0.5) * 10,
+          vx: -70,
+          vy: (Math.random() - 0.5) * 55,
+          hp: 1,
+          points: 22,
+          r: 4.2,
+          type: 'parasite',
+          isSwarm: true,
+        });
       }
     }
   }

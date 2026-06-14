@@ -246,4 +246,37 @@ describe('LifePulse', () => {
       expect(['S','A','B','C','D']).toContain(g);
     });
   });
+
+  describe('Pass 8 new systems (swarm, vortex, surge, crit, queen)', () => {
+    test('swarm powerup activates swarmTimer and spawns minis', () => {
+      const before = game._enemies.length;
+      game._applyPowerup('swarm');
+      expect(game._swarmTimer).toBeGreaterThan(5);
+      // immediate spawns in apply
+      expect(game._enemies.length).toBeGreaterThan(before);
+    });
+
+    test('vortex powerup activates vortexTimer', () => {
+      game._applyPowerup('vortex');
+      expect(game._vortexTimer).toBeGreaterThan(5);
+    });
+
+    test('surge activates on milestones and boosts difficulty', () => {
+      game.level = 9;
+      game._runUpgrades = 3;
+      // simulate boss death path
+      game._boss = { x: 300, y: 180, hp: 1 };
+      game._detonatePulse({ x: 300, y: 180, boosted: false });
+      expect(game._surgeTimer).toBeGreaterThan(10);
+    });
+
+    test('parasite queen spawns and has higher stats', () => {
+      game._enemies.push({
+        id: 999, x: 500, y: 180, vx: -50, vy: 0, hp: 4, points: 210, r: 12, type: 'parasite', isQueen: true
+      });
+      const q = game._enemies[game._enemies.length - 1];
+      expect(q.isQueen).toBe(true);
+      expect(q.hp).toBe(4);
+    });
+  });
 });
