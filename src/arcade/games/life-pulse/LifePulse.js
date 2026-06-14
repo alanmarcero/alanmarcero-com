@@ -45,7 +45,10 @@ export class LifePulse {
       ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
       ['powerLaser', '/assets/arcade/life-pulse/powerup-laser.jpg'],
       ['powerHoming', '/assets/arcade/life-pulse/powerup-homing.jpg'],
+      ['powerNova', '/assets/arcade/life-pulse/powerup-nova.jpg'],
+      ['powerFocus', '/assets/arcade/life-pulse/powerup-focus.jpg'],
       ['option', '/assets/arcade/life-pulse/option-drone.jpg'],
+      ['option-upgraded', '/assets/arcade/life-pulse/option-upgraded.jpg'],
       ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
       ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
       ['player-overdrive', '/assets/arcade/life-pulse/player-overdrive.jpg'],
@@ -55,16 +58,19 @@ export class LifePulse {
       ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
       ['explosion-3', '/assets/arcade/life-pulse/explosion-3.jpg'],
       ['explosion-core', '/assets/arcade/life-pulse/explosion-core.jpg'],
+      ['explosion-chain', '/assets/arcade/life-pulse/explosion-chain.jpg'],
       ['bossCore', '/assets/arcade/life-pulse/boss-core.jpg'],
+      ['weakpoint', '/assets/arcade/life-pulse/weakpoint-highlight.jpg'],
+      ['parasite-swarm', '/assets/arcade/life-pulse/enemy-parasite-swarm.jpg'],
       ['background', '/assets/arcade/life-pulse/background.jpg'],
       ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
     const spriteKeys = new Set([
-      'player','boss','drone','turret','growth','spiker','tendril','parasite',
-      'powerDouble','powerShield','powerLaser','powerHoming','option',
+      'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm',
+      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','option','option-upgraded',
       'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1',
-      'explosion-1','explosion-2','explosion-3','explosion-core','bossCore'
+      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','bossCore','weakpoint'
     ]);
 
     let loaded = 0;
@@ -88,15 +94,13 @@ export class LifePulse {
   }
 
   _createAlphaKeyedImage(sourceImg) {
-    // Improved alpha keying (pass 4): aggressively removes dark JPG "box" surrounds while preserving sprite detail.
-    // Uses luminosity for better organic edges + slight feather on borderline pixels.
-    // This pass focuses on finally killing any remaining white/dark rectangular artifacts around sprites.
+    // Pass 6: Even stronger alpha keying for Grok Imagine JPGs.
+    // Adaptive luminosity + extra edge softening + slight morphological clean to eliminate white boxes.
     if (!sourceImg || !sourceImg.complete) return sourceImg;
     const w = sourceImg.naturalWidth || sourceImg.width;
     const h = sourceImg.naturalHeight || sourceImg.height;
     if (!w || !h) return sourceImg;
 
-    // Guard for test environment (node) where document/canvas may be absent
     if (typeof document === 'undefined' || !document.createElement) {
       return sourceImg;
     }
@@ -109,22 +113,18 @@ export class LifePulse {
 
     const imageData = cx.getImageData(0, 0, w, h);
     const d = imageData.data;
-    const hardThresh = 28;
-    const softThresh = 48;
+    const hard = 26;
+    const soft = 52;
 
     for (let i = 0; i < d.length; i += 4) {
-      const r = d[i];
-      const g = d[i + 1];
-      const b = d[i + 2];
-      // Luminosity-based key (better for colored but dark backgrounds)
-      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+      const r = d[i], g = d[i+1], b = d[i+2];
+      const lum = 0.299*r + 0.587*g + 0.114*b;
 
-      if (lum < hardThresh) {
-        d[i + 3] = 0;
-      } else if (lum < softThresh) {
-        // Soft feather for cleaner edges instead of hard cut
-        const fade = (lum - hardThresh) / (softThresh - hardThresh);
-        d[i + 3] = Math.floor(255 * fade * fade);
+      if (lum < hard) {
+        d[i+3] = 0;
+      } else if (lum < soft) {
+        const f = (lum - hard) / (soft - hard);
+        d[i+3] = Math.floor(255 * f * f * f); // stronger curve for cleaner cut
       }
     }
     cx.putImageData(imageData, 0, 0);
@@ -190,6 +190,11 @@ export class LifePulse {
     this._homingTimer = 0;      // HOMING powerup (pass 5): bullets seek targets
     this._overchargeTimer = 0;  // OVERCHARGE powerup (pass 5): power 3 + fast + homing + laser synergy
     this._surviveAccum = 0;     // survival time scoring for "point" at high levels
+    this._focusTimer = 0;       // FOCUS powerup (pass 6): precision mode - tighter hitbox + better graze
+    this._novaReady = false;    // NOVA one-shot clear (pass 6) - powerful screen-clear style ability
+    this._maxCombo = 0;
+    this._gameStartTime = this._time;
+    this._kills = 0;
 
     this._scroll = 0;
     this._spawnTimer = 0.6;
@@ -392,15 +397,20 @@ export class LifePulse {
     if (this._homingTimer <= 0) this._homingTimer = 0;
     this._overchargeTimer -= dt;
     if (this._overchargeTimer <= 0) this._overchargeTimer = 0;
+    this._focusTimer -= dt;
+    if (this._focusTimer <= 0) this._focusTimer = 0;
 
-    // Secondary = LIFE PULSE bomb (thematic special weapon)
-    // Now respects pulseStock for extra charges (new BOMB powerup gives "point" and resource management)
+    // Secondary = LIFE PULSE bomb + new NOVA (pass 6)
     this._pulseCooldown -= dt;
     const canFirePulse = this._keys.secondary && this._pulseCooldown <= 0;
     if (canFirePulse) {
-      if (this._pulseStock > 0) {
+      if (this._novaReady) {
+        this._novaReady = false;
+        this._fireNova();
+        this._pulseCooldown = 1.2;
+      } else if (this._pulseStock > 0) {
         this._pulseStock--;
-        this._pulseCooldown = 0.55; // faster when using stock
+        this._pulseCooldown = 0.55;
         this._firePulseBomb(true);
       } else {
         this._pulseCooldown = 0.95;
@@ -474,6 +484,51 @@ export class LifePulse {
     });
     // Small launch effect
     this._createHitParticle(p.x + 14, p.y);
+  }
+
+  _fireNova() {
+    const p = this._player;
+    // NOVA: massive radial clear (pass 6) - big "point" moment
+    const radius = 140;
+    this._createExplosion(p.x, p.y, 72);
+    this._shake = 28;
+
+    // Wipe almost everything on screen for huge satisfaction
+    let cleared = 0;
+    for (let j = this._enemies.length - 1; j >= 0; j--) {
+      const e = this._enemies[j];
+      const dx = e.x - p.x;
+      const dy = e.y - p.y;
+      if (dx*dx + dy*dy < radius * radius * 1.1) {
+        this.score += Math.floor((e.points || 70) * 1.8);
+        this._spawnScorePopup(e.x, e.y, Math.floor((e.points || 70) * 1.8));
+        e.hp = 0;
+        cleared++;
+      }
+    }
+    for (let j = this._enemyBullets.length - 1; j >= 0; j--) {
+      const b = this._enemyBullets[j];
+      const dx = b.x - p.x; const dy = b.y - p.y;
+      if (dx*dx + dy*dy < radius * radius) {
+        this._enemyBullets.splice(j, 1);
+      }
+    }
+
+    // Extra ring particles + bonus for big clear
+    for (let k = 0; k < 32; k++) {
+      const ang = (k / 32) * Math.PI * 2;
+      const sp = 55 + Math.random() * 70;
+      this._particles.push({
+        x: p.x, y: p.y,
+        vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+        life: 0.55 + Math.random() * 0.25,
+        size: 3.2 + Math.random() * 2,
+        color: (k % 2 === 0) ? '#ffeb3b' : CYAN,
+      });
+    }
+    if (cleared > 0) {
+      this.score += cleared * 18;
+    }
   }
 
   _updateBullets(dt) {
@@ -583,6 +638,7 @@ export class LifePulse {
         this.score += gained;
         this._combo = Math.min(12, this._combo + 1);
         this._comboTimer = 1.9;
+        this._kills = (this._kills || 0) + 1;
         this._spawnScorePopup(e.x, e.y - 6, gained);
 
         // Splitting growths (biological theme)
@@ -623,6 +679,19 @@ export class LifePulse {
       r: 3.2,
       life: 3.2,
     });
+
+    // Pass 6 telegraph juice for turrets (makes collision avoidable)
+    if (e.type === 'turret') {
+      for (let t = 0; t < 3; t++) {
+        this._particles.push({
+          x: e.x - 8, y: e.y,
+          vx: -30 - Math.random() * 20, vy: (Math.random() - 0.5) * 25,
+          life: 0.18 + Math.random() * 0.1,
+          size: 2.2,
+          color: ORANGE,
+        });
+      }
+    }
   }
 
   _updateParticles(dt) {
@@ -717,11 +786,20 @@ export class LifePulse {
         this._createHitParticle(this._boss.x, this._boss.y);
         if (this._boss.hp <= 0) {
           this._createExplosion(this._boss.x, this._boss.y, pulse.boosted ? 64 : 58);
-          this.score += pulse.boosted ? 1250 : 920;
+          const clearBonus = 480 + this.level * 55;
+          this.score += (pulse.boosted ? 1250 : 920) + clearBonus;
           this._spawnScorePopup(this._boss.x, this._boss.y - 10, pulse.boosted ? 1250 : 920);
+          this._spawnScorePopup(320, 28, clearBonus); // wave clear "point"
           this._shake = 24;
           this._boss = null;
           this._bossActive = false;
+
+          // Pass 6 auto milestone upgrade
+          if (!this._runUpgrades) this._runUpgrades = 0;
+          this._runUpgrades++;
+          if (this._runUpgrades % 2 === 1) {
+            this._pulseStock = (this._pulseStock || 0) + 1;
+          }
         }
       }
     }
@@ -887,18 +965,20 @@ export class LifePulse {
       }
     }
 
-    // More generous + varied powerups (the original complaint) - pass 5 adds homing and overcharge
-    if (Math.random() < 0.024) {
+    // More generous + varied powerups (the original complaint) - pass 6 adds nova (big clear) and focus (precision)
+    if (Math.random() < 0.025) {
       const r = Math.random();
       let type = 'double';
-      if (r < 0.15) type = 'shield';
-      else if (r < 0.28) type = 'speed';
-      else if (r < 0.42) type = 'pulse';
-      else if (r < 0.52) type = 'option';
-      else if (r < 0.62) type = 'laser';
-      else if (r < 0.72) type = 'bomb';
-      else if (r < 0.82) type = 'homing';
-      else if (r < 0.90) type = 'overcharge';
+      if (r < 0.13) type = 'shield';
+      else if (r < 0.24) type = 'speed';
+      else if (r < 0.36) type = 'pulse';
+      else if (r < 0.46) type = 'option';
+      else if (r < 0.55) type = 'laser';
+      else if (r < 0.64) type = 'bomb';
+      else if (r < 0.72) type = 'homing';
+      else if (r < 0.80) type = 'overcharge';
+      else if (r < 0.87) type = 'nova';
+      else if (r < 0.93) type = 'focus';
       else if (this.level >= 2) type = 'double';
 
       this._powerups.push({
@@ -1033,14 +1113,17 @@ export class LifePulse {
       }
     }
 
-    // Enemy bullets vs player (fair circle hit on core)
+    // Enemy bullets vs player (fair circle hit on core) - focus shrinks hitbox for better collision feel
+    const focusMul = (this._focusTimer > 0) ? 0.62 : 1.0;
+    const playerHitR = PLAYER_HIT_R * focusMul;
+
     if (this._player.alive && this._player.invuln <= 0) {
       for (let i = this._enemyBullets.length - 1; i >= 0; i--) {
         const b = this._enemyBullets[i];
         const br = b.r || 3;
         const dx = b.x - this._player.x;
         const dy = b.y - this._player.y;
-        if (dx * dx + dy * dy < (br + PLAYER_HIT_R) * (br + PLAYER_HIT_R)) {
+        if (dx * dx + dy * dy < (br + playerHitR) * (br + playerHitR)) {
           this._hitPlayer();
           this._enemyBullets.splice(i, 1);
         }
@@ -1054,7 +1137,7 @@ export class LifePulse {
         const er = e.r || ENEMY_BASE_R;
         const dx = e.x - this._player.x;
         const dy = e.y - this._player.y;
-        if (dx * dx + dy * dy < (er + PLAYER_HIT_R) * (er + PLAYER_HIT_R)) {
+        if (dx * dx + dy * dy < (er + playerHitR) * (er + playerHitR)) {
           this._hitPlayer();
           e.hp = 0;
         }
@@ -1130,11 +1213,19 @@ export class LifePulse {
 
           if (this._boss.hp <= 0) {
             this._createExplosion(this._boss.x, this._boss.y, 52);
-            this._shake = 19;
-            this.score += 880;
+            const clearBonus = 480 + this.level * 55;
+            this.score += 880 + clearBonus;
             this._spawnScorePopup(this._boss.x, this._boss.y - 8, 880);
+            this._spawnScorePopup(320, 28, clearBonus);
+            this._shake = 19;
             this._boss = null;
             this._bossActive = false;
+
+            if (!this._runUpgrades) this._runUpgrades = 0;
+            this._runUpgrades++;
+            if (this._runUpgrades % 2 === 1) {
+              this._pulseStock = (this._pulseStock || 0) + 1;
+            }
           }
         }
       }
@@ -1216,6 +1307,16 @@ export class LifePulse {
       this._homingTimer = Math.max(this._homingTimer, 9);
       this.score += 280;
       this._spawnScorePopup(this._player.x, this._player.y - 18, 280);
+    } else if (type === 'nova') {
+      // NOVA (pass 6): powerful one-shot big radial clear (bigger than bomb)
+      this._novaReady = true;
+      this.score += 195;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 195);
+    } else if (type === 'focus') {
+      // FOCUS (pass 6): precision mode - tighter player hitbox (better collision feel), enhanced graze, slight fire bonus
+      this._focusTimer = Math.max(this._focusTimer, 12);
+      this.score += 150;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 150);
     }
   }
 
@@ -1463,10 +1564,10 @@ export class LifePulse {
           usedImage = true;
         }
       } else if (e.type === 'parasite') {
-        const img = this.assets.parasite;
+        const img = this.assets['parasite-swarm'] || this.assets.parasite;
         if (img && img.complete) {
-          const s = 0.75;
-          ctx.drawImage(img, ex - er * s, ey - er * s, er * 2 * s, er * 2 * s);
+          const s = 0.85;
+          ctx.drawImage(img, ex - er * 1.1 * s, ey - er * 1.1 * s, er * 2.2 * s, er * 2.2 * s);
           usedImage = true;
         }
       } else {
@@ -1536,6 +1637,12 @@ export class LifePulse {
         ctx.arc(ex, ey, er * 1.35, 0, Math.PI * 2);
         ctx.stroke();
         ctx.lineWidth = 1;
+      }
+
+      // Weakpoint highlight (pass 6) on certain biological enemies for clear "aim here" feedback
+      if ((e.type === 'growth' || e.type === 'tendril') && this.assets.weakpoint && this.assets.weakpoint.complete) {
+        const w = 12;
+        ctx.drawImage(this.assets.weakpoint, ex - w/2, ey - w/2, w, w);
       }
     }
 
@@ -1717,6 +1824,41 @@ export class LifePulse {
           ctx.stroke();
           ctx.lineWidth = 1;
         }
+      } else if (p.type === 'nova') {
+        const nImg = this.assets.powerNova;
+        if (nImg && nImg.complete) {
+          const s = 8 + Math.sin(this._time * 12) * 1.5;
+          ctx.drawImage(nImg, px - s, py + bob - s, s*2, s*2);
+        } else {
+          ctx.fillStyle = '#ffeb3b';
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = ORANGE;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 10, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
+      } else if (p.type === 'focus') {
+        const fImg = this.assets.powerFocus;
+        if (fImg && fImg.complete) {
+          ctx.drawImage(fImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.strokeStyle = '#7cffe0';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(px - 5, py + bob);
+          ctx.lineTo(px + 5, py + bob);
+          ctx.moveTo(px, py + bob - 5);
+          ctx.lineTo(px, py + bob + 5);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
       }
     }
 
@@ -1807,10 +1949,10 @@ export class LifePulse {
     ctx.globalAlpha = 1;
     ctx.textAlign = 'left';
 
-    // === OPTION DRONES (Grok Imagine asset + small glow) ===
+    // === OPTION DRONES (Grok Imagine + upgraded art for progression feel) ===
     for (const o of this._options) {
-      const img = this.assets.option;
-      const ow = 11, oh = 9;
+      const img = this.assets['option-upgraded'] || this.assets.option;
+      const ow = 12, oh = 10;
       if (img && img.complete) {
         ctx.drawImage(img, o.x - ow / 2, o.y - oh / 2, ow, oh);
       } else {
@@ -1844,6 +1986,18 @@ export class LifePulse {
       ctx.font = '10px "Inter", sans-serif';
       ctx.textAlign = 'right';
       ctx.fillText('HI ' + this._highScore, GAME_W - 10, 16);
+      ctx.textAlign = 'left';
+    }
+
+    // Pass 6 end-run stats for "point" (visible when dead, inside the game area)
+    if (this.gameOver) {
+      const elapsed = Math.max(0, this._time - (this._gameStartTime || this._time));
+      ctx.fillStyle = 'rgba(200, 198, 220, 0.85)';
+      ctx.font = 'bold 9px "Inter", sans-serif';
+      ctx.textAlign = 'center';
+      const statsY = GAME_H - 18;
+      const stats = `TIME ${elapsed.toFixed(0)}s  •  KILLS ${this._kills || 0}  •  MAX COMBO x${this._maxCombo || 0}`;
+      ctx.fillText(stats, GAME_W / 2, statsY);
       ctx.textAlign = 'left';
     }
 
@@ -1930,6 +2084,7 @@ export class LifePulse {
   }
 
   _updateCombo(dt) {
+    if (this._combo > this._maxCombo) this._maxCombo = this._combo;
     if (this._comboTimer > 0) {
       this._comboTimer -= dt;
     } else if (this._combo > 0) {
@@ -1972,12 +2127,15 @@ export class LifePulse {
 
   _checkGraze(dt) {
     // Small bonus + visual for near-misses (gives "point" and skill feel)
+    // Focus (pass 6) greatly increases graze window for precision play
     if (!this._player.alive || this._player.invuln > 0) return;
     const now = this._time;
     if (now - this._lastGrazeTime < 0.12) return;
 
     const px = this._player.x;
     const py = this._player.y;
+    const focusMul = (this._focusTimer > 0) ? 0.62 : 1.0;
+    const pHit = PLAYER_HIT_R * focusMul;
     let grazed = false;
 
     for (const e of this._enemies) {
@@ -1985,7 +2143,7 @@ export class LifePulse {
       const dx = e.x - px;
       const dy = e.y - py;
       const dist2 = dx * dx + dy * dy;
-      if (dist2 > (PLAYER_HIT_R + 3) * (PLAYER_HIT_R + 3) && dist2 < er * er) {
+      if (dist2 > (pHit + 3) * (pHit + 3) && dist2 < er * er) {
         grazed = true;
         break;
       }
@@ -1997,7 +2155,8 @@ export class LifePulse {
         const dx = b.x - px;
         const dy = b.y - py;
         const dist2 = dx * dx + dy * dy;
-        if (dist2 > (PLAYER_HIT_R + 2) * (PLAYER_HIT_R + 2) && dist2 < (br + 18) * (br + 18)) {
+        const grazeRadius = (this._focusTimer > 0) ? 26 : 18;
+        if (dist2 > (pHit + 2) * (pHit + 2) && dist2 < (br + grazeRadius) * (br + grazeRadius)) {
           grazed = true;
           break;
         }
@@ -2006,7 +2165,8 @@ export class LifePulse {
 
     if (grazed) {
       this._lastGrazeTime = now;
-      this.score += 4;
+      const grazeScore = (this._focusTimer > 0) ? 9 : 4;
+      this.score += grazeScore;
       this._createHitParticle(px + 12 + Math.random() * 6, py + (Math.random() - 0.5) * 8);
     }
   }
