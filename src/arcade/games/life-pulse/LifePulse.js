@@ -20,13 +20,47 @@ export class LifePulse {
   onHudUpdate = null;
 
   constructor() {
-    // Pure procedural — no external assets (eliminates white-box JPG sprites)
-    // This is /loop iteration 1 (of 500). Next passes can add:
-    // - More enemy types (tendril, organ, parasite)
-    // - Combo multiplier + end-of-wave bonus
-    // - Local high score persistence (localStorage)
-    // - LifePulse.test.js with collision + progression coverage
-    // - Touch secondary button mapping polish + charge visual for pulse bomb
+    this.assets = {};
+    this.assetsLoaded = false;
+    this._loadAssets();
+  }
+
+  // Loop pass 2: Integrated fresh high-quality sprites generated with Grok Imagine.
+  // Hybrid rendering: prefers detailed art assets for player/enemies/boss/powerups/backgrounds/explosions
+  // while preserving all the strong gameplay (circle collisions, Life Pulse bomb, progression, juice, score popups).
+
+  _loadAssets() {
+    // Fresh assets generated with Grok Imagine (higher quality, better themed)
+    // Using JPG for now; new art has dark/black surrounds so no harsh white boxes
+    const assetList = [
+      ['player', '/assets/arcade/life-pulse/player-ship.jpg'],
+      ['boss', '/assets/arcade/life-pulse/boss.jpg'],
+      ['drone', '/assets/arcade/life-pulse/enemy-drone.jpg'],
+      ['turret', '/assets/arcade/life-pulse/enemy-turret.jpg'],
+      ['growth', '/assets/arcade/life-pulse/growth-pulse-1.jpg'],
+      ['powerDouble', '/assets/arcade/life-pulse/powerup-double.jpg'],
+      ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
+      ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
+      ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
+      ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
+      ['explosion-1', '/assets/arcade/life-pulse/explosion-1.jpg'],
+      ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
+      ['background', '/assets/arcade/life-pulse/background.jpg'],
+      ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
+    ];
+
+    let loaded = 0;
+    const total = assetList.length;
+
+    assetList.forEach(([key, src]) => {
+      const img = new Image();
+      img.onload = () => {
+        loaded++;
+        if (loaded === total) this.assetsLoaded = true;
+      };
+      img.src = src;
+      this.assets[key] = img;
+    });
   }
 
   init(width, height) {
@@ -921,7 +955,7 @@ export class LifePulse {
 
     this._drawBackground(ctx);
 
-    // === PLAYER (biological ship) ===
+    // === PLAYER (use Grok Imagine art when available + procedural overlays) ===
     if (this._player.alive) {
       const p = this._player;
       const flicker = p.invuln > 0 ? ((Math.floor(this._time * 18) % 2) === 0 ? 0.42 : 1) : 1;
@@ -932,80 +966,54 @@ export class LifePulse {
       const power = this._powerLevel;
       const boosted = p.speedTimer > 0;
 
-      // Main body (smooth organic hull)
-      ctx.fillStyle = power >= 1 ? '#a3fff0' : CYAN;
-      ctx.beginPath();
-      ctx.moveTo(px + 11, py);
-      ctx.lineTo(px - 9, py - 7.5);
-      ctx.lineTo(px - 11, py);
-      ctx.lineTo(px - 9, py + 7.5);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = WHITE;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+      // Choose the best player sprite from new Grok Imagine assets
+      let playerImg = this.assets.player;
+      let pw = 32, ph = 20;
 
-      // "Vein" details
-      ctx.strokeStyle = VIOLET;
-      ctx.lineWidth = 1.0;
-      ctx.beginPath();
-      ctx.moveTo(px - 3, py - 3.5);
-      ctx.lineTo(px + 5, py);
-      ctx.moveTo(px - 3, py + 3.5);
-      ctx.lineTo(px + 5, py);
-      ctx.stroke();
-
-      // Cockpit / core glow
-      ctx.fillStyle = WHITE;
-      ctx.beginPath();
-      ctx.arc(px + 2, py, 3.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Power level pods / wings
-      if (power >= 1) {
-        ctx.fillStyle = ORANGE;
-        ctx.beginPath();
-        ctx.arc(px - 2, py - 8.5, 2.6, 0, Math.PI * 2);
-        ctx.arc(px - 2, py + 8.5, 2.6, 0, Math.PI * 2);
-        ctx.fill();
+      if (power >= 2 && this.assets['player-powered-spread'] && this.assets['player-powered-spread'].complete) {
+        playerImg = this.assets['player-powered-spread'];
+        pw = 36; ph = 22;
+      } else if (power >= 1 && this.assets['player-powered1'] && this.assets['player-powered1'].complete) {
+        playerImg = this.assets['player-powered1'];
+        pw = 34; ph = 21;
       }
-      if (power >= 2) {
-        ctx.fillStyle = VIOLET;
+
+      if (playerImg && playerImg.complete) {
+        ctx.drawImage(playerImg, px - pw / 2, py - ph / 2, pw, ph);
+      } else {
+        // High quality procedural fallback (from previous pass)
+        ctx.fillStyle = power >= 1 ? '#a3fff0' : CYAN;
         ctx.beginPath();
-        ctx.arc(px - 6, py - 10.5, 2.2, 0, Math.PI * 2);
-        ctx.arc(px - 6, py + 10.5, 2.2, 0, Math.PI * 2);
+        ctx.moveTo(px + 11, py);
+        ctx.lineTo(px - 9, py - 7.5);
+        ctx.lineTo(px - 11, py);
+        ctx.lineTo(px - 9, py + 7.5);
+        ctx.closePath();
         ctx.fill();
-        // extra spread barrels visual
-        ctx.strokeStyle = CYAN;
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.moveTo(px + 5, py - 4);
-        ctx.lineTo(px + 9, py - 7);
-        ctx.moveTo(px + 5, py + 4);
-        ctx.lineTo(px + 9, py + 7);
+        ctx.strokeStyle = WHITE;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
-      // Animated thrusters (flickering organic flame)
+      // Grok Imagine thruster or procedural animated flame
+      const thrusterImg = this.assets['player-thruster-1'];
       const tPhase = (this._time * 11) % 1;
-      const tLen = 5.5 + Math.sin(this._time * 19) * 1.8 + tPhase * 2.2;
-      ctx.fillStyle = ORANGE;
-      ctx.beginPath();
-      ctx.moveTo(px - 10, py - 2.5);
-      ctx.lineTo(px - 10 - tLen, py);
-      ctx.lineTo(px - 10, py + 2.5);
-      ctx.closePath();
-      ctx.fill();
+      if (thrusterImg && thrusterImg.complete) {
+        const tw = 14 + Math.sin(this._time * 22) * 2;
+        ctx.drawImage(thrusterImg, px - 20, py - 6, tw, 12);
+      } else {
+        // Fallback thruster flame
+        const tLen = 5.5 + Math.sin(this._time * 19) * 1.8 + tPhase * 2.2;
+        ctx.fillStyle = ORANGE;
+        ctx.beginPath();
+        ctx.moveTo(px - 10, py - 2.5);
+        ctx.lineTo(px - 10 - tLen, py);
+        ctx.lineTo(px - 10, py + 2.5);
+        ctx.closePath();
+        ctx.fill();
+      }
 
-      ctx.fillStyle = (tPhase > 0.5) ? WHITE : VIOLET;
-      ctx.beginPath();
-      ctx.moveTo(px - 10, py - 1.2);
-      ctx.lineTo(px - 10 - tLen * 0.65, py);
-      ctx.lineTo(px - 10, py + 1.2);
-      ctx.closePath();
-      ctx.fill();
-
-      // Extra speed lines when boosted
+      // Extra speed lines when boosted (procedural juice)
       if (boosted) {
         ctx.strokeStyle = 'rgba(255,240,210,0.75)';
         ctx.lineWidth = 1;
@@ -1059,108 +1067,99 @@ export class LifePulse {
       ctx.globalAlpha = 1;
     }
 
-    // === ENEMIES (organic / biological) ===
+    // === ENEMIES (Grok Imagine sprites + procedural accents for life) ===
     for (const e of this._enemies) {
       const ex = e.x;
       const ey = e.y;
       const er = e.r || ENEMY_BASE_R;
       const pulse = Math.sin(this._time * 5.5 + (e.id || 0)) * 0.5 + 1;
 
+      let usedImage = false;
+
       if (e.type === 'turret') {
-        // Armored turret with "eye"
-        ctx.fillStyle = VIOLET;
-        ctx.fillRect(ex - er * 0.9, ey - er * 0.65, er * 1.85, er * 1.3);
-        ctx.fillStyle = '#3a2a4a';
-        ctx.fillRect(ex - er * 0.55, ey - er * 0.35, er * 1.1, er * 0.7);
-        ctx.fillStyle = ORANGE;
-        ctx.beginPath();
-        ctx.arc(ex - 2, ey, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-        // barrels
-        ctx.fillStyle = MUTED;
-        ctx.fillRect(ex - er * 1.15, ey - 2, 5, 4);
+        const img = this.assets.turret;
+        if (img && img.complete) {
+          ctx.drawImage(img, ex - er * 1.1, ey - er * 0.85, er * 2.2, er * 1.7);
+          usedImage = true;
+        }
       } else if (e.type === 'growth') {
-        // Pulsing biological growth / cell cluster (core of theme)
-        const pScale = 0.82 + (pulse - 0.5) * 0.22;
-        ctx.fillStyle = 'rgba(120, 255, 200, 0.35)';
-        ctx.beginPath();
-        ctx.arc(ex, ey, er * pScale * 1.15, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = CYAN;
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.arc(ex, ey, er * pScale, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // inner organs
-        ctx.fillStyle = VIOLET;
-        ctx.beginPath();
-        ctx.arc(ex - 3, ey - 2, 3.5 * pScale, 0, Math.PI * 2);
-        ctx.arc(ex + 4, ey + 3, 3 * pScale, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = WHITE;
-        ctx.beginPath();
-        ctx.arc(ex + 1, ey - 1, 2 * pScale, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 1;
+        const img = this.assets.growth;
+        if (img && img.complete) {
+          const pScale = 0.9 + (pulse - 0.5) * 0.18;
+          ctx.drawImage(img, ex - er * pScale, ey - er * pScale, er * 2 * pScale, er * 2 * pScale);
+          usedImage = true;
+        }
       } else {
-        // Drone / Swooper — cell with cilia
-        ctx.fillStyle = (e.type === 'swooper') ? '#7dd4ff' : CYAN;
-        ctx.beginPath();
-        ctx.arc(ex, ey, er * (e.type === 'swooper' ? 0.95 : 1), 0, Math.PI * 2);
-        ctx.fill();
+        // drone / swooper
+        const img = this.assets.drone;
+        if (img && img.complete) {
+          const s = (e.type === 'swooper') ? 0.95 : 1.05;
+          ctx.drawImage(img, ex - er * s, ey - er * s, er * 2 * s, er * 2 * s);
+          usedImage = true;
+        }
+      }
 
-        ctx.strokeStyle = WHITE;
-        ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        ctx.arc(ex, ey, er * 0.62, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // nucleus
-        ctx.fillStyle = (e.type === 'swooper') ? VIOLET : '#112';
-        ctx.beginPath();
-        ctx.arc(ex + 1, ey, 2.8, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Waving tendrils / cilia (alive feel)
-        ctx.strokeStyle = MUTED;
-        ctx.lineWidth = 1.1;
-        const wob = Math.sin(this._time * 7 + (e.id || 1) * 1.3) * 1.6;
-        for (let t = -1; t <= 1; t += 2) {
+      if (!usedImage) {
+        // Strong procedural fallback (detailed biological style)
+        if (e.type === 'turret') {
+          ctx.fillStyle = VIOLET;
+          ctx.fillRect(ex - er * 0.9, ey - er * 0.65, er * 1.85, er * 1.3);
+          ctx.fillStyle = '#3a2a4a';
+          ctx.fillRect(ex - er * 0.55, ey - er * 0.35, er * 1.1, er * 0.7);
+          ctx.fillStyle = ORANGE;
           ctx.beginPath();
-          ctx.moveTo(ex - er * 0.6, ey + t * 3.5);
-          ctx.quadraticCurveTo(ex - er * 1.35, ey + t * (5 + wob), ex - er * 1.9, ey + t * (2 + wob * 0.6));
+          ctx.arc(ex - 2, ey, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (e.type === 'growth') {
+          const pScale = 0.82 + (pulse - 0.5) * 0.22;
+          ctx.fillStyle = 'rgba(120, 255, 200, 0.35)';
+          ctx.beginPath();
+          ctx.arc(ex, ey, er * pScale * 1.15, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = CYAN;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(ex, ey, er * pScale, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = VIOLET;
+          ctx.beginPath();
+          ctx.arc(ex - 3, ey - 2, 3.5 * pScale, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = (e.type === 'swooper') ? '#7dd4ff' : CYAN;
+          ctx.beginPath();
+          ctx.arc(ex, ey, er * (e.type === 'swooper' ? 0.95 : 1), 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = WHITE;
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.arc(ex, ey, er * 0.62, 0, Math.PI * 2);
           ctx.stroke();
         }
-        ctx.lineWidth = 1;
       }
     }
 
-    // === BOSS (large organic horror) ===
+    // === BOSS (Grok Imagine detailed boss + animated procedural overlays) ===
     if (this._boss) {
       const b = this._boss;
       const bx = b.x;
       const by = b.y;
       const hpRatio = Math.max(0.2, b.hp / b.maxHp);
 
-      // Main mass
-      ctx.fillStyle = VIOLET;
-      ctx.beginPath();
-      ctx.ellipse(bx, by, 29, 21, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Segmented ridges
-      ctx.strokeStyle = '#4a2a66';
-      ctx.lineWidth = 2.5;
-      for (let s = -1; s <= 1; s++) {
+      const bossImg = this.assets.boss;
+      if (bossImg && bossImg.complete) {
+        const bw = 78;
+        const bh = 58;
+        ctx.drawImage(bossImg, bx - bw / 2, by - bh / 2, bw, bh);
+      } else {
+        // Detailed procedural fallback
+        ctx.fillStyle = VIOLET;
         ctx.beginPath();
-        ctx.ellipse(bx + s * 9, by, 10, 18 * hpRatio, 0, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.ellipse(bx, by, 29, 21, 0, 0, Math.PI * 2);
+        ctx.fill();
       }
 
-      // Pulsing "hearts"
+      // Always add juicy animated elements on top (hearts, eyes, tendrils) for life
       const heartPulse = 3.5 + Math.sin(this._time * 3.8) * 1.3;
       ctx.fillStyle = ORANGE;
       ctx.beginPath();
@@ -1168,7 +1167,6 @@ export class LifePulse {
       ctx.arc(bx + 8, by + 4, heartPulse * 0.85, 0, Math.PI * 2);
       ctx.fill();
 
-      // Multiple glowing "eyes"
       ctx.fillStyle = WHITE;
       ctx.beginPath();
       ctx.arc(bx - 12, by - 7, 2.8, 0, Math.PI * 2);
@@ -1176,7 +1174,6 @@ export class LifePulse {
       ctx.arc(bx - 2, by + 9, 2.1, 0, Math.PI * 2);
       ctx.fill();
 
-      // Tendrils / feelers on sides (animated)
       ctx.strokeStyle = CYAN;
       ctx.lineWidth = 1.8;
       const t = this._time * 4.2;
@@ -1191,25 +1188,25 @@ export class LifePulse {
       ctx.lineWidth = 1;
     }
 
-    // === POWERUPS (distinct & juicy) ===
+    // === POWERUPS (Grok Imagine icons + nice procedural variety) ===
     for (const p of this._powerups) {
       const px = p.x;
       const py = p.y;
       const bob = Math.sin(p.life * 4) * 1.5;
 
-      if (p.type === 'double') {
-        // Double shot — two fused orbs
+      const doubleImg = this.assets.powerDouble;
+      const shieldImg = this.assets.powerShield;
+      if (p.type === 'double' && doubleImg && doubleImg.complete) {
+        ctx.drawImage(doubleImg, px - 8, py + bob - 8, 16, 16);
+      } else if (p.type === 'double') {
         ctx.fillStyle = '#ffe66b';
         ctx.beginPath();
         ctx.arc(px - 3.5, py + bob, 4.8, 0, Math.PI * 2);
         ctx.arc(px + 4, py + bob, 4.8, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = ORANGE;
-        ctx.beginPath();
-        ctx.arc(px, py + bob, 3, 0, Math.PI * 2);
-        ctx.fill();
+      } else if (p.type === 'shield' && shieldImg && shieldImg.complete) {
+        ctx.drawImage(shieldImg, px - 8, py + bob - 8, 16, 16);
       } else if (p.type === 'shield') {
-        // Shield powerup
         ctx.strokeStyle = '#7cffe0';
         ctx.lineWidth = 2.4;
         ctx.beginPath();
@@ -1221,7 +1218,6 @@ export class LifePulse {
         ctx.fill();
         ctx.lineWidth = 1;
       } else if (p.type === 'speed') {
-        // Speed — forward chevrons
         ctx.strokeStyle = '#ffeb3b';
         ctx.lineWidth = 2.2;
         for (let i = 0; i < 3; i++) {
@@ -1234,7 +1230,6 @@ export class LifePulse {
         }
         ctx.lineWidth = 1;
       } else if (p.type === 'pulse') {
-        // Life Pulse collectible
         const pr = 5.5 + Math.sin(this._time * 7) * 1.1;
         ctx.strokeStyle = CYAN;
         ctx.lineWidth = 1.8;
@@ -1275,11 +1270,19 @@ export class LifePulse {
       ctx.lineWidth = 1;
     }
 
-    // === EXPLOSIONS (age-based rings + we already emit the debris particles) ===
+    // === EXPLOSIONS (Grok Imagine explosion + expanding rings) ===
     for (const ex of this._explosions) {
       const prog = ex.age / ex.duration;
       const rad = (ex.size || 18) * (0.6 + prog * 1.35);
       const alpha = Math.max(0.12, 1 - prog * 1.05);
+
+      const frame = (prog < 0.5) ? 'explosion-1' : 'explosion-2';
+      const expImg = this.assets[frame] || this.assets['explosion-1'];
+      if (expImg && expImg.complete) {
+        const imgSize = 28 + prog * 34;
+        ctx.globalAlpha = Math.max(0.3, alpha);
+        ctx.drawImage(expImg, ex.x - imgSize / 2, ex.y - imgSize / 2, imgSize, imgSize);
+      }
 
       ctx.globalAlpha = alpha * 0.85;
       ctx.strokeStyle = ORANGE;
@@ -1328,46 +1331,51 @@ export class LifePulse {
   }
 
   _drawBackground(ctx) {
-    // Deep organic parallax "blood vessel / cell" field — fully procedural
+    // Use Grok Imagine generated biological nebula backgrounds with parallax
+    const bg1 = this.assets.background;
+    const bg2 = this.assets['background-layer2'];
 
-    // Very slow distant layer (veins + faint grid)
-    ctx.strokeStyle = 'rgba(90, 88, 130, 0.22)';
-    ctx.lineWidth = 1.5;
-    const s1 = this._scroll * 0.6;
-    for (let i = 0; i < 5; i++) {
-      const x = ((i * 137 - s1) % (GAME_W + 90)) - 45;
-      ctx.beginPath();
-      ctx.moveTo(x, 10);
-      ctx.quadraticCurveTo(x + 38, GAME_H * 0.33, x - 12, GAME_H * 0.72);
-      ctx.quadraticCurveTo(x + 55, GAME_H * 0.9, x + 22, GAME_H - 8);
-      ctx.stroke();
+    if (bg1 && bg1.complete) {
+      const scroll1 = (this._scroll * 11) % GAME_W;
+      ctx.globalAlpha = 0.95;
+      ctx.drawImage(bg1, -scroll1, 0, GAME_W, GAME_H);
+      ctx.drawImage(bg1, GAME_W - scroll1, 0, GAME_W, GAME_H);
+      ctx.globalAlpha = 1;
+    } else {
+      // Fallback procedural distant veins
+      ctx.strokeStyle = 'rgba(90, 88, 130, 0.22)';
+      ctx.lineWidth = 1.5;
+      const s1 = this._scroll * 0.6;
+      for (let i = 0; i < 5; i++) {
+        const x = ((i * 137 - s1) % (GAME_W + 90)) - 45;
+        ctx.beginPath();
+        ctx.moveTo(x, 10);
+        ctx.quadraticCurveTo(x + 38, GAME_H * 0.33, x - 12, GAME_H * 0.72);
+        ctx.quadraticCurveTo(x + 55, GAME_H * 0.9, x + 22, GAME_H - 8);
+        ctx.stroke();
+      }
     }
 
-    // Pulsing distant cells
-    ctx.fillStyle = 'rgba(120, 200, 255, 0.09)';
-    for (let i = 0; i < 22; i++) {
-      const x = ((i * 29 + this._scroll * 0.18) % (GAME_W + 50)) - 25;
-      const y = 14 + ((i * 17) % (GAME_H - 28));
-      const pr = 1.6 + Math.sin(this._time * 1.3 + i) * 0.7;
-      ctx.beginPath();
-      ctx.arc(x, y, pr, 0, Math.PI * 2);
-      ctx.fill();
+    if (bg2 && bg2.complete) {
+      ctx.globalAlpha = 0.6;
+      const scroll2 = (this._scroll * 27) % GAME_W;
+      ctx.drawImage(bg2, -scroll2, 0, GAME_W, GAME_H);
+      ctx.drawImage(bg2, GAME_W - scroll2, 0, GAME_W, GAME_H);
+      ctx.globalAlpha = 1;
+    } else {
+      // Pulsing cells + mid layer fallback
+      ctx.fillStyle = 'rgba(120, 200, 255, 0.09)';
+      for (let i = 0; i < 22; i++) {
+        const x = ((i * 29 + this._scroll * 0.18) % (GAME_W + 50)) - 25;
+        const y = 14 + ((i * 17) % (GAME_H - 28));
+        const pr = 1.6 + Math.sin(this._time * 1.3 + i) * 0.7;
+        ctx.beginPath();
+        ctx.arc(x, y, pr, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
-    // Mid layer — faster moving vessel walls / membranes
-    ctx.strokeStyle = 'rgba(160, 120, 255, 0.15)';
-    ctx.lineWidth = 1;
-    const s2 = this._scroll * 1.35;
-    for (let i = 0; i < 7; i++) {
-      const x = ((i * 83 - s2) % (GAME_W + 120)) - 60;
-      ctx.beginPath();
-      ctx.moveTo(x, 4);
-      ctx.lineTo(x + 19, GAME_H * 0.5);
-      ctx.lineTo(x - 7, GAME_H - 4);
-      ctx.stroke();
-    }
-
-    // Foreground subtle scan / horizontal flow lines (CRT friendly)
+    // Subtle CRT scan / flow lines on top (always)
     ctx.strokeStyle = 'rgba(0, 245, 255, 0.06)';
     ctx.lineWidth = 1;
     for (let y = 18; y < GAME_H - 12; y += 19) {
