@@ -25,10 +25,10 @@ export class LifePulse {
     this._loadAssets();
   }
 
-  // Loop pass 5: Fresh Grok Imagine assets (homing, parasite, overcharge aura, core burst), 
-  // HOMING + OVERCHARGE powerups, PARASITE enemy, elite variants, chain scoring, survival bonuses,
-  // precision center-hit damage, stronger auras/flashes, improved alpha keying feedback.
-  // Collision feel, sprite cleanliness, and meaningful progression/power/point all pushed harder.
+  // Loop pass 9: Fresh Grok Imagine assets (echo, orbit, charge, tendril-parasite, perfect burst, upgrade aura),
+  // new powerups ECHO + ORBIT + CHARGE, simple run upgrades on wave clears, perfect wave bonuses + accuracy scoring,
+  // end-run detailed breakdown, new enemy behaviors (tendril-parasite), more crit/juice/particle variety.
+  // Continuing to hammer hit collision, sprite cleanliness (keying + cutouts), progression, powerups, and "point".
 
   _loadAssets() {
     // Assets from Grok Imagine + previous. All main sprites get alpha keying (dark pixels -> transparent).
@@ -75,16 +75,23 @@ export class LifePulse {
       ['parasite-swarm', '/assets/arcade/life-pulse/enemy-parasite-swarm.jpg'],
       ['parasite-cluster', '/assets/arcade/life-pulse/enemy-parasite-cluster.jpg'],
       ['parasite-queen', '/assets/arcade/life-pulse/enemy-parasite-queen.jpg'],
+      ['powerEcho', '/assets/arcade/life-pulse/powerup-echo.jpg'],
+      ['powerOrbit', '/assets/arcade/life-pulse/powerup-orbit.jpg'],
+      ['powerCharge', '/assets/arcade/life-pulse/powerup-charge.jpg'],
+      ['enemy-tendril-parasite', '/assets/arcade/life-pulse/enemy-tendril-parasite.jpg'],
+      ['explosion-perfect', '/assets/arcade/life-pulse/explosion-perfect.jpg'],
+      ['player-upgrade-aura', '/assets/arcade/life-pulse/player-upgrade-aura.jpg'],
       ['background', '/assets/arcade/life-pulse/background.jpg'],
       ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
     const spriteKeys = new Set([
       'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm','parasite-cluster','parasite-queen',
-      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','powerChain','powerReflect','powerSwarm','powerVortex',
+      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','powerChain','powerReflect','powerSwarm','powerVortex','powerEcho','powerOrbit','powerCharge',
       'option','option-upgraded','option-upgraded-chain',
-      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1','focus-aura','focus-phase',
-      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','explosion-chain-core','explosion-surge','bossCore','weakpoint','weakpoint-crit'
+      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1','focus-aura','focus-phase','player-upgrade-aura',
+      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','explosion-chain-core','explosion-surge','explosion-perfect','bossCore','weakpoint','weakpoint-crit',
+      'enemy-tendril-parasite'
     ]);
 
     let loaded = 0;
@@ -219,9 +226,18 @@ export class LifePulse {
     this._swarmTimer = 0;       // SWARM powerup (pass 8): spawns aggressive mini-parasites
     this._vortexTimer = 0;      // VORTEX powerup (pass 8): pulls enemies in + damage/score amp
     this._surgeTimer = 0;       // SURGE mode (pass 8): high difficulty ramp after milestones for endless feel + multipliers
+    this._echoTimer = 0;        // ECHO powerup (pass 9)
+    this._orbitTimer = 0;       // ORBIT powerup (pass 9) - enhanced companion orbit
+    this._chargeTimer = 0;      // CHARGE powerup (pass 9)
     this._maxCombo = 0;
     this._gameStartTime = this._time;
     this._kills = 0;
+    this._maxOptions = 2;       // upgradable for progression
+    this._runScoreMulti = 1;    // run multiplier from upgrades
+    this._perfectWave = true;   // for perfect clear bonuses
+    this._damageTakenThisWave = 0;
+    this._perfectWaves = 0;
+    this._grazeCount = 0;
 
     this._scroll = 0;
     this._spawnTimer = 0.6;
@@ -437,6 +453,12 @@ export class LifePulse {
     if (this._vortexTimer <= 0) this._vortexTimer = 0;
     this._surgeTimer -= dt;
     if (this._surgeTimer <= 0) this._surgeTimer = 0;
+    this._echoTimer -= dt;
+    if (this._echoTimer <= 0) this._echoTimer = 0;
+    this._orbitTimer -= dt;
+    if (this._orbitTimer <= 0) this._orbitTimer = 0;
+    this._chargeTimer -= dt;
+    if (this._chargeTimer <= 0) this._chargeTimer = 0;
 
     // Secondary = LIFE PULSE bomb + new NOVA (pass 6)
     this._pulseCooldown -= dt;
@@ -464,24 +486,31 @@ export class LifePulse {
     const baseX = p.x + 13;
     const baseY = p.y;
     const isLaser = this._laserTimer > 0;
+    const isCharge = this._chargeTimer > 0;
 
-    const speed = isLaser ? BULLET_SPEED * 1.15 : BULLET_SPEED;
-    const life = isLaser ? 2.2 : 1.65;
-    const r = isLaser ? BULLET_HIT_R * 1.1 : BULLET_HIT_R;
+    if (isCharge) this._chargeTimer = 0; // consume charge for big shot
 
-    // Center shot (piercing when laser active)
+    const speed = (isLaser || isCharge) ? BULLET_SPEED * 1.2 : BULLET_SPEED;
+    const life = (isLaser || isCharge) ? 2.5 : 1.65;
+    const r = (isLaser || isCharge) ? BULLET_HIT_R * 1.3 : BULLET_HIT_R;
+
     const doHoming = (this._homingTimer > 0 || this._overchargeTimer > 0);
+    const doEcho = this._echoTimer > 0;
+
+    // Center shot (piercing when laser/charge active)
     this._bullets.push({
       x: baseX, y: baseY,
-      vx: speed, vy: 0,
-      r,
+      vx: isCharge ? speed * 0.65 : speed,
+      vy: 0,
+      r: isCharge ? r * 1.7 : r,
       life,
-      pierce: isLaser,
-      laser: isLaser,
+      pierce: isLaser || isCharge,
+      laser: isLaser || isCharge,
       homing: doHoming,
+      charge: isCharge,
     });
 
-    if (this._powerLevel >= 1) {
+    if (this._powerLevel >= 1 && !isCharge) {
       const spread = (this._powerLevel >= 2) ? 11 : 7;
       const spreadSpeedY = (this._powerLevel >= 2) ? 38 : 22;
       this._bullets.push({
@@ -491,7 +520,7 @@ export class LifePulse {
         life: isLaser ? 1.8 : 1.35,
         pierce: isLaser,
         laser: isLaser,
-        homing: (this._homingTimer > 0 || this._overchargeTimer > 0),
+        homing: doHoming,
       });
       this._bullets.push({
         x: baseX - 1, y: baseY + spread,
@@ -500,7 +529,23 @@ export class LifePulse {
         life: isLaser ? 1.8 : 1.35,
         pierce: isLaser,
         laser: isLaser,
-        homing: (this._homingTimer > 0 || this._overchargeTimer > 0),
+        homing: doHoming,
+      });
+    }
+
+    // ECHO: fire extra delayed echo shot for chaining (pass 9)
+    if (doEcho && this._echoTimer > 0) {
+      this._echoTimer = Math.max(0, this._echoTimer - 1.5);
+      this._bullets.push({
+        x: baseX + 4, y: baseY,
+        vx: speed * 0.5,
+        vy: (Math.random() - 0.5) * 30,
+        r: r * 0.8,
+        life: life * 0.75,
+        pierce: isLaser || isCharge,
+        laser: isLaser || isCharge,
+        homing: doHoming,
+        echo: true,
       });
     }
   }
@@ -570,17 +615,19 @@ export class LifePulse {
   }
 
   _computeGrade() {
-    // Pass 7 performance rank for "point" and replay value
+    // Pass 7/9 performance rank for "point" and replay value (factors perfect waves and multi)
     const mc = this._maxCombo || 0;
     const k = this._kills || 0;
     const lvl = this.level || 1;
     const t = Math.max(1, (this._time - (this._gameStartTime || 0)));
-    const grazeBonus = (this._lastGrazeTime > 0) ? 1 : 0; // rough participation
-    let score = (mc * 2) + (k * 0.6) + (lvl * 8) + (grazeBonus * 5) - (t * 0.03);
-    if (score > 55) return 'S';
-    if (score > 42) return 'A';
-    if (score > 28) return 'B';
-    if (score > 16) return 'C';
+    const grazeBonus = (this._grazeCount || 0) * 0.08;
+    const perfect = (this._perfectWaves || 0) * 3;
+    const multi = (this._runScoreMulti || 1) * 2;
+    let score = (mc * 2) + (k * 0.6) + (lvl * 8) + grazeBonus + perfect + multi - (t * 0.025);
+    if (score > 65) return 'S';
+    if (score > 48) return 'A';
+    if (score > 32) return 'B';
+    if (score > 18) return 'C';
     return 'D';
   }
 
@@ -683,6 +730,10 @@ export class LifePulse {
         // slight damage amp while in vortex
         if (dist < 80) e.vortexAmp = (e.vortexAmp || 1) + dt * 0.8;
       }
+      if (e.type === 'tendril-parasite' && e.whip !== undefined) {
+        // Pass 9 hybrid: oscillating whip attack (affects vy for dodge challenge)
+        e.vy = Math.sin(this._time * 3.5 + (e.id || 0)) * (55 * e.whip);
+      }
 
       // Turrets fire predictively (with telegraph via random chance)
       if (e.type === 'turret' && Math.random() < 0.021 * this._difficulty) {
@@ -706,6 +757,7 @@ export class LifePulse {
         if (e.vortexAmp && e.vortexAmp > 1) {
           gained = Math.floor(gained * Math.min(2.2, 1 + e.vortexAmp * 0.4)); // VORTEX amp
         }
+        gained = Math.floor(gained * (this._runScoreMulti || 1));
         this.score += gained;
         this._combo = Math.min(12, this._combo + 1);
         this._comboTimer = 1.9;
@@ -889,6 +941,18 @@ export class LifePulse {
             this._pulseStock = (this._pulseStock || 0) + 1;
           }
           this._surgeTimer = Math.max(this._surgeTimer || 0, 22); // SURGE mode activated (pass 8)
+
+          // Pass 9 simple run progression: auto-grant upgrade on wave clear
+          this._maxOptions = Math.min(4, (this._maxOptions || 2) + 1);
+          this._runScoreMulti = (this._runScoreMulti || 1) + 0.08;
+          if (this._perfectWave) {
+            this._perfectWaves = (this._perfectWaves || 0) + 1;
+            const perfectBonus = 320 + this.level * 25;
+            this.score += perfectBonus;
+            this._spawnScorePopup(320, 48, perfectBonus);
+          }
+          this._perfectWave = true;
+          this._damageTakenThisWave = 0;
         }
       }
     }
@@ -1028,6 +1092,19 @@ export class LifePulse {
           targetOption: Math.random() < 0.4,
           isQueen,
         });
+      } else if (d > 3.0 && Math.random() < 0.25) {
+        // Pass 9 new hybrid enemy from fresh asset: tendril-parasite with whip behavior
+        this._enemies.push({
+          id: Math.random() * 99999 | 0,
+          x: GAME_W + 20, y,
+          vx: -ENEMY_SPEED * (0.9 + d * 0.05),
+          vy: (Math.random() - 0.5) * 25,
+          hp: 3,
+          points: 135,
+          r: ENEMY_BASE_R * 1.1,
+          type: 'tendril-parasite',
+          whip: Math.random() * 3,
+        });
       } else {
         // Fast aggressive "cell" at higher levels
         this._enemies.push({
@@ -1057,25 +1134,27 @@ export class LifePulse {
       }
     }
 
-    // More generous + varied powerups (the original complaint) - pass 8 adds SWARM (mini parasites) and VORTEX (pull + amp)
-    if (Math.random() < 0.027) {
+    // More generous + varied powerups (the original complaint) - pass 9 adds ECHO, ORBIT, CHARGE
+    if (Math.random() < 0.028) {
       const r = Math.random();
       let type = 'double';
-      if (r < 0.10) type = 'shield';
-      else if (r < 0.19) type = 'speed';
-      else if (r < 0.28) type = 'pulse';
-      else if (r < 0.36) type = 'option';
-      else if (r < 0.44) type = 'laser';
-      else if (r < 0.52) type = 'bomb';
-      else if (r < 0.59) type = 'homing';
-      else if (r < 0.66) type = 'overcharge';
-      else if (r < 0.72) type = 'nova';
-      else if (r < 0.78) type = 'focus';
-      else if (r < 0.83) type = 'chain';
-      else if (r < 0.88) type = 'reflect';
-      else if (r < 0.92) type = 'swarm';
-      else if (r < 0.96) type = 'vortex';
-      else if (this.level >= 2) type = 'double';
+      if (r < 0.09) type = 'shield';
+      else if (r < 0.17) type = 'speed';
+      else if (r < 0.25) type = 'pulse';
+      else if (r < 0.33) type = 'option';
+      else if (r < 0.40) type = 'laser';
+      else if (r < 0.47) type = 'bomb';
+      else if (r < 0.54) type = 'homing';
+      else if (r < 0.60) type = 'overcharge';
+      else if (r < 0.66) type = 'nova';
+      else if (r < 0.72) type = 'focus';
+      else if (r < 0.77) type = 'chain';
+      else if (r < 0.82) type = 'reflect';
+      else if (r < 0.86) type = 'swarm';
+      else if (r < 0.90) type = 'vortex';
+      else if (r < 0.93) type = 'echo';
+      else if (r < 0.96) type = 'orbit';
+      else type = 'charge';
 
       this._powerups.push({
         x: GAME_W + 14,
@@ -1283,6 +1362,11 @@ export class LifePulse {
         if (dx * dx + dy * dy < (er + playerHitR) * (er + playerHitR)) {
           this._hitPlayer();
           e.hp = 0;
+          if (e.type === 'tendril-parasite') {
+            // extra whip push effect for collision feedback
+            this._player.vx += (dx > 0 ? -80 : 80);
+            this._createExplosion(this._player.x, this._player.y, 12);
+          }
         }
       }
     }
@@ -1370,6 +1454,19 @@ export class LifePulse {
               this._pulseStock = (this._pulseStock || 0) + 1;
             }
             this._surgeTimer = Math.max(this._surgeTimer || 0, 22); // SURGE mode activated (pass 8)
+
+            // Pass 9 simple run progression: auto-grant upgrade on wave clear
+            this._maxOptions = Math.min(4, (this._maxOptions || 2) + 1);
+            this._runScoreMulti = (this._runScoreMulti || 1) + 0.08;
+            if (this._perfectWave) {
+              this._perfectWaves = (this._perfectWaves || 0) + 1;
+              const perfectBonus = 320 + this.level * 25;
+              this.score += perfectBonus;
+              this._spawnScorePopup(320, 48, perfectBonus);
+              this._createExplosion(320, 50, 52); // use perfect burst art via size
+            }
+            this._perfectWave = true;
+            this._damageTakenThisWave = 0;
           }
         }
       }
@@ -1381,6 +1478,9 @@ export class LifePulse {
     this.lives -= 1;
     this._createExplosion(this._player.x, this._player.y, 23);
     this._shake = Math.max(this._shake, 8);
+
+    this._perfectWave = false;
+    this._damageTakenThisWave = (this._damageTakenThisWave || 0) + 1;
 
     if (this.lives <= 0) {
       this.gameOver = true;
@@ -1424,8 +1524,9 @@ export class LifePulse {
       });
       this.score += 90;
     } else if (type === 'option') {
-      // Spawn a companion drone (classic powerup fantasy)
-      if (this._options.length < 2) {
+      // Spawn a companion drone (classic powerup fantasy) - respects upgradable max
+      const maxOpt = this._maxOptions || 2;
+      if (this._options.length < maxOpt) {
         this._options.push({
           x: this._player.x - 28,
           y: this._player.y + (this._options.length - 0.5) * 16,
@@ -1502,6 +1603,30 @@ export class LifePulse {
       this._vortexTimer = Math.max(this._vortexTimer, 8);
       this.score += 155;
       this._spawnScorePopup(this._player.x, this._player.y - 18, 155);
+    } else if (type === 'echo') {
+      // ECHO (pass 9): next several shots fire an extra delayed echo for chaining
+      this._echoTimer = Math.max(this._echoTimer, 6);
+      this.score += 145;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 145);
+    } else if (type === 'orbit') {
+      // ORBIT (pass 9): spawns additional orbiting mini-drones that auto-fire (stacks with options for progression)
+      this._orbitTimer = Math.max(this._orbitTimer, 10);
+      // immediate spawn of 1-2 orbiters (reuse option style but tagged)
+      for (let o = 0; o < 2; o++) {
+        this._options.push({
+          x: this._player.x - 20 - o * 5,
+          y: this._player.y + (o - 0.5) * 14,
+          fireTimer: 0.3,
+          isOrbit: true,
+        });
+      }
+      this.score += 160;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 160);
+    } else if (type === 'charge') {
+      // CHARGE (pass 9): next primary is a big powerful piercing charge blast (high collision impact + point)
+      this._chargeTimer = Math.max(this._chargeTimer, 1); // consumed on next shot
+      this.score += 170;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 170);
     }
   }
 
@@ -1696,13 +1821,30 @@ export class LifePulse {
         }
       }
 
+      // Pass 9: player upgrade aura (from milestone upgrades) - permanent run progression visual
+      if ((this._runScoreMulti || 1) > 1.05 || (this._maxOptions || 2) > 2) {
+        const upImg = this.assets['player-upgrade-aura'];
+        if (upImg && upImg.complete) {
+          const s = 22 + Math.sin(this._time * 5) * 1.5;
+          ctx.globalAlpha = 0.55;
+          ctx.drawImage(upImg, px - s/2, py - s/2, s, s);
+          ctx.globalAlpha = 1;
+        }
+      }
+
       ctx.globalAlpha = 1;
       ctx.lineWidth = 1;
     }
 
-    // === PLAYER BULLETS (bio energy) - pass 4 laser = long piercing bright beams ===
+    // === PLAYER BULLETS (bio energy) - pass 4 laser = long piercing bright beams, charge = big slow blast ===
     for (const b of this._bullets) {
-      if (b.laser) {
+      if (b.charge) {
+        ctx.fillStyle = '#ffeb3b';
+        const len = 32;
+        ctx.fillRect(b.x - 2.5, b.y - 3, len, 6);
+        ctx.fillStyle = WHITE;
+        ctx.fillRect(b.x + 12, b.y - 1.5, 8, 3);
+      } else if (b.laser) {
         ctx.fillStyle = '#a0fff4';
         const len = (b.vy === 0) ? 26 : 18;
         ctx.fillRect(b.x - 1.2, b.y - 1.6, len, 3.2);
@@ -1773,6 +1915,13 @@ export class LifePulse {
         if (img && img.complete) {
           const s = e.isQueen ? 1.35 : 0.9;
           ctx.drawImage(img, ex - er * 1.15 * s, ey - er * 1.15 * s, er * 2.3 * s, er * 2.3 * s);
+          usedImage = true;
+        }
+      } else if (e.type === 'tendril-parasite') {
+        const img = this.assets['enemy-tendril-parasite'] || this.assets.tendril;
+        if (img && img.complete) {
+          const s = 1.1;
+          ctx.drawImage(img, ex - er * 1.2 * s, ey - er * 0.75 * s, er * 2.4 * s, er * 1.5 * s);
           usedImage = true;
         }
       } else {
@@ -2120,6 +2269,52 @@ export class LifePulse {
           ctx.stroke();
           ctx.lineWidth = 1;
         }
+      } else if (p.type === 'echo') {
+        const eImg = this.assets.powerEcho;
+        if (eImg && eImg.complete) {
+          ctx.drawImage(eImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.fillStyle = '#a0fff4';
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = CYAN;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 8, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
+      } else if (p.type === 'orbit') {
+        const oImg = this.assets.powerOrbit;
+        if (oImg && oImg.complete) {
+          ctx.drawImage(oImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.fillStyle = CYAN;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#7cffe0';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
+      } else if (p.type === 'charge') {
+        const chImg = this.assets.powerCharge;
+        if (chImg && chImg.complete) {
+          ctx.drawImage(chImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.fillStyle = '#ffeb3b';
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = ORANGE;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
 
@@ -2214,9 +2409,10 @@ export class LifePulse {
     ctx.globalAlpha = 1;
     ctx.textAlign = 'left';
 
-    // === OPTION DRONES (Grok Imagine + upgraded art for progression feel, pass 7 prefers chain/reflect variants)
+    // === OPTION DRONES (Grok Imagine + upgraded art for progression feel, pass 9 prefers orbit for new powerup)
     for (const o of this._options) {
-      const img = this.assets['option-upgraded-chain'] || this.assets['option-upgraded'] || this.assets.option;
+      let img = this.assets['option-upgraded-chain'] || this.assets['option-upgraded'] || this.assets.option;
+      if (o.isOrbit) img = this.assets['powerOrbit'] || this.assets['option-upgraded-chain'] || img;
       const ow = 12, oh = 10;
       if (img && img.complete) {
         ctx.drawImage(img, o.x - ow / 2, o.y - oh / 2, ow, oh);
@@ -2254,7 +2450,7 @@ export class LifePulse {
       ctx.textAlign = 'left';
     }
 
-    // Pass 6/7 end-run stats for "point" (visible when dead)
+    // Pass 6/7/9 end-run stats for "point" (visible when dead)
     if (this.gameOver) {
       const elapsed = Math.max(0, this._time - (this._gameStartTime || this._time));
       ctx.fillStyle = 'rgba(200, 198, 220, 0.85)';
@@ -2263,6 +2459,13 @@ export class LifePulse {
       const statsY = GAME_H - 18;
       const stats = `TIME ${elapsed.toFixed(0)}s  •  KILLS ${this._kills || 0}  •  MAX COMBO x${this._maxCombo || 0}`;
       ctx.fillText(stats, GAME_W / 2, statsY);
+
+      // Pass 9 additional breakdown
+      const acc = (this._grazeCount || 0) + (this._damageTakenThisWave || 0) > 0 
+        ? Math.floor( (this._grazeCount || 0) / ((this._grazeCount || 0) + (this._damageTakenThisWave || 1)) * 100 ) : 100;
+      const perf = `PERFECT WAVES ${this._perfectWaves || 0}  •  ACC ${acc}%  •  x${(this._runScoreMulti || 1).toFixed(2)}`;
+      ctx.font = '8px "Inter", sans-serif';
+      ctx.fillText(perf, GAME_W / 2, statsY + 10);
 
       // Pass 7 performance rank/grade (gives real "point" and replay incentive)
       const grade = this._computeGrade();
@@ -2460,6 +2663,7 @@ export class LifePulse {
 
     if (grazed) {
       this._lastGrazeTime = now;
+      this._grazeCount = (this._grazeCount || 0) + 1;
       const grazeScore = (this._focusTimer > 0) ? 9 : 4;
       this.score += grazeScore;
       this._createHitParticle(px + 12 + Math.random() * 6, py + (Math.random() - 0.5) * 8);
