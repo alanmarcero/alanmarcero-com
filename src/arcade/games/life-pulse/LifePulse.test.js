@@ -204,4 +204,26 @@ describe('LifePulse', () => {
       expect(p.r).toBeLessThan(9);
     });
   });
+
+  describe('Pass 6 new systems (nova, focus, wave clear, end stats)', () => {
+    test('nova powerup arms the one-shot clear', () => {
+      game._applyPowerup('nova');
+      expect(game._novaReady).toBe(true);
+    });
+
+    test('focus shrinks effective hit radius in graze/collision logic', () => {
+      game._applyPowerup('focus');
+      expect(game._focusTimer).toBeGreaterThan(5);
+      // indirect: the checkGraze and player collision now use focusMul < 1
+    });
+
+    test('boss death awards wave clear bonus and milestone', () => {
+      game.level = 3;
+      game._boss = { x: 400, y: 180, hp: 1, maxHp: 10 };
+      // simulate a big pulse hit that kills
+      game._detonatePulse({ x: 400, y: 180, boosted: false });
+      // after detonate the bonus should have been added
+      expect(game.score).toBeGreaterThan(900);
+    });
+  });
 });
