@@ -47,30 +47,38 @@ export class LifePulse {
       ['powerHoming', '/assets/arcade/life-pulse/powerup-homing.jpg'],
       ['powerNova', '/assets/arcade/life-pulse/powerup-nova.jpg'],
       ['powerFocus', '/assets/arcade/life-pulse/powerup-focus.jpg'],
+      ['powerChain', '/assets/arcade/life-pulse/powerup-chain.jpg'],
+      ['powerReflect', '/assets/arcade/life-pulse/powerup-reflect.jpg'],
       ['option', '/assets/arcade/life-pulse/option-drone.jpg'],
       ['option-upgraded', '/assets/arcade/life-pulse/option-upgraded.jpg'],
+      ['option-upgraded-chain', '/assets/arcade/life-pulse/option-upgraded-chain.jpg'],
       ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
       ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
       ['player-overdrive', '/assets/arcade/life-pulse/player-overdrive.jpg'],
       ['player-overcharge', '/assets/arcade/life-pulse/player-overcharge.jpg'],
       ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
+      ['focus-aura', '/assets/arcade/life-pulse/focus-aura.jpg'],
       ['explosion-1', '/assets/arcade/life-pulse/explosion-1.jpg'],
       ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
       ['explosion-3', '/assets/arcade/life-pulse/explosion-3.jpg'],
       ['explosion-core', '/assets/arcade/life-pulse/explosion-core.jpg'],
       ['explosion-chain', '/assets/arcade/life-pulse/explosion-chain.jpg'],
+      ['explosion-chain-core', '/assets/arcade/life-pulse/explosion-chain-core.jpg'],
       ['bossCore', '/assets/arcade/life-pulse/boss-core.jpg'],
       ['weakpoint', '/assets/arcade/life-pulse/weakpoint-highlight.jpg'],
+      ['parasite', '/assets/arcade/life-pulse/enemy-parasite.jpg'],
       ['parasite-swarm', '/assets/arcade/life-pulse/enemy-parasite-swarm.jpg'],
+      ['parasite-cluster', '/assets/arcade/life-pulse/enemy-parasite-cluster.jpg'],
       ['background', '/assets/arcade/life-pulse/background.jpg'],
       ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
     ];
 
     const spriteKeys = new Set([
-      'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm',
-      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','option','option-upgraded',
-      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1',
-      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','bossCore','weakpoint'
+      'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm','parasite-cluster',
+      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','powerChain','powerReflect',
+      'option','option-upgraded','option-upgraded-chain',
+      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1','focus-aura',
+      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','explosion-chain-core','bossCore','weakpoint'
     ]);
 
     let loaded = 0;
@@ -192,6 +200,8 @@ export class LifePulse {
     this._surviveAccum = 0;     // survival time scoring for "point" at high levels
     this._focusTimer = 0;       // FOCUS powerup (pass 6): precision mode - tighter hitbox + better graze
     this._novaReady = false;    // NOVA one-shot clear (pass 6) - powerful screen-clear style ability
+    this._chainTimer = 0;       // CHAIN powerup (pass 7): linked hits, score chains, visual links
+    this._reflectTimer = 0;     // REFLECT powerup (pass 7): reflects enemy bullets back as player shots for a time
     this._maxCombo = 0;
     this._gameStartTime = this._time;
     this._kills = 0;
@@ -399,6 +409,10 @@ export class LifePulse {
     if (this._overchargeTimer <= 0) this._overchargeTimer = 0;
     this._focusTimer -= dt;
     if (this._focusTimer <= 0) this._focusTimer = 0;
+    this._chainTimer -= dt;
+    if (this._chainTimer <= 0) this._chainTimer = 0;
+    this._reflectTimer -= dt;
+    if (this._reflectTimer <= 0) this._reflectTimer = 0;
 
     // Secondary = LIFE PULSE bomb + new NOVA (pass 6)
     this._pulseCooldown -= dt;
@@ -531,6 +545,21 @@ export class LifePulse {
     }
   }
 
+  _computeGrade() {
+    // Pass 7 performance rank for "point" and replay value
+    const mc = this._maxCombo || 0;
+    const k = this._kills || 0;
+    const lvl = this.level || 1;
+    const t = Math.max(1, (this._time - (this._gameStartTime || 0)));
+    const grazeBonus = (this._lastGrazeTime > 0) ? 1 : 0; // rough participation
+    let score = (mc * 2) + (k * 0.6) + (lvl * 8) + (grazeBonus * 5) - (t * 0.03);
+    if (score > 55) return 'S';
+    if (score > 42) return 'A';
+    if (score > 28) return 'B';
+    if (score > 16) return 'C';
+    return 'D';
+  }
+
   _updateBullets(dt) {
     for (let i = this._bullets.length - 1; i >= 0; i--) {
       const b = this._bullets[i];
@@ -634,7 +663,11 @@ export class LifePulse {
         const size = e.r || e.size || 13;
         this._createExplosion(e.x, e.y, size * 1.15);
         const comboMul = 1 + Math.min(4, Math.floor(this._combo / 3)) * 0.2;
-        const gained = Math.floor((e.points || 70) * comboMul);
+        let gained = Math.floor((e.points || 70) * comboMul);
+        if (this._chainTimer > 0) {
+          gained = Math.floor(gained * 1.6); // CHAIN powerup (pass 7) dramatically boosts chained kills for "point"
+          this._combo = Math.min(15, this._combo + 1); // stronger combo feed
+        }
         this.score += gained;
         this._combo = Math.min(12, this._combo + 1);
         this._comboTimer = 1.9;
@@ -965,20 +998,22 @@ export class LifePulse {
       }
     }
 
-    // More generous + varied powerups (the original complaint) - pass 6 adds nova (big clear) and focus (precision)
-    if (Math.random() < 0.025) {
+    // More generous + varied powerups (the original complaint) - pass 7 adds chain (linked scoring) and reflect (defense/offense)
+    if (Math.random() < 0.026) {
       const r = Math.random();
       let type = 'double';
-      if (r < 0.13) type = 'shield';
-      else if (r < 0.24) type = 'speed';
-      else if (r < 0.36) type = 'pulse';
-      else if (r < 0.46) type = 'option';
-      else if (r < 0.55) type = 'laser';
-      else if (r < 0.64) type = 'bomb';
-      else if (r < 0.72) type = 'homing';
-      else if (r < 0.80) type = 'overcharge';
-      else if (r < 0.87) type = 'nova';
-      else if (r < 0.93) type = 'focus';
+      if (r < 0.11) type = 'shield';
+      else if (r < 0.21) type = 'speed';
+      else if (r < 0.31) type = 'pulse';
+      else if (r < 0.40) type = 'option';
+      else if (r < 0.48) type = 'laser';
+      else if (r < 0.56) type = 'bomb';
+      else if (r < 0.64) type = 'homing';
+      else if (r < 0.71) type = 'overcharge';
+      else if (r < 0.77) type = 'nova';
+      else if (r < 0.83) type = 'focus';
+      else if (r < 0.88) type = 'chain';
+      else if (r < 0.93) type = 'reflect';
       else if (this.level >= 2) type = 'double';
 
       this._powerups.push({
@@ -1113,6 +1148,25 @@ export class LifePulse {
       }
     }
 
+    // Pass 7 collision skill expression: overcharge/high power cancels enemy bullets with player bullets (bullet hell defense)
+    if (this._overchargeTimer > 0 || this._laserTimer > 0) {
+      for (let i = this._bullets.length - 1; i >= 0; i--) {
+        const pb = this._bullets[i];
+        for (let j = this._enemyBullets.length - 1; j >= 0; j--) {
+          const eb = this._enemyBullets[j];
+          const dx = pb.x - eb.x;
+          const dy = pb.y - eb.y;
+          if (dx * dx + dy * dy < 70) { // generous cancel radius during power mode
+            this._enemyBullets.splice(j, 1);
+            this.score += 3;
+            this._createHitParticle(eb.x, eb.y);
+            // player bullet continues (or reduce life slightly)
+            if (pb.life !== undefined) pb.life *= 0.85;
+          }
+        }
+      }
+    }
+
     // Enemy bullets vs player (fair circle hit on core) - focus shrinks hitbox for better collision feel
     const focusMul = (this._focusTimer > 0) ? 0.62 : 1.0;
     const playerHitR = PLAYER_HIT_R * focusMul;
@@ -1124,8 +1178,24 @@ export class LifePulse {
         const dx = b.x - this._player.x;
         const dy = b.y - this._player.y;
         if (dx * dx + dy * dy < (br + playerHitR) * (br + playerHitR)) {
-          this._hitPlayer();
-          this._enemyBullets.splice(i, 1);
+          if (this._reflectTimer > 0) {
+            // Pass 7 REFLECT: turn enemy bullet into friendly piercing shot going back
+            this._bullets.push({
+              x: this._player.x + 8,
+              y: this._player.y,
+              vx: 380,
+              vy: (Math.random() - 0.5) * 40,
+              r: 3.5,
+              life: 1.4,
+              pierce: true,
+              laser: true,
+            });
+            this._enemyBullets.splice(i, 1);
+            this.score += 6;
+          } else {
+            this._hitPlayer();
+            this._enemyBullets.splice(i, 1);
+          }
         }
       }
     }
@@ -1317,6 +1387,16 @@ export class LifePulse {
       this._focusTimer = Math.max(this._focusTimer, 12);
       this.score += 150;
       this._spawnScorePopup(this._player.x, this._player.y - 18, 150);
+    } else if (type === 'chain') {
+      // CHAIN (pass 7): linked hits dramatically increase combo and score chains for "point"
+      this._chainTimer = Math.max(this._chainTimer, 14);
+      this.score += 175;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 175);
+    } else if (type === 'reflect') {
+      // REFLECT (pass 7): reflects incoming enemy bullets back as friendly shots (great defense + offense synergy)
+      this._reflectTimer = Math.max(this._reflectTimer, 10);
+      this.score += 160;
+      this._spawnScorePopup(this._player.x, this._player.y - 18, 160);
     }
   }
 
@@ -1492,6 +1572,25 @@ export class LifePulse {
         ctx.lineWidth = 1;
       }
 
+      // Pass 7: FOCUS precision aura (new asset + rings) - visual feedback for the tighter hitbox mode
+      if (this._focusTimer > 0) {
+        const fAura = this.assets['focus-aura'];
+        if (fAura && fAura.complete) {
+          const s = 20 + Math.sin(this._time * 8) * 2;
+          ctx.globalAlpha = 0.7;
+          ctx.drawImage(fAura, px - s/2, py - s/2, s, s);
+          ctx.globalAlpha = 1;
+        } else {
+          ctx.strokeStyle = 'rgba(124, 255, 224, 0.6)';
+          ctx.lineWidth = 1.8;
+          const fr = 14 + Math.sin(this._time * 9) * 2;
+          ctx.beginPath();
+          ctx.arc(px + 0.5, py, fr, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
+      }
+
       ctx.globalAlpha = 1;
       ctx.lineWidth = 1;
     }
@@ -1564,10 +1663,10 @@ export class LifePulse {
           usedImage = true;
         }
       } else if (e.type === 'parasite') {
-        const img = this.assets['parasite-swarm'] || this.assets.parasite;
+        const img = this.assets['parasite-cluster'] || this.assets['parasite-swarm'] || this.assets.parasite;
         if (img && img.complete) {
-          const s = 0.85;
-          ctx.drawImage(img, ex - er * 1.1 * s, ey - er * 1.1 * s, er * 2.2 * s, er * 2.2 * s);
+          const s = 0.9;
+          ctx.drawImage(img, ex - er * 1.15 * s, ey - er * 1.15 * s, er * 2.3 * s, er * 2.3 * s);
           usedImage = true;
         }
       } else {
@@ -1859,6 +1958,32 @@ export class LifePulse {
           ctx.stroke();
           ctx.lineWidth = 1;
         }
+      } else if (p.type === 'chain') {
+        const cImg = this.assets.powerChain;
+        if (cImg && cImg.complete) {
+          ctx.drawImage(cImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.strokeStyle = '#ffeb3b';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.arc(px - 4 + i*4, py + bob, 3, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.lineWidth = 1;
+        }
+      } else if (p.type === 'reflect') {
+        const rImg = this.assets.powerReflect;
+        if (rImg && rImg.complete) {
+          ctx.drawImage(rImg, px - 8, py + bob - 8, 16, 16);
+        } else {
+          ctx.strokeStyle = '#a0fff4';
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
       }
     }
 
@@ -1896,8 +2021,10 @@ export class LifePulse {
       if (prog > 0.66) frameKey = 'explosion-3';
       else if (prog > 0.33) frameKey = 'explosion-2';
       let expImg = this.assets[frameKey] || this.assets['explosion-1'];
-      // Pass 5: use special core burst for big boss-style explosions
-      if ((ex.size || 18) > 45 && this.assets['explosion-core'] && this.assets['explosion-core'].complete) {
+      // Pass 5/7: prefer chain-core or big chain for massive clears (nova etc)
+      if ((ex.size || 18) > 55 && this.assets['explosion-chain-core'] && this.assets['explosion-chain-core'].complete) {
+        expImg = this.assets['explosion-chain-core'];
+      } else if ((ex.size || 18) > 45 && this.assets['explosion-core'] && this.assets['explosion-core'].complete) {
         expImg = this.assets['explosion-core'];
       }
       if (expImg && expImg.complete) {
@@ -1949,9 +2076,9 @@ export class LifePulse {
     ctx.globalAlpha = 1;
     ctx.textAlign = 'left';
 
-    // === OPTION DRONES (Grok Imagine + upgraded art for progression feel) ===
+    // === OPTION DRONES (Grok Imagine + upgraded art for progression feel, pass 7 prefers chain/reflect variants)
     for (const o of this._options) {
-      const img = this.assets['option-upgraded'] || this.assets.option;
+      const img = this.assets['option-upgraded-chain'] || this.assets['option-upgraded'] || this.assets.option;
       const ow = 12, oh = 10;
       if (img && img.complete) {
         ctx.drawImage(img, o.x - ow / 2, o.y - oh / 2, ow, oh);
@@ -1989,7 +2116,7 @@ export class LifePulse {
       ctx.textAlign = 'left';
     }
 
-    // Pass 6 end-run stats for "point" (visible when dead, inside the game area)
+    // Pass 6/7 end-run stats for "point" (visible when dead)
     if (this.gameOver) {
       const elapsed = Math.max(0, this._time - (this._gameStartTime || this._time));
       ctx.fillStyle = 'rgba(200, 198, 220, 0.85)';
@@ -1998,6 +2125,12 @@ export class LifePulse {
       const statsY = GAME_H - 18;
       const stats = `TIME ${elapsed.toFixed(0)}s  •  KILLS ${this._kills || 0}  •  MAX COMBO x${this._maxCombo || 0}`;
       ctx.fillText(stats, GAME_W / 2, statsY);
+
+      // Pass 7 performance rank/grade (gives real "point" and replay incentive)
+      const grade = this._computeGrade();
+      ctx.font = 'bold 14px "Space Grotesk", sans-serif';
+      ctx.fillStyle = grade === 'S' || grade === 'A' ? '#ffeb3b' : (grade === 'B' ? '#a0fff4' : 'rgba(200,198,220,0.9)');
+      ctx.fillText(`RANK ${grade}`, GAME_W / 2, statsY - 16);
       ctx.textAlign = 'left';
     }
 
@@ -2085,8 +2218,9 @@ export class LifePulse {
 
   _updateCombo(dt) {
     if (this._combo > this._maxCombo) this._maxCombo = this._combo;
+    const decay = (this._chainTimer > 0) ? dt * 0.6 : dt; // CHAIN (pass 7) makes combos last longer for big point runs
     if (this._comboTimer > 0) {
-      this._comboTimer -= dt;
+      this._comboTimer -= decay;
     } else if (this._combo > 0) {
       this._combo = Math.max(0, this._combo - 1);
       if (this._combo === 0) this._comboTimer = 0;

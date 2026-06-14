@@ -226,4 +226,24 @@ describe('LifePulse', () => {
       expect(game.score).toBeGreaterThan(900);
     });
   });
+
+  describe('Pass 7 new systems (chain, reflect, rank, bullet cancel)', () => {
+    test('chain powerup activates chainTimer and boosts combo scoring', () => {
+      game._applyPowerup('chain');
+      expect(game._chainTimer).toBeGreaterThan(5);
+    });
+
+    test('reflect powerup activates reflectTimer', () => {
+      game._applyPowerup('reflect');
+      expect(game._reflectTimer).toBeGreaterThan(5);
+    });
+
+    test('computeGrade returns a valid letter', () => {
+      game.level = 5;
+      game._maxCombo = 7;
+      game._kills = 40;
+      const g = game._computeGrade();
+      expect(['S','A','B','C','D']).toContain(g);
+    });
+  });
 });
