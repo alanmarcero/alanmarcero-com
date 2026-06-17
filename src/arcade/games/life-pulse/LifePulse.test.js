@@ -61,9 +61,31 @@ describe('LifePulse', () => {
       expect(game._player.x).toBeGreaterThan(50);
     });
 
-    test('assets object exists (Grok Imagine + alpha keyed)', () => {
+    test('assets object exists (procedural renderer)', () => {
       expect(game.assets).toBeDefined();
-      expect(typeof game.assets).toBe('object');
+      expect(game.assetsLoaded).toBe(true);
+    });
+
+    test('pulse charge meter initializes', () => {
+      expect(game._pulseCharge).toBeGreaterThan(0);
+    });
+
+    test('render does not throw with procedural renderer', () => {
+      const canvas = { width: 640, height: 360 };
+      const ctx = {
+        save: jest.fn(), restore: jest.fn(), translate: jest.fn(),
+        scale: jest.fn(), fillRect: jest.fn(), fillStyle: '',
+        createLinearGradient: () => ({ addColorStop: jest.fn() }),
+        createRadialGradient: () => ({ addColorStop: jest.fn() }),
+        beginPath: jest.fn(), moveTo: jest.fn(), lineTo: jest.fn(),
+        quadraticCurveTo: jest.fn(), closePath: jest.fn(), fill: jest.fn(),
+        stroke: jest.fn(), arc: jest.fn(), ellipse: jest.fn(),
+        bezierCurveTo: jest.fn(), fillText: jest.fn(), strokeStyle: '',
+        lineWidth: 1, globalAlpha: 1, font: '', textAlign: 'left',
+        textBaseline: 'alphabetic', setLineDash: jest.fn(), setTransform: jest.fn(),
+        shadowColor: '', shadowBlur: 0, imageSmoothingEnabled: true,
+      };
+      expect(() => game.render(ctx)).not.toThrow();
     });
   });
 

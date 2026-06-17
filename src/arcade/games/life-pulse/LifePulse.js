@@ -1,12 +1,13 @@
 import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import * as R from './LifePulseRenderer';
 
-const GAME_W = 640;
-const GAME_H = 360;
+const GAME_W = R.GAME_W;
+const GAME_H = R.GAME_H;
 
-// Core tuning (improved from original)
-const PLAYER_SPEED = 235;
-const BULLET_SPEED = 460;
-const ENEMY_SPEED = 92;
+// Core tuning — pass 10: snappier feel, fairer early game
+const PLAYER_SPEED = 255;
+const BULLET_SPEED = 480;
+const ENEMY_SPEED = 88;
 const STARTING_LIVES = 3;
 
 // Hit radii (visuals are larger; these are fair collision cores)
@@ -20,147 +21,9 @@ export class LifePulse {
   onHudUpdate = null;
 
   constructor() {
+    // Pass 10: pure procedural renderer — no JPG sprites
     this.assets = {};
-    this.assetsLoaded = false;
-    this._loadAssets();
-  }
-
-  // Loop pass 9: Fresh Grok Imagine assets (echo, orbit, charge, tendril-parasite, perfect burst, upgrade aura),
-  // new powerups ECHO + ORBIT + CHARGE, simple run upgrades on wave clears, perfect wave bonuses + accuracy scoring,
-  // end-run detailed breakdown, new enemy behaviors (tendril-parasite), more crit/juice/particle variety.
-  // Continuing to hammer hit collision, sprite cleanliness (keying + cutouts), progression, powerups, and "point".
-
-  _loadAssets() {
-    // Assets from Grok Imagine + previous. All main sprites get alpha keying (dark pixels -> transparent).
-    const assetList = [
-      ['player', '/assets/arcade/life-pulse/player-ship.jpg'],
-      ['boss', '/assets/arcade/life-pulse/boss.jpg'],
-      ['drone', '/assets/arcade/life-pulse/enemy-drone.jpg'],
-      ['turret', '/assets/arcade/life-pulse/enemy-turret.jpg'],
-      ['growth', '/assets/arcade/life-pulse/growth-pulse-1.jpg'],
-      ['spiker', '/assets/arcade/life-pulse/enemy-spiker.jpg'],
-      ['tendril', '/assets/arcade/life-pulse/enemy-tendril.jpg'],
-      ['parasite', '/assets/arcade/life-pulse/enemy-parasite.jpg'],
-      ['powerDouble', '/assets/arcade/life-pulse/powerup-double.jpg'],
-      ['powerShield', '/assets/arcade/life-pulse/powerup-shield.jpg'],
-      ['powerLaser', '/assets/arcade/life-pulse/powerup-laser.jpg'],
-      ['powerHoming', '/assets/arcade/life-pulse/powerup-homing.jpg'],
-      ['powerNova', '/assets/arcade/life-pulse/powerup-nova.jpg'],
-      ['powerFocus', '/assets/arcade/life-pulse/powerup-focus.jpg'],
-      ['powerChain', '/assets/arcade/life-pulse/powerup-chain.jpg'],
-      ['powerReflect', '/assets/arcade/life-pulse/powerup-reflect.jpg'],
-      ['powerSwarm', '/assets/arcade/life-pulse/powerup-swarm.jpg'],
-      ['powerVortex', '/assets/arcade/life-pulse/powerup-vortex.jpg'],
-      ['option', '/assets/arcade/life-pulse/option-drone.jpg'],
-      ['option-upgraded', '/assets/arcade/life-pulse/option-upgraded.jpg'],
-      ['option-upgraded-chain', '/assets/arcade/life-pulse/option-upgraded-chain.jpg'],
-      ['player-powered1', '/assets/arcade/life-pulse/player-powered1.jpg'],
-      ['player-powered-spread', '/assets/arcade/life-pulse/player-powered-spread.jpg'],
-      ['player-overdrive', '/assets/arcade/life-pulse/player-overdrive.jpg'],
-      ['player-overcharge', '/assets/arcade/life-pulse/player-overcharge.jpg'],
-      ['player-thruster-1', '/assets/arcade/life-pulse/player-thruster-1.jpg'],
-      ['focus-aura', '/assets/arcade/life-pulse/focus-aura.jpg'],
-      ['focus-phase', '/assets/arcade/life-pulse/focus-phase.jpg'],
-      ['explosion-1', '/assets/arcade/life-pulse/explosion-1.jpg'],
-      ['explosion-2', '/assets/arcade/life-pulse/explosion-2.jpg'],
-      ['explosion-3', '/assets/arcade/life-pulse/explosion-3.jpg'],
-      ['explosion-core', '/assets/arcade/life-pulse/explosion-core.jpg'],
-      ['explosion-chain', '/assets/arcade/life-pulse/explosion-chain.jpg'],
-      ['explosion-chain-core', '/assets/arcade/life-pulse/explosion-chain-core.jpg'],
-      ['explosion-surge', '/assets/arcade/life-pulse/explosion-surge.jpg'],
-      ['bossCore', '/assets/arcade/life-pulse/boss-core.jpg'],
-      ['weakpoint', '/assets/arcade/life-pulse/weakpoint-highlight.jpg'],
-      ['weakpoint-crit', '/assets/arcade/life-pulse/weakpoint-crit.jpg'],
-      ['parasite', '/assets/arcade/life-pulse/enemy-parasite.jpg'],
-      ['parasite-swarm', '/assets/arcade/life-pulse/enemy-parasite-swarm.jpg'],
-      ['parasite-cluster', '/assets/arcade/life-pulse/enemy-parasite-cluster.jpg'],
-      ['parasite-queen', '/assets/arcade/life-pulse/enemy-parasite-queen.jpg'],
-      ['powerEcho', '/assets/arcade/life-pulse/powerup-echo.jpg'],
-      ['powerOrbit', '/assets/arcade/life-pulse/powerup-orbit.jpg'],
-      ['powerCharge', '/assets/arcade/life-pulse/powerup-charge.jpg'],
-      ['enemy-tendril-parasite', '/assets/arcade/life-pulse/enemy-tendril-parasite.jpg'],
-      ['explosion-perfect', '/assets/arcade/life-pulse/explosion-perfect.jpg'],
-      ['player-upgrade-aura', '/assets/arcade/life-pulse/player-upgrade-aura.jpg'],
-      ['background', '/assets/arcade/life-pulse/background.jpg'],
-      ['background-layer2', '/assets/arcade/life-pulse/background-layer2.jpg'],
-    ];
-
-    const spriteKeys = new Set([
-      'player','boss','drone','turret','growth','spiker','tendril','parasite','parasite-swarm','parasite-cluster','parasite-queen',
-      'powerDouble','powerShield','powerLaser','powerHoming','powerNova','powerFocus','powerChain','powerReflect','powerSwarm','powerVortex','powerEcho','powerOrbit','powerCharge',
-      'option','option-upgraded','option-upgraded-chain',
-      'player-powered1','player-powered-spread','player-overdrive','player-overcharge','player-thruster-1','focus-aura','focus-phase','player-upgrade-aura',
-      'explosion-1','explosion-2','explosion-3','explosion-core','explosion-chain','explosion-chain-core','explosion-surge','explosion-perfect','bossCore','weakpoint','weakpoint-crit',
-      'enemy-tendril-parasite'
-    ]);
-
-    let loaded = 0;
-    const total = assetList.length;
-
-    assetList.forEach(([key, src]) => {
-      const img = new Image();
-      img.onload = () => {
-        loaded++;
-        if (spriteKeys.has(key)) {
-          this.assets[key] = this._createAlphaKeyedImage(img);
-        } else {
-          this.assets[key] = img;
-        }
-        if (loaded === total) this.assetsLoaded = true;
-      };
-      img.src = src;
-      // temporary placeholder so render checks pass during load
-      this.assets[key] = img;
-    });
-  }
-
-  _createAlphaKeyedImage(sourceImg) {
-    // Pass 8: Aggressive alpha keying tuned for detailed Grok Imagine cutouts.
-    // Stronger hard threshold + cubic soft feather + extra near-black cleanup pass to eliminate any remaining white box artifacts around sprites.
-    if (!sourceImg || !sourceImg.complete) return sourceImg;
-    const w = sourceImg.naturalWidth || sourceImg.width;
-    const h = sourceImg.naturalHeight || sourceImg.height;
-    if (!w || !h) return sourceImg;
-
-    if (typeof document === 'undefined' || !document.createElement) {
-      return sourceImg;
-    }
-
-    const c = document.createElement('canvas');
-    c.width = w;
-    c.height = h;
-    const cx = c.getContext('2d', { willReadFrequently: true });
-    cx.drawImage(sourceImg, 0, 0, w, h);
-
-    const imageData = cx.getImageData(0, 0, w, h);
-    const d = imageData.data;
-    const hard = 24;
-    const soft = 55;
-
-    for (let i = 0; i < d.length; i += 4) {
-      const r = d[i], g = d[i+1], b = d[i+2];
-      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-
-      if (lum < hard) {
-        d[i + 3] = 0;
-      } else if (lum < soft) {
-        const f = (lum - hard) / (soft - hard);
-        d[i + 3] = Math.floor(255 * f * f * f * f); // even stronger curve + extra cleanup
-      }
-    }
-
-    // Second pass: zero any remaining very dark edge pixels for ultra-clean cutouts on complex sprites
-    for (let i = 0; i < d.length; i += 4) {
-      if (d[i] < 30 && d[i + 1] < 30 && d[i + 2] < 30 && d[i + 3] > 0 && d[i + 3] < 180) {
-        d[i + 3] = 0;
-      }
-    }
-
-    cx.putImageData(imageData, 0, 0);
-
-    const out = new Image();
-    out.src = c.toDataURL('image/png');
-    return out;
+    this.assetsLoaded = true;
   }
 
   init(width, height) {
@@ -238,6 +101,10 @@ export class LifePulse {
     this._damageTakenThisWave = 0;
     this._perfectWaves = 0;
     this._grazeCount = 0;
+    this._pulseCharge = 35;       // pass 10: signature pulse meter (0-100)
+    this._pulseWaves = [];        // expanding ring visuals on detonation
+    this._waveBanner = 0;         // "WAVE CLEAR" flash timer
+    this._formationCooldown = 0;
 
     this._scroll = 0;
     this._spawnTimer = 0.6;
@@ -319,7 +186,10 @@ export class LifePulse {
     this._updateExplosions(dt);
     this._updatePowerups(dt);
     this._updatePulses(dt);
+    this._updatePulseWaves(dt);
     this._updateScorePopups(dt);
+    if (this._waveBanner > 0) this._waveBanner -= dt;
+    if (this._formationCooldown > 0) this._formationCooldown -= dt;
     this._updateOptions(dt);
     this._updateCombo(dt);
     this._checkGraze(dt);
@@ -373,9 +243,9 @@ export class LifePulse {
     const speedMul = (p.speedTimer > 0) ? 1.38 : 1.0;
     p.speedMul = speedMul;
 
-    const accel = 1520;
-    const friction = 7.2;
-    const maxSpeed = 278 * speedMul;
+    const accel = 1680;
+    const friction = 8.5;
+    const maxSpeed = 290 * speedMul;
 
     let ax = 0, ay = 0;
     if (this._keys.left) ax -= 1;
@@ -420,9 +290,9 @@ export class LifePulse {
 
     // Primary fire (power level affects pattern + rate)
     this._fireCooldown -= dt;
-    const baseRate = 0.105;
-    let fireRate = this._powerLevel >= 1 ? 0.058 : baseRate;
-    if (this._overchargeTimer > 0) fireRate = 0.038; // pass 5 overcharge = very fast
+    const baseRate = 0.095;
+    let fireRate = this._powerLevel >= 1 ? 0.052 : baseRate;
+    if (this._overchargeTimer > 0) fireRate = 0.034;
     if (this._keys.fire && this._fireCooldown <= 0) {
       this._fireCooldown = fireRate;
       this._shoot();
@@ -552,21 +422,31 @@ export class LifePulse {
 
   _firePulseBomb(fromStock = false) {
     const p = this._player;
-    // Launch a slow, pulsing "Life Pulse" projectile
-    const life = fromStock ? 0.82 : 0.72;
-    const r = fromStock ? 8.5 : 7.5;
+    const charged = this._pulseCharge >= 100;
+    const boosted = fromStock || charged;
+    if (charged) this._pulseCharge = 0;
+
+    const life = boosted ? 0.88 : 0.75;
+    const r = boosted ? 9 : 7.5;
     this._pulses.push({
       x: p.x + 10,
       y: p.y,
-      vx: 195,
-      vy: (Math.random() - 0.5) * 12,
+      vx: boosted ? 220 : 195,
+      vy: (Math.random() - 0.5) * 10,
       r,
       life,
       detonated: false,
-      boosted: fromStock,
+      boosted,
     });
-    // Small launch effect
-    this._createHitParticle(p.x + 14, p.y);
+    this._shake = Math.max(this._shake || 0, boosted ? 4 : 2);
+    for (let i = 0; i < (boosted ? 8 : 4); i++) {
+      const ang = (i / (boosted ? 8 : 4)) * Math.PI * 2;
+      this._particles.push({
+        x: p.x + 14, y: p.y,
+        vx: Math.cos(ang) * 40, vy: Math.sin(ang) * 40,
+        life: 0.2, maxLife: 0.2, size: 2.5, color: CYAN, glow: true, round: true,
+      });
+    }
   }
 
   _fireNova() {
@@ -762,6 +642,7 @@ export class LifePulse {
         this._combo = Math.min(12, this._combo + 1);
         this._comboTimer = 1.9;
         this._kills = (this._kills || 0) + 1;
+        this._pulseCharge = Math.min(100, (this._pulseCharge || 0) + 9);
         this._spawnScorePopup(e.x, e.y - 6, gained);
 
         // Splitting growths (biological theme)
@@ -810,7 +691,7 @@ export class LifePulse {
     const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
 
     // Slight predictive + speed scaled by difficulty
-    const speed = 155 + this._difficulty * 18;
+    const speed = 130 + this._difficulty * 16;
     this._enemyBullets.push({
       x: e.x,
       y: e.y,
@@ -889,7 +770,13 @@ export class LifePulse {
 
   _detonatePulse(pulse) {
     // Big satisfying radial Life Pulse blast — damages enemies + boss in radius
-    const radius = pulse.boosted ? 95 : 78;
+    const radius = pulse.boosted ? 105 : 82;
+    this._pulseWaves.push({
+      x: pulse.x, y: pulse.y,
+      age: 0, duration: 0.45,
+      maxRadius: radius * 1.35,
+      boosted: pulse.boosted,
+    });
     const baseDmg = pulse.boosted ? 4 : 3;
     const bossDmg = pulse.boosted ? 16 : 11;
     this._createExplosion(pulse.x, pulse.y, pulse.boosted ? 54 : 46);
@@ -953,6 +840,8 @@ export class LifePulse {
           }
           this._perfectWave = true;
           this._damageTakenThisWave = 0;
+          this._waveBanner = 1.8;
+          this._pulseCharge = Math.min(100, (this._pulseCharge || 0) + 25);
         }
       }
     }
@@ -982,26 +871,50 @@ export class LifePulse {
     }
   }
 
+  _spawnFormation() {
+    const d = this._difficulty;
+    const count = 4 + Math.floor(d);
+    const baseY = 60 + Math.random() * (GAME_H - 120);
+    for (let i = 0; i < count; i++) {
+      this._enemies.push({
+        id: Math.random() * 99999 | 0,
+        x: GAME_W + 20 + i * 28,
+        y: baseY + Math.sin(i * 1.2) * 35,
+        vx: -ENEMY_SPEED * (0.75 + d * 0.04),
+        vy: Math.cos(i * 0.8) * 18,
+        hp: 1,
+        points: 70,
+        r: ENEMY_BASE_R * 0.9,
+        type: i % 3 === 0 ? 'swooper' : 'drone',
+      });
+    }
+  }
+
   _spawnEnemies(dt) {
     this._spawnTimer -= dt;
 
     // Spawn cadence tightens with difficulty and level
-    const baseRate = Math.max(0.32, 0.82 / this._difficulty);
-    const spawnInterval = baseRate + Math.random() * 0.28;
+    const baseRate = Math.max(0.38, 0.9 / this._difficulty);
+    const spawnInterval = baseRate + Math.random() * 0.25;
 
     if (this._spawnTimer <= 0) {
       this._spawnTimer = spawnInterval;
-      if (this._surgeTimer > 0) this._spawnTimer *= 0.55; // SURGE (pass 8): much faster spawns during surge for challenge + point
-      this._wave += 0.08; // slow wave progress even without kills
+      if (this._surgeTimer > 0) this._spawnTimer *= 0.55;
+      this._wave += 0.08;
+
+      // Formation waves every ~8 wave ticks
+      if (this._formationCooldown <= 0 && Math.floor(this._wave) % 8 === 0 && Math.random() < 0.35) {
+        this._spawnFormation();
+        this._formationCooldown = 6;
+        return;
+      }
 
       const y = 32 + Math.random() * (GAME_H - 64);
-
       const roll = Math.random();
       const d = this._difficulty;
 
-      // New enemy mix with proper radii (no more white boxes or loose rects)
-      if (roll < 0.38) {
-        // Basic organic drone
+      // Pass 10: fixed spawn weights (growth was unreachable due to duplicate branch)
+      if (roll < 0.34) {
         this._enemies.push({
           id: Math.random() * 99999 | 0,
           x: GAME_W + 18, y,
@@ -1012,37 +925,34 @@ export class LifePulse {
           r: ENEMY_BASE_R,
           type: 'drone',
         });
-      } else if (roll < 0.62) {
-        // Swooper (sine wave)
+      } else if (roll < 0.54) {
         this._enemies.push({
           id: Math.random() * 99999 | 0,
           x: GAME_W + 26,
           y: 46 + Math.random() * (GAME_H - 92),
-          vx: -ENEMY_SPEED * (1.08 + d * 0.06),
+          vx: -ENEMY_SPEED * (1.05 + d * 0.05),
           vy: 0,
           hp: 1,
           points: 95,
           r: ENEMY_BASE_R * 1.05,
           type: 'swooper',
         });
-      } else if (roll < 0.82) {
-        // Turret (fires homing-ish shots)
+      } else if (roll < 0.68) {
         this._enemies.push({
           id: Math.random() * 99999 | 0,
           x: GAME_W + 22, y,
-          vx: -ENEMY_SPEED * (0.58 + Math.random() * 0.1),
+          vx: -ENEMY_SPEED * (0.55 + Math.random() * 0.1),
           vy: 0,
           hp: 2 + (d > 2 ? 1 : 0),
           points: 145,
           r: ENEMY_BASE_R * 1.25,
           type: 'turret',
         });
-      } else if (roll < 0.82) {
-        // Growth / splitter (core of the "Life" theme)
+      } else if (roll < 0.78) {
         this._enemies.push({
           id: Math.random() * 99999 | 0,
           x: GAME_W + 28, y,
-          vx: -ENEMY_SPEED * 0.48,
+          vx: -ENEMY_SPEED * 0.45,
           vy: (Math.random() - 0.5) * 15,
           hp: 4,
           points: 195,
@@ -1050,7 +960,7 @@ export class LifePulse {
           type: 'growth',
           split: true,
         });
-      } else if (roll < 0.90) {
+      } else if (roll < 0.86) {
         // New fast spiker (armored aggressive, from new Grok Imagine asset)
         const spikerElite = d > 2.8 && Math.random() < 0.4;
         this._enemies.push({
@@ -1134,34 +1044,26 @@ export class LifePulse {
       }
     }
 
-    // More generous + varied powerups (the original complaint) - pass 9 adds ECHO, ORBIT, CHARGE
-    if (Math.random() < 0.028) {
-      const r = Math.random();
-      let type = 'double';
-      if (r < 0.09) type = 'shield';
-      else if (r < 0.17) type = 'speed';
-      else if (r < 0.25) type = 'pulse';
-      else if (r < 0.33) type = 'option';
-      else if (r < 0.40) type = 'laser';
-      else if (r < 0.47) type = 'bomb';
-      else if (r < 0.54) type = 'homing';
-      else if (r < 0.60) type = 'overcharge';
-      else if (r < 0.66) type = 'nova';
-      else if (r < 0.72) type = 'focus';
-      else if (r < 0.77) type = 'chain';
-      else if (r < 0.82) type = 'reflect';
-      else if (r < 0.86) type = 'swarm';
-      else if (r < 0.90) type = 'vortex';
-      else if (r < 0.93) type = 'echo';
-      else if (r < 0.96) type = 'orbit';
-      else type = 'charge';
-
+    // Pass 10: curated powerup pool — fewer types, more readable
+    if (Math.random() < 0.034) {
+      const pool = ['double', 'shield', 'pulse', 'option', 'laser', 'bomb', 'focus', 'nova',
+        'homing', 'chain', 'vortex', 'charge'];
+      const type = pool[Math.floor(Math.random() * pool.length)];
       this._powerups.push({
         x: GAME_W + 14,
         y: 44 + Math.random() * (GAME_H - 88),
         type,
-        life: 8.5,
+        life: 9,
       });
+    }
+  }
+
+  _updatePulseWaves(dt) {
+    for (let i = this._pulseWaves.length - 1; i >= 0; i--) {
+      this._pulseWaves[i].age += dt;
+      if (this._pulseWaves[i].age >= this._pulseWaves[i].duration) {
+        this._pulseWaves.splice(i, 1);
+      }
     }
   }
 
@@ -1467,6 +1369,8 @@ export class LifePulse {
             }
             this._perfectWave = true;
             this._damageTakenThisWave = 0;
+            this._waveBanner = 1.8;
+            this._pulseCharge = Math.min(100, (this._pulseCharge || 0) + 25);
           }
         }
       }
@@ -1642,9 +1546,12 @@ export class LifePulse {
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        life: (isBig ? 0.38 : 0.24) + Math.random() * 0.22,
-        size: (isBig ? 2.8 : 1.9) + Math.random() * 1.6,
+        life: (isBig ? 0.42 : 0.28) + Math.random() * 0.22,
+        maxLife: (isBig ? 0.42 : 0.28) + Math.random() * 0.22,
+        size: (isBig ? 3.2 : 2.2) + Math.random() * 1.6,
         color: (i % 4 === 0) ? VIOLET : (i % 3 === 0 ? ORANGE : WHITE),
+        glow: isBig,
+        round: true,
       });
     }
     if (isBig) this._shake = Math.max(this._shake, 13);
@@ -1653,11 +1560,14 @@ export class LifePulse {
   _createHitParticle(x, y) {
     this._particles.push({
       x, y,
-      vx: (Math.random() - 0.5) * 74,
-      vy: (Math.random() - 0.5) * 74,
-      life: 0.16,
-      size: 2.4,
+      vx: (Math.random() - 0.5) * 90,
+      vy: (Math.random() - 0.5) * 90,
+      life: 0.18,
+      maxLife: 0.18,
+      size: 2.8,
       color: CYAN,
+      glow: true,
+      round: true,
     });
   }
 
@@ -1676,863 +1586,116 @@ export class LifePulse {
     return (dx * dx + dy * dy) < (ar + br) * (ar + br);
   }
 
-  // ==================== RENDER (pure procedural — no JPGs, no white boxes) ====================
+  // ==================== RENDER (pass 10 — procedural bio-lab aesthetic) ====================
   render(ctx) {
     ctx.save();
 
-    // Screen shake
     const shakeX = (Math.random() - 0.5) * this._shake * 0.85;
     const shakeY = (Math.random() - 0.5) * this._shake * 0.85;
     ctx.translate(this.offsetX + shakeX, this.offsetY + shakeY);
     ctx.scale(this.scale, this.scale);
+    ctx.imageSmoothingEnabled = true;
 
-    ctx.imageSmoothingEnabled = false;
-
-    // Base
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, GAME_W, GAME_H);
 
-    this._drawBackground(ctx);
+    R.drawBackground(ctx, {
+      time: this._time,
+      scroll: this._scroll,
+      pulseCharge: this._pulseCharge,
+    });
 
-    // === PLAYER (use Grok Imagine art when available + procedural overlays) ===
-    if (this._player.alive) {
-      const p = this._player;
-      const flicker = p.invuln > 0 ? ((Math.floor(this._time * 18) % 2) === 0 ? 0.42 : 1) : 1;
-      ctx.globalAlpha = flicker;
-
-      const px = p.x;
-      const py = p.y;
-      const power = this._powerLevel;
-      const boosted = p.speedTimer > 0;
-
-      // Choose the best player sprite from new Grok Imagine assets (pass 4: prefer overdrive when laser active)
-      let playerImg = this.assets.player;
-      let pw = 32, ph = 20;
-
-      const useOverdrive = this._laserTimer > 0 || power >= 2;
-      const useOvercharge = this._overchargeTimer > 0;
-      if (useOvercharge && this.assets['player-overcharge'] && this.assets['player-overcharge'].complete) {
-        playerImg = this.assets['player-overcharge'];
-        pw = 40; ph = 25;
-      } else if (useOverdrive && this.assets['player-overdrive'] && this.assets['player-overdrive'].complete) {
-        playerImg = this.assets['player-overdrive'];
-        pw = 37; ph = 23;
-      } else if (power >= 2 && this.assets['player-powered-spread'] && this.assets['player-powered-spread'].complete) {
-        playerImg = this.assets['player-powered-spread'];
-        pw = 36; ph = 22;
-      } else if (power >= 1 && this.assets['player-powered1'] && this.assets['player-powered1'].complete) {
-        playerImg = this.assets['player-powered1'];
-        pw = 34; ph = 21;
-      }
-
-      if (playerImg && playerImg.complete) {
-        ctx.drawImage(playerImg, px - pw / 2, py - ph / 2, pw, ph);
-      } else {
-        // High quality procedural fallback (from previous pass)
-        ctx.fillStyle = power >= 1 ? '#a3fff0' : CYAN;
-        ctx.beginPath();
-        ctx.moveTo(px + 11, py);
-        ctx.lineTo(px - 9, py - 7.5);
-        ctx.lineTo(px - 11, py);
-        ctx.lineTo(px - 9, py + 7.5);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = WHITE;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-
-      // Grok Imagine thruster or procedural animated flame
-      const thrusterImg = this.assets['player-thruster-1'];
-      const tPhase = (this._time * 11) % 1;
-      if (thrusterImg && thrusterImg.complete) {
-        const tw = 14 + Math.sin(this._time * 22) * 2;
-        ctx.drawImage(thrusterImg, px - 20, py - 6, tw, 12);
-      } else {
-        // Fallback thruster flame
-        const tLen = 5.5 + Math.sin(this._time * 19) * 1.8 + tPhase * 2.2;
-        ctx.fillStyle = ORANGE;
-        ctx.beginPath();
-        ctx.moveTo(px - 10, py - 2.5);
-        ctx.lineTo(px - 10 - tLen, py);
-        ctx.lineTo(px - 10, py + 2.5);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      // Extra speed lines when boosted (procedural juice)
-      if (boosted) {
-        ctx.strokeStyle = 'rgba(255,240,210,0.75)';
-        ctx.lineWidth = 1;
-        for (let i = 0; i < 3; i++) {
-          const off = i * 3.5;
-          ctx.beginPath();
-          ctx.moveTo(px - 14 - off, py - 3 - i);
-          ctx.lineTo(px - 22 - off * 1.6, py - 1);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(px - 14 - off, py + 3 + i);
-          ctx.lineTo(px - 22 - off * 1.6, py + 1);
-          ctx.stroke();
-        }
-      }
-
-      // Shield bubble (strong visual)
-      if (p.invuln > 2.8) {
-        ctx.strokeStyle = '#a0fff4';
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.arc(px + 0.5, py, 15.5 + Math.sin(this._time * 6) * 1.2, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.lineWidth = 1;
-      }
-
-      // Pass 5: strong power aura when overcharge (using new art + procedural rings)
-      if (this._overchargeTimer > 0) {
-        ctx.strokeStyle = 'rgba(160, 255, 240, 0.55)';
-        ctx.lineWidth = 2.5;
-        const auraR = 18 + Math.sin(this._time * 11) * 3;
-        ctx.beginPath();
-        ctx.arc(px + 1, py, auraR, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.strokeStyle = 'rgba(255, 220, 120, 0.35)';
-        ctx.beginPath();
-        ctx.arc(px + 1, py, auraR * 0.7, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.lineWidth = 1;
-      }
-
-      // Pass 7: FOCUS precision aura (new asset + rings) - visual feedback for the tighter hitbox mode
-      if (this._focusTimer > 0) {
-        const fAura = this.assets['focus-aura'];
-        if (fAura && fAura.complete) {
-          const s = 20 + Math.sin(this._time * 8) * 2;
-          ctx.globalAlpha = 0.7;
-          ctx.drawImage(fAura, px - s/2, py - s/2, s, s);
-          ctx.globalAlpha = 1;
-        } else {
-          ctx.strokeStyle = 'rgba(124, 255, 224, 0.6)';
-          ctx.lineWidth = 1.8;
-          const fr = 14 + Math.sin(this._time * 9) * 2;
-          ctx.beginPath();
-          ctx.arc(px + 0.5, py, fr, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      }
-
-      // Pass 9: player upgrade aura (from milestone upgrades) - permanent run progression visual
-      if ((this._runScoreMulti || 1) > 1.05 || (this._maxOptions || 2) > 2) {
-        const upImg = this.assets['player-upgrade-aura'];
-        if (upImg && upImg.complete) {
-          const s = 22 + Math.sin(this._time * 5) * 1.5;
-          ctx.globalAlpha = 0.55;
-          ctx.drawImage(upImg, px - s/2, py - s/2, s, s);
-          ctx.globalAlpha = 1;
-        }
-      }
-
-      ctx.globalAlpha = 1;
-      ctx.lineWidth = 1;
+    if (this._vortexTimer > 0) {
+      R.drawVortexField(ctx, this._player, this._time);
     }
 
-    // === PLAYER BULLETS (bio energy) - pass 4 laser = long piercing bright beams, charge = big slow blast ===
-    for (const b of this._bullets) {
-      if (b.charge) {
-        ctx.fillStyle = '#ffeb3b';
-        const len = 32;
-        ctx.fillRect(b.x - 2.5, b.y - 3, len, 6);
-        ctx.fillStyle = WHITE;
-        ctx.fillRect(b.x + 12, b.y - 1.5, 8, 3);
-      } else if (b.laser) {
-        ctx.fillStyle = '#a0fff4';
-        const len = (b.vy === 0) ? 26 : 18;
-        ctx.fillRect(b.x - 1.2, b.y - 1.6, len, 3.2);
-        ctx.fillStyle = WHITE;
-        ctx.fillRect(b.x + 8, b.y - 0.9, 6, 1.8);
-      } else {
-        ctx.fillStyle = CYAN;
-        const len = (b.vy === 0) ? 7.5 : 5.5;
-        ctx.fillRect(b.x - 1.5, b.y - 1.2, len, 2.4);
-        // small bright head
-        ctx.fillStyle = WHITE;
-        ctx.fillRect(b.x + 4, b.y - 0.7, 2.5, 1.4);
-      }
-    }
-    ctx.fillStyle = CYAN;
-
-    // === ENEMY BULLETS (spores / venom) ===
-    ctx.fillStyle = ORANGE;
-    for (const b of this._enemyBullets) {
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, 2.8, 0, Math.PI * 2);
-      ctx.fill();
-      // faint tail
-      ctx.globalAlpha = 0.45;
-      ctx.fillRect(b.x + 2, b.y - 1, 5, 2);
-      ctx.globalAlpha = 1;
+    for (const wave of this._pulseWaves) {
+      R.drawPulseWave(ctx, wave, this._time);
     }
 
-    // === ENEMIES (Grok Imagine sprites + procedural accents for life) ===
     for (const e of this._enemies) {
-      const ex = e.x;
-      const ey = e.y;
-      const er = e.r || ENEMY_BASE_R;
-      const pulse = Math.sin(this._time * 5.5 + (e.id || 0)) * 0.5 + 1;
-
-      let usedImage = false;
-
-      if (e.type === 'turret') {
-        const img = this.assets.turret;
-        if (img && img.complete) {
-          ctx.drawImage(img, ex - er * 1.1, ey - er * 0.85, er * 2.2, er * 1.7);
-          usedImage = true;
-        }
-      } else if (e.type === 'growth') {
-        const img = this.assets.growth;
-        if (img && img.complete) {
-          const pScale = 0.9 + (pulse - 0.5) * 0.18;
-          ctx.drawImage(img, ex - er * pScale, ey - er * pScale, er * 2 * pScale, er * 2 * pScale);
-          usedImage = true;
-        }
-      } else if (e.type === 'spiker') {
-        const img = this.assets.spiker;
-        if (img && img.complete) {
-          const s = 0.92;
-          ctx.drawImage(img, ex - er * 1.05 * s, ey - er * s, er * 2.1 * s, er * 2 * s);
-          usedImage = true;
-        }
-      } else if (e.type === 'tendril') {
-        const img = this.assets.tendril;
-        if (img && img.complete) {
-          const s = 1.15;
-          ctx.drawImage(img, ex - er * 1.3 * s, ey - er * 0.7 * s, er * 2.6 * s, er * 1.4 * s);
-          usedImage = true;
-        }
-      } else if (e.type === 'parasite') {
-        let img = this.assets['parasite-cluster'] || this.assets['parasite-swarm'] || this.assets.parasite;
-        if (e.isQueen) img = this.assets['parasite-queen'] || img;
-        if (img && img.complete) {
-          const s = e.isQueen ? 1.35 : 0.9;
-          ctx.drawImage(img, ex - er * 1.15 * s, ey - er * 1.15 * s, er * 2.3 * s, er * 2.3 * s);
-          usedImage = true;
-        }
-      } else if (e.type === 'tendril-parasite') {
-        const img = this.assets['enemy-tendril-parasite'] || this.assets.tendril;
-        if (img && img.complete) {
-          const s = 1.1;
-          ctx.drawImage(img, ex - er * 1.2 * s, ey - er * 0.75 * s, er * 2.4 * s, er * 1.5 * s);
-          usedImage = true;
-        }
-      } else {
-        // drone / swooper
-        const img = this.assets.drone;
-        if (img && img.complete) {
-          const s = (e.type === 'swooper') ? 0.95 : 1.05;
-          ctx.drawImage(img, ex - er * s, ey - er * s, er * 2 * s, er * 2 * s);
-          usedImage = true;
-        }
-      }
-
-      if (!usedImage) {
-        // Strong procedural fallback (detailed biological style)
-        if (e.type === 'turret') {
-          ctx.fillStyle = VIOLET;
-          ctx.fillRect(ex - er * 0.9, ey - er * 0.65, er * 1.85, er * 1.3);
-          ctx.fillStyle = '#3a2a4a';
-          ctx.fillRect(ex - er * 0.55, ey - er * 0.35, er * 1.1, er * 0.7);
-          ctx.fillStyle = ORANGE;
-          ctx.beginPath();
-          ctx.arc(ex - 2, ey, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (e.type === 'growth') {
-          const pScale = 0.82 + (pulse - 0.5) * 0.22;
-          ctx.fillStyle = 'rgba(120, 255, 200, 0.35)';
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * pScale * 1.15, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = CYAN;
-          ctx.lineWidth = 1.6;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * pScale, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.fillStyle = VIOLET;
-          ctx.beginPath();
-          ctx.arc(ex - 3, ey - 2, 3.5 * pScale, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          ctx.fillStyle = (e.type === 'swooper') ? '#7dd4ff' : CYAN;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * (e.type === 'swooper' ? 0.95 : 1), 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = WHITE;
-          ctx.lineWidth = 1.3;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * 0.62, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-      }
-
-      // Damage flash (pass 4 visual feedback - makes hits feel much better)
-      if (e.lastHit && (this._time - e.lastHit) < 0.12) {
-        ctx.globalAlpha = 0.6;
-        ctx.fillStyle = WHITE;
-        ctx.beginPath();
-        ctx.arc(ex, ey, er * 1.15, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-
-      // Elite glow (pass 5 - high level threats stand out, better progression feel)
-      if (e.elite) {
-        ctx.strokeStyle = 'rgba(255, 140, 60, 0.65)';
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        ctx.arc(ex, ey, er * 1.35, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.lineWidth = 1;
-      }
-
-      // Weakpoint highlight (pass 6/8) on certain biological enemies for clear "aim here" feedback + crit art
-      const critTypes = ['growth', 'tendril', 'parasite'];
-      if (critTypes.includes(e.type)) {
-        if (this.assets['weakpoint-crit'] && this.assets['weakpoint-crit'].complete) {
-          const w = 11 + (e.elite ? 2 : 0);
-          ctx.drawImage(this.assets['weakpoint-crit'], ex - w/2, ey - w/2, w, w);
-        } else if (this.assets.weakpoint && this.assets.weakpoint.complete) {
-          const w = 12;
-          ctx.drawImage(this.assets.weakpoint, ex - w/2, ey - w/2, w, w);
-        }
-      }
+      R.drawEnemy(ctx, e, this._time);
     }
 
-    // === BOSS (Grok Imagine detailed boss + animated procedural overlays) ===
-    if (this._boss) {
-      const b = this._boss;
-      const bx = b.x;
-      const by = b.y;
-      const hpRatio = Math.max(0.2, b.hp / b.maxHp);
+    R.drawBoss(ctx, this._boss, this._time);
 
-      const bossImg = this.assets.boss;
-      if (bossImg && bossImg.complete) {
-        const bw = 78;
-        const bh = 58;
-        ctx.drawImage(bossImg, bx - bw / 2, by - bh / 2, bw, bh);
-      } else {
-        // Detailed procedural fallback
-        ctx.fillStyle = VIOLET;
-        ctx.beginPath();
-        ctx.ellipse(bx, by, 29, 21, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Pass 4: Draw vulnerable core (new Grok Imagine asset) - makes the "weak point" visually obvious and rewarding
-      const coreImg = this.assets.bossCore;
-      if (coreImg && coreImg.complete) {
-        const cw = 22 + Math.sin(this._time * 5) * 2;
-        const ch = 18 + Math.sin(this._time * 4.2) * 1.5;
-        ctx.drawImage(coreImg, bx - cw / 2 + 3, by - ch / 2 - 1, cw, ch);
-      }
-
-      // Always add juicy animated elements on top (hearts, eyes, tendrils) for life
-      const heartPulse = 3.5 + Math.sin(this._time * 3.8) * 1.3;
-      ctx.fillStyle = ORANGE;
-      ctx.beginPath();
-      ctx.arc(bx - 7, by - 5, heartPulse, 0, Math.PI * 2);
-      ctx.arc(bx + 8, by + 4, heartPulse * 0.85, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = WHITE;
-      ctx.beginPath();
-      ctx.arc(bx - 12, by - 7, 2.8, 0, Math.PI * 2);
-      ctx.arc(bx + 11, by - 8, 2.4, 0, Math.PI * 2);
-      ctx.arc(bx - 2, by + 9, 2.1, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = CYAN;
-      ctx.lineWidth = 1.8;
-      const t = this._time * 4.2;
-      for (let i = 0; i < 4; i++) {
-        const ty = by - 13 + i * 8.5;
-        const tx = bx - 27 - Math.sin(t + i) * 5;
-        ctx.beginPath();
-        ctx.moveTo(bx - 26, ty);
-        ctx.quadraticCurveTo(tx - 4, ty + Math.sin(t * 1.6 + i) * 3, tx - 11, ty + Math.cos(t + i * 2) * 2);
-        ctx.stroke();
-      }
-      ctx.lineWidth = 1;
-    }
-
-    // === POWERUPS (Grok Imagine icons + nice procedural variety) ===
     for (const p of this._powerups) {
-      const px = p.x;
-      const py = p.y;
-      const bob = Math.sin(p.life * 4) * 1.5;
-
-      const doubleImg = this.assets.powerDouble;
-      const shieldImg = this.assets.powerShield;
-      if (p.type === 'double' && doubleImg && doubleImg.complete) {
-        ctx.drawImage(doubleImg, px - 8, py + bob - 8, 16, 16);
-      } else if (p.type === 'double') {
-        ctx.fillStyle = '#ffe66b';
-        ctx.beginPath();
-        ctx.arc(px - 3.5, py + bob, 4.8, 0, Math.PI * 2);
-        ctx.arc(px + 4, py + bob, 4.8, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (p.type === 'shield' && shieldImg && shieldImg.complete) {
-        ctx.drawImage(shieldImg, px - 8, py + bob - 8, 16, 16);
-      } else if (p.type === 'shield') {
-        ctx.strokeStyle = '#7cffe0';
-        ctx.lineWidth = 2.4;
-        ctx.beginPath();
-        ctx.arc(px, py + bob, 7.5, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = '#7cffe0';
-        ctx.beginPath();
-        ctx.arc(px, py + bob, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 1;
-      } else if (p.type === 'speed') {
-        ctx.strokeStyle = '#ffeb3b';
-        ctx.lineWidth = 2.2;
-        for (let i = 0; i < 3; i++) {
-          const ox = -2 + i * 3.5;
-          ctx.beginPath();
-          ctx.moveTo(px + ox, py - 5 + bob);
-          ctx.lineTo(px + ox + 5, py + bob);
-          ctx.lineTo(px + ox, py + 5 + bob);
-          ctx.stroke();
-        }
-        ctx.lineWidth = 1;
-      } else if (p.type === 'pulse') {
-        const pr = 5.5 + Math.sin(this._time * 7) * 1.1;
-        ctx.strokeStyle = CYAN;
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        ctx.arc(px, py + bob, pr, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(px, py + bob, pr * 0.55, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = WHITE;
-        ctx.beginPath();
-        ctx.arc(px, py + bob, 2.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 1;
-      } else if (p.type === 'option') {
-        const optImg = this.assets.option;
-        if (optImg && optImg.complete) {
-          ctx.drawImage(optImg, px - 7, py + bob - 7, 14, 14);
-        } else {
-          ctx.fillStyle = CYAN;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else if (p.type === 'laser') {
-        const laserImg = this.assets.powerLaser;
-        if (laserImg && laserImg.complete) {
-          ctx.drawImage(laserImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.fillStyle = '#7cffe0';
-          ctx.fillRect(px - 6, py + bob - 2, 12, 4);
-          ctx.fillStyle = WHITE;
-          ctx.fillRect(px - 2, py + bob - 1, 4, 2);
-        }
-      } else if (p.type === 'bomb') {
-        // Bomb stock powerup - use a strong pulsing ring + core
-        const pr = 5 + Math.sin(this._time * 9) * 1.3;
-        ctx.strokeStyle = ORANGE;
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.arc(px, py + bob, pr, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = VIOLET;
-        ctx.beginPath();
-        ctx.arc(px, py + bob, 3.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = 1;
-      } else if (p.type === 'homing') {
-        const hImg = this.assets.powerHoming;
-        if (hImg && hImg.complete) {
-          ctx.drawImage(hImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.fillStyle = '#ffeb3b';
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = CYAN;
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'overcharge') {
-        const oImg = this.assets['player-overcharge'];
-        if (oImg && oImg.complete) {
-          ctx.drawImage(oImg, px - 9, py + bob - 9, 18, 18);
-        } else {
-          ctx.fillStyle = '#a0fff4';
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 6, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = WHITE;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 8, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'nova') {
-        const nImg = this.assets.powerNova;
-        if (nImg && nImg.complete) {
-          const s = 8 + Math.sin(this._time * 12) * 1.5;
-          ctx.drawImage(nImg, px - s, py + bob - s, s*2, s*2);
-        } else {
-          ctx.fillStyle = '#ffeb3b';
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = ORANGE;
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 10, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'focus') {
-        const fImg = this.assets.powerFocus;
-        if (fImg && fImg.complete) {
-          ctx.drawImage(fImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.strokeStyle = '#7cffe0';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(px - 5, py + bob);
-          ctx.lineTo(px + 5, py + bob);
-          ctx.moveTo(px, py + bob - 5);
-          ctx.lineTo(px, py + bob + 5);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'chain') {
-        const cImg = this.assets.powerChain;
-        if (cImg && cImg.complete) {
-          ctx.drawImage(cImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.strokeStyle = '#ffeb3b';
-          ctx.lineWidth = 2;
-          for (let i = 0; i < 3; i++) {
-            ctx.beginPath();
-            ctx.arc(px - 4 + i*4, py + bob, 3, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'reflect') {
-        const rImg = this.assets.powerReflect;
-        if (rImg && rImg.complete) {
-          ctx.drawImage(rImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.strokeStyle = '#a0fff4';
-          ctx.lineWidth = 2.2;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'swarm') {
-        const sImg = this.assets.powerSwarm;
-        if (sImg && sImg.complete) {
-          ctx.drawImage(sImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.fillStyle = '#9a2a4a';
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = CYAN;
-          for (let i = 0; i < 3; i++) ctx.fillRect(px - 6 + i * 5, py + bob - 1, 2, 2);
-        }
-      } else if (p.type === 'vortex') {
-        const vImg = this.assets.powerVortex;
-        if (vImg && vImg.complete) {
-          ctx.drawImage(vImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.strokeStyle = '#a0fff4';
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 6 + Math.sin(this._time * 14) * 1.5, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'echo') {
-        const eImg = this.assets.powerEcho;
-        if (eImg && eImg.complete) {
-          ctx.drawImage(eImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.fillStyle = '#a0fff4';
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = CYAN;
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 8, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'orbit') {
-        const oImg = this.assets.powerOrbit;
-        if (oImg && oImg.complete) {
-          ctx.drawImage(oImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.fillStyle = CYAN;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 4, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#7cffe0';
-          ctx.lineWidth = 1.8;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 7, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.lineWidth = 1;
-        }
-      } else if (p.type === 'charge') {
-        const chImg = this.assets.powerCharge;
-        if (chImg && chImg.complete) {
-          ctx.drawImage(chImg, px - 8, py + bob - 8, 16, 16);
-        } else {
-          ctx.fillStyle = '#ffeb3b';
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 6, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = ORANGE;
-          ctx.beginPath();
-          ctx.arc(px, py + bob, 3, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
+      R.drawPowerup(ctx, p, this._time);
     }
 
-    // === LIFE PULSE BOMBS (in flight) ===
     for (const pulse of this._pulses) {
-      const pr = pulse.r + Math.sin(this._time * 22) * 1.3;
-      ctx.fillStyle = 'rgba(140, 255, 235, 0.6)';
-      ctx.beginPath();
-      ctx.arc(pulse.x, pulse.y, pr, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = WHITE;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(pulse.x, pulse.y, pr * 0.65, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // inner rotating detail
-      ctx.strokeStyle = VIOLET;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(pulse.x + Math.cos(this._time * 9) * 3, pulse.y + Math.sin(this._time * 9) * 3, 2.5, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.lineWidth = 1;
+      R.drawPulseBomb(ctx, pulse, this._time);
     }
 
-    // === EXPLOSIONS (Grok Imagine explosion + expanding rings) ===
     for (const ex of this._explosions) {
-      const prog = ex.age / ex.duration;
-      const rad = (ex.size || 18) * (0.6 + prog * 1.35);
-      const alpha = Math.max(0.12, 1 - prog * 1.05);
-
-      // Pass 4: use up to 3 explosion frames from Grok Imagine for richer blasts
-      let frameKey = 'explosion-1';
-      if (prog > 0.66) frameKey = 'explosion-3';
-      else if (prog > 0.33) frameKey = 'explosion-2';
-      let expImg = this.assets[frameKey] || this.assets['explosion-1'];
-      // Pass 5/7/8: prefer surge or chain-core for massive clears (nova, surge mode etc)
-      if ((ex.size || 18) > 55 && this.assets['explosion-surge'] && this.assets['explosion-surge'].complete) {
-        expImg = this.assets['explosion-surge'];
-      } else if ((ex.size || 18) > 55 && this.assets['explosion-chain-core'] && this.assets['explosion-chain-core'].complete) {
-        expImg = this.assets['explosion-chain-core'];
-      } else if ((ex.size || 18) > 45 && this.assets['explosion-core'] && this.assets['explosion-core'].complete) {
-        expImg = this.assets['explosion-core'];
-      }
-      if (expImg && expImg.complete) {
-        const imgSize = 28 + prog * 36;
-        ctx.globalAlpha = Math.max(0.3, alpha);
-        ctx.drawImage(expImg, ex.x - imgSize / 2, ex.y - imgSize / 2, imgSize, imgSize);
-      }
-
-      ctx.globalAlpha = alpha * 0.85;
-      ctx.strokeStyle = ORANGE;
-      ctx.lineWidth = 2.8;
-      ctx.beginPath();
-      ctx.arc(ex.x, ex.y, rad, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.strokeStyle = WHITE;
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.arc(ex.x, ex.y, rad * 0.55, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.globalAlpha = alpha * 0.5;
-      ctx.fillStyle = VIOLET;
-      ctx.beginPath();
-      ctx.arc(ex.x, ex.y, rad * 0.35, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = 1;
-
-    // === PARTICLES (with optional color) ===
-    for (const p of this._particles) {
-      const a = Math.max(0.08, Math.min(1, p.life / 0.5));
-      ctx.globalAlpha = a;
-      ctx.fillStyle = p.color || WHITE;
-      ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-    }
-    ctx.globalAlpha = 1;
-
-    // === SCORE POPUPS ===
-    ctx.font = 'bold 10px "Space Grotesk", sans-serif';
-    ctx.textAlign = 'center';
-    for (const sp of this._scorePopups) {
-      const a = Math.max(0.1, sp.life / 0.85);
-      ctx.globalAlpha = a;
-      ctx.fillStyle = ORANGE;
-      ctx.fillText('+' + sp.amount, sp.x, sp.y);
-    }
-    ctx.globalAlpha = 1;
-    ctx.textAlign = 'left';
-
-    // === OPTION DRONES (Grok Imagine + upgraded art for progression feel, pass 9 prefers orbit for new powerup)
-    for (const o of this._options) {
-      let img = this.assets['option-upgraded-chain'] || this.assets['option-upgraded'] || this.assets.option;
-      if (o.isOrbit) img = this.assets['powerOrbit'] || this.assets['option-upgraded-chain'] || img;
-      const ow = 12, oh = 10;
-      if (img && img.complete) {
-        ctx.drawImage(img, o.x - ow / 2, o.y - oh / 2, ow, oh);
-      } else {
-        ctx.fillStyle = CYAN;
-        ctx.beginPath();
-        ctx.arc(o.x, o.y, 4.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      // subtle companion glow
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(o.x + 1, o.y, 7, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.lineWidth = 1;
+      R.drawExplosion(ctx, ex, this._time);
     }
 
-    // === COMBO + HIGH SCORE (gives "point" and feedback) ===
-    if (this._combo > 1) {
-      const comboAlpha = Math.min(1, this._comboTimer / 0.6 + 0.3);
-      ctx.globalAlpha = comboAlpha;
-      ctx.fillStyle = this._combo > 6 ? VIOLET : ORANGE;
-      ctx.font = 'bold 11px "Space Grotesk", sans-serif';
-      ctx.fillText('COMBO x' + this._combo, 18, 22);
-      ctx.globalAlpha = 1;
+    for (const b of this._enemyBullets) {
+      R.drawEnemyBullet(ctx, b);
     }
 
-    // Persistent high score (top right)
-    if (this._highScore > 0) {
-      ctx.fillStyle = 'rgba(160, 158, 180, 0.7)';
-      ctx.font = '10px "Inter", sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText('HI ' + this._highScore, GAME_W - 10, 16);
-      ctx.textAlign = 'left';
+    for (const b of this._bullets) {
+      R.drawBullet(ctx, b);
     }
 
-    // Pass 6/7/9 end-run stats for "point" (visible when dead)
-    if (this.gameOver) {
-      const elapsed = Math.max(0, this._time - (this._gameStartTime || this._time));
-      ctx.fillStyle = 'rgba(200, 198, 220, 0.85)';
-      ctx.font = 'bold 9px "Inter", sans-serif';
-      ctx.textAlign = 'center';
-      const statsY = GAME_H - 18;
-      const stats = `TIME ${elapsed.toFixed(0)}s  •  KILLS ${this._kills || 0}  •  MAX COMBO x${this._maxCombo || 0}`;
-      ctx.fillText(stats, GAME_W / 2, statsY);
+    R.drawOptions(ctx, this._options, this._time);
+    R.drawPlayer(ctx, {
+      player: this._player,
+      time: this._time,
+      powerLevel: this._powerLevel,
+      timers: {
+        overcharge: this._overchargeTimer,
+        laser: this._laserTimer,
+        focus: this._focusTimer,
+      },
+    });
 
-      // Pass 9 additional breakdown
-      const acc = (this._grazeCount || 0) + (this._damageTakenThisWave || 0) > 0 
-        ? Math.floor( (this._grazeCount || 0) / ((this._grazeCount || 0) + (this._damageTakenThisWave || 1)) * 100 ) : 100;
-      const perf = `PERFECT WAVES ${this._perfectWaves || 0}  •  ACC ${acc}%  •  x${(this._runScoreMulti || 1).toFixed(2)}`;
-      ctx.font = '8px "Inter", sans-serif';
-      ctx.fillText(perf, GAME_W / 2, statsY + 10);
+    R.drawParticles(ctx, this._particles);
+    R.drawScorePopups(ctx, this._scorePopups);
 
-      // Pass 7 performance rank/grade (gives real "point" and replay incentive)
-      const grade = this._computeGrade();
-      ctx.font = 'bold 14px "Space Grotesk", sans-serif';
-      ctx.fillStyle = grade === 'S' || grade === 'A' ? '#ffeb3b' : (grade === 'B' ? '#a0fff4' : 'rgba(200,198,220,0.9)');
-      ctx.fillText(`RANK ${grade}`, GAME_W / 2, statsY - 16);
-      ctx.textAlign = 'left';
-    }
+    R.drawHud(ctx, {
+      combo: this._combo,
+      comboTimer: this._comboTimer,
+      highScore: this._highScore,
+      gameOver: this.gameOver,
+      time: this._time,
+      gameStartTime: this._gameStartTime,
+      kills: this._kills,
+      maxCombo: this._maxCombo,
+      perfectWaves: this._perfectWaves,
+      grazeCount: this._grazeCount,
+      damageTakenThisWave: this._damageTakenThisWave,
+      runScoreMulti: this._runScoreMulti,
+      pulseCharge: this._pulseCharge,
+      pulseStock: this._pulseStock,
+      novaReady: this._novaReady,
+      wave: this._wave,
+      waveBanner: this._waveBanner,
+      powerLevel: this._powerLevel,
+      powerTimer: this._powerTimer,
+      level: this.level,
+      score: this.score,
+      timers: {
+        laser: this._laserTimer,
+        homing: this._homingTimer,
+        overcharge: this._overchargeTimer,
+        focus: this._focusTimer,
+        chain: this._chainTimer,
+        reflect: this._reflectTimer,
+        vortex: this._vortexTimer,
+        surge: this._surgeTimer,
+      },
+      computeGrade: () => this._computeGrade(),
+    });
 
     ctx.restore();
-  }
 
-  _drawBackground(ctx) {
-    // Use Grok Imagine generated biological nebula backgrounds with parallax
-    const bg1 = this.assets.background;
-    const bg2 = this.assets['background-layer2'];
-
-    if (bg1 && bg1.complete) {
-      const scroll1 = (this._scroll * 11) % GAME_W;
-      ctx.globalAlpha = 0.95;
-      ctx.drawImage(bg1, -scroll1, 0, GAME_W, GAME_H);
-      ctx.drawImage(bg1, GAME_W - scroll1, 0, GAME_W, GAME_H);
-      ctx.globalAlpha = 1;
-    } else {
-      // Fallback procedural distant veins
-      ctx.strokeStyle = 'rgba(90, 88, 130, 0.22)';
-      ctx.lineWidth = 1.5;
-      const s1 = this._scroll * 0.6;
-      for (let i = 0; i < 5; i++) {
-        const x = ((i * 137 - s1) % (GAME_W + 90)) - 45;
-        ctx.beginPath();
-        ctx.moveTo(x, 10);
-        ctx.quadraticCurveTo(x + 38, GAME_H * 0.33, x - 12, GAME_H * 0.72);
-        ctx.quadraticCurveTo(x + 55, GAME_H * 0.9, x + 22, GAME_H - 8);
-        ctx.stroke();
-      }
-    }
-
-    if (bg2 && bg2.complete) {
-      ctx.globalAlpha = 0.6;
-      const scroll2 = (this._scroll * 27) % GAME_W;
-      ctx.drawImage(bg2, -scroll2, 0, GAME_W, GAME_H);
-      ctx.drawImage(bg2, GAME_W - scroll2, 0, GAME_W, GAME_H);
-      ctx.globalAlpha = 1;
-    } else {
-      // Pulsing cells + mid layer fallback
-      ctx.fillStyle = 'rgba(120, 200, 255, 0.09)';
-      for (let i = 0; i < 22; i++) {
-        const x = ((i * 29 + this._scroll * 0.18) % (GAME_W + 50)) - 25;
-        const y = 14 + ((i * 17) % (GAME_H - 28));
-        const pr = 1.6 + Math.sin(this._time * 1.3 + i) * 0.7;
-        ctx.beginPath();
-        ctx.arc(x, y, pr, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    // Subtle CRT scan / flow lines on top (always)
-    ctx.strokeStyle = 'rgba(0, 245, 255, 0.06)';
-    ctx.lineWidth = 1;
-    for (let y = 18; y < GAME_H - 12; y += 19) {
-      const phase = ((y * 0.8 + this._scroll * 2.6) % 38) - 19;
-      ctx.beginPath();
-      ctx.moveTo(phase, y);
-      ctx.lineTo(GAME_W - 12 + phase * 0.3, y);
-      ctx.stroke();
-    }
+    // Post-process vignette in screen space
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    R.drawPost(ctx, this.canvasW, this.canvasH);
+    ctx.restore();
   }
 
   destroy() {
@@ -2664,8 +1827,9 @@ export class LifePulse {
     if (grazed) {
       this._lastGrazeTime = now;
       this._grazeCount = (this._grazeCount || 0) + 1;
-      const grazeScore = (this._focusTimer > 0) ? 9 : 4;
+      const grazeScore = (this._focusTimer > 0) ? 9 : 5;
       this.score += grazeScore;
+      this._pulseCharge = Math.min(100, (this._pulseCharge || 0) + 3);
       this._createHitParticle(px + 12 + Math.random() * 6, py + (Math.random() - 0.5) * 8);
     }
   }
