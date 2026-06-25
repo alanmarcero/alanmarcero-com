@@ -25,6 +25,12 @@ describe("SignalMeter", () => {
     expect(getByText("MAIN")).toBeInTheDocument();
   });
 
+  it("omits the label when empty (bars only)", () => {
+    const { container } = render(<SignalMeter label="" />);
+    expect(container.querySelector(".signal-meter__label")).not.toBeInTheDocument();
+    expect(container.querySelectorAll(".signal-meter__bar")).toHaveLength(7);
+  });
+
   it("staggers bars with an index custom property", () => {
     const { container } = render(<SignalMeter bars={3} />);
     const bars = container.querySelectorAll(".signal-meter__bar");
