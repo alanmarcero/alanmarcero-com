@@ -4,14 +4,12 @@ import Hero from './components/Hero';
 import PatchBankItem from './components/PatchBankItem';
 import MusicItem from './components/MusicItem';
 import SkeletonCard from './components/SkeletonCard';
-import BackToTop from './components/BackToTop';
 import NoResults from './components/NoResults';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollReveal from './hooks/useScrollReveal';
 import useScrollProgress from './hooks/useScrollProgress';
-import { WaveformDivider } from './components/graphics';
 import { patchBanks as patchBanksData } from './data/patchBanks';
 import { TOAST_DISMISS_MS } from './config';
 
@@ -113,7 +111,6 @@ function App() {
         >
           <div className="section-head">
             <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
-            <WaveformDivider variant="saw" className="cable-rule" />
           </div>
           {!searchQuery && (
             <p className="section-stat">
@@ -141,7 +138,6 @@ function App() {
         >
           <div className="section-head">
             <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
-            <WaveformDivider variant="sine" className="cable-rule" />
           </div>
           {!searchQuery && !musicLoading && !musicError && filteredMusicItems.length > 0 && (
             <p className="section-stat">
@@ -161,7 +157,6 @@ function App() {
       </main>
 
       <Footer />
-      <BackToTop />
       <Toast message={toast} visible={!!toast} />
     </>
   );
