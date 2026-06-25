@@ -36,6 +36,13 @@ describe("YouTubeEmbed", () => {
     expect(iframe).toHaveAttribute("allowFullScreen");
   });
 
+  it("lazy-loads the iframe to defer offscreen embeds", () => {
+    render(<YouTubeEmbed videoId="abc123" />);
+
+    const iframe = document.querySelector("iframe");
+    expect(iframe).toHaveAttribute("loading", "lazy");
+  });
+
   it("has default title attribute for accessibility", () => {
     render(<YouTubeEmbed videoId="abc123" />);
 

@@ -145,3 +145,10 @@ export const games = [
     factory: () => new LifePulse(),
   },
 ];
+
+/** Look up a game by its id (the value used in the URL hash). */
+export const getGameById = (id) => games.find((game) => game.id === id) || null;
+
+/** Pick a random game id. `rng` is injectable for deterministic tests. */
+export const pickRandomGameId = (rng = Math.random) =>
+  games[Math.floor(rng() * games.length)].id;

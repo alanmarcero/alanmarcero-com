@@ -14,7 +14,7 @@ describe("NoResults", () => {
   it("renders suggestion text", () => {
     render(<NoResults query="test" />);
 
-    expect(screen.getByText("Try different keywords or clear the search")).toBeInTheDocument();
+    expect(screen.getByText("Try different keywords, or clear the search.")).toBeInTheDocument();
   });
 
   it("wraps query in quotes", () => {

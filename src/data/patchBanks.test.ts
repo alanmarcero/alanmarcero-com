@@ -20,6 +20,15 @@ describe('patchBanks', () => {
     });
   });
 
+  it('count, when present, is a positive integer', () => {
+    patchBanks.forEach((bank) => {
+      if ('count' in bank) {
+        expect(Number.isInteger(bank.count)).toBe(true);
+        expect(bank.count).toBeGreaterThan(0);
+      }
+    });
+  });
+
   it('audioDemo is always an array', () => {
     patchBanks.forEach((bank) => {
       expect(Array.isArray(bank.audioDemo)).toBe(true);

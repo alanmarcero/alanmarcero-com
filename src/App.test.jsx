@@ -210,14 +210,14 @@ describe("App", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.queryByText(/No results for/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/No signal for/)).not.toBeInTheDocument();
     });
 
     const searchInput = screen.getByPlaceholderText("Search patches and music...");
     fireEvent.change(searchInput, { target: { value: "xyznonexistent" } });
 
     await waitFor(() => {
-      expect(screen.getByText(/No results for/)).toBeInTheDocument();
+      expect(screen.getByText(/No signal for/)).toBeInTheDocument();
       expect(screen.getByText(/xyznonexistent/)).toBeInTheDocument();
     });
   });
@@ -241,7 +241,7 @@ describe("App", () => {
     const searchInput = screen.getByPlaceholderText("Search patches and music...");
     fireEvent.change(searchInput, { target: { value: "xyznonexistent" } });
 
-    expect(screen.queryByText(/No results for/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/No signal for/)).not.toBeInTheDocument();
   });
 
   it("hides skeleton cards after fetch error", async () => {
