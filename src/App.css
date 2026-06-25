@@ -16,7 +16,7 @@
 
 .hero {
   position: relative;
-  padding: var(--space-7) var(--space-4) var(--space-6);
+  padding: var(--space-5) var(--space-4) var(--space-6);
   overflow: hidden;
 }
 
@@ -111,10 +111,6 @@
 .synthesist-mark__scope {
   --wave-shift: -20px;
   animation: wave-scroll 1.5s linear infinite;
-}
-
-.hero-kicker {
-  margin-top: var(--space-3);
 }
 
 .hero-name {
@@ -668,7 +664,7 @@ footer {
 
 @media (max-width: 40rem) {
   .hero {
-    padding-top: var(--space-6);
+    padding-top: var(--space-4);
   }
 
   .hero-mark {

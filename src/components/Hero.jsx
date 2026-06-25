@@ -32,7 +32,6 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
     <section className="hero">
       <HeroScopeTrace className="hero-scope" />
       <div className="hero-content">
-        <p className="hero-kicker" aria-hidden="true">00 — Console</p>
         <div className="hero-mark">
           <SynthesistMark size={180} />
         </div>
