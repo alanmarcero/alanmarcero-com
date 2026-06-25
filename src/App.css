@@ -7,7 +7,7 @@
      .section / .section-*    rack rows
      .module-grid / .module   faceplate cards (patch banks, music)
      .btn / .btn--ghost       panel buttons
-     .footer, .back-to-top, .toast, .skeleton, .cable-rule
+     .footer, .toast, .skeleton
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -348,26 +348,6 @@ main {
   font-weight: 600;
 }
 
-/* cable run between sections — the section title's waveform. Unlike the hero's
-   travelling trace, this one holds still and gently swells its amplitude, like
-   an LFO modulating a VCA (scoped to the main site, not the arcade divider). */
-.cable-rule {
-  width: 100%;
-  height: 48px;
-  color: var(--line-strong);
-  pointer-events: none;
-}
-
-.cable-rule path {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: divider-lfo 1.8s ease-in-out infinite;
-}
-
-/* offset the second divider's phase so the two never breathe in lockstep */
-.cable-rule[data-variant="sine"] path {
-  animation-delay: -0.9s;
-}
 
 /* --------------------------------------------------------------------------
    MODULES — faceplate cards
@@ -674,7 +654,7 @@ footer {
 }
 
 /* --------------------------------------------------------------------------
-   OVERLAYS — scroll progress, back-to-top, toast
+   OVERLAYS — scroll progress, toast
    -------------------------------------------------------------------------- */
 
 /* scroll-progress signal bar across the top of the viewport */
@@ -690,39 +670,6 @@ footer {
   background: linear-gradient(90deg, var(--phosphor-dim), var(--phosphor) 70%, var(--amber));
   box-shadow: 0 0 10px var(--phosphor-glow);
   pointer-events: none;
-}
-
-.back-to-top {
-  position: fixed;
-  right: var(--space-4);
-  bottom: var(--space-4);
-  z-index: 50;
-  width: 2.8rem;
-  height: 2.8rem;
-  display: grid;
-  place-items: center;
-  background: var(--panel);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  color: var(--phosphor);
-  box-shadow: var(--shadow-module);
-  opacity: 0;
-  transform: translateY(8px);
-  pointer-events: none;
-  transition:
-    opacity var(--dur-fast) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
-}
-
-.back-to-top--visible {
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-}
-
-.back-to-top:hover {
-  border-color: var(--phosphor);
-  box-shadow: 0 0 18px var(--phosphor-glow);
 }
 
 .toast {
@@ -791,13 +738,6 @@ footer {
    seamless; --wave-shift carries each context's period in user units */
 @keyframes wave-scroll {
   to { transform: translateX(var(--wave-shift, 0)); }
-}
-
-/* subtle LFO: the section-title wave swells and eases back about its centerline
-   (0% / 100% rest at full amplitude so reduced-motion holds a clean wave) */
-@keyframes divider-lfo {
-  0%, 100% { transform: scaleY(1); }
-  50%      { transform: scaleY(0.7); }
 }
 
 @keyframes hero-scope-flicker {
