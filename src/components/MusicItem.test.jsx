@@ -56,6 +56,20 @@ describe("MusicItem", () => {
     expect(card.style.getPropertyValue("--card-index")).toBe("3");
   });
 
+  it("tags remixes as Remix", () => {
+    render(<MusicItem item={{ ...mockItem, title: "Melbourne (Alan-M Remix)" }} />);
+
+    expect(screen.getByText("Remix")).toBeInTheDocument();
+    expect(screen.queryByText("Original")).not.toBeInTheDocument();
+  });
+
+  it("tags non-remixes as Original", () => {
+    render(<MusicItem item={mockItem} />);
+
+    expect(screen.getByText("Original")).toBeInTheDocument();
+    expect(screen.queryByText("Remix")).not.toBeInTheDocument();
+  });
+
   it("renders as a module panel with LED indicator", () => {
     const { container } = render(<MusicItem item={mockItem} />);
 

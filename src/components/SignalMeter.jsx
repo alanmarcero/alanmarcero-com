@@ -8,7 +8,7 @@ const DEFAULT_BARS = 7;
 export default function SignalMeter({ bars = DEFAULT_BARS, label = 'OUT', className = '' }) {
   return (
     <div className={`signal-meter ${className}`.trim()} aria-hidden="true">
-      <span className="signal-meter__label">{label}</span>
+      {label && <span className="signal-meter__label">{label}</span>}
       <span className="signal-meter__bars">
         {Array.from({ length: bars }, (_, i) => (
           <span key={i} className="signal-meter__bar" style={{ '--bar-index': i }} />
