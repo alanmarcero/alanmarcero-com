@@ -141,7 +141,7 @@ function App() {
           </div>
           {!searchQuery && !musicLoading && !musicError && filteredMusicItems.length > 0 && (
             <p className="section-stat">
-              <span className="section-stat__value">{filteredMusicItems.length}</span> releases &amp; remixes — streaming on YouTube
+              <span className="section-stat__value">{filteredMusicItems.length}</span> releases &amp; remixes — streaming on YouTube, Spotify, Pandora
             </p>
           )}
           <div className="module-grid">
