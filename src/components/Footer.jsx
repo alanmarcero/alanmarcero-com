@@ -6,7 +6,7 @@ function Footer() {
     <footer>
       <div className="footer-inner">
         <p className="footer-copyright">&copy; {new Date().getFullYear()} Alan Marcero</p>
-        <SignalMeter className="footer-meter" />
+        <SignalMeter className="footer-meter" label="" />
         <nav className="footer-links" aria-label="Site links">
           <a
             href={YOUTUBE_CHANNEL_URL}

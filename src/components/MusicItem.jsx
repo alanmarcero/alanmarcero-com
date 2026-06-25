@@ -7,8 +7,10 @@ function MusicItem({ item, style }) {
     <ModulePanel style={style}>
       <div className="module__head">
         <h3 className="module__title">{item.title}</h3>
-        {isRemix(item.title) && (
+        {isRemix(item.title) ? (
           <span className="module__badge module__badge--amber">Remix</span>
+        ) : (
+          <span className="module__badge">Original</span>
         )}
       </div>
       <div className="module__media">
