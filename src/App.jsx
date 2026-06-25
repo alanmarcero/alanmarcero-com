@@ -10,11 +10,16 @@ import Footer from './components/Footer';
 import Toast from './components/Toast';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollReveal from './hooks/useScrollReveal';
+import useScrollProgress from './hooks/useScrollProgress';
 import { WaveformDivider } from './components/graphics';
 import { patchBanks as patchBanksData } from './data/patchBanks';
 import { TOAST_DISMISS_MS } from './config';
 
 const SKELETON_COUNT = 3;
+
+// Catalog totals for the patch-bank value-prop stat (counted once).
+const TOTAL_PATCHES = patchBanksData.reduce((sum, bank) => sum + (bank.count || 0), 0);
+const PATCH_BANK_COUNT = patchBanksData.filter((bank) => bank.count).length;
 
 const createSearchFilter = (query, ...fields) => (item) => {
   if (!query) return true;
@@ -40,6 +45,7 @@ function App() {
 
   const [storeRef, storeVisible] = useScrollReveal();
   const [musicRef, musicVisible] = useScrollReveal();
+  const scrollProgress = useScrollProgress();
   const showToast = useCallback((message) => {
     clearTimeout(toastTimerRef.current);
     setToast(message);
@@ -85,6 +91,11 @@ function App() {
   return (
     <>
       <a href="#main-content" className="skip-to-content">Skip to main content</a>
+      <div
+        className="scroll-progress"
+        style={{ transform: `scaleX(${scrollProgress})` }}
+        aria-hidden="true"
+      />
       <Hero
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -104,6 +115,12 @@ function App() {
             <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
             <WaveformDivider variant="saw" className="cable-rule" />
           </div>
+          {!searchQuery && (
+            <p className="section-stat">
+              <span className="section-stat__value">{TOTAL_PATCHES.toLocaleString()}</span> patches across{' '}
+              <span className="section-stat__value">{PATCH_BANK_COUNT}</span> instruments — free to download
+            </p>
+          )}
           <div className="module-grid">
             {filteredPatchBanks.map((bank, index) => (
               <PatchBankItem
@@ -126,6 +143,11 @@ function App() {
             <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
             <WaveformDivider variant="sine" className="cable-rule" />
           </div>
+          {!searchQuery && !musicLoading && !musicError && filteredMusicItems.length > 0 && (
+            <p className="section-stat">
+              <span className="section-stat__value">{filteredMusicItems.length}</span> releases &amp; remixes — streaming on YouTube
+            </p>
+          )}
           <div className="module-grid">
             {musicLoading && Array.from({ length: SKELETON_COUNT }, (_, i) => (
               <SkeletonCard key={i} />
