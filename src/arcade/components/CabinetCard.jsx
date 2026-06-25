@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useGameLoop } from '../games/useGameLoop';
+import { controlGlyphs } from '../games/controlGlyphs';
 
 function CabinetCard({ game, onSelect }) {
   const canvasRef = useRef(null);
@@ -68,6 +69,11 @@ function CabinetCard({ game, onSelect }) {
           <div className="crt-monitor-overlay">
             <span className="crt-monitor-title">{game.name}</span>
             <span className="crt-monitor-insert">INSERT COIN</span>
+          </div>
+          <div className="crt-monitor-controls" aria-hidden="true">
+            {controlGlyphs(game.controls).map((glyph) => (
+              <span key={glyph} className="crt-monitor-key">{glyph}</span>
+            ))}
           </div>
         </div>
       </div>

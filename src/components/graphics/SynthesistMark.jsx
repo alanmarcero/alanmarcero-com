@@ -1,7 +1,26 @@
+import { buildWavePath } from "./waveforms";
+
 const PHOSPHOR = "var(--graphic-phosphor, #4af2a4)";
 const AMBER = "var(--graphic-amber, #ffb454)";
 const PANEL = "var(--graphic-panel, #14181a)";
 const PANEL_EDGE = "var(--graphic-panel-edge, #232a2e)";
+
+// The patch cable carries a bright "current" pulse (base line + dashed overlay
+// the CSS marches along).
+const CABLE_PATH = "M150 70 C 168 92 160 124 132 142 C 110 156 78 152 58 138";
+
+// The console's mini read-out: a sine that scrolls inside its clipped window
+// like a live signal. Drawn from x=0; positioned by the parent <g>.
+const SCOPE_X = 32;
+const SCOPE_Y = 146;
+const SCOPE_W = 60;
+const SCOPE_PERIOD = 20;
+const SCOPE_WAVE = buildWavePath("sine", {
+  width: SCOPE_W,
+  mid: SCOPE_Y,
+  amplitude: 11,
+  period: SCOPE_PERIOD,
+});
 
 /**
  * Hero portrait substitute: stylized synthesist at a modular console,
@@ -44,31 +63,48 @@ export default function SynthesistMark({
         <circle cx="122" cy="91" r="5" opacity="0.8" />
         <circle cx="142" cy="91" r="5" opacity="0.8" />
       </g>
-      {/* LEDs */}
-      <g fill={AMBER}>
+      {/* LEDs — VU activity (CSS blinks them in sequence) */}
+      <g className="synthesist-mark__leds" fill={AMBER}>
         <circle cx="118" cy="116" r="2.5" />
-        <circle cx="130" cy="116" r="2.5" opacity="0.5" />
-        <circle cx="142" cy="116" r="2.5" opacity="0.8" />
+        <circle cx="130" cy="116" r="2.5" />
+        <circle cx="142" cy="116" r="2.5" />
       </g>
-      {/* patch cable from panel down and around */}
+      {/* patch cable from panel down and around — base line + current pulse */}
       <path
-        d="M150 70 C 168 92 160 124 132 142 C 110 156 78 152 58 138"
+        d={CABLE_PATH}
         fill="none"
         stroke={AMBER}
         strokeWidth="2.5"
         strokeLinecap="round"
         opacity="0.85"
       />
-      {/* scope trace under the figure */}
       <path
-        d="M34 146 L48 146 L56 132 L66 158 L74 140 L80 146 L96 146"
+        className="synthesist-mark__cable-pulse"
+        pathLength="1"
+        d={CABLE_PATH}
         fill="none"
-        stroke={PHOSPHOR}
-        strokeWidth="2"
+        stroke="#ffe6bd"
+        strokeWidth="2.5"
         strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.9"
       />
+      {/* scope read-out under the figure — a live sine scrolling in its window */}
+      <clipPath id="synth-scope-clip">
+        <rect x={SCOPE_X} y={SCOPE_Y - 12} width={SCOPE_W} height="24" rx="2" />
+      </clipPath>
+      <g clipPath="url(#synth-scope-clip)">
+        <g transform={`translate(${SCOPE_X} 0)`}>
+          <path
+            className="synthesist-mark__scope"
+            d={SCOPE_WAVE}
+            fill="none"
+            stroke={PHOSPHOR}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.9"
+          />
+        </g>
+      </g>
     </svg>
   );
 }

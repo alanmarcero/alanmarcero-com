@@ -18,7 +18,8 @@ describe("Hero", () => {
   it("renders name and tagline", () => {
     render(<Hero {...defaultProps} />);
 
-    expect(screen.getByText("Alan Marcero")).toBeInTheDocument();
+    // name is split into a base + accented span, so match the heading's text
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Alan Marcero");
     expect(screen.getByText("Synthesizer Sound Designer & Producer")).toBeInTheDocument();
   });
 

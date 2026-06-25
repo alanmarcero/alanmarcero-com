@@ -1,6 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
-import { SynthesistMark } from './graphics';
+import { SynthesistMark, HeroScopeTrace } from './graphics';
+
+const isTypingTarget = (el) =>
+  el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
 
 function Hero({ searchQuery, onSearchChange, resultsCount }) {
   const inputRef = useRef(null);
@@ -13,14 +16,27 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
     }
   };
 
+  // Press "/" anywhere (when not already typing) to jump to search.
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (isTypingTarget(document.activeElement)) return;
+      event.preventDefault();
+      inputRef.current?.focus();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   return (
     <section className="hero">
+      <HeroScopeTrace className="hero-scope" />
       <div className="hero-content">
         <p className="hero-kicker" aria-hidden="true">00 — Console</p>
-        <div className="hero-scope hero-mark">
+        <div className="hero-mark">
           <SynthesistMark size={180} />
         </div>
-        <h1 className="hero-name">Alan Marcero</h1>
+        <h1 className="hero-name">Alan <span className="hero-name__accent">Marcero</span></h1>
         <p className="hero-tagline">Synthesizer Sound Designer &amp; Producer</p>
         <div className="hero-bio">
           <p>
@@ -53,7 +69,7 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
             onChange={(e) => onSearchChange(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          {searchQuery && (
+          {searchQuery ? (
             <button
               className="search-clear"
               onClick={() => onSearchChange('')}
@@ -61,6 +77,8 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
             >
               &times;
             </button>
+          ) : (
+            <kbd className="search-hint" aria-hidden="true">/</kbd>
           )}
         </div>
         {resultsCount && (

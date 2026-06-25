@@ -72,14 +72,44 @@
   max-width: var(--content-max);
 }
 
+.picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
 .picker-subtitle {
-  text-align: center;
-  margin: 0 0 var(--space-5);
+  margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-faint);
+}
+
+.picker-random {
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.picker-random:hover {
+  color: var(--phosphor);
+  border-color: var(--phosphor);
+  box-shadow: 0 0 16px var(--phosphor-glow);
 }
 
 .picker-grid {
@@ -262,6 +292,40 @@
   50% { opacity: 0; }
 }
 
+/* control hint — hidden at rest, fades in on hover over the live demo */
+.crt-monitor-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: linear-gradient(0deg, rgba(10, 12, 13, 0.9), transparent);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease-out);
+  pointer-events: none;
+}
+
+.crt-monitor:hover .crt-monitor-controls,
+.crt-monitor:focus-visible .crt-monitor-controls {
+  opacity: 1;
+}
+
+.crt-monitor-key {
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: rgba(10, 12, 13, 0.6);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--phosphor);
+}
+
 @keyframes crtFlicker {
   0%, 100% { opacity: 1; }
   48% { opacity: 0.92; }
@@ -309,7 +373,13 @@
   font-weight: 600;
 }
 
-.game-exit-btn {
+.game-hud-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.game-hud-btn {
   padding: 0.4rem 0.9rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line-strong);
@@ -319,12 +389,21 @@
   font-size: var(--text-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
   transition:
     color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out);
 }
 
+.game-hud-btn:hover,
+.game-hud-btn.is-copied {
+  color: var(--phosphor);
+  border-color: var(--phosphor);
+  box-shadow: 0 0 16px var(--phosphor-glow);
+}
+
+/* exit button keeps the amber "caution" hover */
 .game-exit-btn:hover {
   color: var(--amber);
   border-color: var(--amber);

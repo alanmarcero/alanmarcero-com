@@ -75,6 +75,18 @@ describe("PatchBankItem", () => {
     expect(onDownload).toHaveBeenCalledTimes(1);
   });
 
+  it("renders a patch-count badge when count is present", () => {
+    render(<PatchBankItem bank={{ ...mockBank, count: 128 }} />);
+
+    expect(screen.getByText("128 patches")).toBeInTheDocument();
+  });
+
+  it("omits the badge when count is absent", () => {
+    const { container } = render(<PatchBankItem bank={mockBank} />);
+
+    expect(container.querySelector(".module__badge")).not.toBeInTheDocument();
+  });
+
   it("renders as a module panel with LED indicator", () => {
     const { container } = render(<PatchBankItem bank={mockBank} />);
 

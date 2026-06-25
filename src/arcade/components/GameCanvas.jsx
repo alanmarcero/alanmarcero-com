@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useGameLoop } from '../games/useGameLoop';
+import { copyToClipboard } from '../../utils/clipboard';
 import TouchControls from './TouchControls';
 
 function GameCanvas({ game, onExit }) {
@@ -7,6 +8,18 @@ function GameCanvas({ game, onExit }) {
   const gameRef = useRef(null);
   const [hud, setHud] = useState({ score: 0, lives: 3, level: 1 });
   const [gameOver, setGameOver] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const copyTimerRef = useRef(null);
+
+  const handleCopyLink = useCallback(async () => {
+    const ok = await copyToClipboard(window.location.href);
+    if (!ok) return;
+    setLinkCopied(true);
+    clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setLinkCopied(false), 1800);
+  }, []);
+
+  useEffect(() => () => clearTimeout(copyTimerRef.current), []);
 
   // Initialize game
   useEffect(() => {
@@ -97,7 +110,16 @@ function GameCanvas({ game, onExit }) {
           )}
           <div className="game-hud-stat">LEVEL <span>{hud.level}</span></div>
         </div>
-        <button className="game-exit-btn" onClick={onExit}>ESC Exit</button>
+        <div className="game-hud-actions">
+          <button
+            className={`game-hud-btn${linkCopied ? ' is-copied' : ''}`}
+            onClick={handleCopyLink}
+            aria-label="Copy a direct link to this game"
+          >
+            {linkCopied ? '✓ Link Copied' : 'Copy Link'}
+          </button>
+          <button className="game-hud-btn game-exit-btn" onClick={onExit}>ESC Exit</button>
+        </div>
       </div>
 
       <div className="game-canvas-area">

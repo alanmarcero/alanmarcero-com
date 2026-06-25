@@ -4,7 +4,12 @@ import ModulePanel from './ModulePanel';
 function PatchBankItem({ bank, style, onDownload }) {
   return (
     <ModulePanel style={style}>
-      <h3 className="module__title">{bank.name}</h3>
+      <div className="module__head">
+        <h3 className="module__title">{bank.name}</h3>
+        {bank.count ? (
+          <span className="module__badge">{bank.count} patches</span>
+        ) : null}
+      </div>
       <p className="module__desc">{bank.description}</p>
 
       {bank.audioDemo?.filter(Boolean).map((videoId) => (
@@ -14,7 +19,7 @@ function PatchBankItem({ bank, style, onDownload }) {
       ))}
 
       <div className="module__actions">
-        <a className="btn" href={bank.downloadLink} onClick={onDownload}>
+        <a className="btn btn--download" href={bank.downloadLink} onClick={onDownload}>
           Download
         </a>
       </div>
