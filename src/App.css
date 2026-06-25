@@ -361,12 +361,12 @@ main {
 .cable-rule path {
   transform-box: fill-box;
   transform-origin: center;
-  animation: divider-lfo 5s ease-in-out infinite;
+  animation: divider-lfo 1.8s ease-in-out infinite;
 }
 
 /* offset the second divider's phase so the two never breathe in lockstep */
 .cable-rule[data-variant="sine"] path {
-  animation-delay: -2.4s;
+  animation-delay: -0.9s;
 }
 
 /* --------------------------------------------------------------------------

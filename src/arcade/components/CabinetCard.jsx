@@ -1,10 +1,15 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useGameLoop } from '../games/useGameLoop';
 import { controlGlyphs } from '../games/controlGlyphs';
+
+// Cabinet demos are tiny thumbnails — a low frame rate is plenty and keeps the
+// grid of 12 live canvases from saturating the compositor.
+const DEMO_FPS = 15;
 
 function CabinetCard({ game, onSelect }) {
   const canvasRef = useRef(null);
   const gameRef = useRef(null);
+  const [inView, setInView] = useState(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -37,6 +42,7 @@ function CabinetCard({ game, onSelect }) {
     gameRef.current = { instance, ctx };
     resize();
     instance.init(canvas.width, canvas.height);
+    instance.render(ctx); // paint one frame so the cabinet isn't blank before the loop ticks
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas.parentElement);
@@ -48,12 +54,27 @@ function CabinetCard({ game, onSelect }) {
     };
   }, [game]);
 
-  useGameLoop((dt) => {
-    const ref = gameRef.current;
-    if (!ref) return;
-    ref.instance.update(dt);
-    ref.instance.render(ref.ctx);
-  });
+  // Only run a demo while its cabinet is on-screen.
+  useEffect(() => {
+    const el = canvasRef.current?.closest('.crt-monitor');
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '100px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useGameLoop(
+    (dt) => {
+      const ref = gameRef.current;
+      if (!ref) return;
+      ref.instance.update(dt);
+      ref.instance.render(ref.ctx);
+    },
+    { fps: DEMO_FPS, active: inView }
+  );
 
   return (
     <button
