@@ -7,6 +7,7 @@ import SkeletonCard from './components/SkeletonCard';
 import NoResults from './components/NoResults';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
+import { LissajousHalo } from './components/graphics';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollProgress from './hooks/useScrollProgress';
 import { patchBanks as patchBanksData } from './data/patchBanks';
@@ -139,6 +140,10 @@ function App() {
           </div>
         </section>
       </main>
+
+      <div className="page-scope">
+        <LissajousHalo className="page-scope__trace" />
+      </div>
 
       <Footer />
       <Toast message={toast} visible={!!toast} />

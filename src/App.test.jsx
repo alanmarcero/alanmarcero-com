@@ -311,6 +311,18 @@ describe("App", () => {
     jest.useRealTimers();
   });
 
+  it("renders the parametric scope centered above the footer", () => {
+    global.fetch.mockImplementationOnce(() => new Promise(() => {}));
+    const { container } = render(<App />);
+
+    const scope = container.querySelector(".page-scope");
+    const footer = container.querySelector("footer");
+    expect(scope).toBeTruthy();
+    expect(scope.querySelector(".page-scope__trace")).toBeTruthy();
+    // scope precedes the footer in document order
+    expect(scope.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("renders skip-to-content link targeting #main-content", async () => {
     mockFetchSuccess();
     const { container } = render(<App />);

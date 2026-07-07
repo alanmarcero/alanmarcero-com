@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
-import { SynthesistMark, HeroScopeTrace, LissajousHalo } from './graphics';
+import { SynthesistMark, HeroScopeTrace } from './graphics';
 
 const isTypingTarget = (el) =>
   el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
@@ -33,7 +33,6 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
       <HeroScopeTrace className="hero-scope" />
       <div className="hero-content">
         <div className="hero-mark">
-          <LissajousHalo className="hero-mark-halo" />
           <SynthesistMark size={180} />
         </div>
         <h1 className="hero-name">Alan <span className="hero-name__accent">Marcero</span></h1>
