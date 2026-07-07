@@ -64,8 +64,6 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── useMusicItems.test.js     # useMusicItems tests
 │   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
 │   │   ├── useScrollPosition.test.js # useScrollPosition tests
-│   │   ├── useScrollReveal.js        # Custom hook: IntersectionObserver scroll-reveal
-│   │   └── useScrollReveal.test.js   # useScrollReveal tests
 │   ├── utils/
 │   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
 │   │   └── cardGlow.test.js       # cardGlow tests
@@ -73,7 +71,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
 │   │   └── patchBanks.test.ts    # Data validation tests
 │   ├── config.js                 # Centralized config (Lambda URL, external URLs, scroll threshold, toast duration)
-│   ├── App.jsx                   # Main app: search filtering, scroll reveal, toast, layout
+│   ├── App.jsx                   # Main app: search filtering, toast, layout
 │   ├── App.test.jsx              # App integration tests
 │   ├── App.css                   # Main page stylesheet (imports shared/theme.css): hero, cards, animations, responsive
 │   ├── main.jsx                  # React entry point (main page)
@@ -142,11 +140,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 583 tests across 27 suites**
+**Total: 709 tests across 41 suites**
 
 ## Key Files
 
-- `src/App.jsx` — Main component: client-side search filtering, scroll reveal, toast notifications, layout (delegates fetch to useMusicItems hook)
+- `src/App.jsx` — Main component: client-side search filtering, toast notifications, layout (delegates fetch to useMusicItems hook)
 - `src/shared/theme.css` — Shared CSS custom properties, CRT background/scanline base, resets, `.btn-primary`, reduced-motion. Imported by both `App.css` and `ArcadeApp.css`
 - `src/App.css` — Main page stylesheet (imports shared theme): hero, cards, CRT scanline sweep, glitch keyframes, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, CTA row (YouTube + Arcade links), pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
@@ -198,8 +196,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `.hero-cta` — Hero CTA (inherits .btn-primary gradient pill)
 - `.hero-cta--secondary` — Outlined CTA variant (transparent bg, cyan border, hover glow)
 - `.store-item` — Frosted glass card (8px radius, backdrop-filter: blur(12px), cyan left-border glow on hover, mouse-follow glow via ::before, flexbox column layout with download button at bottom-center)
-- `.section-title` — Left-aligned heading with flowing gradient underline (::after, 60px wide, 4px tall, gradientFlow animation, animates in with scroll reveal)
-- `.scroll-reveal` / `.scroll-reveal--visible` — Fade-up reveal on scroll via IntersectionObserver
+- `.section-title` — Left-aligned heading with engraved channel-number kicker (::before from data-kicker)
 - `.toast` / `.toast--visible` — Fixed bottom-center notification with slide-up animation
 - `.content-grid` — Responsive grid layout for patch bank and music sections (20px bottom padding)
 - `.skeleton-card` — Loading placeholder card with cyan shimmer animation
@@ -214,6 +211,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - YouTube embeds: 85% width, 180px height within cards
 - Buttons: pill-shaped (50px border-radius), gradient background
 - Hero image: circular (50% radius, 260px desktop / 220px tablet / 180px mobile), cyan border with multi-layered neon glow
+- Hero mark halo (`LissajousHalo` in `components/graphics/`): a live XY-oscilloscope trace built from **parametric equations** (`parametric.js` — Lissajous + rose curves) rings the hero badge, morphing between figures via SMIL while an amber beam packet crawls the trace; slowly spins. Sits behind the mark (which is ~0.78 opacity so the rose reads through it). Decorative, `aria-hidden`, dropped to a static curve under `prefers-reduced-motion`
 - Hero content: max-width 900px, hero bio: max-width 820px
 - Hero backdrop: 20% opacity background image
 - Hero name: flowing gradient text (cyan→violet→cyan, 300% background-size) via `background-clip: text`, randomized dual CRT glitch via JS-driven `.glitch-1`/`.glitch-2` classes on ::before/::after pseudo-elements
@@ -233,7 +231,6 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `@keyframes glitch1Top / glitch1Bottom` — Standard CRT glitch (500ms, 3-5px translates, clip-path slices)
 - `@keyframes glitch2Top / glitch2Bottom` — Intense CRT glitch (700ms, 8-12px translates, skewX distortion, flicker gaps)
 - `@keyframes gradientFlow` — Flowing cyan→violet gradient on all section title underlines (3s linear infinite)
-- Scroll-reveal fade-up for sections (IntersectionObserver, one-shot, 0.6s ease)
 - Mouse-follow radial glow on cards (CSS custom properties `--mouse-x`/`--mouse-y`)
 - Button press feedback (scale 0.96 on :active)
 - Section-title underline grow (0→60px, 4px tall, 0.5s ease, 0.2s delay after reveal)
@@ -261,12 +258,12 @@ App
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
-├── Patch Banks section (scroll-reveal, ref=storeRef)
+├── Patch Banks section
 │   └── PatchBankItem[] (bank, style={--card-index}, onDownload, cardGlowHandlers)
 │       ├── Name, description
 │       ├── YouTubeEmbed[] (videoId)
 │       └── Download button (.btn-primary, triggers toast)
-├── Music section (scroll-reveal, ref=musicRef, consistent background)
+├── Music section (consistent background)
 │   └── MusicItem[] (item, style={--card-index}, cardGlowHandlers)
 │       ├── Title
 │       ├── YouTubeEmbed (videoId)
@@ -307,7 +304,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (583 tests, 27 suites)
+npm test                       # Jest (709 tests, 41 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally

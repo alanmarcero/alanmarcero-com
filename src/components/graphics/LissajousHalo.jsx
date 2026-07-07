@@ -1,0 +1,117 @@
+import usePrefersReducedMotion from "../../hooks/usePrefersReducedMotion";
+import { lissajous, rose, buildParametricPath } from "./parametric";
+
+/**
+ * A live XY-oscilloscope halo for the hero mark. Traces parametric figures
+ * (Lissajous curves and a rose) as a neon ring, morphing between figures via
+ * SMIL while a bright beam packet crawls along the trace like a scope's dot.
+ * The badge on top masks the center, so only the outer excursions read as a
+ * glowing halo. Decorative; the slot's CSS `color` drives the hue. The morph
+ * and the beam are dropped under `prefers-reduced-motion`.
+ */
+
+// Centered square viewBox; the curve is scaled to ring the badge beneath it.
+const SIZE = 320;
+const CENTER = SIZE / 2;
+const RADIUS = 146;
+
+// The figures the trace morphs through, in order (then it loops back).
+// Rose curves are radially symmetric, so their petals ring the badge evenly
+// and read as a halo centered on the mark; one Lissajous keeps the scope feel.
+const FIGURES = [
+  rose(3),
+  rose(5),
+  rose(4),
+  lissajous(5, 4, Math.PI / 2),
+];
+
+const FIGURE_PATHS = FIGURES.map((fn) =>
+  buildParametricPath(fn, { cx: CENTER, cy: CENTER, radius: RADIUS })
+);
+
+// symmetric ease for every hold→morph→hold leg
+const EASE = "0.42 0 0.58 1";
+
+/**
+ * Build the SMIL morph attributes: hold each figure, morph to the next, then
+ * loop back to the first. Doubling each figure creates the "hold" plateaus;
+ * evenly spaced keyTimes make holds and morphs equal length.
+ */
+function buildMorph(figurePaths) {
+  const values = [];
+  figurePaths.forEach((path) => values.push(path, path));
+  values.push(figurePaths[0]);
+  const steps = values.length - 1;
+  const keyTimes = values.map((_, i) => +(i / steps).toFixed(4)).join(";");
+  const keySplines = Array(steps).fill(EASE).join(";");
+  return { values: values.join(";"), keyTimes, keySplines, dur: "24s" };
+}
+
+const MORPH = buildMorph(FIGURE_PATHS);
+
+export default function LissajousHalo({ className = "" }) {
+  const reduced = usePrefersReducedMotion();
+  const baseD = FIGURE_PATHS[0];
+
+  const morph = () =>
+    reduced ? null : (
+      <animate
+        attributeName="d"
+        dur={MORPH.dur}
+        repeatCount="indefinite"
+        calcMode="spline"
+        keyTimes={MORPH.keyTimes}
+        keySplines={MORPH.keySplines}
+        values={MORPH.values}
+      />
+    );
+
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox={`0 0 ${SIZE} ${SIZE}`}
+      className={`lissajous-halo ${className}`.trim()}
+    >
+      <path
+        className="lissajous-halo__echo"
+        d={baseD}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.16"
+        transform="translate(0 3)"
+      >
+        {morph()}
+      </path>
+      <path
+        className="lissajous-halo__main"
+        d={baseD}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.5"
+      >
+        {morph()}
+      </path>
+      {!reduced && (
+        <path
+          className="lissajous-halo__beam"
+          pathLength="1"
+          d={baseD}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {morph()}
+        </path>
+      )}
+    </svg>
+  );
+}
