@@ -75,6 +75,7 @@
 /* the operator mark (SVG portrait module): larger focal badge with a
    breathing phosphor halo */
 .hero-mark {
+  position: relative;
   width: 240px;
   height: 240px;
   border-radius: 50%;
@@ -88,10 +89,37 @@
   animation: hero-boot 0.55s var(--ease-out) both, mark-halo 4.5s ease-in-out infinite;
 }
 
-/* the SVG fills the badge regardless of its intrinsic width/height attrs */
+/* the SVG fills the badge regardless of its intrinsic width/height attrs,
+   and sits above the parametric halo behind it — slightly translucent so the
+   rose trace reads through the console */
 .hero-mark .synthesist-mark {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
+  opacity: 0.78;
+}
+
+/* an XY-oscilloscope halo: a parametric (Lissajous/rose) trace ringing the
+   badge. It sits behind the mark, which masks the center so only the outer
+   excursions read as a glowing halo. The whole figure drifts round slowly. */
+.hero-mark-halo {
+  position: absolute;
+  inset: -40px;
+  z-index: 0;
+  color: var(--phosphor);
+  pointer-events: none;
+  filter: drop-shadow(0 0 5px var(--phosphor-glow));
+  animation: halo-spin 60s linear infinite;
+}
+
+/* a bright amber packet rides the trace like a scope's beam dot, marching one
+   full lap of the pathLength="1" curve (reuses the cable-pulse keyframe) */
+.lissajous-halo__beam {
+  color: var(--amber);
+  stroke-dasharray: 0.05 0.95;
+  filter: drop-shadow(0 0 4px var(--amber));
+  animation: signal-run 4.2s linear infinite;
 }
 
 /* VU LEDs blink in sequence */
@@ -704,6 +732,11 @@ footer {
   0%, 100% { opacity: 0.18; }
   40%      { opacity: 0.13; }
   72%      { opacity: 0.22; }
+}
+
+/* the parametric halo drifts slowly around the badge */
+@keyframes halo-spin {
+  to { transform: rotate(360deg); }
 }
 
 /* operator badge halo breathes */

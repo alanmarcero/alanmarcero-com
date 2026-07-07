@@ -8,7 +8,6 @@ import NoResults from './components/NoResults';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
 import useMusicItems from './hooks/useMusicItems';
-import useScrollReveal from './hooks/useScrollReveal';
 import useScrollProgress from './hooks/useScrollProgress';
 import { patchBanks as patchBanksData } from './data/patchBanks';
 import { TOAST_DISMISS_MS } from './config';
@@ -26,9 +25,6 @@ const createSearchFilter = (query, ...fields) => (item) => {
   return searchableText.includes(lowerQuery);
 };
 
-const revealClass = (isVisible, extra = '') =>
-  `${extra ? extra + ' ' : ''}scroll-reveal${isVisible ? ' scroll-reveal--visible' : ''}`;
-
 const readSearchFromUrl = () => {
   if (typeof window === 'undefined') return '';
   const params = new URLSearchParams(window.location.search);
@@ -41,8 +37,6 @@ function App() {
   const toastTimerRef = useRef(null);
   const { musicItems, musicLoading, musicError } = useMusicItems();
 
-  const [storeRef, storeVisible] = useScrollReveal();
-  const [musicRef, musicVisible] = useScrollReveal();
   const scrollProgress = useScrollProgress();
   const showToast = useCallback((message) => {
     clearTimeout(toastTimerRef.current);
@@ -103,12 +97,7 @@ function App() {
       <main id="main-content">
         {hasNoResults && <NoResults query={searchQuery} />}
 
-        <section
-          id="store"
-          ref={storeRef}
-          className={revealClass(storeVisible)}
-          aria-labelledby="store-heading"
-        >
+        <section id="store" aria-labelledby="store-heading">
           <div className="section-head">
             <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
           </div>
@@ -130,12 +119,7 @@ function App() {
           </div>
         </section>
 
-        <section
-          id="music-remixes"
-          ref={musicRef}
-          className={revealClass(musicVisible)}
-          aria-labelledby="music-heading"
-        >
+        <section id="music-remixes" aria-labelledby="music-heading">
           <div className="section-head">
             <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
           </div>
