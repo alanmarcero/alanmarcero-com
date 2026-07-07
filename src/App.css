@@ -99,7 +99,9 @@
 .page-scope {
   display: flex;
   justify-content: center;
-  padding: var(--space-6) var(--space-4) var(--space-5);
+  /* symmetric vertical padding so the gap above (to content) matches the gap
+     below (to footer) */
+  padding: var(--space-5) var(--space-4);
 }
 
 .page-scope__trace {
@@ -315,7 +317,8 @@
 main {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0 var(--space-4) var(--space-7);
+  /* no bottom padding: the page-scope below owns the closing rhythm */
+  padding: 0 var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-7);
