@@ -191,20 +191,6 @@ button {
   top: var(--space-3);
 }
 
-/* scroll reveal — consumed by useScrollReveal */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity var(--dur-slow) var(--ease-out),
-    transform var(--dur-slow) var(--ease-out);
-}
-
-.scroll-reveal--visible {
-  opacity: 1;
-  transform: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -216,10 +202,5 @@ button {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .scroll-reveal {
-    opacity: 1;
-    transform: none;
   }
 }
