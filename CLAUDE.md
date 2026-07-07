@@ -140,7 +140,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 709 tests across 41 suites**
+**Total: 710 tests across 41 suites**
 
 ## Key Files
 
@@ -211,7 +211,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - YouTube embeds: 85% width, 180px height within cards
 - Buttons: pill-shaped (50px border-radius), gradient background
 - Hero image: circular (50% radius, 260px desktop / 220px tablet / 180px mobile), cyan border with multi-layered neon glow
-- Hero mark halo (`LissajousHalo` in `components/graphics/`): a live XY-oscilloscope trace built from **parametric equations** (`parametric.js` — Lissajous + rose curves) rings the hero badge, morphing between figures via SMIL while an amber beam packet crawls the trace; slowly spins. Sits behind the mark (which is ~0.78 opacity so the rose reads through it). Decorative, `aria-hidden`, dropped to a static curve under `prefers-reduced-motion`
+- Page scope (`LissajousHalo` in `components/graphics/`, rendered in `.page-scope` above the footer): a live XY-oscilloscope trace built from **parametric equations** (`parametric.js` — Lissajous + rose curves), centered at the foot of the page, morphing between figures via SMIL while an amber beam packet crawls the trace; slowly spins. Decorative, `aria-hidden`, dropped to a static curve under `prefers-reduced-motion`
 - Hero content: max-width 900px, hero bio: max-width 820px
 - Hero backdrop: 20% opacity background image
 - Hero name: flowing gradient text (cyan→violet→cyan, 300% background-size) via `background-clip: text`, randomized dual CRT glitch via JS-driven `.glitch-1`/`.glitch-2` classes on ::before/::after pseudo-elements
@@ -268,6 +268,7 @@ App
 │       ├── Title
 │       ├── YouTubeEmbed (videoId)
 │       └── Description
+├── Page scope (.page-scope → LissajousHalo, centered parametric trace above footer)
 ├── Footer
 │   ├── Nav links (YouTube, GitHub) — semantic <nav> element
 │   └── Dynamic copyright year
@@ -304,7 +305,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (709 tests, 41 suites)
+npm test                       # Jest (710 tests, 41 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
