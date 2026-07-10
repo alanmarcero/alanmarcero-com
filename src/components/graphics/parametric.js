@@ -16,8 +16,10 @@
 
 const TAU = Math.PI * 2;
 
-// Samples per closed curve. Higher = smoother figure, crisper petals.
-export const CURVE_SAMPLES = 240;
+// Samples per closed curve. Higher = smoother figure, crisper petals, but SMIL
+// morphs interpolate every point each frame on the main thread, so keep it just
+// high enough to read smoothly (150 segments around a closed curve is plenty).
+export const CURVE_SAMPLES = 150;
 
 /**
  * Lissajous figure: `x = sin(a·2π·t + δ)`, `y = sin(b·2π·t)`.
