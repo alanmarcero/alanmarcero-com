@@ -123,6 +123,13 @@
   animation: signal-run 4.2s linear infinite;
 }
 
+/* frozen while scrolled off-screen: the spin (which forces the drop-shadow to
+   re-rasterize each frame) and the beam march both halt. SMIL is paused in JS. */
+.lissajous-halo--paused,
+.lissajous-halo--paused .lissajous-halo__beam {
+  animation-play-state: paused;
+}
+
 /* VU LEDs blink in sequence */
 .synthesist-mark__leds circle {
   animation: mark-led 1.6s steps(1, end) infinite;
