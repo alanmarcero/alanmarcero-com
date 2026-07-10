@@ -38,7 +38,7 @@ function App() {
   const toastTimerRef = useRef(null);
   const { musicItems, musicLoading, musicError } = useMusicItems();
 
-  const scrollProgress = useScrollProgress();
+  const scrollProgressRef = useScrollProgress();
   const showToast = useCallback((message) => {
     clearTimeout(toastTimerRef.current);
     setToast(message);
@@ -85,8 +85,8 @@ function App() {
     <>
       <a href="#main-content" className="skip-to-content">Skip to main content</a>
       <div
+        ref={scrollProgressRef}
         className="scroll-progress"
-        style={{ transform: `scaleX(${scrollProgress})` }}
         aria-hidden="true"
       />
       <Hero
