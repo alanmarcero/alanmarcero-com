@@ -41,6 +41,7 @@ function YouTubeEmbed({ videoId, title = 'YouTube video', width = '100%', height
         src={thumbnailUrl(videoId)}
         alt=""
         loading="lazy"
+        decoding="async"
         width="480"
         height="360"
       />
