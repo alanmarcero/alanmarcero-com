@@ -194,7 +194,7 @@
 :root[data-era="y2001"] main,
 :root[data-era="y2001"] section {
   background: transparent !important;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -362,6 +362,9 @@
 
 /* the bottom: dividers, games, favorites wall, hit counter, webring */
 .gc-chrome { position: relative; z-index: 20; }
+/* the site-wide reset sets img { display:block }; the GIFs need to flow inline
+   so marquees, clusters, and the favorites wall run horizontally, not stacked */
+.gc-chrome img { display: inline-block; vertical-align: middle; }
 .gc-footer {
   position: relative;
   z-index: 20;
@@ -371,18 +374,31 @@
   color: #fff;
   font-family: "Comic Sans MS", cursive;
 }
-.gc-bar { display: block; width: 100%; max-width: 640px; height: 8px; margin: 12px auto; }
-.gc-block { margin: 10px auto; }
-.gc-heading { color: #ffff00; font-size: 1.3rem; margin: 6px 0; text-shadow: 2px 2px 0 #f0f; }
-.gc-block img { height: 48px; margin: 4px; vertical-align: middle; }
+.gc-bar { display: block; width: 100%; max-width: 900px; height: 8px; margin: 14px auto; }
+.gc-block { margin: 14px auto; }
+.gc-heading { color: #ffff00; font-size: 1.4rem; margin: 6px 0; text-shadow: 2px 2px 0 #f0f; }
+.gc-block p {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 8px auto;
+}
+.gc-block img { height: 52px; }
 .gc-small { color: #0ff; font-size: 0.85rem; }
 
+/* the "favorite gifs" wall: a wrapping horizontal grid, not a vertical column */
 .gc-wall {
-  max-width: 680px;
-  margin: 0 auto;
-  line-height: 2.4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px 16px;
+  max-width: 1000px;
+  margin: 10px auto;
 }
-.gc-wall img { height: 34px; margin: 3px; vertical-align: middle; }
+.gc-wall img { height: 44px; width: auto; }
 
 .gc-counter {
   display: inline-flex;
@@ -403,11 +419,34 @@
   font-size: 1.3rem;
   font-weight: 700;
 }
-.gc-badges img { height: 31px; margin: 4px; }
-.gc-webring { color: #ff0; }
+.gc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 16px;
+}
+.gc-badges img { height: 34px; }
+.gc-webring {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: #ff0;
+}
 .gc-webring a { color: #0ff; }
-.gc-webring img { height: 20px; }
-.gc-fineprint { color: #aaa; font-size: 0.8rem; margin-top: 10px; }
+.gc-webring img { height: 22px; }
+.gc-fineprint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  color: #aaa;
+  font-size: 0.8rem;
+  margin-top: 12px;
+}
 .gc-fineprint .gc-blink { color: #f0f; }
 
 /* --------------------------------------------------------------------------
@@ -479,7 +518,7 @@
 }
 :root[data-era="y2007"] .hero,
 :root[data-era="y2007"] main {
-  max-width: 820px;
+  max-width: 1080px;
   margin: 0 auto !important;
   background: #232323 !important;
 }
@@ -527,18 +566,22 @@
 }
 :root[data-era="y2014"] .hero,
 :root[data-era="y2020"] .hero {
-  max-width: 880px;
+  max-width: 1180px;
   margin: 0 auto !important;
   padding: 1rem 1.5rem 1.5rem !important;
-  background: url(/eras/img/banner.jpg) repeat !important;
+  /* banner.jpg is a thin vertical gradient; stretch it so it reads as one clean
+     teal band instead of tiling with visible JPEG seams */
+  background: url(/eras/img/banner.jpg) no-repeat center / 100% 100% !important;
   border-bottom: 3px solid #438391;
 }
 :root[data-era="y2014"] main,
 :root[data-era="y2020"] main {
-  max-width: 880px;
+  max-width: 1180px;
   margin: 0 auto !important;
   padding: 0 1.5rem 2rem !important;
-  background: #fff url(/eras/img/section_content.jpg) repeat-x !important;
+  /* section_content.jpg is a tall top-fade gradient; stretch it full-width at
+     the top (no horizontal tiling) over white */
+  background: #fff url(/eras/img/section_content.jpg) no-repeat top / 100% 500px !important;
 }
 :root[data-era="y2014"] .hero-name,
 :root[data-era="y2020"] .hero-name {
@@ -563,7 +606,7 @@
 :root[data-era="y2020"] .section-title {
   font-family: Tahoma, Helvetica, Arial, sans-serif; font-weight: bold; text-transform: capitalize;
   color: #382e20 !important;
-  background: url(/eras/img/section_heading.jpg) repeat; padding: 6px 10px;
+  background: url(/eras/img/section_heading.jpg) no-repeat center / 100% 100%; padding: 8px 12px;
 }
 :root[data-era="y2014"] .section-title::before,
 :root[data-era="y2020"] .section-title::before { color: #438391 !important; }
@@ -600,7 +643,7 @@
 }
 :root[data-era="y2014"] footer,
 :root[data-era="y2020"] footer {
-  background: url(/eras/img/nav.jpg) repeat !important; border-top: 1px dotted #438391 !important;
+  background: url(/eras/img/nav.jpg) repeat-x center / auto 100% !important; border-top: 1px dotted #438391 !important;
 }
 :root[data-era="y2014"] .footer-links a, :root[data-era="y2020"] .footer-links a,
 :root[data-era="y2014"] .footer-copyright, :root[data-era="y2020"] .footer-copyright { color: #e8f6f8 !important; }
