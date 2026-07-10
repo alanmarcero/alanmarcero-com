@@ -13,11 +13,11 @@
 }
 
 .take-me-back__menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 50%;
+  /* portaled to <body> and fixed above everything (CRT scanlines are z-index
+     9999) so it is never clipped by the hero's overflow or hidden behind chrome */
+  position: fixed;
   transform: translateX(-50%);
-  z-index: 40;
+  z-index: 10001;
   min-width: 15rem;
   padding: var(--space-2);
   display: grid;
