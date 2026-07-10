@@ -32,29 +32,27 @@ describe("PatchBankItem", () => {
     expect(downloadBtn).toHaveAttribute("href", "/banks/test.zip");
   });
 
-  it("renders YouTube embeds for each audioDemo", () => {
+  it("renders YouTube facades for each audioDemo", () => {
     render(<PatchBankItem bank={mockBank} />);
 
-    const iframes = document.querySelectorAll("iframe");
-    expect(iframes).toHaveLength(2);
-    expect(iframes[0]).toHaveAttribute("src", "https://www.youtube.com/embed/video1");
-    expect(iframes[1]).toHaveAttribute("src", "https://www.youtube.com/embed/video2");
+    const thumbs = document.querySelectorAll("img.yt-facade__thumb");
+    expect(thumbs).toHaveLength(2);
+    expect(thumbs[0]).toHaveAttribute("src", "https://i.ytimg.com/vi/video1/hqdefault.jpg");
+    expect(thumbs[1]).toHaveAttribute("src", "https://i.ytimg.com/vi/video2/hqdefault.jpg");
   });
 
-  it("renders no iframes when audioDemo is empty array", () => {
+  it("renders no embeds when audioDemo is empty array", () => {
     const bankEmptyDemo = { ...mockBank, audioDemo: [] };
     render(<PatchBankItem bank={bankEmptyDemo} />);
 
-    const iframes = document.querySelectorAll("iframe");
-    expect(iframes).toHaveLength(0);
+    expect(document.querySelectorAll(".yt-facade")).toHaveLength(0);
   });
 
   it("skips falsy videoIds in audioDemo array", () => {
     const bankWithFalsyId = { ...mockBank, audioDemo: ["valid", "", null] };
     render(<PatchBankItem bank={bankWithFalsyId} />);
 
-    const iframes = document.querySelectorAll("iframe");
-    expect(iframes).toHaveLength(1);
+    expect(document.querySelectorAll(".yt-facade")).toHaveLength(1);
   });
 
   it("applies style prop to container", () => {
