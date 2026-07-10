@@ -236,6 +236,37 @@
 :root[data-era="y2001"] .module::before,
 :root[data-era="y2001"] .module::after { display: none !important; }
 
+/* distribute gifs INTO the content: flames on each section title, a NEW! badge
+   on every card, stars flanking the stat line */
+:root[data-era="y2001"] .section-title::after {
+  content: "";
+  display: inline-block;
+  width: 34px;
+  height: 22px;
+  margin-left: 10px;
+  vertical-align: middle;
+  background: url(/eras/gifs/flames.gif) no-repeat center / contain;
+}
+:root[data-era="y2001"] .module__title::before {
+  content: "";
+  display: inline-block;
+  width: 32px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: middle;
+  background: url(/eras/gifs/new.gif) no-repeat center / contain;
+}
+:root[data-era="y2001"] .section-stat::before,
+:root[data-era="y2001"] .section-stat::after {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin: 0 6px;
+  vertical-align: middle;
+  background: url(/eras/gifs/star.gif) no-repeat center / contain;
+}
+
 /* classic 3D buttons everywhere */
 :root[data-era="y2001"] .btn,
 :root[data-era="y2001"] .take-me-back__trigger,
