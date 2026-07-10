@@ -14,7 +14,7 @@ function MusicItem({ item, style }) {
         )}
       </div>
       <div className="module__media">
-        <YouTubeEmbed videoId={item.videoId} />
+        <YouTubeEmbed videoId={item.videoId} title={item.title} />
       </div>
       <p className="module__desc">{item.description}</p>
       <div className="module__actions">

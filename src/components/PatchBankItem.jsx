@@ -14,7 +14,7 @@ function PatchBankItem({ bank, style, onDownload }) {
 
       {bank.audioDemo?.filter(Boolean).map((videoId) => (
         <div key={videoId} className="module__media">
-          <YouTubeEmbed videoId={videoId} />
+          <YouTubeEmbed videoId={videoId} title={`${bank.name} audio demo`} />
         </div>
       ))}
 
