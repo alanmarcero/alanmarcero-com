@@ -41,8 +41,6 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 ├── src/
 │   ├── components/
-│   │   ├── BackToTop.jsx          # Scroll-to-top button (uses useScrollPosition + SCROLL_THRESHOLD)
-│   │   ├── BackToTop.test.jsx     # BackToTop tests
 │   │   ├── Footer.jsx             # Footer with nav links + dynamic year
 │   │   ├── Footer.test.jsx        # Footer tests
 │   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear, useRandomGlitch hook
@@ -57,13 +55,17 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── SkeletonCard.test.jsx  # SkeletonCard tests
 │   │   ├── Toast.jsx              # Download toast notification
 │   │   ├── Toast.test.jsx         # Toast tests
-│   │   ├── YouTubeEmbed.jsx       # Shared YouTube iframe component
+│   │   ├── YouTubeEmbed.jsx       # Click-to-load YouTube facade (thumbnail + play button; iframe loads on click)
 │   │   └── YouTubeEmbed.test.jsx  # YouTubeEmbed tests
 │   ├── hooks/
 │   │   ├── useMusicItems.js          # Custom hook: Lambda fetch for music items
 │   │   ├── useMusicItems.test.js     # useMusicItems tests
-│   │   ├── useScrollPosition.js      # Custom hook: scroll threshold detection
-│   │   ├── useScrollPosition.test.js # useScrollPosition tests
+│   │   ├── useInViewport.js          # Custom hook: IntersectionObserver visibility (pauses off-screen animations)
+│   │   ├── useInViewport.test.js     # useInViewport tests
+│   │   ├── usePrefersReducedMotion.js      # Custom hook: prefers-reduced-motion
+│   │   ├── usePrefersReducedMotion.test.js # usePrefersReducedMotion tests
+│   │   ├── useScrollProgress.js      # Custom hook: writes scroll-progress transform via ref + rAF (no re-render)
+│   │   ├── useScrollProgress.test.js # useScrollProgress tests
 │   ├── utils/
 │   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
 │   │   └── cardGlow.test.js       # cardGlow tests
@@ -140,7 +142,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 710 tests across 41 suites**
+**Total: 707 tests across 41 suites**
 
 ## Key Files
 
@@ -152,7 +154,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/arcade/games/gameRegistry.js` — Game metadata array (id, name, description, accent color, controls, factory function) for all 10 arcade games
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
-- `src/hooks/useScrollPosition.js` — Custom hook returning boolean when scroll exceeds a threshold
+- `src/hooks/useScrollProgress.js` — Custom hook: returns a ref and writes `transform: scaleX(fraction)` to it via rAF on scroll (no React re-render per scroll)
+- `src/hooks/useInViewport.js` — Custom hook: `[ref, inView]` via IntersectionObserver; used to pause off-screen animations (SignalMeter rAF, LissajousHalo SMIL/spin)
 - `src/data/patchBanks.js` — Static patch bank catalog (add new releases here)
 - `index.ts` — Fetches YouTube playlist, transforms response, returns JSON with Cache-Control: public, max-age=300. Generic error responses (no internal message leaks)
 - `infrastructure/cloudfront-add-oac.yml` — One-time workflow: Lambda URL lockdown via CloudFront OAC (already run)
@@ -271,8 +274,8 @@ App
 ├── Page scope (.page-scope → LissajousHalo, centered parametric trace above footer)
 ├── Footer
 │   ├── Nav links (YouTube, GitHub) — semantic <nav> element
+│   ├── SignalMeter (Winamp-style spectrum analyzer; rAF paused off-screen via useInViewport)
 │   └── Dynamic copyright year
-├── BackToTop (uses useScrollPosition hook, gradient pill with CRT overlay)
 └── Toast (message, visible) — download notification
 ```
 
@@ -305,7 +308,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (710 tests, 41 suites)
+npm test                       # Jest (707 tests, 41 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
