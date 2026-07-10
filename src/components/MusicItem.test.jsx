@@ -23,12 +23,14 @@ describe("MusicItem", () => {
     expect(screen.getByText("A great track")).toBeInTheDocument();
   });
 
-  it("renders a YouTube embed with correct videoId", () => {
+  it("renders a YouTube facade with correct videoId thumbnail", () => {
     render(<MusicItem item={mockItem} />);
 
-    const iframe = document.querySelector("iframe");
-    expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute("src", "https://www.youtube.com/embed/xyz789");
+    const thumb = document.querySelector("img.yt-facade__thumb");
+    expect(thumb).toBeInTheDocument();
+    expect(thumb).toHaveAttribute("src", "https://i.ytimg.com/vi/xyz789/hqdefault.jpg");
+    // the player iframe is deferred until the visitor clicks
+    expect(document.querySelector("iframe")).not.toBeInTheDocument();
   });
 
   it("handles missing description gracefully", () => {
