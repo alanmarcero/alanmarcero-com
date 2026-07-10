@@ -20,6 +20,7 @@ describe("YouTubeEmbed", () => {
     const img = document.querySelector("img.yt-facade__thumb");
     expect(img).toHaveAttribute("src", "https://i.ytimg.com/vi/abc123/hqdefault.jpg");
     expect(img).toHaveAttribute("loading", "lazy");
+    expect(img).toHaveAttribute("decoding", "async");
     expect(img).toHaveAttribute("alt", ""); // decorative; the button carries the label
   });
 
