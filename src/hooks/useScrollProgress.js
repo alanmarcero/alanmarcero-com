@@ -1,30 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 /**
- * Returns how far the page is scrolled, as a 0–1 fraction of the total
- * scrollable height. Useful for a scroll-progress indicator.
+ * Drives a scroll-progress indicator without re-rendering the React tree.
+ *
+ * Returns a ref to attach to the indicator element; the hook writes
+ * `transform: scaleX(fraction)` straight to that element's style, coalescing
+ * bursts of scroll events into a single write per animation frame. Keeping the
+ * update off React state avoids reconciling the whole page on every scroll.
+ *
+ * @returns {React.RefObject<HTMLElement>} ref for the progress element
  */
 function useScrollProgress() {
-  const [progress, setProgress] = useState(0);
+  const ref = useRef(null);
 
   useEffect(() => {
-    const update = () => {
+    let raf = 0;
+
+    const apply = () => {
+      raf = 0;
+      const el = ref.current;
+      if (!el) return;
       const doc = document.documentElement;
       const max = doc.scrollHeight - doc.clientHeight;
-      const next = max > 0 ? window.scrollY / max : 0;
-      setProgress(Math.min(1, Math.max(0, next)));
+      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      el.style.transform = `scaleX(${progress})`;
     };
 
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+    const schedule = () => {
+      if (raf) return; // already queued for this frame
+      raf = requestAnimationFrame(apply);
+    };
+
+    apply(); // set the initial position
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
     return () => {
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
     };
   }, []);
 
-  return progress;
+  return ref;
 }
 
 export default useScrollProgress;
