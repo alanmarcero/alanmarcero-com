@@ -1,12 +1,14 @@
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
+import useInViewport from '../hooks/useInViewport';
 
 /**
  * Decorative spectrum analyzer styled after the classic Winamp visualizer:
  * vertical LED bars coloured green → yellow → red by height, with light
  * peak-hold caps that jump up and slowly fall. There's no real audio — the
  * spectrum is simulated. Purely ornamental (aria-hidden); paused under
- * prefers-reduced-motion (drawn once, static).
+ * prefers-reduced-motion (drawn once, static) and while scrolled off-screen
+ * (the footer sits below the fold, so the rAF loop would otherwise run unseen).
  */
 
 // logical geometry (CSS px; scaled by devicePixelRatio for crispness)
@@ -33,8 +35,9 @@ const PEAK = '#d8d8c4';
 const segColor = (frac) => (frac < 0.55 ? GREEN : frac < 0.8 ? YELLOW : RED);
 
 export default function SignalMeter({ className = '' }) {
-  const canvasRef = useRef(null);
   const reduced = usePrefersReducedMotion();
+  // start the loop a little before the footer scrolls into view
+  const [canvasRef, inView] = useInViewport({ rootMargin: '200px' });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -105,6 +108,9 @@ export default function SignalMeter({ className = '' }) {
       return undefined;
     }
 
+    // off-screen: skip the rAF loop entirely so it costs nothing while unseen
+    if (!inView) return undefined;
+
     let raf;
     let last = 0;
     let start = null;
@@ -118,7 +124,7 @@ export default function SignalMeter({ className = '' }) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [reduced]);
+  }, [reduced, inView, canvasRef]);
 
   return <canvas ref={canvasRef} className={`signal-meter ${className}`.trim()} aria-hidden="true" />;
 }
