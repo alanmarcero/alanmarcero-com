@@ -1,13 +1,19 @@
+import { useEffect } from "react";
 import usePrefersReducedMotion from "../../hooks/usePrefersReducedMotion";
+import useInViewport from "../../hooks/useInViewport";
 import { lissajous, rose, buildParametricPath } from "./parametric";
 
 /**
- * A live XY-oscilloscope halo for the hero mark. Traces parametric figures
- * (Lissajous curves and a rose) as a neon ring, morphing between figures via
- * SMIL while a bright beam packet crawls along the trace like a scope's dot.
- * The badge on top masks the center, so only the outer excursions read as a
- * glowing halo. Decorative; the slot's CSS `color` drives the hue. The morph
- * and the beam are dropped under `prefers-reduced-motion`.
+ * A live XY-oscilloscope trace built from parametric figures (Lissajous curves
+ * and roses). It morphs between figures via SMIL while a bright beam packet
+ * crawls along the trace like a scope's dot, and the whole figure drifts round
+ * slowly. Decorative; the slot's CSS `color` drives the hue.
+ *
+ * The morph and beam are dropped under `prefers-reduced-motion`. While the trace
+ * is scrolled off-screen its animation is paused — the SMIL timeline via
+ * `pauseAnimations()` and the CSS spin/beam via the `lissajous-halo--paused`
+ * class — so a figure nobody can see costs no CPU/GPU (the spinning
+ * `drop-shadow` in particular re-rasterizes every frame otherwise).
  */
 
 // Centered square viewBox; the curve is scaled to ring the badge beneath it.
@@ -51,7 +57,18 @@ const MORPH = buildMorph(FIGURE_PATHS);
 
 export default function LissajousHalo({ className = "" }) {
   const reduced = usePrefersReducedMotion();
+  const [ref, inView] = useInViewport({ rootMargin: "200px" });
   const baseD = FIGURE_PATHS[0];
+
+  // Pause/resume the SMIL animation timeline as the trace leaves/enters view.
+  // (CSS spin + beam are frozen via the paused class below.)
+  useEffect(() => {
+    const svg = ref.current;
+    if (!svg || typeof svg.pauseAnimations !== "function") return undefined;
+    if (inView) svg.unpauseAnimations();
+    else svg.pauseAnimations();
+    return undefined;
+  }, [inView, ref]);
 
   const morph = () =>
     reduced ? null : (
@@ -66,12 +83,17 @@ export default function LissajousHalo({ className = "" }) {
       />
     );
 
+  const classes = ["lissajous-halo", className, !inView && !reduced && "lissajous-halo--paused"]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <svg
+      ref={ref}
       aria-hidden="true"
       focusable="false"
       viewBox={`0 0 ${SIZE} ${SIZE}`}
-      className={`lissajous-halo ${className}`.trim()}
+      className={classes}
     >
       <path
         className="lissajous-halo__echo"
