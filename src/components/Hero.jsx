@@ -1,11 +1,12 @@
 import { useRef, useEffect } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
 import { SynthesistMark, HeroScopeTrace } from './graphics';
+import TakeMeBack from './TakeMeBack';
 
 const isTypingTarget = (el) =>
   el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
 
-function Hero({ searchQuery, onSearchChange, resultsCount }) {
+function Hero({ searchQuery, onSearchChange, resultsCount, onTravel }) {
   const inputRef = useRef(null);
 
   const handleKeyDown = (event) => {
@@ -57,6 +58,7 @@ function Hero({ searchQuery, onSearchChange, resultsCount }) {
           <a className="btn btn--ghost" href="/arcade.html">
             Arcade
           </a>
+          <TakeMeBack onSelect={onTravel} />
         </div>
         <div className="hero-search">
           <input

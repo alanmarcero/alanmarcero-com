@@ -1,0 +1,530 @@
+/* ==========================================================================
+   TAKE ME BACK — era skins for today's content.
+   Each `[data-era="…"]` on <html> re-skins the live app as a past version of
+   the site. The present (no data-era) is untouched. The GIFs are the point.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Present-theme control: the hero "Take Me Back" button + year picker
+   -------------------------------------------------------------------------- */
+.take-me-back {
+  position: relative;
+  display: inline-block;
+}
+
+.take-me-back__menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  min-width: 15rem;
+  padding: var(--space-2);
+  display: grid;
+  gap: 4px;
+  background: var(--panel-inset, #0f1417);
+  border: 1px solid var(--phosphor, #4af2a4);
+  border-radius: var(--radius-sm, 6px);
+  box-shadow: 0 0 24px var(--phosphor-glow, rgba(74, 242, 164, 0.25));
+}
+
+.take-me-back__hint {
+  margin: 0 0 2px;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-xs, 0.72rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #8fb0a6);
+}
+
+.take-me-back__year {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line, rgba(74, 242, 164, 0.18));
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  color: var(--text-primary, #e8edee);
+  font-family: var(--font-mono, monospace);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.take-me-back__year:hover,
+.take-me-back__year:focus-visible {
+  background: var(--phosphor-glow, rgba(74, 242, 164, 0.14));
+  border-color: var(--phosphor, #4af2a4);
+}
+
+.take-me-back__year-num {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--phosphor, #4af2a4);
+}
+
+.take-me-back__year-label {
+  font-size: var(--text-xs, 0.72rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #8fb0a6);
+}
+
+/* --------------------------------------------------------------------------
+   Time-travel bar — persistent control shown in every past era
+   -------------------------------------------------------------------------- */
+.time-travel-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 6px 12px;
+  background: #0b0f14;
+  border-bottom: 2px solid #4af2a4;
+  color: #e8edee;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.82rem;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+}
+
+.time-travel-bar b { color: #ffd166; }
+
+.time-travel-bar__years {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.time-travel-bar__year {
+  min-width: 3.2rem;
+  padding: 3px 8px;
+  border: 1px solid #2b3a44;
+  border-radius: 4px;
+  background: #10161c;
+  color: #cfe;
+  font: inherit;
+  cursor: pointer;
+}
+
+.time-travel-bar__year.is-active {
+  background: #4af2a4;
+  border-color: #4af2a4;
+  color: #04120c;
+  font-weight: 700;
+}
+
+.time-travel-bar__home {
+  padding: 3px 10px;
+  border: 1px solid #ffd166;
+  border-radius: 4px;
+  background: transparent;
+  color: #ffd166;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.time-travel-bar__home:hover { background: #ffd166; color: #1a1400; }
+
+/* every past era leaves room for the fixed bar and drops the CRT-only chrome */
+:root[data-era] body { padding-top: 40px; }
+
+:root[data-era] body::after,
+:root[data-era] .hero-scope,
+:root[data-era] .hero::after,
+:root[data-era] .page-scope,
+:root[data-era] .scroll-progress,
+:root[data-era] .signal-meter,
+:root[data-era] .hero-mark,
+:root[data-era] .btn::after,
+:root[data-era] .btn--download::after {
+  display: none !important;
+}
+
+:root[data-era] html,
+:root[data-era] body {
+  background-image: none;
+}
+
+/* the search box + hints read as CRT hardware; calm them for the non-GeoCities
+   past eras (GeoCities styles its own beveled input) */
+:root[data-era="y2007"] .hero-search input,
+:root[data-era="y2014"] .hero-search input,
+:root[data-era="y2020"] .hero-search input {
+  background: #fff !important;
+  color: #111 !important;
+  border: 1px solid #999 !important;
+  box-shadow: none !important;
+}
+:root[data-era="y2007"] .search-hint,
+:root[data-era="y2014"] .search-hint,
+:root[data-era="y2020"] .search-hint,
+:root[data-era="y2007"] .search-clear,
+:root[data-era="y2014"] .search-clear,
+:root[data-era="y2020"] .search-clear {
+  color: #666 !important;
+  background: transparent !important;
+  border-color: #bbb !important;
+}
+
+/* ==========================================================================
+   2001 — GEOCITIES.  it was the gif era. it was not supposed to look good.
+   ========================================================================== */
+:root[data-era="y2001"] body {
+  padding-top: 92px; /* time-travel bar + two marquees */
+  background: #000044;
+  background-image:
+    radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 1.5px),
+    radial-gradient(circle at 70% 60%, #ff0 0.5px, transparent 1.5px),
+    radial-gradient(circle at 45% 85%, #0ff 0.5px, transparent 1.5px);
+  background-size: 90px 90px, 130px 130px, 70px 70px;
+  color: #ffff00;
+  font-family: "Comic Sans MS", "Comic Sans", cursive, system-ui;
+}
+
+:root[data-era="y2001"] .hero,
+:root[data-era="y2001"] main,
+:root[data-era="y2001"] section {
+  background: transparent !important;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+:root[data-era="y2001"] .hero-name {
+  font-family: "Comic Sans MS", cursive;
+  font-weight: 700;
+  color: #00ff00 !important;
+  -webkit-text-fill-color: #00ff00;
+  background: none !important;
+  text-shadow: 2px 2px 0 #ff00ff, 4px 4px 0 #000;
+  animation: gc-rainbow 1s linear infinite;
+}
+:root[data-era="y2001"] .hero-name__accent { color: #ff00ff !important; -webkit-text-fill-color: #ff00ff; }
+
+:root[data-era="y2001"] .hero-tagline { color: #00ffff !important; font-family: "Comic Sans MS", cursive; }
+:root[data-era="y2001"] .hero-bio,
+:root[data-era="y2001"] .module__desc,
+:root[data-era="y2001"] .section-stat { color: #ffffff !important; }
+
+:root[data-era="y2001"] .section-title {
+  color: #ffff00 !important;
+  font-family: "Comic Sans MS", cursive;
+  text-shadow: 2px 2px 0 #ff00ff;
+}
+:root[data-era="y2001"] .section-title::before { color: #00ffff !important; }
+
+/* garish beveled cards, a different loud colour each */
+:root[data-era="y2001"] .module {
+  background: #c0c0c0 !important;
+  border: 4px ridge #ff00ff !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #000 !important;
+  animation: none !important;
+}
+:root[data-era="y2001"] .module:nth-child(3n+1) { border-color: #00ff00 !important; background: #000080 !important; color: #fff !important; }
+:root[data-era="y2001"] .module:nth-child(3n+2) { border-color: #ffff00 !important; background: #800000 !important; color: #fff !important; }
+:root[data-era="y2001"] .module__title { color: inherit !important; font-family: "Comic Sans MS", cursive; }
+:root[data-era="y2001"] .module::before,
+:root[data-era="y2001"] .module::after { display: none !important; }
+
+/* classic 3D buttons everywhere */
+:root[data-era="y2001"] .btn,
+:root[data-era="y2001"] .take-me-back__trigger,
+:root[data-era="y2001"] .module__badge {
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border: 3px outset #eee !important;
+  border-radius: 0 !important;
+  font-family: "Comic Sans MS", cursive !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+:root[data-era="y2001"] .btn:active { border-style: inset !important; }
+
+:root[data-era="y2001"] .hero-search input {
+  border: 2px inset #808080 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #000 !important;
+  font-family: "Comic Sans MS", cursive !important;
+}
+
+:root[data-era="y2001"] footer,
+:root[data-era="y2001"] .footer-inner { background: transparent !important; border: none !important; }
+:root[data-era="y2001"] .footer-links a { color: #00ffff !important; text-decoration: underline; }
+
+/* the animated-gif zoo -------------------------------------------------- */
+.gc-gif { vertical-align: middle; margin: 0 4px; }
+
+.gc-marquee {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 8900;
+  height: 26px;
+  line-height: 26px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #000;
+  color: #fff;
+  font-family: "Comic Sans MS", cursive;
+  font-weight: 700;
+  border-bottom: 1px solid #333;
+}
+.gc-marquee--fire { top: 40px; }
+.gc-marquee--alt { top: 66px; background: #111; color: #0f0; }
+.gc-marquee img { height: 22px; vertical-align: middle; }
+
+.gc-blink { animation: gc-blink 0.8s steps(1) infinite; color: #ffff00; }
+@keyframes gc-blink { 50% { visibility: hidden; } }
+@keyframes gc-rainbow {
+  0% { color: #ff0000; } 20% { color: #ffff00; } 40% { color: #00ff00; }
+  60% { color: #00ffff; } 80% { color: #ff00ff; } 100% { color: #ff0000; }
+}
+
+/* corner stickers, distributed to the four corners (fixed) */
+.gc-sticker { position: fixed; z-index: 8800; height: 56px; pointer-events: none; }
+.gc-sticker--tl { top: 96px; left: 6px; }
+.gc-sticker--tr { top: 96px; right: 6px; }
+.gc-sticker--bl { bottom: 8px; left: 6px; }
+.gc-sticker--br { bottom: 8px; right: 6px; }
+
+/* MIDI player widget (fixed) */
+.gc-midi {
+  position: fixed;
+  left: 8px;
+  bottom: 74px;
+  z-index: 8850;
+  width: 180px;
+  padding: 5px;
+  background: #000080;
+  border: 3px outset #c0c0c0;
+  color: #0f0;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+}
+.gc-midi__screen {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 4px; margin-bottom: 4px;
+  background: #000; border: 1px inset #444; color: #0f0;
+  white-space: nowrap; overflow: hidden;
+}
+.gc-midi__note { color: #ff0; animation: gc-blink 0.6s steps(1) infinite; }
+.gc-midi__title { overflow: hidden; text-overflow: ellipsis; }
+.gc-midi__controls { display: flex; gap: 3px; margin-bottom: 4px; }
+.gc-midi__btn {
+  flex: 1; padding: 2px; cursor: pointer;
+  background: #c0c0c0; color: #000; border: 2px outset #eee;
+  font-family: "Courier New", monospace; font-weight: 700;
+}
+.gc-midi__btn:active { border-style: inset; }
+.gc-midi__list { width: 100%; font-family: "Courier New", monospace; font-size: 11px; }
+
+/* the bottom: dividers, games, favorites wall, hit counter, webring */
+.gc-chrome { position: relative; z-index: 20; }
+.gc-footer {
+  position: relative;
+  z-index: 20;
+  margin-top: var(--space-6, 3rem);
+  padding: 1rem;
+  text-align: center;
+  color: #fff;
+  font-family: "Comic Sans MS", cursive;
+}
+.gc-bar { display: block; width: 100%; max-width: 640px; height: 8px; margin: 12px auto; }
+.gc-block { margin: 10px auto; }
+.gc-heading { color: #ffff00; font-size: 1.3rem; margin: 6px 0; text-shadow: 2px 2px 0 #f0f; }
+.gc-block img { height: 48px; margin: 4px; vertical-align: middle; }
+.gc-small { color: #0ff; font-size: 0.85rem; }
+
+.gc-wall {
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 2.4;
+}
+.gc-wall img { height: 34px; margin: 3px; vertical-align: middle; }
+
+.gc-counter {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 10px auto;
+  color: #0f0;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+}
+.gc-counter__digits { display: inline-flex; gap: 2px; }
+.gc-counter__digit {
+  padding: 2px 5px;
+  background: #000;
+  border: 1px solid #0f0;
+  color: #0f0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.gc-badges img { height: 31px; margin: 4px; }
+.gc-webring { color: #ff0; }
+.gc-webring a { color: #0ff; }
+.gc-webring img { height: 20px; }
+.gc-fineprint { color: #aaa; font-size: 0.8rem; margin-top: 10px; }
+.gc-fineprint .gc-blink { color: #f0f; }
+
+/* ==========================================================================
+   2007 — WEB 1.0.  "Alan Marcero · web developer & music producer"
+   ========================================================================== */
+:root[data-era="y2007"] body {
+  background: #6b6b6b !important;
+  color: #222;
+  font-family: Georgia, "Times New Roman", serif;
+}
+:root[data-era="y2007"] .hero,
+:root[data-era="y2007"] main {
+  max-width: 760px;
+  margin: 0 auto !important;
+  background: #f4f1e8 !important;
+  border-left: 1px solid #999;
+  border-right: 1px solid #999;
+}
+:root[data-era="y2007"] .hero { padding: 1.5rem 2rem !important; border-top: 8px solid #2f4f6f; }
+:root[data-era="y2007"] main { padding: 0 2rem 2rem !important; }
+:root[data-era="y2007"] .hero-name {
+  font-family: Georgia, serif; font-weight: 700; color: #2f4f6f !important;
+  -webkit-text-fill-color: #2f4f6f; background: none !important; text-shadow: none;
+}
+:root[data-era="y2007"] .hero-name__accent { color: #8a6d3b !important; -webkit-text-fill-color: #8a6d3b; }
+:root[data-era="y2007"] .hero-tagline { color: #8a6d3b !important; font-family: Georgia, serif; text-transform: none; letter-spacing: 0; }
+:root[data-era="y2007"] .hero-bio,
+:root[data-era="y2007"] .module__desc,
+:root[data-era="y2007"] .section-stat { color: #333 !important; }
+:root[data-era="y2007"] .section-title { color: #2f4f6f !important; font-family: Georgia, serif; }
+:root[data-era="y2007"] .section-title::before { color: #8a6d3b !important; }
+
+:root[data-era="y2007"] .module {
+  background: #fffdf6 !important;
+  border: 1px solid #cfc7b0 !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  color: #222 !important;
+  animation: none !important;
+}
+:root[data-era="y2007"] .module::before,
+:root[data-era="y2007"] .module::after { display: none !important; }
+:root[data-era="y2007"] .module__title { color: #2f4f6f !important; }
+
+:root[data-era="y2007"] .btn,
+:root[data-era="y2007"] .take-me-back__trigger {
+  background: #e9e3d2 !important;
+  background-image: linear-gradient(#fbf8ef, #ddd4bd) !important;
+  color: #2f4f6f !important;
+  border: 1px solid #b3a887 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  font-family: Georgia, serif !important;
+}
+:root[data-era="y2007"] .footer-links a,
+:root[data-era="y2007"] a { color: #1a5276; }
+:root[data-era="y2007"] footer { background: #f4f1e8 !important; border-top: 1px solid #999 !important; color: #555; }
+:root[data-era="y2007"] .footer-inner { max-width: 760px; }
+
+/* ==========================================================================
+   PATCH STORE — shared base for 2014 / 2020 (name-your-price shop)
+   ========================================================================== */
+:root[data-era="y2014"] body,
+:root[data-era="y2020"] body {
+  color: #1a1a1a;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 13px;
+}
+:root[data-era="y2014"] .hero,
+:root[data-era="y2020"] .hero,
+:root[data-era="y2014"] main,
+:root[data-era="y2020"] main {
+  max-width: 800px;
+  margin: 0 auto !important;
+  background: #ffffff !important;
+}
+:root[data-era="y2014"] .hero,
+:root[data-era="y2020"] .hero { padding: 1.25rem 1.5rem !important; }
+:root[data-era="y2014"] main,
+:root[data-era="y2020"] main { padding: 0 1.5rem 2rem !important; }
+
+:root[data-era="y2014"] .hero-name,
+:root[data-era="y2020"] .hero-name {
+  font-family: Verdana, Arial, sans-serif; font-weight: 700;
+  background: none !important; text-shadow: none;
+}
+:root[data-era="y2014"] .hero-tagline,
+:root[data-era="y2020"] .hero-tagline { text-transform: none; letter-spacing: 0; }
+:root[data-era="y2014"] .hero-bio,
+:root[data-era="y2020"] .hero-bio,
+:root[data-era="y2014"] .module__desc,
+:root[data-era="y2020"] .module__desc { color: #333 !important; }
+
+:root[data-era="y2014"] .module,
+:root[data-era="y2020"] .module {
+  background: #fff !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #1a1a1a !important;
+  animation: none !important;
+  border: 0 !important;
+  border-bottom: 1px solid #ccc !important;
+  padding-bottom: var(--space-4, 1.25rem) !important;
+}
+:root[data-era="y2014"] .module::before,
+:root[data-era="y2020"] .module::before,
+:root[data-era="y2014"] .module::after,
+:root[data-era="y2020"] .module::after { display: none !important; }
+
+:root[data-era="y2014"] .btn,
+:root[data-era="y2020"] .btn,
+:root[data-era="y2014"] .take-me-back__trigger,
+:root[data-era="y2020"] .take-me-back__trigger {
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  font-family: Verdana, Arial, sans-serif !important;
+}
+
+/* 2014 — utilitarian beige/green shop */
+:root[data-era="y2014"] body { background: #ece9df !important; }
+:root[data-era="y2014"] .hero-name { color: #2e6b2e !important; -webkit-text-fill-color: #2e6b2e; }
+:root[data-era="y2014"] .hero-name__accent { color: #444 !important; -webkit-text-fill-color: #444; }
+:root[data-era="y2014"] .section-title,
+:root[data-era="y2014"] .module__title { color: #2e6b2e !important; }
+:root[data-era="y2014"] .btn,
+:root[data-era="y2014"] .take-me-back__trigger {
+  background: #e6e6e6 !important; color: #111 !important; border: 1px solid #999 !important;
+}
+:root[data-era="y2014"] .btn--download { background: #2e6b2e !important; color: #fff !important; border-color: #245524 !important; }
+:root[data-era="y2014"] a { color: #1c5f9e; }
+:root[data-era="y2014"] footer { background: #ece9df !important; border-top: 1px solid #bbb !important; color: #555; }
+
+/* 2020 — cleaner, cooler blue shop */
+:root[data-era="y2020"] body { background: #eef1f5 !important; }
+:root[data-era="y2020"] .hero-name { color: #12395e !important; -webkit-text-fill-color: #12395e; }
+:root[data-era="y2020"] .hero-name__accent { color: #2b8cc4 !important; -webkit-text-fill-color: #2b8cc4; }
+:root[data-era="y2020"] .section-title,
+:root[data-era="y2020"] .module__title { color: #12395e !important; }
+:root[data-era="y2020"] .btn,
+:root[data-era="y2020"] .take-me-back__trigger {
+  background: #2b8cc4 !important; color: #fff !important; border: 1px solid #1f6f9e !important;
+}
+:root[data-era="y2020"] .btn--ghost { background: #fff !important; color: #12395e !important; border-color: #b8c4d0 !important; }
+:root[data-era="y2020"] a { color: #2b8cc4; }
+:root[data-era="y2020"] footer { background: #e2e7ee !important; border-top: 1px solid #c4ccd6 !important; color: #556; }
+
+/* reduced motion: freeze the era animations too */
+@media (prefers-reduced-motion: reduce) {
+  .gc-blink, .gc-midi__note, :root[data-era="y2001"] .hero-name { animation: none !important; }
+}

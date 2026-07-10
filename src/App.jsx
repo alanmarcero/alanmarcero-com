@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import './App.css';
+import './eras/eras.css';
 import Hero from './components/Hero';
 import PatchBankItem from './components/PatchBankItem';
 import MusicItem from './components/MusicItem';
@@ -8,6 +9,8 @@ import NoResults from './components/NoResults';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
 import { LissajousHalo } from './components/graphics';
+import EraChrome from './eras/EraChrome';
+import useEra from './eras/useEra';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollProgress from './hooks/useScrollProgress';
 import { patchBanks as patchBanksData } from './data/patchBanks';
@@ -39,6 +42,7 @@ function App() {
   const { musicItems, musicLoading, musicError } = useMusicItems();
 
   const scrollProgressRef = useScrollProgress();
+  const [era, setEra] = useEra();
   const showToast = useCallback((message) => {
     clearTimeout(toastTimerRef.current);
     setToast(message);
@@ -93,6 +97,7 @@ function App() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         resultsCount={resultsCount}
+        onTravel={setEra}
       />
 
       <main id="main-content">
@@ -147,6 +152,7 @@ function App() {
 
       <Footer />
       <Toast message={toast} visible={!!toast} />
+      <EraChrome era={era} onSetEra={setEra} />
     </>
   );
 }

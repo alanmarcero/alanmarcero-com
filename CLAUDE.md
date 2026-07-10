@@ -142,7 +142,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 707 tests across 41 suites**
+**Total: 737 tests across 46 suites**
 
 ## Key Files
 
@@ -308,7 +308,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (707 tests, 41 suites)
+npm test                       # Jest (737 tests, 46 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -407,6 +407,27 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 **Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
 
 **CRT overlay on games:** CSS div with scanline `repeating-linear-gradient` positioned over the canvas + `crtFlicker` animation, `pointer-events: none`.
+
+## Take Me Back (era themes)
+
+A hero control (`TakeMeBack`, next to the Arcade link) opens a year picker that
+re-skins **today's content** as a past version of alanmarcero.com. It is a theme
+switch, not a content snapshot — the same React app (patch banks, music, search,
+downloads) keeps working; only the skin changes. Years for 2007/2014/2020 come
+from Wayback Machine captures; 2001 is an estimated GeoCities era.
+
+- `src/eras/eras.js` — era metadata (`present`, `y2001`, `y2007`, `y2014`, `y2020`).
+- `src/eras/useEra.js` — hook: reflects the era on `<html data-era>` and syncs `?era=`.
+- `src/eras/eras.css` — all `[data-era="…"]` theme skins + GeoCities chrome + the time-travel bar.
+- `src/eras/EraChrome.jsx` — a persistent time-travel bar (all past eras) plus, for
+  GeoCities, an avalanche of real period GIFs (`public/eras/gifs/` — fire, anarchy,
+  aliens/UFOs, StarCraft/Diablo/WarCraft, Netscape Now, etc. sourced from the
+  Internet Archive's GifCities), marquees, corner stickers, a favorites wall, a
+  fake hit counter, and a MIDI player.
+- `src/eras/miditracks.js` + `src/eras/midiPlayer.js` + `src/components/MidiPlayer.jsx` —
+  a Web Audio "MIDI" background player (autoplays sandstorm.mid; playlist also has
+  Zombie Nation, Better Off Alone, Blood Is Pumping, Nokia, Für Elise). Synthesized
+  riffs, no audio files; autoplay starts on the click that enters the era.
 
 ## Image Generation
 
