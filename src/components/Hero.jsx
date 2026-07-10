@@ -2,12 +2,14 @@ import { useRef, useEffect } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
 import { SynthesistMark, HeroScopeTrace } from './graphics';
 import TakeMeBack from './TakeMeBack';
+import { getEraHero } from '../eras/eraHero';
 
 const isTypingTarget = (el) =>
   el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
 
-function Hero({ searchQuery, onSearchChange, resultsCount, onTravel }) {
+function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'present' }) {
   const inputRef = useRef(null);
+  const eraHero = getEraHero(era);
 
   const handleKeyDown = (event) => {
     if (event.key === 'Escape' && searchQuery) {
@@ -37,14 +39,20 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel }) {
           <SynthesistMark size={180} />
         </div>
         <h1 className="hero-name">Alan <span className="hero-name__accent">Marcero</span></h1>
-        <p className="hero-tagline">Synthesizer Sound Designer &amp; Producer</p>
+        <p className="hero-tagline">
+          {eraHero ? eraHero.tagline : 'Synthesizer Sound Designer & Producer'}
+        </p>
         <div className="hero-bio">
-          <p>
-            Trance and electronic music producer from Boston, USA. Crafting original tracks,
-            remixes, and synthesizer sound design since the early 2000s. Supported by Ferry Corsten,
-            Paul van Dyk, Sean Tyas, and Daniel Kandi. Featured on A State of Trance and
-            BBC Radio 1's Essential Mix. Released on Armada, Bonzai, and Ministry of Sound.
-          </p>
+          {eraHero ? (
+            eraHero.writeup.map((paragraph, i) => <p key={i}>{paragraph}</p>)
+          ) : (
+            <p>
+              Trance and electronic music producer from Boston, USA. Crafting original tracks,
+              remixes, and synthesizer sound design since the early 2000s. Supported by Ferry Corsten,
+              Paul van Dyk, Sean Tyas, and Daniel Kandi. Featured on A State of Trance and
+              BBC Radio 1's Essential Mix. Released on Armada, Bonzai, and Ministry of Sound.
+            </p>
+          )}
         </div>
         <div className="hero-cta-row">
           <a
