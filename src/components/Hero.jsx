@@ -10,6 +10,8 @@ const isTypingTarget = (el) =>
 function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'present' }) {
   const inputRef = useRef(null);
   const eraHero = getEraHero(era);
+  // 2007–2020 used the "Alan Marcero" name graphic (me.png) as the banner
+  const showNameBanner = era === 'y2007' || era === 'y2014' || era === 'y2020';
 
   const handleKeyDown = (event) => {
     if (event.key === 'Escape' && searchQuery) {
@@ -38,6 +40,15 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
         <div className="hero-mark">
           <SynthesistMark size={180} />
         </div>
+        {showNameBanner && (
+          <img
+            className="hero-era-banner"
+            src="/eras/img/me.png"
+            width="251"
+            height="56"
+            alt="Alan Marcero"
+          />
+        )}
         <h1 className="hero-name">Alan <span className="hero-name__accent">Marcero</span></h1>
         <p className="hero-tagline">
           {eraHero ? eraHero.tagline : 'Synthesizer Sound Designer & Producer'}
@@ -54,6 +65,11 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
             </p>
           )}
         </div>
+        {era === 'y2007' && (
+          <p className="hero-blogfeed">
+            <img src="/eras/img/blog-feed.gif" width="75" height="17" alt="" /> Subscribe to my blog
+          </p>
+        )}
         <div className="hero-cta-row">
           <a
             className="btn"

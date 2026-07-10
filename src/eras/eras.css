@@ -380,6 +380,39 @@
 .gc-fineprint .gc-blink { color: #f0f; }
 
 /* --------------------------------------------------------------------------
+   The archived "Alan Marcero" name banner (me.png) + 2007 blog-feed badge
+   -------------------------------------------------------------------------- */
+.hero-era-banner { display: none; }
+.hero-blogfeed { display: none; }
+
+/* 2007–2020 used the me.png name graphic as the banner; show it and hide the
+   present-day text title in those eras */
+:root[data-era="y2007"] .hero-era-banner,
+:root[data-era="y2014"] .hero-era-banner,
+:root[data-era="y2020"] .hero-era-banner {
+  display: block;
+  width: 251px;
+  height: 56px;
+  margin: 0 auto 0.25rem;
+  padding: 8px 18px;
+  background: #f4f4ef;
+  border-radius: 3px;
+  box-sizing: content-box;
+}
+:root[data-era="y2007"] .hero-name,
+:root[data-era="y2014"] .hero-name,
+:root[data-era="y2020"] .hero-name { display: none !important; }
+
+:root[data-era="y2007"] .hero-blogfeed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  color: #ffcd27;
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
    Archived synth thumbnails on the era cards (hidden in the present)
    -------------------------------------------------------------------------- */
 .module__era-thumb { display: none; }
@@ -474,7 +507,7 @@
   max-width: 880px;
   margin: 0 auto !important;
   padding: 0 1.5rem 2rem !important;
-  background: #fff !important;
+  background: #fff url(/eras/img/section_content.jpg) repeat-x !important;
 }
 :root[data-era="y2014"] .hero-name,
 :root[data-era="y2020"] .hero-name {
