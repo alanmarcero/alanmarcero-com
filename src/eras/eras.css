@@ -379,150 +379,167 @@
 .gc-fineprint { color: #aaa; font-size: 0.8rem; margin-top: 10px; }
 .gc-fineprint .gc-blink { color: #f0f; }
 
+/* --------------------------------------------------------------------------
+   Archived synth thumbnails on the era cards (hidden in the present)
+   -------------------------------------------------------------------------- */
+.module__era-thumb { display: none; }
+
+:root[data-era="y2007"] .module__era-thumb,
+:root[data-era="y2014"] .module__era-thumb,
+:root[data-era="y2020"] .module__era-thumb {
+  display: block;
+  float: right;
+  width: 150px;
+  height: auto;
+  padding: 4px;
+  margin: 0 0 6px 12px;
+  border: 1px groove #73b9cb;
+  background: #fff;
+}
+:root[data-era="y2001"] .module__era-thumb {
+  display: block;
+  float: right;
+  width: 120px;
+  height: auto;
+  margin: 4px;
+  border: 3px ridge #ff00ff;
+}
+
 /* ==========================================================================
-   2007 — WEB 1.0.  "Alan Marcero · web developer & music producer"
+   2007 — dark "web developer & music producer" (gold accent, from the archive)
    ========================================================================== */
 :root[data-era="y2007"] body {
-  background: #6b6b6b !important;
-  color: #222;
-  font-family: Georgia, "Times New Roman", serif;
+  background: #1c1c1c !important;
+  color: #cfcfcf;
+  font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 }
 :root[data-era="y2007"] .hero,
 :root[data-era="y2007"] main {
-  max-width: 760px;
+  max-width: 820px;
   margin: 0 auto !important;
-  background: #f4f1e8 !important;
-  border-left: 1px solid #999;
-  border-right: 1px solid #999;
+  background: #232323 !important;
 }
-:root[data-era="y2007"] .hero { padding: 1.5rem 2rem !important; border-top: 8px solid #2f4f6f; }
+:root[data-era="y2007"] .hero { padding: 1.5rem 2rem !important; border-top: 3px solid #ffcd27; }
 :root[data-era="y2007"] main { padding: 0 2rem 2rem !important; }
 :root[data-era="y2007"] .hero-name {
-  font-family: Georgia, serif; font-weight: 700; color: #2f4f6f !important;
-  -webkit-text-fill-color: #2f4f6f; background: none !important; text-shadow: none;
+  color: #fff !important; -webkit-text-fill-color: #fff; background: none !important;
+  text-shadow: none; font-weight: 700;
 }
-:root[data-era="y2007"] .hero-name__accent { color: #8a6d3b !important; -webkit-text-fill-color: #8a6d3b; }
-:root[data-era="y2007"] .hero-tagline { color: #8a6d3b !important; font-family: Georgia, serif; text-transform: none; letter-spacing: 0; }
+:root[data-era="y2007"] .hero-name__accent { color: #ffcd27 !important; -webkit-text-fill-color: #ffcd27; }
+:root[data-era="y2007"] .hero-tagline { color: #ffcd27 !important; text-transform: none; letter-spacing: 0.06em; }
 :root[data-era="y2007"] .hero-bio,
 :root[data-era="y2007"] .module__desc,
-:root[data-era="y2007"] .section-stat { color: #333 !important; }
-:root[data-era="y2007"] .section-title { color: #2f4f6f !important; font-family: Georgia, serif; }
-:root[data-era="y2007"] .section-title::before { color: #8a6d3b !important; }
-
+:root[data-era="y2007"] .section-stat { color: #bdbdbd !important; }
+:root[data-era="y2007"] .section-title { color: #fff !important; }
+:root[data-era="y2007"] .section-title::before { color: #ffcd27 !important; }
 :root[data-era="y2007"] .module {
-  background: #fffdf6 !important;
-  border: 1px solid #cfc7b0 !important;
-  border-radius: 3px !important;
-  box-shadow: none !important;
-  color: #222 !important;
-  animation: none !important;
+  background: #2a2a2a !important; color: #cfcfcf !important;
+  border: 1px solid #3a3a3a !important; border-radius: 3px !important;
+  box-shadow: none !important; animation: none !important;
 }
 :root[data-era="y2007"] .module::before,
 :root[data-era="y2007"] .module::after { display: none !important; }
-:root[data-era="y2007"] .module__title { color: #2f4f6f !important; }
-
+:root[data-era="y2007"] .module__title { color: #fff !important; }
+:root[data-era="y2007"] a,
+:root[data-era="y2007"] .footer-links a { color: #ffcd27; }
 :root[data-era="y2007"] .btn,
 :root[data-era="y2007"] .take-me-back__trigger {
-  background: #e9e3d2 !important;
-  background-image: linear-gradient(#fbf8ef, #ddd4bd) !important;
-  color: #2f4f6f !important;
-  border: 1px solid #b3a887 !important;
-  border-radius: 4px !important;
-  box-shadow: none !important;
-  font-family: Georgia, serif !important;
+  background: #333 !important; color: #ffcd27 !important; border: 1px solid #ffcd27 !important;
+  border-radius: 3px !important; box-shadow: none !important; background-image: none !important;
 }
-:root[data-era="y2007"] .footer-links a,
-:root[data-era="y2007"] a { color: #1a5276; }
-:root[data-era="y2007"] footer { background: #f4f1e8 !important; border-top: 1px solid #999 !important; color: #555; }
-:root[data-era="y2007"] .footer-inner { max-width: 760px; }
+:root[data-era="y2007"] .btn--ghost { background: transparent !important; }
+:root[data-era="y2007"] footer { background: #1c1c1c !important; border-top: 1px solid #3a3a3a !important; }
 
 /* ==========================================================================
-   PATCH STORE — shared base for 2014 / 2020 (name-your-price shop)
+   2014 / 2020 — the teal "AM Sounds" patch store (real archived CSS + images)
+   palette #382e20 text · #438391 teal · #73b9cb light · #e8f6f8 pale
    ========================================================================== */
 :root[data-era="y2014"] body,
 :root[data-era="y2020"] body {
-  color: #1a1a1a;
-  font-family: Verdana, Arial, sans-serif;
-  font-size: 13px;
+  background: #e8f0f2 !important;
+  color: #382e20;
+  font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
+  font-size: 15px;
 }
 :root[data-era="y2014"] .hero,
-:root[data-era="y2020"] .hero,
+:root[data-era="y2020"] .hero {
+  max-width: 880px;
+  margin: 0 auto !important;
+  padding: 1rem 1.5rem 1.5rem !important;
+  background: url(/eras/img/banner.jpg) repeat !important;
+  border-bottom: 3px solid #438391;
+}
 :root[data-era="y2014"] main,
 :root[data-era="y2020"] main {
-  max-width: 800px;
+  max-width: 880px;
   margin: 0 auto !important;
-  background: #ffffff !important;
+  padding: 0 1.5rem 2rem !important;
+  background: #fff !important;
 }
-:root[data-era="y2014"] .hero,
-:root[data-era="y2020"] .hero { padding: 1.25rem 1.5rem !important; }
-:root[data-era="y2014"] main,
-:root[data-era="y2020"] main { padding: 0 1.5rem 2rem !important; }
-
 :root[data-era="y2014"] .hero-name,
 :root[data-era="y2020"] .hero-name {
-  font-family: Verdana, Arial, sans-serif; font-weight: 700;
-  background: none !important; text-shadow: none;
+  font-family: Tahoma, Helvetica, Arial, sans-serif; font-weight: 400;
+  color: #382e20 !important; -webkit-text-fill-color: #382e20;
+  background: none !important; text-shadow: none; text-transform: capitalize;
 }
+:root[data-era="y2014"] .hero-name__accent,
+:root[data-era="y2020"] .hero-name__accent { color: #438391 !important; -webkit-text-fill-color: #438391; }
 :root[data-era="y2014"] .hero-tagline,
-:root[data-era="y2020"] .hero-tagline { text-transform: none; letter-spacing: 0; }
+:root[data-era="y2020"] .hero-tagline {
+  color: #438391 !important; font-family: Tahoma, Arial, sans-serif;
+  text-transform: none; letter-spacing: 0;
+}
 :root[data-era="y2014"] .hero-bio,
 :root[data-era="y2020"] .hero-bio,
 :root[data-era="y2014"] .module__desc,
-:root[data-era="y2020"] .module__desc { color: #333 !important; }
-
+:root[data-era="y2020"] .module__desc,
+:root[data-era="y2014"] .section-stat,
+:root[data-era="y2020"] .section-stat { color: #382e20 !important; }
+:root[data-era="y2014"] .section-title,
+:root[data-era="y2020"] .section-title {
+  font-family: Tahoma, Helvetica, Arial, sans-serif; font-weight: bold; text-transform: capitalize;
+  color: #382e20 !important;
+  background: url(/eras/img/section_heading.jpg) repeat; padding: 6px 10px;
+}
+:root[data-era="y2014"] .section-title::before,
+:root[data-era="y2020"] .section-title::before { color: #438391 !important; }
 :root[data-era="y2014"] .module,
 :root[data-era="y2020"] .module {
-  background: #fff !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  color: #1a1a1a !important;
-  animation: none !important;
-  border: 0 !important;
-  border-bottom: 1px solid #ccc !important;
+  background: #fff !important; color: #382e20 !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+  border-bottom: 1px dotted #438391 !important; animation: none !important;
   padding-bottom: var(--space-4, 1.25rem) !important;
 }
-:root[data-era="y2014"] .module::before,
-:root[data-era="y2020"] .module::before,
-:root[data-era="y2014"] .module::after,
-:root[data-era="y2020"] .module::after { display: none !important; }
-
+:root[data-era="y2014"] .module::before, :root[data-era="y2020"] .module::before,
+:root[data-era="y2014"] .module::after, :root[data-era="y2020"] .module::after { display: none !important; }
+:root[data-era="y2014"] .module__title,
+:root[data-era="y2020"] .module__title {
+  font-family: Tahoma, Helvetica, Arial, sans-serif; color: #382e20 !important; text-transform: capitalize;
+}
+:root[data-era="y2014"] a, :root[data-era="y2020"] a { color: #438391; text-decoration: underline; font-weight: bold; }
 :root[data-era="y2014"] .btn,
 :root[data-era="y2020"] .btn,
 :root[data-era="y2014"] .take-me-back__trigger,
 :root[data-era="y2020"] .take-me-back__trigger {
-  border-radius: 3px !important;
-  box-shadow: none !important;
-  background-image: none !important;
-  font-family: Verdana, Arial, sans-serif !important;
+  background: #438391 url(/eras/img/button.gif) repeat !important; color: #fff !important;
+  border: 1px solid #438391 !important; border-radius: 0 !important; box-shadow: none !important;
+  font-family: "Lucida Grande", Arial, sans-serif !important;
 }
-
-/* 2014 — utilitarian beige/green shop */
-:root[data-era="y2014"] body { background: #ece9df !important; }
-:root[data-era="y2014"] .hero-name { color: #2e6b2e !important; -webkit-text-fill-color: #2e6b2e; }
-:root[data-era="y2014"] .hero-name__accent { color: #444 !important; -webkit-text-fill-color: #444; }
-:root[data-era="y2014"] .section-title,
-:root[data-era="y2014"] .module__title { color: #2e6b2e !important; }
-:root[data-era="y2014"] .btn,
-:root[data-era="y2014"] .take-me-back__trigger {
-  background: #e6e6e6 !important; color: #111 !important; border: 1px solid #999 !important;
+:root[data-era="y2014"] .btn--ghost,
+:root[data-era="y2020"] .btn--ghost {
+  background: #e8f6f8 !important; color: #438391 !important; border: 1px solid #73b9cb !important;
 }
-:root[data-era="y2014"] .btn--download { background: #2e6b2e !important; color: #fff !important; border-color: #245524 !important; }
-:root[data-era="y2014"] a { color: #1c5f9e; }
-:root[data-era="y2014"] footer { background: #ece9df !important; border-top: 1px solid #bbb !important; color: #555; }
-
-/* 2020 — cleaner, cooler blue shop */
-:root[data-era="y2020"] body { background: #eef1f5 !important; }
-:root[data-era="y2020"] .hero-name { color: #12395e !important; -webkit-text-fill-color: #12395e; }
-:root[data-era="y2020"] .hero-name__accent { color: #2b8cc4 !important; -webkit-text-fill-color: #2b8cc4; }
-:root[data-era="y2020"] .section-title,
-:root[data-era="y2020"] .module__title { color: #12395e !important; }
-:root[data-era="y2020"] .btn,
-:root[data-era="y2020"] .take-me-back__trigger {
-  background: #2b8cc4 !important; color: #fff !important; border: 1px solid #1f6f9e !important;
+:root[data-era="y2014"] .hero-search input,
+:root[data-era="y2020"] .hero-search input {
+  background: #e8f6f8 url(/eras/img/text.jpg) repeat-x !important;
+  border: 1px double #73b9cb !important; color: #382e20 !important; border-radius: 0 !important;
 }
-:root[data-era="y2020"] .btn--ghost { background: #fff !important; color: #12395e !important; border-color: #b8c4d0 !important; }
-:root[data-era="y2020"] a { color: #2b8cc4; }
-:root[data-era="y2020"] footer { background: #e2e7ee !important; border-top: 1px solid #c4ccd6 !important; color: #556; }
+:root[data-era="y2014"] footer,
+:root[data-era="y2020"] footer {
+  background: url(/eras/img/nav.jpg) repeat !important; border-top: 1px dotted #438391 !important;
+}
+:root[data-era="y2014"] .footer-links a, :root[data-era="y2020"] .footer-links a,
+:root[data-era="y2014"] .footer-copyright, :root[data-era="y2020"] .footer-copyright { color: #e8f6f8 !important; }
 
 /* reduced motion: freeze the era animations too */
 @media (prefers-reduced-motion: reduce) {

@@ -98,6 +98,7 @@ function App() {
         onSearchChange={setSearchQuery}
         resultsCount={resultsCount}
         onTravel={setEra}
+        era={era}
       />
 
       <main id="main-content">

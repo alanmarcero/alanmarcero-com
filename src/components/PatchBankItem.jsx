@@ -1,7 +1,9 @@
 import YouTubeEmbed from './YouTubeEmbed';
 import ModulePanel from './ModulePanel';
+import { bankThumb } from '../eras/bankThumbs';
 
 function PatchBankItem({ bank, style, onDownload }) {
+  const thumb = bankThumb(bank.name);
   return (
     <ModulePanel style={style}>
       <div className="module__head">
@@ -10,6 +12,8 @@ function PatchBankItem({ bank, style, onDownload }) {
           <span className="module__badge">{bank.count} patches</span>
         ) : null}
       </div>
+      {/* archived synth photo — only shown in the Take Me Back eras (see eras.css) */}
+      {thumb ? <img className="module__era-thumb" src={thumb} alt="" aria-hidden="true" /> : null}
       <p className="module__desc">{bank.description}</p>
 
       {bank.audioDemo?.filter(Boolean).map((videoId) => (
