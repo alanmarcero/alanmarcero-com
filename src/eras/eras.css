@@ -508,6 +508,24 @@
   border: 3px ridge #ff00ff;
 }
 
+/* section stat line: drop the present-day mono font + phosphor-green numbers */
+:root[data-era] .section-stat { font-family: inherit !important; }
+:root[data-era="y2014"] .section-stat__value,
+:root[data-era="y2020"] .section-stat__value { color: #2a6b7a !important; }
+:root[data-era="y2007"] .section-stat__value { color: #ffcd27 !important; }
+:root[data-era="y2001"] .section-stat__value { color: #00ffff !important; }
+
+/* patch-count badge: re-skin the present-day phosphor pill per era */
+:root[data-era="y2014"] .module__badge,
+:root[data-era="y2020"] .module__badge {
+  color: #2a6b7a !important; background: #e8f6f8 !important;
+  border: 1px solid #73b9cb !important; border-radius: 2px !important;
+}
+:root[data-era="y2007"] .module__badge {
+  color: #ffcd27 !important; background: #2a2a2a !important;
+  border: 1px solid #ffcd27 !important;
+}
+
 /* ==========================================================================
    2007 — dark "web developer & music producer" (gold accent, from the archive)
    ========================================================================== */
@@ -593,8 +611,8 @@
 :root[data-era="y2020"] .hero-name__accent { color: #438391 !important; -webkit-text-fill-color: #438391; }
 :root[data-era="y2014"] .hero-tagline,
 :root[data-era="y2020"] .hero-tagline {
-  color: #438391 !important; font-family: Tahoma, Arial, sans-serif;
-  text-transform: none; letter-spacing: 0;
+  color: #eaf7fa !important; font-family: Tahoma, Arial, sans-serif; font-weight: bold;
+  text-transform: none; letter-spacing: 0; text-shadow: 0 1px 2px rgba(0, 30, 40, 0.55);
 }
 :root[data-era="y2014"] .hero-bio,
 :root[data-era="y2020"] .hero-bio,
