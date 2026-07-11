@@ -526,6 +526,21 @@
   border: 1px solid #ffcd27 !important;
 }
 
+/* the media panel keeps the present-day dark inset + cyan glow; reskin per era */
+:root[data-era="y2014"] .module__media,
+:root[data-era="y2020"] .module__media {
+  background: #f4fafb !important;
+  border: 1px solid #b9d6dd !important;
+  box-shadow: none !important;
+  border-radius: 2px !important;
+}
+:root[data-era="y2007"] .module__media {
+  background: #1c1c1c !important;
+  border: 1px solid #3a3a3a !important;
+  box-shadow: none !important;
+}
+:root[data-era="y2007"] .hero-era-banner { border: 1px solid #ffcd27; }
+
 /* ==========================================================================
    2007 — dark "web developer & music producer" (gold accent, from the archive)
    ========================================================================== */
