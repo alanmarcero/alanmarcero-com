@@ -424,9 +424,16 @@
   .ht-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.8rem}
   @media (max-width:720px){.ht-grid{grid-template-columns:1fr}}
   .ht-card{background:var(--card);border:1px solid var(--hair);border-radius:13px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
-  .ht-photo{position:relative;height:126px;background:linear-gradient(135deg,var(--brass-soft),var(--green-soft));background-size:cover;background-position:center}
+  .ht-photo{position:relative;display:block;height:126px;background:linear-gradient(135deg,var(--brass-soft),var(--green-soft));background-size:cover;background-position:center;text-decoration:none}
   .ht-pool{position:absolute;left:8px;bottom:8px;background:rgba(16,11,28,.72);color:#fff;font-weight:700;font-size:.72rem;padding:.14rem .46rem;border-radius:8px;backdrop-filter:blur(2px)}
   .ht-photo .ht-dot{position:absolute;right:8px;top:8px;width:.8rem;height:.8rem;box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+  .ht-maptag{position:absolute;right:8px;bottom:8px;background:rgba(16,11,28,.72);color:#fff;font-weight:700;font-size:.66rem;padding:.12rem .42rem;border-radius:8px;opacity:0;transition:.15s;backdrop-filter:blur(2px)}
+  .ht-photo:hover .ht-maptag,.ht-photo:focus-visible .ht-maptag{opacity:1}
+  .ht-photo:hover{filter:brightness(1.06)}
+  .ht-namelink{color:inherit;text-decoration:none}
+  .ht-namelink:hover{text-decoration:underline;text-decoration-color:var(--brass)}
+  #htGroups.hide-two .ht-two{display:none}
+  #htGroups.hide-suite .ht-suite{display:none}
   .ht-body{padding:.6rem .75rem .7rem;display:flex;flex-direction:column;gap:.28rem;flex:1}
   .ht-name{font-weight:680;font-size:.98rem;line-height:1.2;color:var(--ink)}
   .ht-stars{color:var(--brass);font-size:.8rem;font-weight:700}
@@ -435,15 +442,17 @@
   .ht-rate{font-weight:600;color:var(--ink)}
   .ht-d{color:var(--faint);font-weight:500}
   .ht-blurb{font-size:.83rem;color:var(--muted);line-height:1.4}
-  .ht-pricebox{background:var(--paper);border:1px solid var(--hair);border-radius:9px;padding:.4rem .55rem;margin-top:.05rem}
-  .ht-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
-  .ht-hl{font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:700}
-  .ht-big{font-family:var(--serif);font-size:1.42rem;font-weight:700;color:var(--green)}
-  .ht-opts{display:flex;flex-direction:column;gap:.12rem;margin-top:.3rem;padding-top:.3rem;border-top:1px dotted var(--hair-strong)}
-  .ht-opt{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;font-size:.8rem;color:var(--muted)}
-  .ht-opt b{color:var(--ink);font-variant-numeric:tabular-nums}
-  .ht-oi{display:inline-flex;gap:.2rem}
-  .ht-req{color:var(--faint);font-style:italic;font-size:.76rem}
+  .ht-pricebox{background:var(--paper);border:1px solid var(--hair);border-radius:9px;padding:.4rem .5rem;margin-top:.05rem;display:flex;flex-direction:column;gap:.28rem}
+  .ht-pbhead{font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:700;display:flex;justify-content:space-between;gap:.4rem;flex-wrap:wrap}
+  .ht-pbsub{color:var(--green);text-transform:none;letter-spacing:0;font-weight:600}
+  .ht-opt{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--muted);padding:.26rem .4rem;border-radius:7px;border:1px solid transparent}
+  .ht-opt .ht-oi{display:flex;flex-direction:column;line-height:1.15;flex:1}
+  .ht-opt .ht-oi em{font-style:normal;font-size:.68rem;color:var(--faint)}
+  .ht-opt b{color:var(--ink);font-variant-numeric:tabular-nums;font-size:.95rem}
+  .ht-opt.ht-win{background:var(--green-soft);border-color:var(--green)}
+  .ht-opt.ht-win b{color:var(--green);font-weight:800}
+  .ht-cheap{font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--green);padding:.08rem .34rem;border-radius:999px}
+  .ht-req{color:var(--faint);font-style:italic;font-size:.78rem}
   .ht-near{font-size:.78rem;color:var(--muted)}
   .ht-nl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-right:.15rem}
   .ht-tags{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin-top:.1rem}
@@ -453,7 +462,7 @@
   .ht-card[hidden],.ht-group[hidden]{display:none}
 </style>
   <div class="shead"><span class="ic">🏨</span> Where to stay</div>
-  <p class="sintro">Thirty <b>pool</b> hotels — <b>10 in the French Quarter</b> and <b>20 across the city</b> — grouped by neighborhood, its streetcar line, and the food &amp; sights near it from this itinerary. Every pick has a pool, is mid-to-luxury, and (outside the Quarter) sits a short walk from a streetcar stop. The headline price is the <b>cheapest way to house all four for 5 nights</b>; underneath, the <b>two-room</b> and <b>one-suite/family-room</b> options. Google's lowest rates for your Sep 10–15 dates — taxes &amp; fees excluded, estimates only, verify before booking.</p>
+  <p class="sintro">Thirty <b>pool</b> hotels — <b>10 in the French Quarter</b> and <b>20 across the city</b> — grouped by neighborhood, its streetcar line, and the food &amp; sights near it. Every pick has a pool, is mid-to-luxury, and (outside the Quarter) sits a short walk from a streetcar stop. For your party of four each card prices <b>two options for 5 nights — two rooms vs. one suite — and highlights the cheaper</b>. <b>Two rooms:</b> each has one large bed + a sleeper sofa, or two beds. <b>Suite:</b> two beds + one sleeper sofa. Suite figures are Google's lowest 4-guest unit — confirm the exact bed layout &amp; rate with the hotel. Taxes &amp; fees excluded; estimates only, verify before booking.</p>
 
   <div class="ht-bar" id="htBar">
     <div class="ht-frow"><span class="ht-flabel">Area</span><div class="ht-chips" id="htAreas"></div></div>
@@ -464,9 +473,16 @@
         <button class="ht-chip" data-color="red"><span class="ht-dot c-red"></span>$1,400+</button>
       </div>
     </div>
+    <div class="ht-frow"><span class="ht-flabel">Show</span>
+      <div class="ht-chips" id="htShow">
+        <button class="ht-chip" data-show="both" aria-pressed="true">Both prices</button>
+        <button class="ht-chip" data-show="two">Two rooms only</button>
+        <button class="ht-chip" data-show="suite">Suite only</button>
+      </div>
+    </div>
     <div class="ht-frow"><span class="ht-flabel">Only</span>
       <div class="ht-chips" id="htToggles">
-        <button class="ht-chip" data-flag="suite">🏨 Suite fits 4</button>
+        <button class="ht-chip" data-flag="suitecheaper">🏨 Suite cheaper than 2 rooms</button>
         <button class="ht-chip" data-flag="red">♿ Accessible red line</button>
       </div>
       <span class="ht-flabel ht-sortlabel">Sort</span>
@@ -485,174 +501,114 @@
     <section class="ht-group" data-group="French Quarter">
       <div class="ht-ghead"><span class="ht-gemoji">🏛️</span><div><div class="ht-gname">French Quarter <span class="ht-gcount">10</span></div><div class="ht-gnote">Walk to everything — the Canal, Riverfront &amp; Rampart–St. Claude (red) streetcars ring the Quarter. Jackson Square, Café du Monde, Muriel's, Preservation Hall &amp; the French Market on foot.</div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="French Quarter" data-price="730" data-color="green" data-suite="0" data-red="1" data-rating="4.6" data-walk="4">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/french-market-inn.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="730" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.6" data-walk="4">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/french-market-inn.jpg')" href="https://www.google.com/maps/search/?api=1&query=French%20Market%20Inn%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open French Market Inn in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">French Market Inn <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=French%20Market%20Inn%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">French Market Inn</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(2,304)</span></span> · 🚋 ~4 min to Riverfront (red)</div>
           <div class="ht-blurb">Riverside courtyard pool, steps to Café du Monde and the Riverfront streetcar.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$730</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,030</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$730</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,030</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$730</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Steamboat Natchez <span class='ht-d'>0.15mi</span> · Muriel&#x27;s <span class='ht-d'>0.19mi</span> · Jackson Sq <span class='ht-d'>0.2mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.955381400000004,-90.06415360000001" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=French%20Market%20Inn%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="790" data-color="green" data-suite="0" data-red="1" data-rating="4.1" data-walk="6">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/dauphine-orleans-hotel.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="790" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.1" data-walk="6">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/dauphine-orleans-hotel.jpg')" href="https://www.google.com/maps/search/?api=1&query=Dauphine%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Dauphine Orleans Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Dauphine Orleans Hotel <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Dauphine%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Dauphine Orleans Hotel</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.1 <span class='ht-d'>(1,359)</span></span> · 🚋 ~6 min to Canal (red)</div>
           <div class="ht-blurb">The value pick in the Quarter — pool, free breakfast, on quieter Dauphine St.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$790</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,000</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$790</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,000</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$790</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.19mi</span> · Muriel&#x27;s <span class='ht-d'>0.33mi</span> · Jackson Sq <span class='ht-d'>0.38mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.957345599999996,-90.0684177" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Dauphine%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="815" data-color="green" data-suite="0" data-red="1" data-rating="4.6" data-walk="4">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hotel-st-marie.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="815" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.6" data-walk="4">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hotel-st-marie.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hotel%20St.%20Marie%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hotel St. Marie in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hotel St. Marie <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hotel%20St.%20Marie%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hotel St. Marie</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(1,900)</span></span> · 🚋 ~4 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Heart-of-the-Quarter courtyard pool, half a block from Preservation Hall.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$815</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,220</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$815</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,220</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$815</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.09mi</span> · Muriel&#x27;s <span class='ht-d'>0.24mi</span> · Jackson Sq <span class='ht-d'>0.3mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9583087,-90.06692" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hotel%20St.%20Marie%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1035" data-color="amber" data-suite="0" data-red="1" data-rating="4.6" data-walk="2">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/place-d-armes-hotel.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1035" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.6" data-walk="2">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/place-d-armes-hotel.jpg')" href="https://www.google.com/maps/search/?api=1&query=Place%20d%27Armes%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Place d&#x27;Armes Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Place d&#x27;Armes Hotel <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Place%20d%27Armes%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Place d&#x27;Armes Hotel</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(1,512)</span></span> · 🚋 ~2 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Steps from Jackson Square & Café du Monde; three courtyard pools, kids stay free.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,035</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,590</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,035</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,590</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,035</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Muriel&#x27;s <span class='ht-d'>0.06mi</span> · Jackson Sq <span class='ht-d'>0.12mi</span> · Preservation Hall <span class='ht-d'>0.12mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.958721099999998,-90.06346339999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Place%20d%27Armes%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1085" data-color="amber" data-suite="0" data-red="1" data-rating="4.5" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hotel-provincial.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1085" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.5" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hotel-provincial.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hotel%20Provincial%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hotel Provincial in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hotel Provincial <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hotel%20Provincial%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hotel Provincial</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.5 <span class='ht-d'>(1,260)</span></span> · 🚋 ~1 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Quiet lower-Quarter courtyards and two pools; walk to the French Market.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,085</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,260</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,085</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,260</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,085</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> French Market <span class='ht-d'>0.05mi</span> · Muriel&#x27;s <span class='ht-d'>0.18mi</span> · Jackson Sq <span class='ht-d'>0.19mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9600722,-90.0610969" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hotel%20Provincial%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1155" data-color="amber" data-suite="0" data-red="1" data-rating="4.4" data-walk="4">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/four-points-by-sheraton-french-quarter.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1155" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="4">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/four-points-by-sheraton-french-quarter.jpg')" href="https://www.google.com/maps/search/?api=1&query=Four%20Points%20by%20Sheraton%20French%20Quarter%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Four Points by Sheraton French Quarter in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Four Points by Sheraton French Quarter <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Four%20Points%20by%20Sheraton%20French%20Quarter%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Four Points by Sheraton French Quarter</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(3,257)</span></span> · 🚋 ~4 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Reliable Quarter base with a courtyard pool, a block from Preservation Hall.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,155</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,430</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,155</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,430</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,155</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.08mi</span> · Muriel&#x27;s <span class='ht-d'>0.21mi</span> · Jackson Sq <span class='ht-d'>0.27mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.957834599999998,-90.0665069" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Four%20Points%20by%20Sheraton%20French%20Quarter%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1310" data-color="amber" data-suite="0" data-red="1" data-rating="4.4" data-walk="2">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/bourbon-orleans-hotel.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1310" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="2">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/bourbon-orleans-hotel.jpg')" href="https://www.google.com/maps/search/?api=1&query=Bourbon%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Bourbon Orleans Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Bourbon Orleans Hotel <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Bourbon%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Bourbon Orleans Hotel</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(2,894)</span></span> · 🚋 ~2 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Historic hotel with a saltwater courtyard pool, a block off Preservation Hall.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,310</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,470</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,310</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,470</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,310</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.05mi</span> · Muriel&#x27;s <span class='ht-d'>0.11mi</span> · Jackson Sq <span class='ht-d'>0.18mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9587297,-90.06471499999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Bourbon%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1410" data-color="red" data-suite="0" data-red="1" data-rating="4.3" data-walk="5">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/the-royal-sonesta-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1410" data-color="red" data-suitecheaper="1" data-red="1" data-rating="4.3" data-walk="5">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/the-royal-sonesta-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=The%20Royal%20Sonesta%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open The Royal Sonesta in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">The Royal Sonesta <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=The%20Royal%20Sonesta%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Royal Sonesta</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(4,349)</span></span> · 🚋 ~5 min to Canal (red)</div>
           <div class="ht-blurb">Bourbon St landmark with a lush courtyard pool and roomy family suites.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,410</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,500</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,410</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,500</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,410</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.25mi</span> · Sazerac Bar (Roosevelt) <span class='ht-d'>0.32mi</span> · Muriel&#x27;s <span class='ht-d'>0.35mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.955615599999994,-90.0681189" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=The%20Royal%20Sonesta%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1495" data-color="red" data-suite="0" data-red="1" data-rating="4.3" data-walk="6">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/omni-royal-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1495" data-color="red" data-suitecheaper="1" data-red="1" data-rating="4.3" data-walk="6">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/omni-royal-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Omni%20Royal%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Omni Royal Orleans in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Omni Royal Orleans <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Omni%20Royal%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Omni Royal Orleans</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(3,587)</span></span> · 🚋 ~6 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Rooftop pool + observation deck over the Quarter; steps to Jackson Square.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,495</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,680</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,495</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,680</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,495</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.15mi</span> · Muriel&#x27;s <span class='ht-d'>0.2mi</span> · Jackson Sq <span class='ht-d'>0.23mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9562645,-90.06562249999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Omni%20Royal%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="French Quarter" data-price="1590" data-color="red" data-suite="0" data-red="1" data-rating="4.8" data-walk="5">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/grenoble-house.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span></div>
+      <article class="ht-card" data-area="French Quarter" data-price="1590" data-color="red" data-suitecheaper="0" data-red="1" data-rating="4.8" data-walk="5">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/grenoble-house.jpg')" href="https://www.google.com/maps/search/?api=1&query=Grenoble%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Grenoble House in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Grenoble House <span class="ht-stars">3★</span><span class='ht-sub'>all-suite</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Grenoble%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Grenoble House</a> <span class="ht-stars">3★</span><span class='ht-sub'>all-suite</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.8 <span class='ht-d'>(325)</span></span> · 🚋 ~5 min to Canal (red)</div>
           <div class="ht-blurb">All-suite with kitchens + a saltwater pool — a top-rated Quarter family fit.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,590</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,590</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$2,130</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two ht-win"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,590</b><span class="ht-cheap">cheapest</span></div><div class="ht-opt ht-suite"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$2,130</b></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Preservation Hall <span class='ht-d'>0.25mi</span> · Sazerac Bar (Roosevelt) <span class='ht-d'>0.35mi</span> · Muriel&#x27;s <span class='ht-d'>0.38mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9565786,-90.0691166" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Grenoble%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -660,174 +616,114 @@
     <section class="ht-group" data-group="CBD / Downtown">
       <div class="ht-ghead"><span class="ht-gemoji">🏙️</span><div><div class="ht-gname">CBD / Downtown <span class="ht-gcount">10</span></div><div class="ht-gnote">On the Canal (red) &amp; St. Charles (green) lines — the walkable hub between the Quarter and the museums. Steps to the Sazerac Bar and the Aquarium; a short streetcar hop to the WWII Museum.</div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="CBD" data-price="630" data-color="green" data-suite="0" data-red="0" data-rating="4.6" data-walk="4">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/virgin-hotels-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="685" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.2" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/sheraton-new-orleans-hotel.jpg')" href="https://www.google.com/maps/search/?api=1&query=Sheraton%20New%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Sheraton New Orleans Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Virgin Hotels <span class="ht-stars">4★</span></div>
-          <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(1,539)</span></span> · 🚋 ~4 min to St. Charles (green)</div>
-          <div class="ht-blurb">Playful design hotel with a rooftop pool & bar, near the Sazerac and WWII Museum.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$630</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,340</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$630</b></div>
-            </div>
-          </div>
-          <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.23mi</span> · WWII Museum <span class='ht-d'>0.47mi</span> · Superdome <span class='ht-d'>0.48mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.949106900000004,-90.07331889999999" target="_blank" rel="noopener">Map ↗</a></div>
-        </div>
-      </article>
-      <article class="ht-card" data-area="CBD" data-price="685" data-color="green" data-suite="0" data-red="1" data-rating="4.2" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/sheraton-new-orleans-hotel.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
-        <div class="ht-body">
-          <div class="ht-name">Sheraton New Orleans Hotel <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Sheraton%20New%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Sheraton New Orleans Hotel</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.2 <span class='ht-d'>(7,632)</span></span> · 🚋 ~1 min to Canal (red)</div>
           <div class="ht-blurb">Big, family-friendly Canal St tower with a pool, right across from the Quarter.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$685</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,160</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$685</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,160</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$685</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.21mi</span> · Audubon Aquarium <span class='ht-d'>0.27mi</span> · Steamboat Natchez <span class='ht-d'>0.37mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.951857300000004,-90.0679251" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Sheraton%20New%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="870" data-color="green" data-suite="0" data-red="1" data-rating="4.0" data-walk="2">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/le-m-ridien-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="870" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.0" data-walk="2">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/le-m-ridien-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Le%20M%C3%A9ridien%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Le Méridien in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Le Méridien <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Le%20M%C3%A9ridien%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Le Méridien</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.0 <span class='ht-d'>(2,816)</span></span> · 🚋 ~2 min to Canal (red)</div>
           <div class="ht-blurb">Sleek pool deck a block off Canal; easy walk to the river and Sazerac Bar.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$870</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,290</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$870</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,290</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$870</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Audubon Aquarium <span class='ht-d'>0.17mi</span> · Sazerac Bar (Roosevelt) <span class='ht-d'>0.35mi</span> · Steamboat Natchez <span class='ht-d'>0.43mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9490896,-90.0667143" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Le%20M%C3%A9ridien%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="890" data-color="green" data-suite="0" data-red="0" data-rating="4.7" data-walk="3">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/drury-plaza-hotel-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="890" data-color="green" data-suitecheaper="1" data-red="0" data-rating="4.7" data-walk="3">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/drury-plaza-hotel-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Drury%20Plaza%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Drury Plaza Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Drury Plaza Hotel <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Drury%20Plaza%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Drury Plaza Hotel</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.7 <span class='ht-d'>(2,768)</span></span> · 🚋 ~3 min to St. Charles (green)</div>
           <div class="ht-blurb">Family favorite: free hot breakfast + evening bites, rooftop pool, on the streetcar.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$890</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,280</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$890</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,280</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$890</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.16mi</span> · WWII Museum <span class='ht-d'>0.49mi</span> · Audubon Aquarium <span class='ht-d'>0.5mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9498035,-90.0724249" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Drury%20Plaza%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="970" data-color="green" data-suite="1" data-red="0" data-rating="4.1" data-walk="4">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/homewood-suites-by-hilton-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="970" data-color="green" data-suitecheaper="1" data-red="0" data-rating="4.1" data-walk="4">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/homewood-suites-by-hilton-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Homewood%20Suites%20by%20Hilton%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Homewood Suites by Hilton in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Homewood Suites by Hilton <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Homewood%20Suites%20by%20Hilton%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Homewood Suites by Hilton</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.1 <span class='ht-d'>(1,791)</span></span> · 🚋 ~4 min to St. Charles (green)</div>
           <div class="ht-blurb">All-suite (kitchens + sofa beds) with a pool — one unit sleeps the whole crew.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$970</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,360</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$970</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,360</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$970</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.15mi</span> · Superdome <span class='ht-d'>0.47mi</span> · WWII Museum <span class='ht-d'>0.55mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag kid">🏨 suite fits 4</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9503892,-90.0732324" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Homewood%20Suites%20by%20Hilton%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="1000" data-color="green" data-suite="0" data-red="0" data-rating="4.3" data-walk="2">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/the-barnett-jdv-by-hyatt.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="1000" data-color="green" data-suitecheaper="1" data-red="0" data-rating="4.3" data-walk="2">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/the-barnett-jdv-by-hyatt.jpg')" href="https://www.google.com/maps/search/?api=1&query=The%20Barnett%20-%20JDV%20by%20Hyatt%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open The Barnett in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">The Barnett <span class="ht-stars">4★</span><span class='ht-sub'>JdV by Hyatt</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=The%20Barnett%20-%20JDV%20by%20Hyatt%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Barnett</a> <span class="ht-stars">4★</span><span class='ht-sub'>JdV by Hyatt</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(2,195)</span></span> · 🚋 ~2 min to St. Charles (green)</div>
           <div class="ht-blurb">Boutique-y JdV hotel with a pool near the St. Charles line and the WWII Museum.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,000</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,210</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,000</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,210</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,000</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.27mi</span> · WWII Museum <span class='ht-d'>0.38mi</span> · Audubon Aquarium <span class='ht-d'>0.5mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.948145800000002,-90.0720327" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=The%20Barnett%20-%20JDV%20by%20Hyatt%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="1125" data-color="amber" data-suite="0" data-red="1" data-rating="4.3" data-walk="2">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/the-westin-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="1115" data-color="amber" data-suitecheaper="1" data-red="0" data-rating="4.6" data-walk="4">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/virgin-hotels-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Virgin%20Hotels%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Virgin Hotels in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">The Westin New Orleans <span class="ht-stars">4★</span><span class='ht-sub'>at Canal Place</span></div>
-          <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(2,578)</span></span> · 🚋 ~2 min to Riverfront (red)</div>
-          <div class="ht-blurb">River-view rooms above the Aquarium; Riverfront streetcar at the door.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,125</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,520</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,125</b></div>
-            </div>
-          </div>
-          <div class="ht-near"><span class="ht-nl">Near</span> Audubon Aquarium <span class='ht-d'>0.1mi</span> · Steamboat Natchez <span class='ht-d'>0.25mi</span> · Sazerac Bar (Roosevelt) <span class='ht-d'>0.4mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.951227099999997,-90.0648026" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Virgin%20Hotels%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Virgin Hotels</a> <span class="ht-stars">4★</span></div>
+          <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(1,539)</span></span> · 🚋 ~4 min to St. Charles (green)</div>
+          <div class="ht-blurb">Playful design hotel with a rooftop pool & bar, near the Sazerac and WWII Museum.</div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,340</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,115</b><span class="ht-cheap">cheapest</span></div></div>
+          <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.23mi</span> · WWII Museum <span class='ht-d'>0.47mi</span> · Superdome <span class='ht-d'>0.48mi</span></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Virgin%20Hotels%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="1265" data-color="amber" data-suite="0" data-red="1" data-rating="4.4" data-walk="3">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/nopsi-hotel-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="1125" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="3">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/nopsi-hotel-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=NOPSI%20Hotel%2C%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open NOPSI Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">NOPSI Hotel <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=NOPSI%20Hotel%2C%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">NOPSI Hotel</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(1,989)</span></span> · 🚋 ~3 min to Canal (red)</div>
           <div class="ht-blurb">Stylish rooftop pool + bar; a block from the Roosevelt and the Canal streetcar.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,265</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,330</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,265</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,330</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,125</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.07mi</span> · Superdome <span class='ht-d'>0.51mi</span> · Audubon Aquarium <span class='ht-d'>0.54mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.952048800000004,-90.07265" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=NOPSI%20Hotel%2C%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="1275" data-color="amber" data-suite="0" data-red="1" data-rating="4.4" data-walk="3">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hyatt-centric-french-quarter-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="1125" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.3" data-walk="2">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/the-westin-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=The%20Westin%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open The Westin New Orleans in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hyatt Centric French Quarter <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=The%20Westin%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Westin New Orleans</a> <span class="ht-stars">4★</span><span class='ht-sub'>at Canal Place</span></div>
+          <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(2,578)</span></span> · 🚋 ~2 min to Riverfront (red)</div>
+          <div class="ht-blurb">River-view rooms above the Aquarium; Riverfront streetcar at the door.</div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,520</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,125</b><span class="ht-cheap">cheapest</span></div></div>
+          <div class="ht-near"><span class="ht-nl">Near</span> Audubon Aquarium <span class='ht-d'>0.1mi</span> · Steamboat Natchez <span class='ht-d'>0.25mi</span> · Sazerac Bar (Roosevelt) <span class='ht-d'>0.4mi</span></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=The%20Westin%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
+        </div>
+      </article>
+      <article class="ht-card" data-area="CBD" data-price="1275" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="3">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hyatt-centric-french-quarter-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hyatt%20Centric%20French%20Quarter%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hyatt Centric French Quarter in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
+        <div class="ht-body">
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hyatt%20Centric%20French%20Quarter%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hyatt Centric French Quarter</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(2,700)</span></span> · 🚋 ~3 min to Canal (red)</div>
           <div class="ht-blurb">Courtyard pool on the Quarter's edge, a short walk to Bourbon and the Aquarium.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,275</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,660</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,275</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,660</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,275</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.23mi</span> · Preservation Hall <span class='ht-d'>0.36mi</span> · Muriel&#x27;s <span class='ht-d'>0.46mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.954951599999998,-90.06990189999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hyatt%20Centric%20French%20Quarter%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="CBD" data-price="1590" data-color="red" data-suite="0" data-red="1" data-rating="4.6" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/the-roosevelt-new-orleans-a-waldorf-astoria-hote.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span></div>
+      <article class="ht-card" data-area="CBD" data-price="1575" data-color="red" data-suitecheaper="1" data-red="1" data-rating="4.6" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/the-roosevelt-new-orleans-a-waldorf-astoria-hote.jpg')" href="https://www.google.com/maps/search/?api=1&query=The%20Roosevelt%20New%20Orleans%2C%20A%20Waldorf%20Astoria%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open The Roosevelt New Orleans in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-red"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">The Roosevelt New Orleans <span class="ht-stars">5★</span><span class='ht-sub'>Waldorf Astoria · 5★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=The%20Roosevelt%20New%20Orleans%2C%20A%20Waldorf%20Astoria%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Roosevelt New Orleans</a> <span class="ht-stars">5★</span><span class='ht-sub'>Waldorf Astoria · 5★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(6,202)</span></span> · 🚋 ~1 min to Canal (red)</div>
           <div class="ht-blurb">5-star Waldorf Astoria landmark — rooftop pool and the Sazerac Bar downstairs.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,590</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,590</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,620</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,590</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,575</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Sazerac Bar (Roosevelt) <span class='ht-d'>0.17mi</span> · Preservation Hall <span class='ht-d'>0.5mi</span> · Superdome <span class='ht-d'>0.57mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.954342800000003,-90.0722983" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=The%20Roosevelt%20New%20Orleans%2C%20A%20Waldorf%20Astoria%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -835,89 +731,59 @@
     <section class="ht-group" data-group="Warehouse / Arts District">
       <div class="ht-ghead"><span class="ht-gemoji">🎨</span><div><div class="ht-gname">Warehouse / Arts District <span class="ht-gcount">5</span></div><div class="ht-gnote">Riverfront (red) &amp; St. Charles (green) lines; flat, easy blocks. Beside the National WWII Museum &amp; the Aquarium, with Cochon and Pêche for dinner.</div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="Warehouse/Arts" data-price="795" data-color="green" data-suite="1" data-red="1" data-rating="3.8" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/embassy-suites-by-hilton-new-orleans.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="Warehouse/Arts" data-price="795" data-color="green" data-suitecheaper="1" data-red="1" data-rating="3.8" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/embassy-suites-by-hilton-new-orleans.jpg')" href="https://www.google.com/maps/search/?api=1&query=Embassy%20Suites%20by%20Hilton%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Embassy Suites New Orleans in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Embassy Suites New Orleans <span class="ht-stars">4★</span><span class='ht-sub'>all two-room suites</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Embassy%20Suites%20by%20Hilton%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Embassy Suites New Orleans</a> <span class="ht-stars">4★</span><span class='ht-sub'>two-room suites</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 3.8 <span class='ht-d'>(3,761)</span></span> · 🚋 ~1 min to Riverfront (red)</div>
           <div class="ht-blurb">All two-room suites (sleeps the family in one unit), pool + free cooked breakfast.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$795</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,080</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$795</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,080</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$795</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Convention Center <span class='ht-d'>0.25mi</span> · WWII Museum <span class='ht-d'>0.27mi</span> · Audubon Aquarium <span class='ht-d'>0.37mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag kid">🏨 suite fits 4</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9450563,-90.0661787" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Embassy%20Suites%20by%20Hilton%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="Warehouse/Arts" data-price="805" data-color="green" data-suite="0" data-red="1" data-rating="4.4" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/renaissance-new-orleans-arts-warehouse-district-.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="Warehouse/Arts" data-price="805" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/renaissance-new-orleans-arts-warehouse-district-.jpg')" href="https://www.google.com/maps/search/?api=1&query=Renaissance%20New%20Orleans%20Arts%20Warehouse%20District%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Renaissance Arts Warehouse in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Renaissance Arts Warehouse <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Renaissance%20New%20Orleans%20Arts%20Warehouse%20District%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Renaissance Arts Warehouse</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(1,352)</span></span> · 🚋 ~1 min to Riverfront (red)</div>
           <div class="ht-blurb">Arts-District design hotel with a pool, a block from the WWII Museum.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$805</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,470</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$805</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,470</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$805</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> WWII Museum <span class='ht-d'>0.26mi</span> · Convention Center <span class='ht-d'>0.33mi</span> · Audubon Aquarium <span class='ht-d'>0.35mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9458837,-90.0672769" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Renaissance%20New%20Orleans%20Arts%20Warehouse%20District%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="Warehouse/Arts" data-price="820" data-color="green" data-suite="0" data-red="1" data-rating="4.3" data-walk="3">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hampton-inn-suites-new-orleans-convention-center.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="Warehouse/Arts" data-price="820" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.3" data-walk="3">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hampton-inn-suites-new-orleans-convention-center.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20%26%20Suites%20New%20Orleans-Convention%20Center%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hampton Inn &amp; Suites in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hampton Inn &amp; Suites <span class="ht-stars">3★</span><span class='ht-sub'>Convention Center</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20%26%20Suites%20New%20Orleans-Convention%20Center%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hampton Inn &amp; Suites</a> <span class="ht-stars">3★</span><span class='ht-sub'>Convention Center</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(2,641)</span></span> · 🚋 ~3 min to Riverfront (red)</div>
           <div class="ht-blurb">Pool + free breakfast steps from the WWII Museum and the Convention Center.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$820</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,220</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$820</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,220</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$820</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Convention Center <span class='ht-d'>0.16mi</span> · WWII Museum <span class='ht-d'>0.36mi</span> · Audubon Aquarium <span class='ht-d'>0.7mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9399302,-90.06506499999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20%26%20Suites%20New%20Orleans-Convention%20Center%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="Warehouse/Arts" data-price="1205" data-color="amber" data-suite="0" data-red="1" data-rating="4.4" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/new-orleans-marriott-warehouse-arts-district.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="Warehouse/Arts" data-price="1205" data-color="amber" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/new-orleans-marriott-warehouse-arts-district.jpg')" href="https://www.google.com/maps/search/?api=1&query=New%20Orleans%20Marriott%20Warehouse%20Arts%20District%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Marriott Warehouse Arts District in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Marriott Warehouse Arts District <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=New%20Orleans%20Marriott%20Warehouse%20Arts%20District%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Marriott Warehouse Arts District</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(2,230)</span></span> · 🚋 ~1 min to Riverfront (red)</div>
           <div class="ht-blurb">Pool in the heart of the galleries, walk to Cochon, Pêche and the museum.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,205</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,730</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,205</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,730</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,205</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Convention Center <span class='ht-d'>0.1mi</span> · WWII Museum <span class='ht-d'>0.31mi</span> · Audubon Aquarium <span class='ht-d'>0.47mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.943267799999994,-90.06477" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=New%20Orleans%20Marriott%20Warehouse%20Arts%20District%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="Warehouse/Arts" data-price="1310" data-color="amber" data-suite="0" data-red="1" data-rating="4.2" data-walk="2">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hilton-new-orleans-riverside.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="Warehouse/Arts" data-price="1310" data-color="amber" data-suitecheaper="0" data-red="1" data-rating="4.2" data-walk="2">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hilton-new-orleans-riverside.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hilton%20New%20Orleans%20Riverside%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hilton New Orleans Riverside in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hilton New Orleans Riverside <span class="ht-stars">4★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hilton%20New%20Orleans%20Riverside%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hilton New Orleans Riverside</a> <span class="ht-stars">4★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.2 <span class='ht-d'>(8,698)</span></span> · 🚋 ~2 min to Riverfront (red)</div>
           <div class="ht-blurb">Big riverfront resort — pools, near the Aquarium and the Riverfront streetcar.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,310</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,310</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,325</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two ht-win"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,310</b><span class="ht-cheap">cheapest</span></div><div class="ht-opt ht-suite"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,325</b></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Audubon Aquarium <span class='ht-d'>0.18mi</span> · Convention Center <span class='ht-d'>0.38mi</span> · Steamboat Natchez <span class='ht-d'>0.45mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.947506200000003,-90.063454" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hilton%20New%20Orleans%20Riverside%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -925,21 +791,15 @@
     <section class="ht-group" data-group="Lower Garden District">
       <div class="ht-ghead"><span class="ht-gemoji">🌿</span><div><div class="ht-gname">Lower Garden District <span class="ht-gcount">1</span></div><div class="ht-gnote">Right on the St. Charles (green) streetcar. Walk to Magazine Street &amp; District Donuts; ride up to Commander's Palace. <span class='ht-warn'>⚠ the historic green line isn't wheelchair-accessible — rideshare is the comfy call here</span></div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="Lower Garden" data-price="1070" data-color="amber" data-suite="1" data-red="0" data-rating="4.4" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/club-wyndham-avenue-plaza.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="Lower Garden" data-price="1070" data-color="amber" data-suitecheaper="0" data-red="0" data-rating="4.4" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/club-wyndham-avenue-plaza.jpg')" href="https://www.google.com/maps/search/?api=1&query=Club%20Wyndham%20Avenue%20Plaza%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Avenue Plaza in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Avenue Plaza <span class="ht-stars">3★</span><span class='ht-sub'>all-suite resort</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Club%20Wyndham%20Avenue%20Plaza%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Avenue Plaza</a> <span class="ht-stars">3★</span><span class='ht-sub'>all-suite resort</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(2,121)</span></span> · 🚋 ~1 min to St. Charles (green)</div>
           <div class="ht-blurb">All-suite on the St. Charles line with a pool — roomy base near Magazine St.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,070</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,070</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room</span><span class='ht-req'>ask hotel</span></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two ht-win"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,070</b><span class="ht-cheap">cheapest</span></div><div class="ht-opt ht-suite"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><span class="ht-req">ask hotel</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Magazine St <span class='ht-d'>0.31mi</span> · Commander&#x27;s Palace <span class='ht-d'>0.51mi</span> · WWII Museum <span class='ht-d'>0.83mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag kid">🏨 suite fits 4</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9347516,-90.08004559999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Club%20Wyndham%20Avenue%20Plaza%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -947,38 +807,26 @@
     <section class="ht-group" data-group="Garden District">
       <div class="ht-ghead"><span class="ht-gemoji">🏡</span><div><div class="ht-gname">Garden District <span class="ht-gcount">2</span></div><div class="ht-gnote">The prettiest blocks of the St. Charles (green) line. Commander's Palace, Lafayette Cemetery &amp; Magazine Street shopping. <span class='ht-warn'>⚠ the historic green line isn't wheelchair-accessible — rideshare is the comfy call here</span></div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="Garden District" data-price="745" data-color="green" data-suite="0" data-red="0" data-rating="4.3" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hampton-inn-new-orleans-st-charles-ave-garden-di.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="Garden District" data-price="745" data-color="green" data-suitecheaper="1" data-red="0" data-rating="4.3" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hampton-inn-new-orleans-st-charles-ave-garden-di.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20New%20Orleans-St.%20Charles%20Ave./Garden%20District%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hampton Inn New Orleans-St. Charles Ave./Garden District in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hampton Inn New Orleans-St. Charles Ave./Garden District <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20New%20Orleans-St.%20Charles%20Ave./Garden%20District%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hampton Inn New Orleans-St. Charles Ave./Garden District</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.3 <span class='ht-d'>(807)</span></span> · 🚋 ~1 min to St. Charles (green)</div>
           <div class="ht-blurb">Pool + free breakfast right on the streetcar, walk to Commander's Palace.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$745</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,150</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$745</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,150</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$745</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Commander&#x27;s Palace <span class='ht-d'>0.58mi</span> · Magazine St <span class='ht-d'>1.13mi</span> · WWII Museum <span class='ht-d'>1.81mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9269939,-90.0939846" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20New%20Orleans-St.%20Charles%20Ave./Garden%20District%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
-      <article class="ht-card" data-area="Garden District" data-price="1040" data-color="amber" data-suite="0" data-red="0" data-rating="4.5" data-walk="13">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/dew-drop-inn-hotel-lounge-historic-boutique-hote.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span></div>
+      <article class="ht-card" data-area="Garden District" data-price="1040" data-color="amber" data-suitecheaper="0" data-red="0" data-rating="4.5" data-walk="13">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/dew-drop-inn-hotel-lounge-historic-boutique-hote.jpg')" href="https://www.google.com/maps/search/?api=1&query=Dew%20Drop%20Inn%20Hotel%20%26%20Lounge%20-%20Historic%20Boutique%20Hotel%20in%20New%20Orleans%20LA%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Dew Drop Inn Hotel &amp; Lounge - Historic Boutique Hotel in New Orleans LA in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-amber"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Dew Drop Inn Hotel &amp; Lounge - Historic Boutique Hotel in New Orleans LA <span class="ht-stars">★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Dew%20Drop%20Inn%20Hotel%20%26%20Lounge%20-%20Historic%20Boutique%20Hotel%20in%20New%20Orleans%20LA%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Dew Drop Inn Hotel &amp; Lounge - Historic Boutique Hotel in New Orleans LA</a> <span class="ht-stars">★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.5 <span class='ht-d'>(197)</span></span> · 🚋 ~13 min to St. Charles (green)</div>
           <div class="ht-blurb">The legendary music hall reborn as a boutique hotel — pool, on the streetcar.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$1,040</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,040</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$1,375</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two ht-win"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,040</b><span class="ht-cheap">cheapest</span></div><div class="ht-opt ht-suite"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$1,375</b></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Commander&#x27;s Palace <span class='ht-d'>0.72mi</span> · Magazine St <span class='ht-d'>1.0mi</span> · Superdome <span class='ht-d'>1.17mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9368716,-90.0916424" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Dew%20Drop%20Inn%20Hotel%20%26%20Lounge%20-%20Historic%20Boutique%20Hotel%20in%20New%20Orleans%20LA%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -986,21 +834,15 @@
     <section class="ht-group" data-group="Uptown">
       <div class="ht-ghead"><span class="ht-gemoji">🌳</span><div><div class="ht-gname">Uptown <span class="ht-gcount">1</span></div><div class="ht-gnote">The leafy far end of the St. Charles (green) line. Audubon Park &amp; Zoo, The Fly, and Magazine Street's Uptown stretch. <span class='ht-warn'>⚠ the historic green line isn't wheelchair-accessible — rideshare is the comfy call here</span></div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="Uptown" data-price="805" data-color="green" data-suite="0" data-red="0" data-rating="4.6" data-walk="13">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/alder-hotel.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="Uptown" data-price="805" data-color="green" data-suitecheaper="1" data-red="0" data-rating="4.6" data-walk="13">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/alder-hotel.jpg')" href="https://www.google.com/maps/search/?api=1&query=Alder%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Alder Hotel in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Alder Hotel <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Alder%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Alder Hotel</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.6 <span class='ht-d'>(1,064)</span></span> · 🚋 ~13 min to St. Charles (green)</div>
           <div class="ht-blurb">Uptown boutique with a pool near the hospitals & Audubon; St. Charles line nearby.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$805</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,000</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$805</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,000</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$805</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Commander&#x27;s Palace <span class='ht-d'>1.38mi</span> · Audubon Park <span class='ht-d'>1.68mi</span> · Superdome <span class='ht-d'>1.74mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.9372263,-90.10523769999999" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag sun">🚋 green line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Alder%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -1008,21 +850,15 @@
     <section class="ht-group" data-group="Marigny / Frenchmen">
       <div class="ht-ghead"><span class="ht-gemoji">🎷</span><div><div class="ht-gname">Marigny / Frenchmen <span class="ht-gcount">1</span></div><div class="ht-gnote">On the Rampart–St. Claude (red) line, at the Quarter's downriver edge. Frenchmen Street jazz and Crescent Park are the draw.</div></div></div>
       <div class="ht-grid">
-      <article class="ht-card" data-area="Marigny" data-price="645" data-color="green" data-suite="0" data-red="1" data-rating="4.4" data-walk="1">
-        <div class="ht-photo" style="background-image:url('/neworleans-hotels/hampton-inn-new-orleans-french-quarter-market-ar.jpg')"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span></div>
+      <article class="ht-card" data-area="Marigny" data-price="645" data-color="green" data-suitecheaper="1" data-red="1" data-rating="4.4" data-walk="1">
+        <a class="ht-photo" style="background-image:url('/neworleans-hotels/hampton-inn-new-orleans-french-quarter-market-ar.jpg')" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20New%20Orleans%20French%20Quarter%20Market%20Area%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener" title="Open Hampton Inn New Orleans French Quarter Market Area in Google Maps"><span class="ht-pool">🏊 pool</span><span class="ht-dot c-green"></span><span class="ht-maptag">Google Maps ↗</span></a>
         <div class="ht-body">
-          <div class="ht-name">Hampton Inn New Orleans French Quarter Market Area <span class="ht-stars">3★</span></div>
+          <div class="ht-name"><a class="ht-namelink" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20New%20Orleans%20French%20Quarter%20Market%20Area%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hampton Inn New Orleans French Quarter Market Area</a> <span class="ht-stars">3★</span></div>
           <div class="ht-meta"><span class="ht-rate">⭐ 4.4 <span class='ht-d'>(367)</span></span> · 🚋 ~1 min to Rampart–St. Claude (red)</div>
           <div class="ht-blurb">Pool + free breakfast at the Quarter/Marigny line, a walk to Frenchmen Street.</div>
-          <div class="ht-pricebox">
-            <div class="ht-head"><span class="ht-hl">Cheapest for all four · 5 nights</span><span class="ht-big">$645</span></div>
-            <div class="ht-opts">
-              <div class="ht-opt"><span class="ht-oi">🛏️🛏️ Two rooms</span><b>$1,010</b></div>
-              <div class='ht-opt'><span class='ht-oi'>🛏️ Suite / family room · sleeps 4</span><b>$645</b></div>
-            </div>
-          </div>
+          <div class="ht-pricebox"><div class="ht-pbhead">Your party of 4 · 5 nights <span class="ht-pbsub">cheaper option highlighted</span></div><div class="ht-opt ht-two"><span class="ht-oi">🛏️🛏️ Two rooms<em>each: 1 bed + sleeper sofa, or 2 beds</em></span><b>$1,010</b></div><div class="ht-opt ht-suite ht-win"><span class="ht-oi">🏨 Suite<em>2 beds + 1 sleeper sofa</em></span><b>$645</b><span class="ht-cheap">cheapest</span></div></div>
           <div class="ht-near"><span class="ht-nl">Near</span> Frenchmen St <span class='ht-d'>0.08mi</span> · Crescent Park <span class='ht-d'>0.25mi</span> · French Market <span class='ht-d'>0.36mi</span></div>
-          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=29.962881999999997,-90.055949" target="_blank" rel="noopener">Map ↗</a></div>
+          <div class="ht-tags"><span class="tag ac">🏊 pool</span><span class="tag walk">♿ red line</span><a class="ht-map" href="https://www.google.com/maps/search/?api=1&query=Hampton%20Inn%20New%20Orleans%20French%20Quarter%20Market%20Area%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a></div>
         </div>
       </article>
       </div>
@@ -1040,16 +876,15 @@
   var areasWrap = document.getElementById('htAreas');
   var state = {areas:new Set(), colors:new Set(), flags:new Set(), sort:'price'};
   groups.forEach(function(g){
-    var one = g.querySelector('.ht-card');
-    var key = one ? one.getAttribute('data-area') : g.getAttribute('data-group');
-    var b = document.createElement('button');
-    b.className='ht-chip'; b.setAttribute('data-area', key); b.textContent=g.getAttribute('data-group');
-    if(!one) b.setAttribute('data-noteonly','1');
+    var one=g.querySelector('.ht-card');
+    var key=one?one.getAttribute('data-area'):g.getAttribute('data-group');
+    var b=document.createElement('button');
+    b.className='ht-chip'; b.setAttribute('data-area',key); b.textContent=g.getAttribute('data-group');
     areasWrap.appendChild(b);
   });
   function bind(wrap,setKey,attr){
     wrap.querySelectorAll('.ht-chip').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click',function(){
         var v=btn.getAttribute(attr), on=btn.getAttribute('aria-pressed')==='true';
         btn.setAttribute('aria-pressed', !on);
         if(on) state[setKey].delete(v); else state[setKey].add(v);
@@ -1064,14 +899,24 @@
   function reset(){
     state.areas.clear();state.colors.clear();state.flags.clear();state.sort='price';
     document.querySelectorAll('#htBar .ht-chip').forEach(function(b){b.setAttribute('aria-pressed','false');});
-    document.getElementById('htSort').value='price';apply();
+    document.getElementById('htSort').value='price'; setShow('both'); apply();
   }
+  // Show: both / two-rooms only / suite only (radio-style)
+  var groupsEl=document.getElementById('htGroups');
+  var showBtns=Array.prototype.slice.call(document.querySelectorAll('#htShow .ht-chip'));
+  function setShow(mode){
+    showBtns.forEach(function(b){b.setAttribute('aria-pressed', b.getAttribute('data-show')===mode);});
+    groupsEl.classList.remove('hide-two','hide-suite');
+    if(mode==='two') groupsEl.classList.add('hide-suite');
+    else if(mode==='suite') groupsEl.classList.add('hide-two');
+  }
+  showBtns.forEach(function(b){ b.addEventListener('click',function(){ setShow(b.getAttribute('data-show')); }); });
   document.getElementById('htReset').addEventListener('click',reset);
   var r2=document.getElementById('htReset2'); if(r2) r2.addEventListener('click',reset);
   function vis(c){
     if(state.areas.size && !state.areas.has(c.getAttribute('data-area'))) return false;
     if(state.colors.size && !state.colors.has(c.getAttribute('data-color'))) return false;
-    if(state.flags.has('suite') && c.getAttribute('data-suite')!=='1') return false;
+    if(state.flags.has('suitecheaper') && c.getAttribute('data-suitecheaper')!=='1') return false;
     if(state.flags.has('red') && c.getAttribute('data-red')!=='1') return false;
     return true;
   }
@@ -1085,9 +930,7 @@
     var shown=0;
     groups.forEach(function(g){
       var gc=Array.prototype.slice.call(g.querySelectorAll('.ht-card'));
-      var isNote = gc.length===0;
-      var group = g.getAttribute('data-group');
-      if(isNote){ g.hidden = state.areas.size>0 && !state.areas.has(group); return; }
+      if(gc.length===0){ g.hidden = state.areas.size>0 && !state.areas.has(g.getAttribute('data-group')); return; }
       var v=gc.filter(function(c){var ok=vis(c);c.hidden=!ok;if(ok)shown++;return ok;});
       v.sort(function(a,b){return key(a)-key(b);});
       var grid=g.querySelector('.ht-grid');
