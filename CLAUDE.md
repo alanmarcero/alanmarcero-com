@@ -257,7 +257,7 @@ App
 │   ├── Bio paragraph
 │   ├── CTA row (.hero-cta-row flex container)
 │   │   ├── YouTube CTA (gradient pill button with CRT overlay)
-│   │   └── Arcade link (outlined secondary CTA → /arcade.html)
+│   │   └── Arcade link (outlined secondary CTA → /arcade)
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
@@ -387,7 +387,7 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 
 ## Arcade Page
 
-**URL:** `/arcade.html` (separate Vite entry point — not React Router)
+**URL:** `/arcade` in production — a CloudFront Function rewrites the request to `/arcade.html` at the edge (see `infrastructure/cloudfront-clean-urls.yml`). Dev server still serves `/arcade.html` directly. Separate Vite entry point — not React Router.
 
 **Architecture:** Separate `arcade.html` entry + `src/arcade/main.jsx` React root. Zero impact on main page bundle size. Vite handles shared vendor chunks (React) automatically via `build.rollupOptions.input` in `vite.config.js`.
 

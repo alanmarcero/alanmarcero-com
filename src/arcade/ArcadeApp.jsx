@@ -5,7 +5,7 @@ import GamePicker from './components/GamePicker';
 import GameCanvas from './components/GameCanvas';
 import { getGameById } from './games/gameRegistry';
 
-// Each game is addressable as `/arcade.html#<game-id>`. Hash routing keeps the
+// Each game is addressable as `/arcade#<game-id>`. Hash routing keeps the
 // static, no-router setup intact while making every game directly linkable.
 const gameIdFromHash = () => {
   if (typeof window === 'undefined') return null;
