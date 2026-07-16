@@ -780,18 +780,212 @@
     <div class="gc"><div class="gn">Rhythm of the day</div><div class="gw">Outdoors early &amp; after 5 PM, A/C 11–3, a midday hotel-pool reset. Light layers — indoor A/C runs cold.</div><div class="gt"><span class="tag ac">❄️</span></div></div>
   </div>
 
-  <div class="shead" id="do"><span class="ic">🎷</span> Do &amp; hear</div>
-  <p class="sintro">Beyond the daily plan — more great, mostly-cool, kid-OK ways to soak up the city.</p>
-  <div class="cards">
-    <div class="gc"><div class="gn">New Orleans Jazz Museum <span class="nb">· Old U.S. Mint</span></div><div class="gw">A/C exhibits plus near-daily live sets — the comfortable way to hear real jazz with a kid.</div><div class="gt"><span class="tag ac">❄️</span><span class="tag walk">🪑</span><span class="tag kid">🧒</span><span class="tag tram">🚋</span></div></div>
-    <div class="gc"><div class="gn">Café Beignet · Legends Park <span class="nb">· off Bourbon</span></div><div class="gw">Live jazz daily from ~10 AM in a shaded courtyard, kids welcome — beignets optional-but-inevitable.</div><div class="gt"><span class="tag shade">🌳</span><span class="tag kid">🧒</span></div></div>
-    <div class="gc"><div class="gn">Frenchmen Street <span class="nb">· evening</span></div><div class="gw">The locals' music strip. The Maison &amp; Bamboula's admit under-18s (with a parent) until ~9 PM, or just stroll and catch it from the sidewalk.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag car">🚗</span></div></div>
-    <div class="gc"><div class="gn">Music Box Village <span class="nb">· Bywater</span></div><div class="gw">Playable "musical houses" — architecture you bang, strum, and climb. Delightfully weird, but only open on scheduled days — check the calendar (musicboxvillage.com) first.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag sun">☀️</span></div></div>
-    <div class="gc"><div class="gn">Sazerac House <span class="nb">· Canal St · free</span></div><div class="gw">A slick, free, interactive cocktail-history museum — A/C, and fun for curious older kids too.</div><div class="gt"><span class="tag ac">❄️</span><span class="tag walk">🪑</span><span class="tag tram">🚋</span></div></div>
-    <div class="gc"><div class="gn">Pharmacy Museum <span class="nb">· French Quarter · $5</span></div><div class="gw">A tiny two-story apothecary of 1800s potions, leech jars, and voodoo cures — quick, cheap, cool, and deliciously creepy for a curious kid.</div><div class="gt"><span class="tag ac">❄️</span><span class="tag walk">🪑</span><span class="tag kid">🧒</span></div></div>
-    <div class="gc"><div class="gn">Roman Candy cart</div><div class="gw">The mule-drawn taffy wagon, rolling Uptown since 1915. Pure delight for a 7-year-old.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag sun">☀️</span></div></div>
+  <div class="shead" id="do"><span class="ic">🎷</span> Do &amp; see</div>
+  <p class="sintro">A filterable menu of things to do — beyond the daily plan. Flag <b>❄️ heat-safe</b> for the hot middle of the day, <b>🧒 kid</b> for the 7-year-old, or filter by price. 📅 marks what's already scheduled. Tap any name for the map.</p>
+  <div class="ht-bar" id="aoBar">
+    <div class="ht-frow"><span class="ht-flabel">Type</span><div class="ht-chips" id="aoCats">
+        <button class="ht-chip" data-cat="music">🎷 Music &amp; culture</button>
+        <button class="ht-chip" data-cat="museum">🏛️ Museums &amp; indoor</button>
+        <button class="ht-chip" data-cat="animal">🐊 Animals, river &amp; tours</button>
+        <button class="ht-chip" data-cat="outdoor">🌳 Outdoors, parks &amp; quirky</button>
+    </div></div>
+    <div class="ht-frow"><span class="ht-flabel">Price</span><div class="ht-chips" id="aoPrice">
+        <button class="ht-chip" data-price="0">Free</button>
+        <button class="ht-chip" data-price="1">$</button>
+        <button class="ht-chip" data-price="2">$$+</button>
+    </div></div>
+    <div class="ht-frow"><span class="ht-flabel">Only</span><div class="ht-chips" id="aoToggles">
+        <button class="ht-chip" data-flag="ac">❄️ Heat-safe (A/C)</button>
+        <button class="ht-chip" data-flag="kid">🧒 Kid-friendly</button>
+        <button class="ht-chip" data-flag="reserve">📞 Timed / book ahead</button>
+      </div>
+      <button class="ht-reset" id="aoReset">Reset</button>
+      <span class="ht-count" id="aoCount"></span>
+    </div>
   </div>
+  <div class="et-groups" id="aoGroups">
+    <section class="et-group" data-cat="music">
+      <div class="et-ghead">🎷 Music &amp; culture <span class="et-gcount">6</span></div>
+      <div class="et-grid">
+      <article class="et-card" data-cat="music" data-price="1" data-kid="1" data-ac="1" data-reserve="0" data-name="New Orleans Jazz Museum">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=New%20Orleans%20Jazz%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">New Orleans Jazz Museum</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Old U.S. Mint, FQ</span></div>
+        <div class="et-blurb">A/C exhibits plus near-daily live sets — the comfortable way to hear real jazz with a kid.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=New%20Orleans%20Jazz%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="music" data-price="2" data-kid="1" data-ac="0" data-reserve="1" data-name="Preservation Hall">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Preservation%20Hall%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Preservation Hall</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">The 1961 jazz shrine — book the early "Big Shot" show ahead; no A/C, no drinks, just the music.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Preservation%20Hall%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="music" data-price="0" data-kid="1" data-ac="0" data-reserve="0" data-name="Café Beignet · Musical Legends Park">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20Beignet%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Café Beignet · Musical Legends Park</a><span class="et-price">Free</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">Free live jazz daily from ~10 AM in a shaded courtyard off Bourbon — kids welcome, beignets inevitable.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20Beignet%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="music" data-price="0" data-kid="1" data-ac="0" data-reserve="0" data-name="Frenchmen Street">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Frenchmen%20Street%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Frenchmen Street</a><span class="et-price">Free</span></div>
+        <div class="et-meta"><span class="et-nb">Marigny</span></div>
+        <div class="et-blurb">The locals' music strip. The Maison &amp; Bamboula's admit under-18s with a parent until ~9 PM, or catch it from the sidewalk.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Frenchmen%20Street%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="music" data-price="2" data-kid="1" data-ac="1" data-reserve="1" data-name="JAMNOLA">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=JAMNOLA%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">JAMNOLA</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Marigny · Frenchmen</span></div>
+        <div class="et-blurb">29 interactive art-music "funhouse" exhibits by 100+ local artists — a 10-min walk from the Quarter. Timed entry.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=JAMNOLA%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="music" data-price="1" data-kid="1" data-ac="1" data-reserve="0" data-name="Backstreet Cultural Museum">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Backstreet%20Cultural%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Backstreet Cultural Museum</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Tremé</span></div>
+        <div class="et-blurb">Mardi Gras Indian suits, second-line &amp; jazz-funeral history in a tiny, powerful A/C space.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Backstreet%20Cultural%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      </div>
+    </section>
+    <section class="et-group" data-cat="museum">
+      <div class="et-ghead">🏛️ Museums &amp; indoor <span class="et-gcount">6</span></div>
+      <div class="et-grid">
+      <article class="et-card" data-cat="museum" data-price="2" data-kid="1" data-ac="1" data-reserve="1" data-name="National WWII Museum">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=National%20WWII%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">National WWII Museum</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Warehouse District</span><span class="et-fave" title="already in your day-by-day plan">📅 in the plan</span></div>
+        <div class="et-blurb">The nation's official WWII museum — elevators, seating everywhere, the 4D film &amp; planes overhead win all ages. In the day plan.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=National%20WWII%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="museum" data-price="1" data-kid="1" data-ac="1" data-reserve="0" data-name="Cabildo &amp;amp; Presbytère">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Cabildo%20and%20Presbyt%C3%A8re%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Cabildo &amp; Presbytère</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Jackson Square, FQ</span></div>
+        <div class="et-blurb">Two cool, compact Louisiana State Museums on the square — Mardi Gras &amp; Katrina stories.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Cabildo%20and%20Presbyt%C3%A8re%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="museum" data-price="1" data-kid="1" data-ac="1" data-reserve="0" data-name="The Pharmacy Museum">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=The%20Pharmacy%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Pharmacy Museum</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">A two-story 1800s apothecary of potions, leech jars &amp; voodoo cures — quick, cheap, deliciously creepy for a curious kid.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=The%20Pharmacy%20Museum%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="museum" data-price="0" data-kid="1" data-ac="1" data-reserve="0" data-name="Sazerac House">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Sazerac%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Sazerac House</a><span class="et-price">Free</span></div>
+        <div class="et-meta"><span class="et-nb">Canal St</span></div>
+        <div class="et-blurb">A slick, free, interactive cocktail-history museum — A/C, and fun for curious older kids too.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Sazerac%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="museum" data-price="1" data-kid="0" data-ac="1" data-reserve="0" data-name="Ogden Museum of Southern Art">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Ogden%20Museum%20of%20Southern%20Art%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Ogden Museum of Southern Art</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Warehouse District</span></div>
+        <div class="et-blurb">Bright, walkable galleries of Southern art; Thursday-night "Ogden After Hours" has live music.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Ogden%20Museum%20of%20Southern%20Art%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="museum" data-price="2" data-kid="1" data-ac="1" data-reserve="1" data-name="Mardi Gras World">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Mardi%20Gras%20World%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Mardi Gras World</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Riverfront, CBD</span></div>
+        <div class="et-blurb">A guided tour through the working warehouse where Carnival floats are built — hands-on and A/C. Daily tours.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Mardi%20Gras%20World%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      </div>
+    </section>
+    <section class="et-group" data-cat="animal">
+      <div class="et-ghead">🐊 Animals, river &amp; tours <span class="et-gcount">6</span></div>
+      <div class="et-grid">
+      <article class="et-card" data-cat="animal" data-price="2" data-kid="1" data-ac="1" data-reserve="0" data-name="Audubon Aquarium &amp;amp; Insectarium">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Audubon%20Aquarium%20and%20Insectarium%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Audubon Aquarium &amp; Insectarium</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Riverfront, FQ</span><span class="et-fave" title="already in your day-by-day plan">📅 in the plan</span></div>
+        <div class="et-blurb">One combined ticket: a 60-ft shark/stingray touch pool, penguins, the Gulf tank &amp; a butterfly garden. In the day plan.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Audubon%20Aquarium%20and%20Insectarium%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="animal" data-price="2" data-kid="1" data-ac="0" data-reserve="0" data-name="Audubon Zoo">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Audubon%20Zoo%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Audubon Zoo</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Uptown</span></div>
+        <div class="et-blurb">Free-roaming exhibits and the "Cool Zoo" splash park for the kid — pair with the St. Charles streetcar.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Audubon%20Zoo%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="animal" data-price="3" data-kid="1" data-ac="1" data-reserve="1" data-name="Steamboat Natchez jazz cruise">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Steamboat%20Natchez%20jazz%20cruise%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Steamboat Natchez jazz cruise</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Riverfront, FQ</span><span class="et-fave" title="already in your day-by-day plan">📅 in the plan</span></div>
+        <div class="et-blurb">A real steamboat with a seated, A/C dining room and live jazz — board ~10:30 for the lunch sailing. In the day plan.</div>
+        <div class="et-tags"><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Steamboat%20Natchez%20jazz%20cruise%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="animal" data-price="3" data-kid="1" data-ac="0" data-reserve="1" data-name="Covered pontoon swamp tour">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Covered%20pontoon%20swamp%20tour%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Covered pontoon swamp tour</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Cajun Encounters · hotel pickup</span><span class="et-fave" title="already in your day-by-day plan">📅 in the plan</span></div>
+        <div class="et-blurb">Shaded pontoon boats on Honey Island Swamp with A/C-bus hotel pickup — the kid can hold a small alligator. In the day plan.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Covered%20pontoon%20swamp%20tour%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="animal" data-price="0" data-kid="1" data-ac="0" data-reserve="0" data-name="Streetcar joyride">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Streetcar%20joyride%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Streetcar joyride</a><span class="et-price">Free</span></div>
+        <div class="et-meta"><span class="et-nb">Canal / Riverfront lines</span></div>
+        <div class="et-blurb">Sometimes the ride is the activity — the clatter and wooden seats are a hit. $1.25 a ride, or a Jazzy Pass.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Streetcar%20joyride%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="animal" data-price="2" data-kid="0" data-ac="0" data-reserve="1" data-name="St. Louis Cemetery No.1 tour">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=St.%20Louis%20Cemetery%20No.1%20tour%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">St. Louis Cemetery No.1 tour</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Tremé edge, FQ</span></div>
+        <div class="et-blurb">The famous above-ground "city of the dead" — entry is by licensed guide only; short and shaded-ish, book ahead.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=St.%20Louis%20Cemetery%20No.1%20tour%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      </div>
+    </section>
+    <section class="et-group" data-cat="outdoor">
+      <div class="et-ghead">🌳 Outdoors, parks &amp; quirky <span class="et-gcount">5</span></div>
+      <div class="et-grid">
+      <article class="et-card" data-cat="outdoor" data-price="1" data-kid="1" data-ac="0" data-reserve="0" data-name="City Park · Storyland &amp;amp; Carousel Gardens">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=City%20Park%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">City Park · Storyland &amp; Carousel Gardens</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Mid-City</span></div>
+        <div class="et-blurb">A fairytale playground plus a 1906 antique carousel &amp; kiddie rides — ride the Canal (red) streetcar right there.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=City%20Park%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="outdoor" data-price="0" data-kid="0" data-ac="0" data-reserve="0" data-name="Crescent Park">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Crescent%20Park%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Crescent Park</a><span class="et-price">Free</span></div>
+        <div class="et-meta"><span class="et-nb">Marigny / Bywater</span></div>
+        <div class="et-blurb">A flat riverfront promenade with the best skyline-and-river views — great early-morning or golden-hour stroll.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Crescent%20Park%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="outdoor" data-price="1" data-kid="1" data-ac="0" data-reserve="0" data-name="Roman Candy cart">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Roman%20Candy%20cart%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Roman Candy cart</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Uptown</span></div>
+        <div class="et-blurb">The mule-drawn taffy wagon, rolling since 1915 — pure delight for a 7-year-old.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Roman%20Candy%20cart%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="outdoor" data-price="1" data-kid="1" data-ac="0" data-reserve="1" data-name="Music Box Village">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Music%20Box%20Village%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Music Box Village</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Bywater</span></div>
+        <div class="et-blurb">Playable "musical houses" you bang, strum &amp; climb — delightfully weird, but only open on scheduled days (check the calendar).</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><span class="tag sun">📞 timed/book</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Music%20Box%20Village%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      <article class="et-card" data-cat="outdoor" data-price="0" data-kid="1" data-ac="0" data-reserve="0" data-name="Jackson Square &amp;amp; the riverfront">
+        <div class="et-top"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Jackson%20Square%20and%20the%20riverfront%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Jackson Square &amp; the riverfront</a><span class="et-price">Free</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">Street artists, buskers, the cathedral, and the Washington Artillery Park river overlook — the free heart of the Quarter.</div>
+        <div class="et-tags"><span class="tag shade">🌳 outdoor</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Jackson%20Square%20and%20the%20riverfront%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div>
+      </article>
+      </div>
+    </section>
+  </div>
+  <div class="ht-empty" id="aoEmpty" hidden>Nothing matches — <button class="ht-reset" id="aoReset2">reset</button>.</div>
 
+<script id="ao-script">
+(function(){
+  var groups=[].slice.call(document.querySelectorAll('#aoGroups .et-group'));
+  var cards=[].slice.call(document.querySelectorAll('#aoGroups .et-card'));
+  var state={cats:new Set(),price:new Set(),flags:new Set()};
+  function bind(id,key,attr){var w=document.getElementById(id);w.querySelectorAll('.ht-chip').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute(attr),on=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!on);if(on)state[key].delete(v);else state[key].add(v);apply();});});}
+  bind('aoCats','cats','data-cat');bind('aoPrice','price','data-price');bind('aoToggles','flags','data-flag');
+  function reset(){state.cats.clear();state.price.clear();state.flags.clear();document.querySelectorAll('#aoBar .ht-chip').forEach(function(b){b.setAttribute('aria-pressed','false');});apply();}
+  document.getElementById('aoReset').addEventListener('click',reset);
+  var r2=document.getElementById('aoReset2');if(r2)r2.addEventListener('click',reset);
+  function vis(c){
+    if(state.price.size){var p=c.getAttribute('data-price');var pk=(p==='3')?'2':p;if(!state.price.has(pk))return false;}
+    if(state.flags.has('ac')&&c.getAttribute('data-ac')!=='1')return false;
+    if(state.flags.has('kid')&&c.getAttribute('data-kid')!=='1')return false;
+    if(state.flags.has('reserve')&&c.getAttribute('data-reserve')!=='1')return false;
+    return true;
+  }
+  function apply(){var shown=0;groups.forEach(function(g){var on=state.cats.size===0||state.cats.has(g.getAttribute('data-cat'));var gc=[].slice.call(g.querySelectorAll('.et-card'));var v=0;gc.forEach(function(c){var ok=on&&vis(c);c.hidden=!ok;if(ok){v++;shown++;}});g.hidden=v===0;});document.getElementById('aoCount').textContent='Showing '+shown+' of '+cards.length;document.getElementById('aoEmpty').hidden=shown!==0;}
+  apply();
+})();
+</script>
   <div class="shead" id="magazine"><span class="ic">🛍️</span> Magazine Street</div>
   <p class="sintro">Six miles of local boutiques, antiques, cafés and treats — the stretch you've been meaning to dig into. It's long, so pick one walkable cluster and rideshare between. Here's a half-day built around your beloved District Donuts.</p>
   <div class="cards">
