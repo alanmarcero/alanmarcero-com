@@ -212,7 +212,7 @@
   .jump a:hover,.jump a:focus-visible{color:var(--ink);background:var(--card);border-color:var(--hair-strong)}
   </style>
   <nav class="jump" aria-label="Jump to a section">
-    <a href="#decide">🧭 Decide</a><a href="#days">🗓️ Days</a><a href="#kids">🎠 Kids</a><a href="#eat">🍽️ Eat</a><a href="#sip">🍸 Sip</a><a href="#cool">❄️ Cool</a><a href="#do">🎷 Do &amp; hear</a><a href="#magazine">🛍️ Magazine</a><a href="#stay">🏨 Hotels</a>
+    <a href="#decide">🧭 Decide</a><a href="#days">🗓️ Days</a><a href="#kids">🎠 Kids</a><a href="#eat">🍽️ Eat</a><a href="#sip">🍸 Sip</a><a href="#cool">❄️ Cool</a><a href="#do">🎷 Do &amp; hear</a><a href="#magazine">🛍️ Magazine</a><a href="#stay">🏨 Hotels</a><a href="#book">📋 Book</a>
   </nav>
   <div class="top">
     <p class="dates">Thursday Sep 10 – Tuesday Sep 15, 2026</p>
@@ -1588,6 +1588,73 @@
   apply();
 })();
 </script>
+  <style id="bk-styles">
+  .bk-wrap{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:.4rem .95rem .8rem;box-shadow:var(--shadow);margin-top:.9rem}
+  .bk-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem 1.4rem}
+  @media (max-width:640px){.bk-grid{grid-template-columns:1fr}}
+  .bk-group{padding-top:.5rem}
+  .bk-gt{font-weight:700;font-size:.82rem;color:var(--ink);margin-bottom:.25rem}
+  .bk-item{display:flex;gap:.55rem;align-items:flex-start;font-size:.85rem;color:var(--ink);padding:.32rem .2rem;border-radius:8px;cursor:pointer;line-height:1.4}
+  .bk-item:hover{background:var(--paper)}
+  .bk-item input{margin-top:.18rem;width:18px;height:18px;flex:none;accent-color:var(--green);cursor:pointer}
+  .bk-item span{transition:.12s}
+  .bk-item.done span{opacity:.5;text-decoration:line-through}
+  .bk-reset{font-family:var(--sans);font-size:.74rem;font-weight:600;color:var(--muted);background:transparent;border:1px solid var(--hair-strong);border-radius:8px;padding:.24rem .55rem;cursor:pointer;margin-top:.5rem}
+  .bk-reset:hover{color:var(--ink);border-color:var(--brass)}
+  </style>
+  <div class="shead" id="book"><span class="ic">📋</span> Book ahead</div>
+  <p class="sintro">Your dates dodge the festivals, but these still sell out. Tick them off as you go — the list remembers on this device.</p>
+  <div class="bk-wrap">
+    <div class="bk-grid">
+      <div class="bk-group"><div class="bk-gt">✈️ Book now — for rate &amp; seats</div>
+        <label class="bk-item"><input type="checkbox" data-bk="b0"><span>Book the 4 JetBlue seats — <b>B6 401</b> out / <b>B6 400</b> back — and add your friend (need legal name as on ID, DOB &amp; gender).</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b1"><span>Reserve <b>2 rooms or a 2-bed suite</b> (see Hotels) — September is low season, but lock the rate.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b2"><span>Confirm checked-bag fees on jetblue.com (~$39 first bag off-peak) and whether Blue&nbsp;Plus is worth it.</span></label>
+      </div>
+      <div class="bk-group"><div class="bk-gt">📞 Reserve 2–4 weeks out — these sell out</div>
+        <label class="bk-item"><input type="checkbox" data-bk="b3"><span><b>Steamboat Natchez</b> jazz-lunch cruise.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b4"><span><b>Cajun Encounters</b> swamp tour — the 9:30 AM with A/C hotel pickup.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b5"><span><b>Preservation Hall</b> — the early "Big Shot" show.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b6"><span><b>Commander's Palace</b> (dress code) + any ★ dinner — GW Fins, Brigtsen's, Cochon, Pêche, Compère Lapin, Herbsaint, Coquette.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b7"><span><b>Muriel's</b> — dinner or the Sunday jazz brunch.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b8"><span><b>St. Louis Cemetery No.1</b> — a licensed guide (the only way in).</span></label>
+      </div>
+      <div class="bk-group"><div class="bk-gt">🎟️ Timed tickets — a few days out</div>
+        <label class="bk-item"><input type="checkbox" data-bk="b9"><span><b>National WWII Museum</b> — add the 4D "Beyond All Boundaries" film.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b10"><span><b>Mardi Gras World</b> float-warehouse tour.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b11"><span><b>JamNOLA</b> timed entry.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b12"><span><b>Audubon Aquarium &amp; Insectarium</b> — buy online to skip the line.</span></label>
+      </div>
+      <div class="bk-group"><div class="bk-gt">🎒 Quick prep</div>
+        <label class="bk-item"><input type="checkbox" data-bk="b13"><span>Download the RTA <b>"Le Pass"</b> app (streetcar / Jazzy Pass) + Uber/Lyft.</span></label>
+        <label class="bk-item"><input type="checkbox" data-bk="b14"><span>Pack light layers (A/C runs cold), sun hats, refillable water, a compact rain layer (hurricane season).</span></label>
+      </div>
+    </div>
+    <button class="bk-reset" id="bkReset">Clear checklist</button>
+  </div>
+  <script id="bk-script">
+  (function(){
+    var KEY='nola-book-v1';
+    var boxes=[].slice.call(document.querySelectorAll('#book, .bk-wrap').length?document.querySelectorAll('.bk-item input'):[]);
+    boxes=[].slice.call(document.querySelectorAll('.bk-item input'));
+    var saved={};
+    try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+    function paint(cb){cb.closest('.bk-item').classList.toggle('done',cb.checked);}
+    boxes.forEach(function(cb){
+      var id=cb.getAttribute('data-bk');
+      cb.checked=!!saved[id]; paint(cb);
+      cb.addEventListener('change',function(){
+        saved[id]=cb.checked; paint(cb);
+        try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}
+      });
+    });
+    var r=document.getElementById('bkReset');
+    if(r) r.addEventListener('click',function(){
+      boxes.forEach(function(cb){cb.checked=false;paint(cb);});
+      saved={}; try{localStorage.removeItem(KEY);}catch(e){}
+    });
+  })();
+  </script>
   <style id="mobile-fixes">
   .trackdiv{overflow:hidden}
   .hero{margin-left:0;margin-right:0;max-width:100%}
@@ -1602,6 +1669,8 @@
     .ht-bar{padding:.6rem .7rem}
     .snap-grid{grid-template-columns:1fr 1fr}
     #heatToggle{min-height:40px}
+    .bk-reset{min-height:40px;padding:.5rem .7rem}
+    .bk-item{padding:.42rem .2rem}
   }
   @media (max-width:400px){.snap-grid{grid-template-columns:1fr}}
   </style>
