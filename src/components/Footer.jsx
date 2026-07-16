@@ -22,7 +22,7 @@ function Footer() {
           >
             GitHub
           </a>
-          <a href="/arcade.html">Arcade</a>
+          <a href="/arcade">Arcade</a>
         </nav>
       </div>
     </footer>
