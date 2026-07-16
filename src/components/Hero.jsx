@@ -79,7 +79,7 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
           >
             Subscribe on YouTube
           </a>
-          <a className="btn btn--ghost" href="/arcade.html">
+          <a className="btn btn--ghost" href="/arcade">
             Arcade
           </a>
           <TakeMeBack onSelect={onTravel} />

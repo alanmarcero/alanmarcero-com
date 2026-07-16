@@ -1,0 +1,132 @@
+name: Enable clean URLs (/arcade, /neworleans)
+
+# One-time (or re-runnable) workflow that creates a CloudFront Function to
+# rewrite `/arcade` -> `/arcade.html` at the edge and 301 `/arcade.html` -> `/arcade`
+# for canonicalization. Same treatment for `/neworleans`.
+#
+# CloudFront Functions billing: $0.10 per 1M invocations, no cold start.
+# At this site's traffic that is effectively free.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  clean-urls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Write function source
+        run: |
+          cat > clean-urls.js <<'EOF'
+          function handler(event) {
+            var request = event.request;
+            var uri = request.uri;
+
+            // /api is served by a separate cache behavior, but be defensive.
+            if (uri.indexOf('/api') === 0) return request;
+
+            // Canonicalize: 301 the .html form to the clean URL.
+            if (uri === '/arcade.html' || uri === '/neworleans.html') {
+              var clean = uri.replace(/\.html$/, '');
+              return {
+                statusCode: 301,
+                statusDescription: 'Moved Permanently',
+                headers: {
+                  location: { value: clean },
+                  'cache-control': { value: 'public, max-age=3600' }
+                }
+              };
+            }
+
+            // Transparent rewrite: /arcade or /arcade/ -> /arcade.html at origin.
+            var routes = ['/arcade', '/neworleans'];
+            for (var i = 0; i < routes.length; i++) {
+              var p = routes[i];
+              if (uri === p || uri === p + '/') {
+                request.uri = p + '.html';
+                return request;
+              }
+            }
+
+            return request;
+          }
+          EOF
+
+      - name: Create or update CloudFront Function
+        id: fn
+        run: |
+          FN_NAME="alanmarcero-clean-urls"
+          FN_CONFIG='{"Comment":"Rewrite clean URLs to .html and 301 canonicalize","Runtime":"cloudfront-js-2.0"}'
+
+          if aws cloudfront describe-function --name "$FN_NAME" >/dev/null 2>&1; then
+            echo "Function exists; updating source."
+            ETAG=$(aws cloudfront describe-function --name "$FN_NAME" --query 'ETag' --output text)
+            aws cloudfront update-function \
+              --name "$FN_NAME" \
+              --if-match "$ETAG" \
+              --function-config "$FN_CONFIG" \
+              --function-code fileb://clean-urls.js
+          else
+            echo "Function does not exist; creating."
+            aws cloudfront create-function \
+              --name "$FN_NAME" \
+              --function-config "$FN_CONFIG" \
+              --function-code fileb://clean-urls.js
+          fi
+
+          # Publish DEVELOPMENT -> LIVE
+          ETAG=$(aws cloudfront describe-function --name "$FN_NAME" --query 'ETag' --output text)
+          aws cloudfront publish-function --name "$FN_NAME" --if-match "$ETAG"
+
+          FN_ARN=$(aws cloudfront describe-function \
+            --name "$FN_NAME" \
+            --stage LIVE \
+            --query 'FunctionSummary.FunctionMetadata.FunctionARN' \
+            --output text)
+          echo "FN_ARN=$FN_ARN" >> "$GITHUB_OUTPUT"
+          echo "Function published: $FN_ARN"
+
+      - name: Associate function with default cache behavior
+        run: |
+          aws cloudfront get-distribution-config \
+            --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --output json > cf-config.json
+
+          jq -r '.ETag' cf-config.json > etag.txt
+          jq '.DistributionConfig' cf-config.json > dist-config.json
+
+          FN_ARN="${{ steps.fn.outputs.FN_ARN }}"
+
+          # Idempotent: replace any existing viewer-request association on the
+          # default behavior with our function.
+          jq --arg arn "$FN_ARN" '
+            .DefaultCacheBehavior.FunctionAssociations = {
+              "Quantity": 1,
+              "Items": [{"FunctionARN": $arn, "EventType": "viewer-request"}]
+            }
+          ' dist-config.json > dist-config-updated.json
+
+          ETAG=$(cat etag.txt)
+          aws cloudfront update-distribution \
+            --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --if-match "$ETAG" \
+            --distribution-config file://dist-config-updated.json
+
+          echo "CloudFront distribution update initiated"
+
+      - name: Summary
+        run: |
+          echo "=== Clean URLs enabled ==="
+          echo "Wait ~5-15 min for CloudFront propagation, then:"
+          echo "  https://alanmarcero.com/arcade       -> serves arcade.html (200)"
+          echo "  https://alanmarcero.com/arcade.html  -> 301 to /arcade"
+          echo "  https://alanmarcero.com/neworleans   -> serves neworleans.html (200)"
+          echo ""
+          echo "Rollback: unset FunctionAssociations on the default behavior, or"
+          echo "run 'aws cloudfront delete-function --name alanmarcero-clean-urls'."
