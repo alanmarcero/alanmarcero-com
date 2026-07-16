@@ -92,12 +92,14 @@
   .trackdiv .ties{position:absolute;left:0;right:0;bottom:4px;height:9px;background:repeating-linear-gradient(90deg,var(--hair-strong) 0 2px,transparent 2px 15px);opacity:.55}
   .trackdiv .trolley{position:absolute;bottom:9px;left:-14%;width:56px;z-index:1;animation:trolleyRun 14s linear infinite}
   @keyframes trolleyRun{0%{left:-14%}100%{left:114%}}
+  .kidbounce{display:inline-block;animation:kb 2.4s ease-in-out infinite}
+  @keyframes kb{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   .hero .cap{position:absolute;left:clamp(15px,4vw,26px);bottom:12px;z-index:3}
   .hero .cap .eye{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:#fff3dd;font-weight:700;
     text-shadow:0 1px 6px rgba(60,20,40,.5)}
   .hero h1{font-family:var(--serif);color:#fff;font-weight:600;font-size:clamp(2rem,6.5vw,3.2rem);line-height:.98;
     margin:.1rem 0 0;letter-spacing:-.01em;text-shadow:0 2px 14px rgba(50,15,40,.55)}
-  @media (prefers-reduced-motion:reduce){.lights i,.steam,.note,.boat,.tram-move,.tram2,.trolley{animation:none!important}.steam,.note{display:none}}
+  @media (prefers-reduced-motion:reduce){.lights i,.steam,.note,.boat,.tram-move,.tram2,.trolley,.kidbounce{animation:none!important}.steam,.note{display:none}}
 
   /* ---------- shared ---------- */
   .top{padding-top:1.3rem}
@@ -272,6 +274,19 @@
   <div class="trackdiv" aria-hidden="true">
     <div class="ties"></div><div class="rail"></div>
     <svg class="trolley" viewBox="0 0 120 60"><rect x="6" y="14" width="108" height="32" rx="6" fill="#2f6f4e"/><rect x="6" y="14" width="108" height="9" rx="4" fill="#244f39"/><g fill="#dcecdd"><rect x="15" y="26" width="15" height="13" rx="2"/><rect x="36" y="26" width="15" height="13" rx="2"/><rect x="57" y="26" width="15" height="13" rx="2"/><rect x="78" y="26" width="15" height="13" rx="2"/></g><rect x="96" y="26" width="12" height="13" rx="2" fill="#ffd873"/><circle cx="32" cy="50" r="6" fill="#1a1f18"/><circle cx="88" cy="50" r="6" fill="#1a1f18"/></svg>
+  </div>
+
+  <div class="shead"><span class="ic kidbounce">🎠</span> Just for kids</div>
+  <p class="sintro">The 7-year-old's greatest hits — day-plan headliners plus a few extra magnets, tagged for heat and walking.</p>
+  <div class="cards">
+    <div class="gc"><div class="gn">Louisiana Children's Museum <span class="nb">· City Park</span></div><div class="gw">30,000 sq ft of hands-on: a climbing wall, build-your-own Creole cottage, and the world through a honeybee's eyes — cool and indoor.</div><div class="gt"><span class="tag ac">❄️</span><span class="tag walk">🪑</span><span class="tag kid">🧒</span></div></div>
+    <div class="gc"><div class="gn">Carousel Gardens <span class="nb">· City Park</span></div><div class="gw">The 1906 "flying horses" carousel, a ladybug roller coaster, and a little train that loops the park. Seasonal hours (often weekends) — check ahead.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag sun">☀️</span></div></div>
+    <div class="gc"><div class="gn">Storyland <span class="nb">· City Park</span></div><div class="gw">A fairy-tale playground of climb-on storybook sets under shady oaks — walk in from Carousel Gardens.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag shade">🌳</span></div></div>
+    <div class="gc"><div class="gn">Hold a baby gator <span class="nb">· Cajun Encounters swamp</span></div><div class="gw">Sunday's headliner — hold a baby alligator from the shaded pontoon. (Already in the day plan.)</div><div class="gt"><span class="tag kid">🧒</span><span class="tag shade">🌳</span><span class="tag walk">🪑</span></div></div>
+    <div class="gc"><div class="gn">Audubon Zoo touch pool <span class="nb">· Uptown</span></div><div class="gw">A 60-ft touch pool of sharks &amp; stingrays, plus a "Sky Tykes" ropes course sized for ages 2–7. Go at opening — it's outdoors and bakes by midday.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag sun">☀️</span><span class="tag car">🚗</span></div></div>
+    <div class="gc"><div class="gn">Try on a crown <span class="nb">· Mardi Gras World</span></div><div class="gw">Watch giant floats get built and try on Carnival costumes — indoor, A/C, guided. (Also in the day plan.)</div><div class="gt"><span class="tag ac">❄️</span><span class="tag kid">🧒</span></div></div>
+    <div class="gc"><div class="gn">Watch pralines poured <span class="nb">· Aunt Sally's, French Market</span></div><div class="gw">A free, sweet minute watching hot pralines poured by hand — then taste one warm.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag tram">🚋</span></div></div>
+    <div class="gc"><div class="gn">City Putt mini-golf <span class="nb">· City Park</span></div><div class="gw">36 shady holes of New-Orleans-themed mini golf — both courses are wheelchair accessible.</div><div class="gt"><span class="tag kid">🧒</span><span class="tag walk">🪑</span><span class="tag shade">🌳</span></div></div>
   </div>
 
   <div class="shead"><span class="ic">🍽️</span> Eat</div>
