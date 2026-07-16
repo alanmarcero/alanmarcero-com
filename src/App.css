@@ -24,9 +24,11 @@
    (the echo path) with the main trace continuously re-sweeping over it */
 .hero-scope {
   position: absolute;
-  /* a centered horizontal band, not full-bleed, so the wave reads flatter */
+  /* full-bleed horizontal band: without width:100%, the SVG's viewBox
+     aspect ratio would compute its width from height * 5.5 and clip short */
   left: 0;
   right: 0;
+  width: 100%;
   top: 50%;
   height: 40%;
   transform: translateY(-50%);
