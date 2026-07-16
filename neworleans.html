@@ -212,7 +212,7 @@
   .jump a:hover,.jump a:focus-visible{color:var(--ink);background:var(--card);border-color:var(--hair-strong)}
   </style>
   <nav class="jump" aria-label="Jump to a section">
-    <a href="#days">🗓️ Days</a><a href="#kids">🎠 Kids</a><a href="#eat">🍽️ Eat</a><a href="#sip">🍸 Sip</a><a href="#cool">❄️ Cool</a><a href="#do">🎷 Do &amp; hear</a><a href="#magazine">🛍️ Magazine</a><a href="#stay">🏨 Hotels</a>
+    <a href="#decide">🧭 Decide</a><a href="#days">🗓️ Days</a><a href="#kids">🎠 Kids</a><a href="#eat">🍽️ Eat</a><a href="#sip">🍸 Sip</a><a href="#cool">❄️ Cool</a><a href="#do">🎷 Do &amp; hear</a><a href="#magazine">🛍️ Magazine</a><a href="#stay">🏨 Hotels</a>
   </nav>
   <div class="top">
     <p class="dates">Thursday Sep 10 – Tuesday Sep 15, 2026</p>
@@ -273,6 +273,43 @@
     <button class="htoggle" id="heatToggle" aria-pressed="false"><span class="sw"></span> ☀️ Heat-safe mode <span class="hint">dim the sun-exposed picks</span></button>
   </div>
 
+  <style id="dc-styles">
+  .dc{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:.85rem 1rem;box-shadow:var(--shadow);margin-top:1rem}
+  .dc-h{font-family:var(--serif);font-size:1.08rem;font-weight:600;display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap}
+  .dc-h span{font-weight:500;font-size:.8rem;color:var(--faint)}
+  .dc-tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 .2rem}
+  .dc-tab[aria-selected="true"]{background:var(--green-soft);border-color:var(--green);color:var(--ink)}
+  .dc-intro{font-size:.85rem;color:var(--muted);margin:.5rem 0 .3rem;font-style:italic}
+  .dc-list{margin:.1rem 0 .1rem;padding-left:1.1rem;display:flex;flex-direction:column;gap:.28rem}
+  .dc-list li{font-size:.88rem;color:var(--ink)}
+  .dc-why{color:var(--muted);font-weight:400}
+  .dc-go{color:var(--ac);text-decoration:none;font-weight:700}
+  .dc-go:hover{text-decoration:underline}
+  .dc-panel[hidden]{display:none}
+  </style>
+  <div class="dc" id="decide">
+    <div class="dc-h">🧭 Quick decisions <span>— tap your situation, get a plan</span></div>
+    <div class="dc-tabs" role="tablist"><button class="ht-chip dc-tab" data-p="rain" aria-selected="true">☔ It's raining</button><button class="ht-chip dc-tab" data-p="hot">🥵 Too hot out</button><button class="ht-chip dc-tab" data-p="low">😴 Low-energy / rest</button><button class="ht-chip dc-tab" data-p="meltdown">😤 Kid's melting down</button><button class="ht-chip dc-tab" data-p="evening">🌙 Evening / after dinner</button><button class="ht-chip dc-tab" data-p="last">✈️ Last morning · Sep 15</button></div>
+    <div class="dc-panels">
+    <div class="dc-panel" data-p="rain"><p class="dc-intro">Everything here is fully indoors.</p><ul class="dc-list"><li><b>National WWII Museum</b> <span class="dc-why">— hours of A/C, elevators &amp; the 4D film</span> <a class="dc-go" href="#do">→</a></li><li><b>Audubon Aquarium &amp; Insectarium</b> <span class="dc-why">— sharks, penguins &amp; butterflies under one roof</span> <a class="dc-go" href="#do">→</a></li><li><b>JamNOLA</b> <span class="dc-why">— 29 interactive art rooms, a 10-min ride to the Marigny</span> <a class="dc-go" href="#do">→</a></li><li><b>Mardi Gras World</b> <span class="dc-why">— the working float-warehouse tour on the river</span> <a class="dc-go" href="#do">→</a></li><li><b>Cabildo, Presbytère or the Pharmacy Museum</b> <span class="dc-why">— quick, cheap, delightfully weird</span> <a class="dc-go" href="#do">→</a></li><li><b>Warm rain? The hotel pool still counts.</b></li></ul></div>
+    <div class="dc-panel" data-p="hot" hidden><p class="dc-intro">Beat the 11–3 peak; go outside early or after 5.</p><ul class="dc-list"><li><b>Sazerac House (free), Backstreet or the Pharmacy Museum</b> <span class="dc-why">— cool, compact, A/C</span> <a class="dc-go" href="#do">→</a></li><li><b>Hotel pool reset + a snoball at Hansen's</b> <span class="dc-why">— the whole crew recovers</span> <a class="dc-go" href="#eat">→</a></li><li><b>Steamboat Natchez</b> <span class="dc-why">— a breezy river ride with an A/C dining room</span> <a class="dc-go" href="#do">→</a></li><li><b>A red streetcar loop</b> <span class="dc-why">— windows-open breeze, and the ride is the activity</span> <a class="dc-go" href="#do">→</a></li></ul></div>
+    <div class="dc-panel" data-p="low" hidden><p class="dc-intro">Stay close, walk little.</p><ul class="dc-list"><li><b>Café du Monde beignets + Napoleon House Pimm's</b> <span class="dc-why">— both a short flat stroll in the Quarter</span> <a class="dc-go" href="#eat">→</a></li><li><b>Hotel pool, then an easy Creole dinner</b> <span class="dc-why">— Gumbo Shop or Muriel's on the square</span> <a class="dc-go" href="#eat">→</a></li><li><b>A short Riverfront (red) streetcar loop</b> <span class="dc-why">— sit, roll, people-watch</span> <a class="dc-go" href="#do">→</a></li></ul></div>
+    <div class="dc-panel" data-p="meltdown" hidden><p class="dc-intro">Sugar, shade, water — in that order.</p><ul class="dc-list"><li><b>A snoball (Hansen's), District Donuts, or the Roman Candy cart</b> <span class="dc-why">— fast sugar, fast fix</span> <a class="dc-go" href="#eat">→</a></li><li><b>The hotel pool</b> <span class="dc-why">— always the hotel pool</span> <a class="dc-go" href="#stay">→</a></li><li><b>The Aquarium touch pool or City Park's Storyland</b> <span class="dc-why">— a full reset</span> <a class="dc-go" href="#do">→</a></li></ul></div>
+    <div class="dc-panel" data-p="evening" hidden><p class="dc-intro">Cooler air, live music.</p><ul class="dc-list"><li><b>Preservation Hall early "Big Shot" show</b> <span class="dc-why">— book ahead — it sells out</span> <a class="dc-go" href="#do">→</a></li><li><b>The Jazz Museum set or a Frenchmen St stroll</b> <span class="dc-why">— real jazz, kid-OK early</span> <a class="dc-go" href="#do">→</a></li><li><b>A spin through JamNOLA</b> <span class="dc-why">— lights + music, indoors</span> <a class="dc-go" href="#do">→</a></li></ul></div>
+    <div class="dc-panel" data-p="last" hidden><p class="dc-intro">Your 6:10 PM flight leaves a full final day.</p><ul class="dc-list"><li><b>Beignets + the French Market</b> <span class="dc-why">— one more slow Quarter morning</span> <a class="dc-go" href="#eat">→</a></li><li><b>Easy brunch — Stanley or Ruby Slipper — + a last Magazine St stop</b> <a class="dc-go" href="#eat">→</a></li><li><b>Bag storage at the hotel after checkout</b> <span class="dc-why">— then head to MSY ~3:30 PM</span> <a class="dc-go" href="#stay">→</a></li></ul></div>
+    </div>
+  </div>
+  <script id="dc-script">
+  (function(){
+    var tabs=[].slice.call(document.querySelectorAll('#decide .dc-tab'));
+    var panels=[].slice.call(document.querySelectorAll('#decide .dc-panel'));
+    tabs.forEach(function(t){t.addEventListener('click',function(){
+      var p=t.getAttribute('data-p');
+      tabs.forEach(function(x){x.setAttribute('aria-selected', x===t);});
+      panels.forEach(function(pn){pn.hidden = pn.getAttribute('data-p')!==p;});
+    });});
+  })();
+  </script>
   <div class="shead" id="days"><span class="ic">🗓️</span> Day by day</div>
 
   <div class="day">
@@ -757,6 +794,15 @@
     <div class="gc"><div class="gn">Napoleon House <span class="nb">· French Quarter</span></div><div class="gw">A Pimm's Cup in a 200-year-old courtyard, opera on the speakers, muffulettas in hand. Wonderfully kid-tolerant.</div><div class="gt"><span class="tag shade">🌳</span><span class="tag kid">🧒</span><span class="tag tram">🚋</span></div></div>
     <div class="gc"><div class="gn">Peychaud's <span class="nb">· Warehouse District</span></div><div class="gw">Named for the bitters in your Sazerac — a lovely courtyard escape from the crowds.</div><div class="gt"><span class="tag shade">🌳</span><span class="tag walk">🪑</span></div></div>
     <div class="gc"><div class="gn">Erin Rose <span class="nb">· French Quarter</span></div><div class="gw">The city's cult <b>frozen Irish coffee</b> from a soft-serve machine. Grab one to-go — the bar itself is a tiny dive.</div><div class="gt"><span class="tag ac">❄️</span></div></div>
+  </div>
+  <div class="et-ghead" style="margin-top:1.15rem">🥤 Grab a go-cup <span class="et-gcount">5</span></div>
+  <p class="sintro">New Orleans lets you carry a drink down the street in a plastic go-cup — every bar will pour you one for the walk. These are the classic to-go stops.</p>
+  <div class="cards">
+    <div class="gc"><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Molly%27s%20at%20the%20Market%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Molly&#x27;s at the Market</a> <span class="nb">· Decatur St, FQ</span> <span class="et-fave">★ your pick</span></div><div class="gw">Your pick — a beloved local Irish pub; the <b>frozen Irish coffee</b> (or a Bloody Mary) in a go-cup is the move.</div><div class="gt"><span class="tag walk">🚶 walk from FQ</span><span class="tag car">🥤 go-cup</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Molly%27s%20at%20the%20Market%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div></div>
+    <div class="gc"><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Lafitte%27s%20Blacksmith%20Shop%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Lafitte&#x27;s Blacksmith Shop</a> <span class="nb">· Bourbon St, FQ</span></div><div class="gw">Candlelit and allegedly the oldest bar in the U.S. (1700s) — grab the purple "Voodoo Daiquiri" to go.</div><div class="gt"><span class="tag walk">🚶 walk from FQ</span><span class="tag car">🥤 go-cup</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Lafitte%27s%20Blacksmith%20Shop%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div></div>
+    <div class="gc"><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Pat%20O%27Brien%27s%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Pat O&#x27;Brien&#x27;s</a> <span class="nb">· St. Peter St, FQ</span></div><div class="gw">Home of the original <b>Hurricane</b>; get one to-go from the flaming-fountain courtyard bar.</div><div class="gt"><span class="tag walk">🚶 walk from FQ</span><span class="tag car">🥤 go-cup</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Pat%20O%27Brien%27s%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div></div>
+    <div class="gc"><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=The%20Chart%20Room%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Chart Room</a> <span class="nb">· Chartres St, FQ</span></div><div class="gw">A cash-only dive for a cheap, unfussy go-cup — pure local color, no frills.</div><div class="gt"><span class="tag walk">🚶 walk from FQ</span><span class="tag car">🥤 go-cup</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=The%20Chart%20Room%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div></div>
+    <div class="gc"><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Bar%20Tonique%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Bar Tonique</a> <span class="nb">· N. Rampart St, FQ edge</span></div><div class="gw">Three blocks off Bourbon — serious craft cocktails at honest prices; worth the few-minute wait.</div><div class="gt"><span class="tag walk">🚶 walk from FQ</span><span class="tag car">🥤 go-cup</span><a class="et-map" href="https://www.google.com/maps/search/?api=1&query=Bar%20Tonique%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Map ↗</a></div></div>
   </div>
   <div class="et-ghead" style="margin-top:1.15rem">🍺 Breweries &amp; taprooms <span class="et-gcount">7</span></div>
   <p class="sintro">You loved Courtyard Brewery — here's the rest of the crawl, tagged by the hotel/area each one is closest to. Most are casual and fine with the kid early; Urban South is built for families.</p>
