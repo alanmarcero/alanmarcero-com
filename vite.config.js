@@ -11,6 +11,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         arcade: resolve(__dirname, 'arcade.html'),
         neworleans: resolve(__dirname, 'neworleans.html'),
+        test: resolve(__dirname, 'test.html'),
       },
     },
   },
