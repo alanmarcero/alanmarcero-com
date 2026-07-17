@@ -338,6 +338,9 @@
   .et-group{margin-top:1.15rem}
   .et-ghead{font-family:var(--serif);font-size:1.12rem;font-weight:600;color:var(--ink);padding-bottom:.35rem;border-bottom:1px solid var(--hair-strong)}
   .et-gcount{font-size:.7rem;color:var(--faint);border:1px solid var(--hair-strong);border-radius:999px;padding:.02rem .38rem;margin-left:.15rem;vertical-align:middle}
+  .et-vibe{background:var(--brass-soft);border:1px solid var(--hair);border-radius:14px;padding:.7rem .85rem;margin-top:1rem}
+  .et-vibe .et-ghead{border-bottom-color:var(--brass);color:var(--ink)}
+  .et-vnote{font-size:.83rem;color:var(--muted);margin:.15rem 0 .1rem}
   .et-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.7rem}
   @media (max-width:640px){.et-grid{grid-template-columns:1fr}}
   .et-card{background:var(--card);border:1px solid var(--hair);border-radius:11px;padding:.6rem .72rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.2rem;overflow:hidden}
@@ -359,7 +362,295 @@
   .et-card[hidden],.et-group[hidden]{display:none}
 </style>
   <div class="shead" id="eat"><span class="ic">🍽️</span> Eat</div>
-  <p class="sintro">Grouped by meal and tuned to your past trips — <b>★ your faves</b> (and the heirs of the closed ones) are flagged. Filter by neighborhood, price, or what the kid will eat; tap any name for the map. FQ spots are walkable; the rest is a short rideshare. Reserve the ones marked 📞.</p>
+  <p class="sintro">Two quick collections up top — <b>🏛️ the classics</b> and <b>✨ the new &amp; trendy</b> — then the full list grouped by meal below, tuned to your past trips (<b>★ your faves</b> flagged). Filter by neighborhood, price, or what the kid will eat; tap any name for the map. FQ spots are walkable; the rest is a short rideshare. Reserve the ones marked 📞.</p>
+  <div class="et-vibes">
+    <section class="et-group et-vibe" data-vibe="classic">
+      <div class="et-ghead">🏛️ New Orleans Classics <span class="et-gcount">20</span></div>
+      <div class="et-vnote">The institutions — decades (a century-plus for some) deep. The ones you plan the trip around.</div>
+      <div class="et-grid">
+      <article class="et-card" data-meal="breakfast sweets" data-nb="French Quarter" data-price="1" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="Café du Monde">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/caf-du-monde.jpg)" href="https://www.yelp.com/search?find_desc=Caf%C3%A9%20du%20Monde&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Café du Monde"><span class="et-ph-emoji">🥐</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Caf%C3%A9%20du%20Monde&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Café du Monde</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">Beignets &amp; café au lait on a covered patio, essentially 24/7.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Caf%C3%A9%20du%20Monde&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="French Quarter" data-price="4" data-kid="0" data-fave="0" data-walk="1" data-reserve="1" data-name="Antoine&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/antoine-s.jpg)" href="https://www.yelp.com/search?find_desc=Antoine%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Antoine&#x27;s"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Antoine%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Antoine&#x27;s</a><span class="et-price">$$$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">1840, the country's oldest family-run restaurant — Oysters Rockefeller was invented here. Reserve.</div>
+        <div class="et-tags"><span class="tag walk">🚶 walk from FQ</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Antoine%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="French Quarter" data-price="4" data-kid="0" data-fave="0" data-walk="1" data-reserve="0" data-name="Galatoire&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/galatoire-s.jpg)" href="https://www.yelp.com/search?find_desc=Galatoire%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Galatoire&#x27;s"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Galatoire%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Galatoire&#x27;s</a><span class="et-price">$$$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">1905 grande dame of Creole dining; downstairs is first-come, jackets for dinner. The Friday-lunch tradition is legendary.</div>
+        <div class="et-tags"><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Galatoire%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Garden / Magazine / Uptown" data-price="4" data-kid="1" data-fave="0" data-walk="0" data-reserve="1" data-name="Commander&#x27;s Palace">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/commander-s-palace.jpg)" href="https://www.yelp.com/search?find_desc=Commander%27s%20Palace&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Commander&#x27;s Palace"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Commander%27s%20Palace&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Commander&#x27;s Palace</a><span class="et-price">$$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Garden District</span></div>
+        <div class="et-blurb">The landmark. Dress code: no shorts, collared shirt + closed-toe shoes. Reserve.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Commander%27s%20Palace&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="Mid-City / Tremé" data-price="3" data-kid="1" data-fave="1" data-walk="0" data-reserve="0" data-name="Dooky Chase&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/dooky-chase-s.jpg)" href="https://www.yelp.com/search?find_desc=Dooky%20Chase%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Dooky Chase&#x27;s"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Dooky%20Chase%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Dooky Chase&#x27;s</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Tremé</span><span class="et-fave" title="from your past trips (or its heir)">★ your fave</span></div>
+        <div class="et-blurb">You've been — the historic Creole lunch buffet (go hungry); à-la-carte at Li'l Dizzy's instead.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Dooky%20Chase%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="breakfast" data-nb="French Quarter" data-price="4" data-kid="0" data-fave="0" data-walk="1" data-reserve="1" data-name="Brennan&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/brennan-s.jpg)" href="https://www.yelp.com/search?find_desc=Brennan%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Brennan&#x27;s"><span class="et-ph-emoji">🥐</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Brennan%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Brennan&#x27;s</a><span class="et-price">$$$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">The grand brunch (bananas Foster was born here), 80 years on — dress up a touch.</div>
+        <div class="et-tags"><span class="tag walk">🚶 walk from FQ</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Brennan%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="French Quarter" data-price="3" data-kid="1" data-fave="1" data-walk="1" data-reserve="1" data-name="Muriel&#x27;s Jackson Square">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/muriel-s-jackson-square.jpg)" href="https://www.yelp.com/search?find_desc=Muriel%27s%20Jackson%20Square&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Muriel&#x27;s Jackson Square"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Muriel%27s%20Jackson%20Square&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Muriel&#x27;s Jackson Square</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-fave" title="from your past trips (or its heir)">★ your fave</span></div>
+        <div class="et-blurb">Your favorite — Creole on the square, Sunday jazz brunch too. Reserve.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Muriel%27s%20Jackson%20Square&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="French Quarter" data-price="1" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="Central Grocery">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/central-grocery.jpg)" href="https://www.yelp.com/search?find_desc=Central%20Grocery&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Central Grocery"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Central%20Grocery&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Central Grocery</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">The original muffuletta (1906) — <b>rebuilt and reopened in 2024</b> after its long Hurricane-Ida closure; grab one to-go and picnic on the riverbank.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Central%20Grocery&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="French Quarter" data-price="2" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="Napoleon House">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/napoleon-house.jpg)" href="https://www.yelp.com/search?find_desc=Napoleon%20House&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Napoleon House"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Napoleon%20House&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Napoleon House</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">The 1797 landmark café-bar at Chartres &amp; St. Louis — a warm muffuletta and a <b>Pimm's Cup</b> (America's first) in a gloriously worn courtyard; easy with kids, open till 10.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Napoleon%20House&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch dinner" data-nb="Garden / Magazine / Uptown" data-price="2" data-kid="0" data-fave="0" data-walk="0" data-reserve="0" data-name="Casamento&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/casamento-s.jpg)" href="https://www.yelp.com/search?find_desc=Casamento%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Casamento&#x27;s"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Casamento%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Casamento&#x27;s</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Magazine St</span></div>
+        <div class="et-blurb">📺 <i>Diners, Drive-Ins &amp; Dives</i> — the 1919 tile-clad oyster house famed for its fried-oyster loaf; cash only. <b>⚠️ Closed all summer, reopening in <i>late</i> September for oyster season — so it's likely still closed during your Sep 10–15 dates; call ahead before counting on it.</b></div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Casamento%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Garden / Magazine / Uptown" data-price="3" data-kid="0" data-fave="0" data-walk="0" data-reserve="0" data-name="Pascal&#x27;s Manale">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/pascal-s-manale.jpg)" href="https://www.yelp.com/search?find_desc=Pascal%27s%20Manale&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Pascal&#x27;s Manale"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Pascal%27s%20Manale&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Pascal&#x27;s Manale</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Uptown</span></div>
+        <div class="et-blurb">1913 institution, the original BBQ shrimp (bring napkins).</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Pascal%27s%20Manale&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="Garden / Magazine / Uptown" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Domilise&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/domilise-s.jpg)" href="https://www.yelp.com/search?find_desc=Domilise%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Domilise&#x27;s"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Domilise%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Domilise&#x27;s</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Uptown</span></div>
+        <div class="et-blurb">Fried shrimp &amp; oyster po'boys since 1918 — a cult shrine.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Domilise%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Garden / Magazine / Uptown" data-price="3" data-kid="0" data-fave="1" data-walk="0" data-reserve="1" data-name="Brigtsen&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/brigtsen-s.jpg)" href="https://www.yelp.com/search?find_desc=Brigtsen%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Brigtsen&#x27;s"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Brigtsen%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Brigtsen&#x27;s</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Riverbend</span><span class="et-fave" title="from your past trips (or its heir)">★ your fave</span></div>
+        <div class="et-blurb">The K-Paul's heir — Prudhomme's right hand for six years. Reserve.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Brigtsen%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="French Quarter" data-price="2" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="Gumbo Shop">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/gumbo-shop.jpg)" href="https://www.yelp.com/search?find_desc=Gumbo%20Shop&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Gumbo Shop"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Gumbo%20Shop&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Gumbo Shop</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">Easy, reliable, award-winning gumbo.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Gumbo%20Shop&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="breakfast lunch" data-nb="CBD / Warehouse" data-price="2" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Mother&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/mother-s.jpg)" href="https://www.yelp.com/search?find_desc=Mother%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Mother&#x27;s"><span class="et-ph-emoji">🥐</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Mother%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Mother&#x27;s</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">CBD</span></div>
+        <div class="et-blurb">Since 1938 — the Ferdi baked-ham po'boy, biscuits &amp; grits, always a line, always worth it.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Mother%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="Mid-City / Tremé" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Parkway Bakery">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/parkway-bakery.jpg)" href="https://www.yelp.com/search?find_desc=Parkway%20Bakery&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Parkway Bakery"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Parkway%20Bakery&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Parkway Bakery</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Mid-City</span></div>
+        <div class="et-blurb">The "debris"-style roast-beef po'boy, dressed.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Parkway%20Bakery&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="Mid-City / Tremé" data-price="2" data-kid="1" data-fave="1" data-walk="0" data-reserve="0" data-name="Li&#x27;l Dizzy&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/li-l-dizzy-s.jpg)" href="https://www.yelp.com/search?find_desc=Li%27l%20Dizzy%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Li&#x27;l Dizzy&#x27;s"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Li%27l%20Dizzy%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Li&#x27;l Dizzy&#x27;s</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Tremé</span><span class="et-fave" title="from your past trips (or its heir)">★ your fave</span></div>
+        <div class="et-blurb">Creole à-la-carte (fried chicken, gumbo) — the easier alternative to a big buffet.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Li%27l%20Dizzy%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="sweets" data-nb="Mid-City / Tremé" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Angelo Brocato">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/angelo-brocato.jpg)" href="https://www.yelp.com/search?find_desc=Angelo%20Brocato&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Angelo Brocato"><span class="et-ph-emoji">🍨</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Angelo%20Brocato&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Angelo Brocato</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Mid-City</span></div>
+        <div class="et-blurb">Since 1905 — Sicilian gelato, cannoli, lemon ice &amp; spumoni in a marble-counter parlor.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Angelo%20Brocato&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="sweets" data-nb="Garden / Magazine / Uptown" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Hansen&#x27;s Sno-Bliz">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/hansen-s-sno-bliz.jpg)" href="https://www.yelp.com/search?find_desc=Hansen%27s%20Sno-Bliz&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Hansen&#x27;s Sno-Bliz"><span class="et-ph-emoji">🍨</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Hansen%27s%20Sno-Bliz&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hansen&#x27;s Sno-Bliz</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Uptown</span></div>
+        <div class="et-blurb">The 85-year snoball legend — feather-fine shaved ice.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Hansen%27s%20Sno-Bliz&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="CBD / Warehouse" data-price="3" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Drago&#x27;s">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/drago-s.jpg)" href="https://www.yelp.com/search?find_desc=Drago%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Drago&#x27;s"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Drago%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Drago&#x27;s</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">CBD</span></div>
+        <div class="et-blurb">Birthplace of the charbroiled oyster, "single best bite in town."</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Drago%27s&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      </div>
+    </section>
+    <section class="et-group et-vibe" data-vibe="trendy">
+      <div class="et-ghead">✨ New &amp; Trendy <span class="et-gcount">19</span></div>
+      <div class="et-vnote">The modern wave — chef-driven newcomers &amp; buzzy neighborhood spots from the last decade or so.</div>
+      <div class="et-grid">
+      <article class="et-card" data-meal="lunch" data-nb="Garden / Magazine / Uptown" data-price="2" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Turkey and the Wolf">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/turkey-and-the-wolf.jpg)" href="https://www.yelp.com/search?find_desc=Turkey%20and%20the%20Wolf&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Turkey and the Wolf"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Turkey%20and%20the%20Wolf&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Turkey and the Wolf</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Lower Garden</span></div>
+        <div class="et-blurb">Bon Appétit's one-time #1 new restaurant — wild, playful sandwiches; shorts &amp; t-shirts welcome, no reservations.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Turkey%20and%20the%20Wolf&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="CBD / Warehouse" data-price="3" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="Compère Lapin">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/comp-re-lapin.jpg)" href="https://www.yelp.com/search?find_desc=Comp%C3%A8re%20Lapin&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Compère Lapin"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Comp%C3%A8re%20Lapin&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Compère Lapin</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Warehouse</span></div>
+        <div class="et-blurb">Chef Nina Compton's acclaimed Caribbean-Creole — curried goat, conch croquettes. Reserve.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Comp%C3%A8re%20Lapin&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Garden / Magazine / Uptown" data-price="3" data-kid="1" data-fave="0" data-walk="0" data-reserve="1" data-name="Saba">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/saba.jpg)" href="https://www.yelp.com/search?find_desc=Saba&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Saba"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Saba&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Saba</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Uptown</span></div>
+        <div class="et-blurb">Alon Shaya's modern Israeli — the pita comes out puffed &amp; hot; hummus for days. Great for the kid.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Saba&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Marigny / Bywater" data-price="2" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="Casimiro">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/casimiro.jpg)" href="https://www.yelp.com/search?find_desc=Casimiro&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Casimiro"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Casimiro&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Casimiro</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Bywater</span></div>
+        <div class="et-blurb">Chef Ana Castro's buzzy masa spot — fresh tamales, tortillas &amp; flautas made daily.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Casimiro&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Marigny / Bywater" data-price="3" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="N7">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/n7.jpg)" href="https://www.yelp.com/search?find_desc=N7&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="N7"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=N7&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">N7</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Bywater</span></div>
+        <div class="et-blurb">A hidden French wine-bar in a candlelit Bywater garden — tinned fish &amp; steak frites; a grown-up night.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=N7&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="CBD / Warehouse" data-price="3" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="Pêche">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/p-che.jpg)" href="https://www.yelp.com/search?find_desc=P%C3%AAche&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Pêche"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=P%C3%AAche&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Pêche</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Warehouse</span></div>
+        <div class="et-blurb">James Beard live-fire Gulf seafood — whole grilled fish. Reserve.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=P%C3%AAche&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="CBD / Warehouse" data-price="3" data-kid="1" data-fave="0" data-walk="0" data-reserve="1" data-name="Cochon">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/cochon.jpg)" href="https://www.yelp.com/search?find_desc=Cochon&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Cochon"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Cochon&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Cochon</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Warehouse</span></div>
+        <div class="et-blurb">Rustic Cajun (whole roast suckling pig for the table). Reserve.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Cochon&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Marigny / Bywater" data-price="2" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Bacchanal">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/bacchanal.jpg)" href="https://www.yelp.com/search?find_desc=Bacchanal&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Bacchanal"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Bacchanal&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Bacchanal</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Bywater</span></div>
+        <div class="et-blurb">A wine-shop-turned-backyard-garden with live music every night — pick a bottle, grab small plates, let the kid roam the yard.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Bacchanal&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Mid-City / Tremé" data-price="2" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="Chada">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/chada.jpg)" href="https://www.yelp.com/search?find_desc=Chada&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Chada"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Chada&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Chada</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">Mid-City</span></div>
+        <div class="et-blurb">Stylish Thai with a terraced patio and elaborate cocktails — a Mid-City change of pace.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Chada&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Marigny / Bywater" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Pizza Delicious">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/pizza-delicious.jpg)" href="https://www.yelp.com/search?find_desc=Pizza%20Delicious&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Pizza Delicious"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Pizza%20Delicious&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Pizza Delicious</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Bywater</span></div>
+        <div class="et-blurb">Some of the city's best NY-style pies in a laid-back Bywater room — the easy kid win.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Pizza%20Delicious&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="lunch" data-nb="French Quarter" data-price="2" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="Killer PoBoys">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/killer-poboys.jpg)" href="https://www.yelp.com/search?find_desc=Killer%20PoBoys&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Killer PoBoys"><span class="et-ph-emoji">🥪</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Killer%20PoBoys&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Killer PoBoys</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">Creative po'boys (glazed pork belly, real veggie options).</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Killer%20PoBoys&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Marigny / Bywater" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Dat Dog">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/dat-dog.jpg)" href="https://www.yelp.com/search?find_desc=Dat%20Dog&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Dat Dog"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Dat%20Dog&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Dat Dog</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Frenchmen · Marigny</span></div>
+        <div class="et-blurb">Over-the-top gourmet hot dogs (gator sausage!) right on Frenchmen — a cheap, fun, kid-pleasing bite between sets.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Dat%20Dog&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="breakfast sweets" data-nb="Garden / Magazine / Uptown" data-price="1" data-kid="1" data-fave="1" data-walk="0" data-reserve="0" data-name="District Donuts">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/district-donuts.jpg)" href="https://www.yelp.com/search?find_desc=District%20Donuts&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="District Donuts"><span class="et-ph-emoji">🥐</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=District%20Donuts&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">District Donuts</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Magazine St</span><span class="et-fave" title="from your past trips (or its heir)">★ your fave</span></div>
+        <div class="et-blurb">Your spot — scratch donuts with a monthly-changing menu, plus biscuit sandwiches &amp; sliders from 7am.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=District%20Donuts&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="breakfast" data-nb="CBD / Warehouse" data-price="2" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Willa Jean">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/willa-jean.jpg)" href="https://www.yelp.com/search?find_desc=Willa%20Jean&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Willa Jean"><span class="et-ph-emoji">🥐</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Willa%20Jean&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Willa Jean</a><span class="et-price">$$</span></div>
+        <div class="et-meta"><span class="et-nb">CBD</span></div>
+        <div class="et-blurb">Scratch bakery-café — famous biscuits and a big Southern brunch.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Willa%20Jean&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Garden / Magazine / Uptown" data-price="3" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="Lilette">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/lilette.jpg)" href="https://www.yelp.com/search?find_desc=Lilette&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Lilette"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Lilette&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Lilette</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Magazine St</span></div>
+        <div class="et-blurb">Chef John Harris's beloved French-Mediterranean bistro on Magazine (since 2001) — the grilled-beets &amp; goat cheese and the hanger steak are classics. Pretty &amp; reservation-worthy.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Lilette&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="dinner" data-nb="Marigny / Bywater" data-price="3" data-kid="0" data-fave="0" data-walk="0" data-reserve="1" data-name="Marigny Brasserie">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/marigny-brasserie.jpg)" href="https://www.yelp.com/search?find_desc=Marigny%20Brasserie&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Marigny Brasserie"><span class="et-ph-emoji">🍽️</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Marigny%20Brasserie&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Marigny Brasserie</a><span class="et-price">$$$</span></div>
+        <div class="et-meta"><span class="et-nb">Frenchmen · Marigny</span></div>
+        <div class="et-blurb">Upscale-casual Southern bistro at the foot of Frenchmen — a calmer sit-down before the clubs.</div>
+        <div class="et-tags"><span class="tag car">🚗 rideshare</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Marigny%20Brasserie&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="sweets" data-nb="French Quarter" data-price="1" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="Sweet Saint">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/sweet-saint.jpg)" href="https://www.yelp.com/search?find_desc=Sweet%20Saint&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Sweet Saint"><span class="et-ph-emoji">🍨</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Sweet%20Saint&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Sweet Saint</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">Artisan ice cream, sorbet &amp; sherbet churned in-house at 710 St Louis St — the other genuine scoop shop right in the Quarter, a block off Bourbon; closed Tue.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Sweet%20Saint&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="sweets" data-nb="French Quarter" data-price="1" data-kid="1" data-fave="0" data-walk="1" data-reserve="0" data-name="O.K. Ice Cream">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/o-k-ice-cream.jpg)" href="https://www.yelp.com/search?find_desc=O.K.%20Ice%20Cream&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="O.K. Ice Cream"><span class="et-ph-emoji">🍨</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=O.K.%20Ice%20Cream&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">O.K. Ice Cream</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">French Quarter</span></div>
+        <div class="et-blurb">All-natural housemade scoops at 1129 Decatur (by the French Market) — hand-spun shakes, frozen coffee &amp; the <b>&ldquo;Screamers&rdquo; ice-cream sandwiches</b>. The most walkable real ice cream in the Quarter; closed Wed.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">🚶 walk from FQ</span><a class="et-map" href="https://www.yelp.com/search?find_desc=O.K.%20Ice%20Cream&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      <article class="et-card" data-meal="sweets" data-nb="Marigny / Bywater" data-price="1" data-kid="1" data-fave="0" data-walk="0" data-reserve="0" data-name="Nola Mia Gelato">
+        <a class="et-photo has-img" style="background-image:url(/neworleans-eat/nola-mia-gelato.jpg)" href="https://www.yelp.com/search?find_desc=Nola%20Mia%20Gelato&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener" aria-label="Nola Mia Gelato"><span class="et-ph-emoji">🍨</span></a>
+        <div class="et-top"><a class="et-name" href="https://www.yelp.com/search?find_desc=Nola%20Mia%20Gelato&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Nola Mia Gelato</a><span class="et-price">$</span></div>
+        <div class="et-meta"><span class="et-nb">Frenchmen · Marigny</span></div>
+        <div class="et-blurb">Authentic Neapolitan gelato (blood orange, pistachio) plus wood-fired pizza &amp; panini — the real-deal gelateria a few blocks past Frenchmen St; fold it into a music-strip night.</div>
+        <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag car">🚗 rideshare</span><a class="et-map" href="https://www.yelp.com/search?find_desc=Nola%20Mia%20Gelato&find_loc=New%20Orleans%2C%20LA" target="_blank" rel="noopener">Yelp ↗</a></div>
+      </article>
+      </div>
+    </section>
+  </div>
+  <p class="sintro" style="margin-top:1.1rem"><b>The full list, by meal</b> — filter it below.</p>
   <div class="ht-bar" id="etBar">
     <div class="ht-frow"><span class="ht-flabel">Meal</span><div class="ht-chips" id="etMeals">
         <button class="ht-chip" data-meal="breakfast">🥐 Breakfast &amp; brunch</button>
