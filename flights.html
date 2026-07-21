@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Fare Finder — BOS nonstop, next 12 months</title>
+<title>JetBlue Fare Board — Boston nonstop, next 12 months</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,12 +14,12 @@
 <style>
   :root{
     --bg:#e8ebee; --card:#ffffff; --board:#0e1317; --board-ink:#f2ede0;
-    --ink:#141a1f; --muted:#59636d; --faint:#8b95a0;
-    --hair:#dde2e7; --hair-strong:#c9d0d7;
+    --ink:#141a1f; --muted:#59636d; --faint:#8b95a0; --hair:#dde2e7; --hair-strong:#c9d0d7;
     --amber:#b8791f; --amber-soft:#f6ecd7;
-    --ie:#1f7d4d; --ie-soft:#e2f0e8;
-    --sf:#c33f28; --sf-soft:#fbe6e0; --sc:#1f6db0; --sc-soft:#e3eef7;
-    --ac:var(--ie); --ac-soft:var(--ie-soft);
+    --ne:#3a4f8f; --ne-soft:#e6ebf6; --se:#1f7d4d; --se-soft:#e2f0e8; --fl:#c33f28; --fl-soft:#fbe6e0;
+    --mw:#a06e1c; --mw-soft:#f5ecd6; --we:#0a9488; --we-soft:#d7f0ee; --eu:#6d4aa8; --eu-soft:#ece4f6;
+    --ca:#b23a6d; --ca-soft:#f8e4ee;
+    --ac:var(--ne); --ac-soft:var(--ne-soft);
     --shadow:0 1px 2px rgba(20,30,40,.06),0 18px 46px rgba(20,30,40,.09);
     --shadow-sm:0 1px 2px rgba(20,30,40,.06),0 6px 18px rgba(20,30,40,.07);
     --cond:"Barlow Condensed",system-ui,sans-serif;
@@ -29,215 +29,188 @@
   @media (prefers-color-scheme:dark){
     :root{
       --bg:#0a0d0f; --card:#151a1f; --board:#080b0d; --board-ink:#f3edde;
-      --ink:#eef2f5; --muted:#98a2ac; --faint:#6b757f;
-      --hair:#252c33; --hair-strong:#333c44;
+      --ink:#eef2f5; --muted:#98a2ac; --faint:#6b757f; --hair:#252c33; --hair-strong:#333c44;
       --amber:#e8bd6a; --amber-soft:#2c2412;
-      --ie:#57c089; --ie-soft:#15271d;
-      --sf:#f2704f; --sf-soft:#2e1712; --sc:#62b0ec; --sc-soft:#122534;
+      --ne:#8098e0; --ne-soft:#141b30; --se:#57c089; --se-soft:#15271d; --fl:#f2704f; --fl-soft:#2e1712;
+      --mw:#d9a94e; --mw-soft:#2b2210; --we:#38c0b8; --we-soft:#0c2a28; --eu:#a98cde; --eu-soft:#1e1633;
+      --ca:#e87bad; --ca-soft:#301523;
       --shadow:0 1px 2px rgba(0,0,0,.5),0 20px 50px rgba(0,0,0,.45);
       --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
     }
   }
   :root[data-theme="light"]{
-    --bg:#e8ebee; --card:#ffffff; --board:#0e1317; --board-ink:#f2ede0;
-    --ink:#141a1f; --muted:#59636d; --faint:#8b95a0; --hair:#dde2e7; --hair-strong:#c9d0d7;
-    --amber:#b8791f; --amber-soft:#f6ecd7; --ie:#1f7d4d; --ie-soft:#e2f0e8; --sf:#c33f28; --sf-soft:#fbe6e0; --sc:#1f6db0; --sc-soft:#e3eef7;
+    --bg:#e8ebee; --card:#ffffff; --board:#0e1317; --board-ink:#f2ede0; --ink:#141a1f; --muted:#59636d;
+    --faint:#8b95a0; --hair:#dde2e7; --hair-strong:#c9d0d7; --amber:#b8791f; --amber-soft:#f6ecd7;
+    --ne:#3a4f8f; --ne-soft:#e6ebf6; --se:#1f7d4d; --se-soft:#e2f0e8; --fl:#c33f28; --fl-soft:#fbe6e0;
+    --mw:#a06e1c; --mw-soft:#f5ecd6; --we:#0a9488; --we-soft:#d7f0ee; --eu:#6d4aa8; --eu-soft:#ece4f6;
+    --ca:#b23a6d; --ca-soft:#f8e4ee;
     --shadow:0 1px 2px rgba(20,30,40,.06),0 18px 46px rgba(20,30,40,.09);
     --shadow-sm:0 1px 2px rgba(20,30,40,.06),0 6px 18px rgba(20,30,40,.07);
   }
   :root[data-theme="dark"]{
-    --bg:#0a0d0f; --card:#151a1f; --board:#080b0d; --board-ink:#f3edde;
-    --ink:#eef2f5; --muted:#98a2ac; --faint:#6b757f; --hair:#252c33; --hair-strong:#333c44;
-    --amber:#e8bd6a; --amber-soft:#2c2412; --ie:#57c089; --ie-soft:#15271d; --sf:#f2704f; --sf-soft:#2e1712; --sc:#62b0ec; --sc-soft:#122534;
+    --bg:#0a0d0f; --card:#151a1f; --board:#080b0d; --board-ink:#f3edde; --ink:#eef2f5; --muted:#98a2ac;
+    --faint:#6b757f; --hair:#252c33; --hair-strong:#333c44; --amber:#e8bd6a; --amber-soft:#2c2412;
+    --ne:#8098e0; --ne-soft:#141b30; --se:#57c089; --se-soft:#15271d; --fl:#f2704f; --fl-soft:#2e1712;
+    --mw:#d9a94e; --mw-soft:#2b2210; --we:#38c0b8; --we-soft:#0c2a28; --eu:#a98cde; --eu-soft:#1e1633;
+    --ca:#e87bad; --ca-soft:#301523;
     --shadow:0 1px 2px rgba(0,0,0,.5),0 20px 50px rgba(0,0,0,.45);
     --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
-    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 clamp(14px,4vw,26px) clamp(40px,6vw,72px)}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 clamp(14px,4vw,26px) clamp(40px,6vw,72px)}
   a{color:var(--ac)}
 
-  /* ---------- masthead / departure board ---------- */
   .board{background:var(--board);color:var(--board-ink);margin:0 calc(-1*clamp(14px,4vw,26px));
-    padding:clamp(18px,4vw,26px) clamp(14px,4vw,26px) clamp(20px,4vw,28px);
-    border-radius:0 0 20px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    padding:clamp(18px,4vw,26px) clamp(14px,4vw,26px) clamp(20px,4vw,28px);border-radius:0 0 20px 20px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden}
   .board::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 4px)}
   .board-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
-  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--amber);font-weight:500}
-  .board h1{font-family:var(--cond);font-weight:700;font-size:clamp(30px,7.5vw,54px);line-height:.94;
-    letter-spacing:.01em;margin:.28em 0 .14em;text-transform:uppercase}
-  .board .sub{color:#c4ccd2;font-size:clamp(13px,2.6vw,15px);max-width:52ch}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:500}
+  .board h1{font-family:var(--cond);font-weight:700;font-size:clamp(30px,7.5vw,54px);line-height:.94;letter-spacing:.01em;margin:.28em 0 .14em;text-transform:uppercase}
+  .board .sub{color:#c4ccd2;font-size:clamp(13px,2.6vw,15px);max-width:60ch}
   .board .sub b{color:var(--board-ink);font-weight:600}
   .theme-btn{flex:none;background:rgba(255,255,255,.07);color:var(--board-ink);border:1px solid rgba(255,255,255,.16);
-    border-radius:999px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    padding:7px 13px;cursor:pointer;transition:background .18s}
+    border-radius:999px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;cursor:pointer;transition:background .18s}
   .theme-btn:hover{background:rgba(255,255,255,.14)}
 
-  /* ---------- route gates ---------- */
-  .gates{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:clamp(16px,3.5vw,22px) 0 clamp(20px,4vw,30px)}
-  .gate{--gac:var(--ie);text-align:left;background:var(--card);border:1px solid var(--hair);
-    border-radius:15px;padding:15px 17px;cursor:pointer;box-shadow:var(--shadow-sm);min-width:0;
-    display:flex;align-items:center;gap:14px;transition:transform .16s,border-color .16s,box-shadow .16s;position:relative}
-  .gate .g-city{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* region board of gates */
+  .region{margin-top:clamp(16px,3vw,24px)}
+  .region-head{display:flex;align-items:baseline;gap:10px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--rc)}
+  .region-head .rname{font-family:var(--cond);font-weight:700;font-size:clamp(17px,3.4vw,22px);text-transform:uppercase;letter-spacing:.02em;color:var(--rc)}
+  .region-head .rmeta{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.02em}
+  .region-head .rmeta b{color:var(--ink)}
+  .region-head .rbadge{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--eu);border:1px solid var(--eu);border-radius:5px;padding:2px 7px}
+  .gates{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px}
+  .gate{--rc:var(--ne);text-align:left;background:var(--card);border:1px solid var(--hair);border-radius:12px;
+    padding:10px 12px;cursor:pointer;box-shadow:var(--shadow-sm);min-width:0;position:relative;
+    transition:transform .14s,border-color .14s,box-shadow .14s;display:block}
   .gate:hover{transform:translateY(-2px)}
-  .gate .flag{font-size:30px;line-height:1;flex:none;filter:saturate(1.05)}
-  .gate .g-main{min-width:0;flex:1}
-  .gate .g-route{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
-  .gate .g-city{font-family:var(--cond);font-weight:700;font-size:24px;line-height:1.02;text-transform:uppercase;letter-spacing:.01em}
-  .gate .g-price{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--gac);white-space:nowrap}
-  .gate .g-price small{color:var(--muted);font-weight:400;font-size:11px}
-  .gate[aria-selected="true"]{border-color:var(--gac);box-shadow:0 0 0 1.5px var(--gac),var(--shadow-sm)}
-  .gate[aria-selected="true"]::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;
-    border-radius:0 4px 4px 0;background:var(--gac)}
-  .gate:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+  .gate .g-top{display:flex;align-items:baseline;gap:7px;min-width:0}
+  .gate .g-code{font-family:var(--mono);font-weight:600;font-size:12px;color:var(--rc);flex:none}
+  .gate .g-city{font-family:var(--sans);font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gate .g-price{font-family:var(--cond);font-weight:700;font-size:19px;margin-top:3px}
+  .gate .g-price small{font-family:var(--sans);font-weight:400;font-size:10.5px;color:var(--muted)}
+  .gate[aria-selected="true"]{border-color:var(--rc);box-shadow:0 0 0 1.5px var(--rc),var(--shadow-sm)}
+  .gate[aria-selected="true"]::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--rc)}
+  .gate:focus-visible{outline:2px solid var(--rc);outline-offset:2px}
+  .gate .seasonal{position:absolute;top:8px;right:9px;font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--amber)}
 
-  /* ---------- boarding pass ---------- */
-  .pass{background:var(--card);border-radius:18px;box-shadow:var(--shadow);border:1px solid var(--hair);
-    overflow:hidden;margin-bottom:clamp(16px,3vw,22px)}
-  .pass-stub{background:var(--board);color:var(--board-ink);padding:9px clamp(16px,3vw,24px);
-    display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .detail{margin-top:clamp(26px,5vw,42px);scroll-margin-top:12px}
+  .pass{background:var(--card);border-radius:18px;box-shadow:var(--shadow);border:1px solid var(--hair);overflow:hidden;margin-bottom:clamp(16px,3vw,22px)}
+  .pass-stub{background:var(--board);color:var(--board-ink);padding:9px clamp(16px,3vw,24px);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
   .pass-stub .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
-  .pass-stub .stamp{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--board-ink);border:1px solid rgba(255,255,255,.28);border-radius:5px;padding:3px 8px}
+  .pass-stub .stamp{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--board-ink);border:1px solid rgba(255,255,255,.28);border-radius:5px;padding:3px 8px}
   .pass-body{padding:clamp(18px,3.4vw,28px) clamp(16px,3vw,26px)}
   .route-line{display:flex;align-items:center;gap:clamp(10px,3vw,26px);flex-wrap:wrap}
   .port{text-align:center;flex:none}
-  .port .code{font-family:var(--cond);font-weight:700;font-size:clamp(40px,10vw,66px);line-height:.86;letter-spacing:.01em}
-  .port .name{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
-  .path{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ac)}
-  .path .dur{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+  .port .code{font-family:var(--cond);font-weight:700;font-size:clamp(38px,9vw,62px);line-height:.86}
+  .port .name{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .path{flex:1;min-width:110px;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ac)}
+  .path .dur{font-family:var(--mono);font-size:12px;color:var(--muted)}
   .path .track{position:relative;width:100%;height:2px;background:var(--hair-strong);border-radius:2px}
-  .path .track::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:7px;height:7px;
-    border-radius:50%;background:var(--ac)}
-  .path .plane{position:absolute;right:-2px;top:50%;transform:translateY(-50%);font-size:15px;line-height:1}
-  .path .nonstop{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--ac);font-weight:500}
+  .path .track::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:var(--ac)}
+  .path .plane{position:absolute;right:-2px;top:50%;transform:translateY(-50%);font-size:15px}
+  .path .nonstop{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ac);font-weight:500}
   .fare{flex:none;text-align:right;margin-left:auto}
-  .fare .amt{font-family:var(--cond);font-weight:700;font-size:clamp(44px,11vw,72px);line-height:.84;color:var(--ac);letter-spacing:.005em}
+  .fare .amt{font-family:var(--cond);font-weight:700;font-size:clamp(42px,10vw,68px);line-height:.84;color:var(--ac)}
   .fare .amt.flip{animation:flip .5s cubic-bezier(.2,.7,.2,1)}
-  @keyframes flip{0%{transform:rotateX(-88deg);opacity:0;filter:blur(1px)}55%{opacity:1}100%{transform:none;filter:none}}
+  @keyframes flip{0%{transform:rotateX(-88deg);opacity:0}55%{opacity:1}100%{transform:none}}
   .fare .meta{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
   .fare .meta b{color:var(--ink);font-weight:600}
-
-  .perf{border:none;border-top:2px dashed var(--hair-strong);margin:clamp(16px,3vw,22px) -8px;position:relative}
+  .perf{border:none;border-top:2px dashed var(--hair-strong);margin:clamp(16px,3vw,22px) -8px}
   .segs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .seg{display:flex;gap:12px;align-items:baseline}
   .seg .dir{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);flex:none;width:58px;padding-top:2px}
-  .seg .when{font-family:var(--cond);font-weight:600;font-size:20px;text-transform:uppercase;line-height:1.05}
+  .seg .when{font-family:var(--cond);font-weight:600;font-size:19px;text-transform:uppercase;line-height:1.05}
   .seg .when .time{color:var(--ac)}
   .seg .fl{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:2px}
 
-  /* ---------- stat strip ---------- */
+  .alert{display:flex;gap:11px;align-items:flex-start;background:var(--amber-soft);border:1px solid var(--amber);border-radius:12px;
+    padding:13px 16px;margin-bottom:clamp(16px,3vw,22px);font-size:13.5px;color:var(--ink);line-height:1.5}
+  .alert .ai{color:var(--amber);font-size:17px;line-height:1.35;flex:none}
+  .alert b{font-weight:600}
+
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:clamp(20px,3.4vw,28px)}
   .stat{background:var(--card);border:1px solid var(--hair);border-radius:13px;padding:13px 15px;box-shadow:var(--shadow-sm)}
   .stat .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-  .stat .v{font-family:var(--cond);font-weight:700;font-size:clamp(20px,4vw,26px);line-height:1.05;margin-top:3px}
+  .stat .v{font-family:var(--cond);font-weight:700;font-size:clamp(19px,4vw,26px);line-height:1.05;margin-top:3px}
   .stat .v small{font-family:var(--sans);font-weight:500;font-size:12px;color:var(--muted)}
 
-  /* ---------- section headings ---------- */
-  .sec{margin:clamp(26px,4.5vw,40px) 0 clamp(12px,2vw,16px);display:flex;align-items:baseline;gap:12px}
-  .sec h2{font-family:var(--cond);font-weight:700;font-size:clamp(20px,4vw,27px);text-transform:uppercase;letter-spacing:.02em;margin:0}
+  .sec{margin:clamp(24px,4vw,36px) 0 clamp(12px,2vw,16px);display:flex;align-items:baseline;gap:12px}
+  .sec h2{font-family:var(--cond);font-weight:700;font-size:clamp(19px,4vw,26px);text-transform:uppercase;letter-spacing:.02em;margin:0}
   .sec .note{font-size:12.5px;color:var(--muted)}
 
-  /* ---------- month chart ---------- */
   .chartcard{background:var(--card);border:1px solid var(--hair);border-radius:15px;padding:clamp(14px,2.6vw,22px);box-shadow:var(--shadow-sm)}
-  .chart{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(4px,1vw,9px);align-items:end;height:200px;margin-bottom:8px}
-  .col{position:relative;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;cursor:default}
-  .bar{position:relative;width:100%;max-width:38px;background:var(--ac);border-radius:4px 4px 0 0;min-height:3px;
-    transition:height .5s cubic-bezier(.2,.7,.2,1),opacity .15s;opacity:.42}
+  .chart{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(3px,.9vw,8px);align-items:end;height:190px;margin-bottom:8px}
+  .col{position:relative;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+  .bar{position:relative;width:100%;max-width:36px;background:var(--ac);border-radius:4px 4px 0 0;min-height:3px;transition:height .5s cubic-bezier(.2,.7,.2,1),opacity .15s;opacity:.42}
   .col.cheapest .bar{opacity:1;box-shadow:inset 0 0 0 2px var(--card),0 0 0 1.5px var(--ac)}
   .col:hover .bar{opacity:.85}
   .col.cheapest:hover .bar{opacity:1}
-  .blab{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:5px;
-    font-family:var(--mono);font-size:10px;color:var(--ac);font-weight:600;opacity:0;transition:opacity .2s;white-space:nowrap}
+  .blab{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:5px;font-family:var(--mono);font-size:9.5px;color:var(--ac);font-weight:600;opacity:0;transition:opacity .2s;white-space:nowrap}
   .col.cheapest .blab{opacity:1}
-  .xaxis{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(4px,1vw,9px);border-top:1px solid var(--hair);padding-top:7px}
-  .xaxis span{font-family:var(--mono);font-size:9.5px;letter-spacing:.02em;color:var(--muted);text-align:center;text-transform:uppercase}
-  .xaxis span b{display:block;color:var(--faint);font-weight:400;font-size:8.5px}
-  .tip{position:fixed;z-index:20;pointer-events:none;background:var(--board);color:var(--board-ink);
-    font-family:var(--mono);font-size:11.5px;padding:8px 11px;border-radius:8px;box-shadow:var(--shadow);
-    opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:230px;line-height:1.5}
+  .barnone{opacity:1;background:transparent;border-radius:0;background-image:repeating-linear-gradient(45deg,var(--hair-strong) 0 1.5px,transparent 1.5px 6px);border-bottom:2px solid var(--hair-strong)}
+  .col.none .nolab{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:8px;color:var(--faint);text-transform:uppercase;transform:rotate(-90deg)}
+  .xaxis{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(3px,.9vw,8px);border-top:1px solid var(--hair);padding-top:7px}
+  .xaxis span{font-family:var(--mono);font-size:9px;color:var(--muted);text-align:center;text-transform:uppercase}
+  .xaxis span b{display:block;color:var(--faint);font-weight:400;font-size:8px}
+  .tip{position:fixed;z-index:20;pointer-events:none;background:var(--board);color:var(--board-ink);font-family:var(--mono);font-size:11.5px;padding:8px 11px;border-radius:8px;box-shadow:var(--shadow);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;max-width:230px;line-height:1.5}
   .tip.on{opacity:1;transform:none}
   .tip .tp{color:var(--amber);font-weight:600}
 
-  /* ---------- seasonal alert + no-service bars ---------- */
-  .alert{display:flex;gap:11px;align-items:flex-start;background:var(--amber-soft);border:1px solid var(--amber);
-    border-radius:12px;padding:13px 16px;margin-bottom:clamp(16px,3vw,22px);font-size:13.5px;color:var(--ink);line-height:1.5}
-  .alert .ai{color:var(--amber);font-size:17px;line-height:1.35;flex:none}
-  .alert b{font-weight:600}
-  .col.none{cursor:default}
-  .barnone{opacity:1;background:transparent;border-radius:0;
-    background-image:repeating-linear-gradient(45deg,var(--hair-strong) 0 1.5px,transparent 1.5px 6px);
-    border-bottom:2px solid var(--hair-strong)}
-  .col.none .nolab{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-family:var(--mono);
-    font-size:8.5px;letter-spacing:.02em;color:var(--faint);text-transform:uppercase;transform:rotate(-90deg);transform-origin:center}
-
-  /* ---------- cheap dates table ---------- */
   .tablecard{background:var(--card);border:1px solid var(--hair);border-radius:15px;box-shadow:var(--shadow-sm);overflow:hidden}
   .tbl-scroll{overflow-x:auto}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
-  thead th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-    text-align:left;font-weight:500;padding:11px 14px;border-bottom:1px solid var(--hair);background:var(--card);position:sticky;top:0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:480px}
+  thead th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:500;padding:11px 14px;border-bottom:1px solid var(--hair)}
   tbody td{padding:10px 14px;border-bottom:1px solid var(--hair)}
   tbody tr:last-child td{border-bottom:none}
   tbody tr:hover{background:var(--ac-soft)}
   td.price{font-family:var(--mono);font-weight:600;color:var(--ac)}
   td.dt{font-family:var(--cond);font-weight:600;font-size:15px;text-transform:uppercase}
   td.fl{font-family:var(--mono);font-size:12px;color:var(--muted)}
-  .pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:5px;
-    background:var(--ac-soft);color:var(--ac);font-weight:500;border:1px solid transparent}
+  .pill{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--ac-soft);color:var(--ac);font-weight:500}
 
-  /* ---------- notes ---------- */
-  .notes{background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--amber);
-    border-radius:12px;padding:clamp(14px,2.6vw,20px);box-shadow:var(--shadow-sm);font-size:13px;color:var(--muted)}
+  .notes{background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--amber);border-radius:12px;padding:clamp(14px,2.6vw,20px);box-shadow:var(--shadow-sm);font-size:13px;color:var(--muted)}
   .notes h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin:0 0 10px}
   .notes ul{margin:0;padding-left:18px}
   .notes li{margin:6px 0}
   .notes b{color:var(--ink);font-weight:600}
   .foot{margin-top:26px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.04em}
 
-  @media (max-width:620px){
-    .gates{grid-template-columns:1fr}
-    .gate .g-city{white-space:normal}
-  }
   @media (max-width:640px){
     .stats{grid-template-columns:1fr 1fr}
     .segs{grid-template-columns:1fr}
     .fare{margin-left:0;text-align:left;width:100%}
-    .fare .amt{font-size:56px}
-    .route-line{gap:14px}
-    .chart{height:160px}
+    .fare .amt{font-size:54px}
+    .chart{height:150px}
     .xaxis span b{display:none}
   }
-  @media (prefers-reduced-motion:reduce){
-    *{animation:none!important;transition:none!important}
-  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <div class="wrap">
   <header class="board">
     <div class="board-top">
       <div>
-        <div class="eyebrow">Boston Logan · Nonstop only · 5 nights</div>
-        <h1>Fare Finder</h1>
+        <div class="eyebrow">Boston Logan · JetBlue nonstop · 5 nights · 2 adults + 1 child</div>
+        <h1>JetBlue Fare Board</h1>
       </div>
       <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">Theme</button>
     </div>
-    <p class="sub">Cheapest <b>nonstop</b> round trip that can seat <b>2 adults + 1 child</b> (3 seats), for a
-      <b>5-night</b> stay, at any departure in the <b>next 12 months</b>. Pick a destination.</p>
+    <p class="sub">Cheapest <b>JetBlue nonstop</b> round trip that can seat <b>3</b> (2 adults + 1 child), for a
+      <b>5-night</b> stay, at any departure in the <b>next 12 months</b> — every JetBlue nonstop out of Boston,
+      by region. <b>Transatlantic (Europe) flights include a meal + drink</b>, with Mint lie-flat suites up front.
+      Pick a destination.</p>
   </header>
 
-  <div class="gates" role="tablist" aria-label="Destination">
-    <button class="gate" id="gate-dub" role="tab" data-route="dub"></button>
-    <button class="gate" id="gate-sfo" role="tab" data-route="sfo"></button>
-    <button class="gate" id="gate-scot" role="tab" data-route="scot"></button>
-  </div>
+  <nav id="regions" aria-label="Destinations by region"></nav>
 
-  <main id="panel" role="tabpanel"></main>
+  <main id="detail" class="detail" role="region" aria-live="polite"></main>
 
   <div class="foot" id="foot"></div>
 </div>
@@ -245,81 +218,68 @@
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
 <script>
-const FLIGHTS = {"generated": "2026-07-20", "party": "2 adults + 1 child (age 7)", "seats": 3, "nights": 5, "origin": "BOS", "routes": {"dub": {"code": "DUB", "city": "Dublin", "country": "Ireland", "emoji": "\ud83c\uddee\ud83c\uddea", "cheapest": {"price": 1912, "pp": 637, "dep": "2026-08-23", "ret": "2026-08-28", "out": {"airline": "EI", "flight": "132", "dep": "2026-08-23T17:25:00", "arr": "2026-08-24T04:35:00", "dur": 370}, "back": {"airline": "EI", "flight": "133", "dep": "2026-08-28T12:45:00", "arr": "2026-08-28T14:55:00", "dur": 430}}, "monthly": [{"ym": "2026-07", "label": "Jul 2026", "min": 4820}, {"ym": "2026-08", "label": "Aug 2026", "min": 1912}, {"ym": "2026-09", "label": "Sep 2026", "min": 1912}, {"ym": "2026-10", "label": "Oct 2026", "min": 1969}, {"ym": "2026-11", "label": "Nov 2026", "min": 1920}, {"ym": "2026-12", "label": "Dec 2026", "min": 1920}, {"ym": "2027-01", "label": "Jan 2027", "min": 1920}, {"ym": "2027-02", "label": "Feb 2027", "min": 1920}, {"ym": "2027-03", "label": "Mar 2027", "min": 1920}, {"ym": "2027-04", "label": "Apr 2027", "min": 1979}, {"ym": "2027-05", "label": "May 2027", "min": 2024}, {"ym": "2027-06", "label": "Jun 2027", "min": 2488}], "carriers": [{"code": "EI", "name": "Aer Lingus", "n": 97}], "cheapDates": [{"dep": "2026-08-23", "ret": "2026-08-28", "price": 1912, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-09-13", "ret": "2026-09-18", "price": 1912, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-09-16", "ret": "2026-09-21", "price": 1936, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-11-06", "ret": "2026-11-11", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-11-12", "ret": "2026-11-17", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-11-18", "ret": "2026-11-23", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-12-03", "ret": "2026-12-08", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-12-09", "ret": "2026-12-14", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2026-12-12", "ret": "2026-12-17", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-01-08", "ret": "2027-01-13", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-01-20", "ret": "2027-01-25", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-01-23", "ret": "2027-01-28", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-01-26", "ret": "2027-01-31", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-01-29", "ret": "2027-02-03", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-02-04", "ret": "2027-02-09", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-03-03", "ret": "2027-03-08", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-03-06", "ret": "2027-03-11", "price": 1920, "oc": "EI", "of": "132", "bc": "EI", "bf": "137"}, {"dep": "2027-03-24", "ret": "2027-03-29", "price": 1934, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-03-27", "ret": "2027-04-01", "price": 1934, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}, {"dep": "2027-03-30", "ret": "2027-04-04", "price": 1934, "oc": "EI", "of": "132", "bc": "EI", "bf": "133"}], "nPriced": 97, "nTotal": 118}, "sfo": {"code": "SFO", "city": "San Francisco", "country": "California", "emoji": "\ud83c\udf09", "cheapest": {"price": 981, "pp": 327, "dep": "2026-09-04", "ret": "2026-09-09", "out": {"airline": "B6", "flight": "733", "dep": "2026-09-04T17:20:00", "arr": "2026-09-04T20:56:00", "dur": 396}, "back": {"airline": "B6", "flight": "434", "dep": "2026-09-09T07:50:00", "arr": "2026-09-09T16:49:00", "dur": 359}}, "monthly": [{"ym": "2026-07", "label": "Jul 2026", "min": 1476}, {"ym": "2026-08", "label": "Aug 2026", "min": 1011}, {"ym": "2026-09", "label": "Sep 2026", "min": 981}, {"ym": "2026-10", "label": "Oct 2026", "min": 996}, {"ym": "2026-11", "label": "Nov 2026", "min": 996}, {"ym": "2026-12", "label": "Dec 2026", "min": 1221}, {"ym": "2027-01", "label": "Jan 2027", "min": 1221}, {"ym": "2027-02", "label": "Feb 2027", "min": 1221}, {"ym": "2027-03", "label": "Mar 2027", "min": 1221}, {"ym": "2027-04", "label": "Apr 2027", "min": 1221}, {"ym": "2027-05", "label": "May 2027", "min": 1221}, {"ym": "2027-06", "label": "Jun 2027", "min": 1221}], "carriers": [{"code": "UA", "name": "United", "n": 51}, {"code": "B6", "name": "JetBlue", "n": 26}, {"code": "DL", "name": "Delta", "n": 15}], "cheapDates": [{"dep": "2026-09-04", "ret": "2026-09-09", "price": 981, "oc": "B6", "of": "733", "bc": "B6", "bf": "434"}, {"dep": "2026-09-07", "ret": "2026-09-12", "price": 981, "oc": "UA", "of": "2441", "bc": "UA", "bf": "2647"}, {"dep": "2026-09-10", "ret": "2026-09-15", "price": 996, "oc": "UA", "of": "2441", "bc": "UA", "bf": "2356"}, {"dep": "2026-09-16", "ret": "2026-09-21", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-09-19", "ret": "2026-09-24", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-09-22", "ret": "2026-09-27", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-09-25", "ret": "2026-09-30", "price": 996, "oc": "UA", "of": "2441", "bc": "UA", "bf": "1372"}, {"dep": "2026-09-28", "ret": "2026-10-03", "price": 996, "oc": "UA", "of": "2441", "bc": "UA", "bf": "1665"}, {"dep": "2026-10-01", "ret": "2026-10-06", "price": 996, "oc": "UA", "of": "2441", "bc": "UA", "bf": "2634"}, {"dep": "2026-10-07", "ret": "2026-10-12", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "1234"}, {"dep": "2026-10-13", "ret": "2026-10-18", "price": 999, "oc": "B6", "of": "413", "bc": "UA", "bf": "371"}, {"dep": "2026-10-16", "ret": "2026-10-21", "price": 996, "oc": "UA", "of": "2441", "bc": "UA", "bf": "1372"}, {"dep": "2026-10-19", "ret": "2026-10-24", "price": 996, "oc": "B6", "of": "413", "bc": "B6", "bf": "1534"}, {"dep": "2026-10-22", "ret": "2026-10-27", "price": 996, "oc": "UA", "of": "2441", "bc": "UA", "bf": "2647"}, {"dep": "2026-10-28", "ret": "2026-11-02", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-10-31", "ret": "2026-11-05", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-11-03", "ret": "2026-11-08", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "1234"}, {"dep": "2026-11-06", "ret": "2026-11-11", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-11-09", "ret": "2026-11-14", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}, {"dep": "2026-11-12", "ret": "2026-11-17", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}], "nPriced": 92, "nTotal": 118}, "scot": {"code": "EDI", "city": "Edinburgh", "country": "Scotland", "emoji": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f", "cheapest": {"price": 2262, "pp": 754, "dep": "2026-09-16", "ret": "2026-09-21", "out": {"airline": "DL", "flight": "122", "dep": "2026-09-16T19:45:00", "arr": "2026-09-17T07:05:00", "dur": 380}, "back": {"airline": "DL", "flight": "123", "dep": "2026-09-21T11:20:00", "arr": "2026-09-21T13:27:00", "dur": 427}}, "monthly": [{"ym": "2026-07", "label": "Jul 2026", "min": 4371}, {"ym": "2026-08", "label": "Aug 2026", "min": 2700}, {"ym": "2026-09", "label": "Sep 2026", "min": 2262}, {"ym": "2026-10", "label": "Oct 2026", "min": 2262}, {"ym": "2026-11", "label": "Nov 2026", "min": null}, {"ym": "2026-12", "label": "Dec 2026", "min": null}, {"ym": "2027-01", "label": "Jan 2027", "min": null}, {"ym": "2027-02", "label": "Feb 2027", "min": null}, {"ym": "2027-03", "label": "Mar 2027", "min": null}, {"ym": "2027-04", "label": "Apr 2027", "min": 2679}, {"ym": "2027-05", "label": "May 2027", "min": 2529}, {"ym": "2027-06", "label": "Jun 2027", "min": 3549}], "carriers": [{"code": "DL", "name": "Delta", "n": 24}, {"code": "B6", "name": "JetBlue", "n": 16}], "cheapDates": [{"dep": "2026-09-16", "ret": "2026-09-21", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}, {"dep": "2026-09-19", "ret": "2026-09-24", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}, {"dep": "2026-10-01", "ret": "2026-10-06", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}, {"dep": "2026-10-07", "ret": "2026-10-12", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}, {"dep": "2026-10-10", "ret": "2026-10-15", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}, {"dep": "2026-10-13", "ret": "2026-10-18", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}, {"dep": "2026-10-19", "ret": "2026-10-24", "price": 2262, "oc": "DL", "of": "122", "bc": "DL", "bf": "123"}], "nPriced": 40, "nTotal": 118, "alert": "Nonstop to Scotland is <b>seasonal and Edinburgh-only</b>. It runs roughly <b>late&nbsp;Jul&ndash;Oct</b> and again <b>Apr&ndash;mid&nbsp;Jun</b>; there is <b>no BOS nonstop Nov&ndash;Mar</b>, and <b>Glasgow has no BOS nonstop at all</b>. Off-season, expect a connection (~$2,250&ndash;$2,950 for the party)."}}};
-const AIRLINES = {EI:"Aer Lingus",B6:"JetBlue",UA:"United",DL:"Delta",AA:"American",AS:"Alaska",WN:"Southwest"};
-const ROUTES = ["dub","sfo","scot"];
-const AC = {dub:"var(--ie)", sfo:"var(--sf)", scot:"var(--sc)"};
-const ACSOFT = {dub:"var(--ie-soft)", sfo:"var(--sf-soft)", scot:"var(--sc-soft)"};
-const CARRIER_NOTE = {
-  dub:"Only Aer Lingus flies BOS&ndash;Dublin nonstop with 3 economy seats at the low fare (one rotation per day).",
-  sfo:"JetBlue, United, and Delta all fly BOS&ndash;SFO nonstop, with several departures a day.",
-  scot:"Delta and JetBlue fly BOS&ndash;Edinburgh nonstop, but only <b>seasonally</b> (roughly summer&ndash;fall). Glasgow has no BOS nonstop, and there's none to Scotland at all Nov&ndash;Mar."
-};
+const FLIGHTS = {"generated": "2026-07-20", "party": "2 adults + 1 child (age 7)", "seats": 3, "nights": 5, "origin": "BOS", "airline": "JetBlue", "sampling": "monthly (1 date/month)", "regions": [{"name": "Northeast", "keys": ["JFK", "DCA"]}, {"name": "Southeast", "keys": ["RDU"]}, {"name": "Florida", "keys": ["FLL"]}, {"name": "Midwest & Central", "keys": ["ORD"]}, {"name": "West", "keys": ["SFO"]}, {"name": "Europe", "keys": ["LHR"]}, {"name": "Caribbean & Latin America", "keys": ["SJU"]}], "routes": {"JFK": {"code": "JFK", "city": "New York\u2013JFK", "region": "Northeast", "cheapest": {"price": 573, "pp": 191, "dep": "2026-08-14", "ret": "2026-08-19", "out": {"airline": "B6", "flight": "917", "dep": "2026-08-14T05:01:00", "arr": "2026-08-14T06:14:00", "dur": 73}, "back": {"airline": "B6", "flight": "2718", "dep": "2026-08-19T06:29:00", "arr": "2026-08-19T07:46:00", "dur": 77}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 573}, {"ym": "2026-09", "label": "Sep 2026", "min": 573}, {"ym": "2026-10", "label": "Oct 2026", "min": 573}, {"ym": "2026-11", "label": "Nov 2026", "min": 789}, {"ym": "2026-12", "label": "Dec 2026", "min": 1221}, {"ym": "2027-01", "label": "Jan 2027", "min": 741}, {"ym": "2027-02", "label": "Feb 2027", "min": 1191}, {"ym": "2027-03", "label": "Mar 2027", "min": 741}, {"ym": "2027-04", "label": "Apr 2027", "min": 873}, {"ym": "2027-05", "label": "May 2027", "min": 861}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 10}], "cheapDates": [{"dep": "2026-08-14", "ret": "2026-08-19", "price": 573, "oc": "B6", "of": "917", "bc": "B6", "bf": "2718"}, {"dep": "2026-09-14", "ret": "2026-09-19", "price": 573, "oc": "B6", "of": "717", "bc": "B6", "bf": "2718"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 573, "oc": "B6", "of": "917", "bc": "B6", "bf": "2718"}]}, "FLL": {"code": "FLL", "city": "Fort Lauderdale", "region": "Florida", "cheapest": {"price": 921, "pp": 307, "dep": "2026-09-14", "ret": "2026-09-19", "out": {"airline": "B6", "flight": "569", "dep": "2026-09-14T06:19:00", "arr": "2026-09-14T09:45:00", "dur": 206}, "back": {"airline": "B6", "flight": "70", "dep": "2026-09-19T18:35:00", "arr": "2026-09-19T21:50:00", "dur": 195}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 936}, {"ym": "2026-09", "label": "Sep 2026", "min": 921}, {"ym": "2026-10", "label": "Oct 2026", "min": 921}, {"ym": "2026-11", "label": "Nov 2026", "min": 1269}, {"ym": "2026-12", "label": "Dec 2026", "min": 1176}, {"ym": "2027-01", "label": "Jan 2027", "min": 2619}, {"ym": "2027-02", "label": "Feb 2027", "min": 3190}, {"ym": "2027-03", "label": "Mar 2027", "min": 1986}, {"ym": "2027-04", "label": "Apr 2027", "min": null}, {"ym": "2027-05", "label": "May 2027", "min": 1161}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 9}], "cheapDates": [{"dep": "2026-08-14", "ret": "2026-08-19", "price": 936, "oc": "B6", "of": "569", "bc": "B6", "bf": "690"}, {"dep": "2026-09-14", "ret": "2026-09-19", "price": 921, "oc": "B6", "of": "569", "bc": "B6", "bf": "70"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 921, "oc": "B6", "of": "69", "bc": "B6", "bf": "690"}]}, "ORD": {"code": "ORD", "city": "Chicago", "region": "Midwest & Central", "cheapest": {"price": 648, "pp": 216, "dep": "2026-09-14", "ret": "2026-09-19", "out": {"airline": "B6", "flight": "111", "dep": "2026-09-14T06:55:00", "arr": "2026-09-14T08:46:00", "dur": 171}, "back": {"airline": "B6", "flight": "112", "dep": "2026-09-19T09:38:00", "arr": "2026-09-19T13:06:00", "dur": 148}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 843}, {"ym": "2026-09", "label": "Sep 2026", "min": 648}, {"ym": "2026-10", "label": "Oct 2026", "min": 648}, {"ym": "2026-11", "label": "Nov 2026", "min": 966}, {"ym": "2026-12", "label": "Dec 2026", "min": 993}, {"ym": "2027-01", "label": "Jan 2027", "min": 834}, {"ym": "2027-02", "label": "Feb 2027", "min": 1596}, {"ym": "2027-03", "label": "Mar 2027", "min": 1311}, {"ym": "2027-04", "label": "Apr 2027", "min": 1101}, {"ym": "2027-05", "label": "May 2027", "min": 1011}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 10}], "cheapDates": [{"dep": "2026-09-14", "ret": "2026-09-19", "price": 648, "oc": "B6", "of": "111", "bc": "B6", "bf": "112"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 648, "oc": "B6", "of": "111", "bc": "B6", "bf": "112"}]}, "SFO": {"code": "SFO", "city": "San Francisco", "region": "West", "cheapest": {"price": 996, "pp": 332, "dep": "2026-09-14", "ret": "2026-09-19", "out": {"airline": "B6", "flight": "413", "dep": "2026-09-14T21:35:00", "arr": "2026-09-15T01:03:00", "dur": 388}, "back": {"airline": "B6", "flight": "434", "dep": "2026-09-19T07:50:00", "arr": "2026-09-19T16:49:00", "dur": 359}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 1011}, {"ym": "2026-09", "label": "Sep 2026", "min": 996}, {"ym": "2026-10", "label": "Oct 2026", "min": 996}, {"ym": "2026-11", "label": "Nov 2026", "min": 1266}, {"ym": "2026-12", "label": "Dec 2026", "min": 1884}, {"ym": "2027-01", "label": "Jan 2027", "min": 1221}, {"ym": "2027-02", "label": "Feb 2027", "min": 3064}, {"ym": "2027-03", "label": "Mar 2027", "min": 2511}, {"ym": "2027-04", "label": "Apr 2027", "min": 1626}, {"ym": "2027-05", "label": "May 2027", "min": 1401}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 10}], "cheapDates": [{"dep": "2026-08-14", "ret": "2026-08-19", "price": 1011, "oc": "B6", "of": "1333", "bc": "B6", "bf": "734"}, {"dep": "2026-09-14", "ret": "2026-09-19", "price": 996, "oc": "B6", "of": "413", "bc": "B6", "bf": "434"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 996, "oc": "B6", "of": "633", "bc": "B6", "bf": "434"}]}, "LHR": {"code": "LHR", "city": "London\u2013Heathrow", "region": "Europe", "cheapest": {"price": 2324, "pp": 775, "dep": "2026-11-14", "ret": "2026-11-19", "out": {"airline": "B6", "flight": "1620", "dep": "2026-11-14T19:10:00", "arr": "2026-11-15T06:55:00", "dur": 405}, "back": {"airline": "B6", "flight": "1621", "dep": "2026-11-19T09:20:00", "arr": "2026-11-19T12:15:00", "dur": 475}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": null}, {"ym": "2026-09", "label": "Sep 2026", "min": 2471}, {"ym": "2026-10", "label": "Oct 2026", "min": 2621}, {"ym": "2026-11", "label": "Nov 2026", "min": 2324}, {"ym": "2026-12", "label": "Dec 2026", "min": 3326}, {"ym": "2027-01", "label": "Jan 2027", "min": null}, {"ym": "2027-02", "label": "Feb 2027", "min": 2585}, {"ym": "2027-03", "label": "Mar 2027", "min": 2471}, {"ym": "2027-04", "label": "Apr 2027", "min": null}, {"ym": "2027-05", "label": "May 2027", "min": 2774}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 7}], "cheapDates": [{"dep": "2026-11-14", "ret": "2026-11-19", "price": 2324, "oc": "B6", "of": "1620", "bc": "B6", "bf": "1621"}]}, "SJU": {"code": "SJU", "city": "San Juan", "region": "Caribbean & Latin America", "cheapest": {"price": 831, "pp": 277, "dep": "2026-09-14", "ret": "2026-09-19", "out": {"airline": "B6", "flight": "861", "dep": "2026-09-14T10:15:00", "arr": "2026-09-14T14:23:00", "dur": 248}, "back": {"airline": "B6", "flight": "562", "dep": "2026-09-19T06:00:00", "arr": "2026-09-19T10:03:00", "dur": 243}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 1137}, {"ym": "2026-09", "label": "Sep 2026", "min": 831}, {"ym": "2026-10", "label": "Oct 2026", "min": 831}, {"ym": "2026-11", "label": "Nov 2026", "min": 1137}, {"ym": "2026-12", "label": "Dec 2026", "min": null}, {"ym": "2027-01", "label": "Jan 2027", "min": 1620}, {"ym": "2027-02", "label": "Feb 2027", "min": 3744}, {"ym": "2027-03", "label": "Mar 2027", "min": 1485}, {"ym": "2027-04", "label": "Apr 2027", "min": 1671}, {"ym": "2027-05", "label": "May 2027", "min": 1671}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 9}], "cheapDates": [{"dep": "2026-09-14", "ret": "2026-09-19", "price": 831, "oc": "B6", "of": "861", "bc": "B6", "bf": "562"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 831, "oc": "B6", "of": "861", "bc": "B6", "bf": "562"}]}, "DCA": {"code": "DCA", "city": "Washington\u2013Reagan", "region": "Northeast", "cheapest": {"price": 585, "pp": 195, "dep": "2026-09-14", "ret": "2026-09-19", "out": {"airline": "B6", "flight": "455", "dep": "2026-09-14T06:05:00", "arr": "2026-09-14T07:56:00", "dur": 111}, "back": {"airline": "B6", "flight": "754", "dep": "2026-09-19T12:10:00", "arr": "2026-09-19T13:52:00", "dur": 102}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 702}, {"ym": "2026-09", "label": "Sep 2026", "min": 585}, {"ym": "2026-10", "label": "Oct 2026", "min": 585}, {"ym": "2026-11", "label": "Nov 2026", "min": 1203}, {"ym": "2026-12", "label": "Dec 2026", "min": 1038}, {"ym": "2027-01", "label": "Jan 2027", "min": 1371}, {"ym": "2027-02", "label": "Feb 2027", "min": 1656}, {"ym": "2027-03", "label": "Mar 2027", "min": 1101}, {"ym": "2027-04", "label": "Apr 2027", "min": 1101}, {"ym": "2027-05", "label": "May 2027", "min": 1041}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 10}], "cheapDates": [{"dep": "2026-09-14", "ret": "2026-09-19", "price": 585, "oc": "B6", "of": "455", "bc": "B6", "bf": "754"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 585, "oc": "B6", "of": "455", "bc": "B6", "bf": "554"}]}, "RDU": {"code": "RDU", "city": "Raleigh\u2013Durham", "region": "Southeast", "cheapest": {"price": 786, "pp": 262, "dep": "2026-09-14", "ret": "2026-09-19", "out": {"airline": "B6", "flight": "2083", "dep": "2026-09-14T08:00:00", "arr": "2026-09-14T10:25:00", "dur": 145}, "back": {"airline": "B6", "flight": "1484", "dep": "2026-09-19T06:00:00", "arr": "2026-09-19T08:00:00", "dur": 120}}, "monthly": [{"ym": "2026-08", "label": "Aug 2026", "min": 840}, {"ym": "2026-09", "label": "Sep 2026", "min": 786}, {"ym": "2026-10", "label": "Oct 2026", "min": 786}, {"ym": "2026-11", "label": "Nov 2026", "min": 996}, {"ym": "2026-12", "label": "Dec 2026", "min": 1386}, {"ym": "2027-01", "label": "Jan 2027", "min": 1221}, {"ym": "2027-02", "label": "Feb 2027", "min": 2121}, {"ym": "2027-03", "label": "Mar 2027", "min": 951}, {"ym": "2027-04", "label": "Apr 2027", "min": 1971}, {"ym": "2027-05", "label": "May 2027", "min": 1041}, {"ym": "2027-06", "label": "Jun 2027", "min": null}, {"ym": "2027-07", "label": "Jul 2027", "min": null}], "carriers": [{"code": "B6", "name": "JetBlue", "n": 10}], "cheapDates": [{"dep": "2026-09-14", "ret": "2026-09-19", "price": 786, "oc": "B6", "of": "2083", "bc": "B6", "bf": "1484"}, {"dep": "2026-10-14", "ret": "2026-10-19", "price": 786, "oc": "B6", "of": "1883", "bc": "B6", "bf": "1484"}]}}};
+const AIRLINES = {B6:"JetBlue"};
+const RVAR = {"Northeast":"ne","Southeast":"se","Florida":"fl","Midwest & Central":"mw","West":"we","Europe":"eu","Caribbean & Latin America":"ca"};
 
 const $ = (s,r=document)=>r.querySelector(s);
-const el = (t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
 const money = n => "$"+Math.round(n).toLocaleString("en-US");
 const D = iso => new Date(iso.length<=10 ? iso+"T00:00:00" : iso);
 const fmtDate = iso => D(iso).toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
 const fmtTime = iso => D(iso).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
 const fmtDur = m => Math.floor(m/60)+"h "+String(m%60).padStart(2,"0")+"m";
 const al = c => AIRLINES[c]||c;
+const rvar = reg => "var(--"+(RVAR[reg]||"ne")+")";
+const rvarSoft = reg => "var(--"+(RVAR[reg]||"ne")+"-soft)";
+const isSeasonal = r => { let run=0,mx=0; for(const m of r.monthly){ if(m.min==null){run++; if(run>mx)mx=run;} else run=0; } return mx>=3; };
 
-function renderGates(){
-  ROUTES.forEach((key,i)=>{
-    const r = FLIGHTS.routes[key], g = $("#gate-"+key);
-    g.style.setProperty("--gac", AC[key]);
-    g.innerHTML =
-      `<span class="flag">${r.emoji}</span>
-       <span class="g-main">
-         <span class="g-route">BOS &rarr; ${r.code}</span>
-         <span class="g-city">${r.city}</span>
-       </span>
-       <span class="g-price">${money(r.cheapest.price)} <small>from</small></span>`;
-    g.addEventListener("click",()=>select(key));
-    g.addEventListener("keydown",e=>{
-      if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;
-      e.preventDefault();
-      const step = e.key==="ArrowRight"?1:-1;
-      const next = ROUTES[(i+step+ROUTES.length)%ROUTES.length];
-      select(next); $("#gate-"+next).focus();
-    });
-  });
+function renderRegions(){
+  const nav = $("#regions");
+  nav.innerHTML = FLIGHTS.regions.map(reg=>{
+    const rv = RVAR[reg.name]||"ne";
+    const cheapest = Math.min(...reg.keys.map(k=>FLIGHTS.routes[k].cheapest.price));
+    const gates = reg.keys.map(k=>{
+      const r = FLIGHTS.routes[k];
+      const seas = isSeasonal(r) ? `<span class="seasonal">seasonal</span>` : "";
+      return `<button class="gate" id="gate-${k}" role="tab" data-key="${k}" style="--rc:var(--${rv})">
+        ${seas}
+        <span class="g-top"><span class="g-code">${r.code}</span><span class="g-city">${r.city}</span></span>
+        <span class="g-price">${money(r.cheapest.price)} <small>from</small></span>
+      </button>`;
+    }).join("");
+    const badge = reg.name==="Europe" ? `<span class="rbadge">✦ meal + drink included</span>` : "";
+    return `<section class="region" style="--rc:var(--${rv})">
+      <div class="region-head">
+        <span class="rname">${reg.name}</span>
+        <span class="rmeta"><b>${reg.keys.length}</b> ${reg.keys.length===1?"route":"routes"} · from <b>${money(cheapest)}</b></span>
+        ${badge}
+      </div>
+      <div class="gates">${gates}</div>
+    </section>`;
+  }).join("");
+  nav.querySelectorAll(".gate").forEach(g=>g.addEventListener("click",()=>select(g.dataset.key)));
 }
 
 function segRow(dir, seg){
-  return `<div class="seg">
-    <span class="dir">${dir}</span>
-    <span>
-      <span class="when">${fmtDate(seg.dep).toUpperCase()} · <span class="time">${fmtTime(seg.dep)}</span></span>
-      <span class="fl">${al(seg.airline)} ${seg.airline}${seg.flight} · ${fmtDur(seg.dur)} · arrives ${fmtTime(seg.arr)}</span>
-    </span></div>`;
+  return `<div class="seg"><span class="dir">${dir}</span><span>
+    <span class="when">${fmtDate(seg.dep).toUpperCase()} · <span class="time">${fmtTime(seg.dep)}</span></span>
+    <span class="fl">${al(seg.airline)} ${seg.airline}${seg.flight} · ${fmtDur(seg.dur)} · arrives ${fmtTime(seg.arr)}</span>
+  </span></div>`;
 }
-
-function carriersLine(r){
-  return r.carriers.map(c=>c.name).join(" · ");
-}
+const carriersLine = r => r.carriers.map(c=>c.name).join(" · ");
 
 function chart(r){
   const vals = r.monthly.filter(m=>m.min!=null).map(m=>m.min);
   const max = Math.max(...vals), lo = Math.min(...vals);
   const cols = r.monthly.map(m=>{
-    if(m.min==null){
-      return `<div class="col none" data-tip="${m.label}: no nonstop &mdash; connection required">
-        <span class="bar barnone" style="height:100%"><span class="nolab">no nonstop</span></span>
-      </div>`;
-    }
+    if(m.min==null) return `<div class="col none" data-tip="${m.label}: no fare in this month's sample">
+      <span class="bar barnone" style="height:100%"><span class="nolab">n/a</span></span></div>`;
     const h = Math.max(3, Math.round(m.min/max*100));
-    const isMin = m.min===lo;
-    return `<div class="col${isMin?" cheapest":""}" data-tip="${m.label}: ${money(m.min)} cheapest (${money(m.min/3)}/person)">
-      <span class="bar" style="height:${h}%"><span class="blab">${money(m.min)}</span></span>
-    </div>`;
+    return `<div class="col${m.min===lo?" cheapest":""}" data-tip="${m.label}: from ${money(m.min)} (${money(m.min/3)}/person)">
+      <span class="bar" style="height:${h}%"><span class="blab">${money(m.min)}</span></span></div>`;
   }).join("");
   const ax = r.monthly.map(m=>{const [mo,y]=m.label.split(" ");return `<span>${mo}<b>&rsquo;${y.slice(2)}</b></span>`;}).join("");
-  return `<div class="chartcard">
-    <div class="chart">${cols}</div>
-    <div class="xaxis">${ax}</div>
-  </div>`;
+  return `<div class="chartcard"><div class="chart">${cols}</div><div class="xaxis">${ax}</div></div>`;
 }
 
 function table(r){
@@ -327,8 +287,7 @@ function table(r){
     <td class="dt">${fmtDate(d.dep)} <span style="color:var(--faint)">&rarr;</span> ${fmtDate(d.ret)}</td>
     <td class="price">${money(d.price)}</td>
     <td class="fl">${d.oc}${d.of} <span style="color:var(--faint)">/</span> ${d.bc}${d.bf}</td>
-    <td><span class="pill">nonstop</span></td>
-  </tr>`).join("");
+    <td><span class="pill">nonstop</span></td></tr>`).join("");
   return `<div class="tablecard"><div class="tbl-scroll"><table>
     <thead><tr><th>Depart &rarr; Return (5 nights)</th><th>Total · 3 seats</th><th>Flights out / back</th><th></th></tr></thead>
     <tbody>${rows}</tbody></table></div></div>`;
@@ -336,73 +295,63 @@ function table(r){
 
 function select(key){
   const r = FLIGHTS.routes[key];
-  document.documentElement.style.setProperty("--ac", AC[key]);
-  document.documentElement.style.setProperty("--ac-soft", ACSOFT[key]);
-  for(const k of ["dub","sfo"]) $("#gate-"+k).setAttribute("aria-selected", String(k===key));
-
+  document.documentElement.style.setProperty("--ac", rvar(r.region));
+  document.documentElement.style.setProperty("--ac-soft", rvarSoft(r.region));
+  document.querySelectorAll(".gate").forEach(g=>g.setAttribute("aria-selected", String(g.dataset.key===key)));
   const c = r.cheapest;
-  const monthsAtFloor = r.cheapDates.length;
   const cheapMonth = r.monthly.filter(m=>m.min!=null).reduce((a,b)=>b.min<a.min?b:a);
-  const panel = $("#panel");
-  panel.innerHTML = `
+  const seasonal = isSeasonal(r);
+  const isEU = r.region==="Europe";
+  const alert = isEU
+    ? `JetBlue transatlantic service — <b>a meal and a drink are included</b>, and Mint lie-flat suites are available up front.${seasonal?" This route is <b>seasonal</b> (see the greyed months below).":" Year-round service."}`
+    : (seasonal ? `This is a <b>seasonal</b> JetBlue route — the greyed months below have no nonstop.` : "");
+
+  $("#detail").innerHTML = `
     <section class="pass">
       <div class="pass-stub">
-        <span class="lbl">Boarding pass · Cheapest nonstop</span>
-        <span class="stamp">Best of next 12 months</span>
+        <span class="lbl">JetBlue nonstop · Cheapest of next 12 months</span>
+        <span class="stamp">${r.region}</span>
       </div>
       <div class="pass-body">
         <div class="route-line">
           <div class="port"><div class="code">BOS</div><div class="name">Boston</div></div>
-          <div class="path">
-            <span class="dur">${fmtDur(c.out.dur)}</span>
-            <span class="track"><span class="plane">&#9992;</span></span>
-            <span class="nonstop">Nonstop</span>
-          </div>
+          <div class="path"><span class="dur">${fmtDur(c.out.dur)}</span><span class="track"><span class="plane">&#9992;</span></span><span class="nonstop">Nonstop</span></div>
           <div class="port"><div class="code">${r.code}</div><div class="name">${r.city}</div></div>
-          <div class="fare">
-            <div class="amt" id="fareAmt">${money(c.price)}</div>
-            <div class="meta">round trip · <b>3 seats</b><br>${money(c.pp)} / person</div>
-          </div>
+          <div class="fare"><div class="amt" id="fareAmt">${money(c.price)}</div>
+            <div class="meta">round trip · <b>3 seats</b><br>${money(c.pp)} / person</div></div>
         </div>
         <hr class="perf">
-        <div class="segs">
-          ${segRow("Depart", c.out)}
-          ${segRow("Return", c.back)}
-        </div>
+        <div class="segs">${segRow("Depart", c.out)}${segRow("Return", c.back)}</div>
       </div>
     </section>
 
-    ${r.alert ? `<div class="alert"><span class="ai">&#9888;</span><div>${r.alert}</div></div>` : ""}
+    ${alert ? `<div class="alert"><span class="ai">${isEU?"&#9992;":"&#9888;"}</span><div>${alert}</div></div>` : ""}
 
     <div class="stats">
       <div class="stat"><div class="k">Cheapest total</div><div class="v" style="color:var(--ac)">${money(c.price)}</div></div>
       <div class="stat"><div class="k">Per person</div><div class="v">${money(c.pp)}</div></div>
       <div class="stat"><div class="k">Cheapest month</div><div class="v">${cheapMonth.label.split(" ")[0]} <small>${money(cheapMonth.min)}</small></div></div>
-      <div class="stat"><div class="k">Nonstop carriers</div><div class="v" style="font-size:clamp(15px,3vw,19px);line-height:1.15">${carriersLine(r)}</div></div>
+      <div class="stat"><div class="k">Flight time</div><div class="v">${fmtDur(c.out.dur)}</div></div>
     </div>
 
-    <div class="sec"><h2>When it's cheapest</h2><span class="note">lowest nonstop 3-seat fare by departure month</span></div>
+    <div class="sec"><h2>When it's cheapest</h2><span class="note">lowest JetBlue nonstop 3-seat fare by departure month</span></div>
     ${chart(r)}
 
-    <div class="sec"><h2>Cheapest dates</h2><span class="note">${monthsAtFloor} departures within ~2% of the floor</span></div>
+    <div class="sec"><h2>Cheapest dates</h2><span class="note">sampled departures near the floor</span></div>
     ${table(r)}
 
     <div class="sec"><h2>Before you book</h2></div>
-    <div class="notes">
-      <h3>Fine print</h3>
-      <ul>
-        <li><b>Bags not included.</b> Prices are the base fare for 3 economy seats; the Google Flights data does not add checked-bag fees. Confirm the fare brand + bag cost with the airline before booking.</li>
-        <li><b>Nonstop, both directions</b>, priced so all 3 seats are available on one itinerary. ${CARRIER_NOTE[key]}</li>
-        <li><b>Estimates that drift.</b> Fares change constantly; the cheapest date was re-checked 3&times; and held, but verify at booking time.</li>
-      </ul>
-    </div>`;
+    <div class="notes"><h3>Fine print</h3><ul>
+      <li><b>Bags not included.</b> Prices are the base fare for 3 economy seats; the Google Flights data doesn't add checked-bag fees. Confirm the fare brand + bag cost with JetBlue.</li>
+      <li><b>${isEU?"Transatlantic perk.":"JetBlue nonstop."}</b> ${isEU?"Boston&ndash;"+r.city+" flies on the A321neo with a meal, a drink, and Mint suites up front.":"Flown nonstop from Boston by JetBlue ("+carriersLine(r)+")."} ${seasonal?"Service is seasonal — greyed months have no nonstop.":""}</li>
+      <li><b>Monthly-sample estimates.</b> This board samples a couple of departures per month per route, so treat fares as indicative "from" prices; they drift, so verify the exact date on jetblue.com.</li>
+    </ul></div>`;
 
-  const amt = $("#fareAmt");
-  amt.classList.remove("flip"); void amt.offsetWidth; amt.classList.add("flip");
+  const amt = $("#fareAmt"); amt.classList.remove("flip"); void amt.offsetWidth; amt.classList.add("flip");
   bindTips();
+  $("#detail").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-// chart tooltip
 let tipT;
 function bindTips(){
   const tip = $("#tip");
@@ -412,34 +361,33 @@ function bindTips(){
       tip.innerHTML = `<span class="tp">${head}</span><br>${rest.join(": ")}`;
       tip.classList.add("on");
       const pt = e.touches? e.touches[0]:e;
-      let x=pt.clientX+14, y=pt.clientY-10;
-      if(x+240>innerWidth) x=pt.clientX-226;
+      let x=pt.clientX+14, y=pt.clientY-10; if(x+240>innerWidth) x=pt.clientX-226;
       tip.style.left=x+"px"; tip.style.top=y+"px";
     };
     col.addEventListener("mousemove",show);
     col.addEventListener("mouseleave",()=>tip.classList.remove("on"));
-    col.addEventListener("touchstart",e=>{show(e); clearTimeout(tipT); tipT=setTimeout(()=>tip.classList.remove("on"),2200);},{passive:true});
+    col.addEventListener("touchstart",e=>{show(e);clearTimeout(tipT);tipT=setTimeout(()=>tip.classList.remove("on"),2200);},{passive:true});
   });
 }
 
-// theme toggle
 function initTheme(){
-  const btn = $("#themeBtn");
-  const sys = ()=>matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
-  let cur = null; // null = follow system
-  const label = ()=>{const eff = cur||sys(); btn.textContent = eff==="dark"?"☀ Light":"☾ Dark";};
-  const apply = ()=>{ if(cur) document.documentElement.setAttribute("data-theme",cur); else document.documentElement.removeAttribute("data-theme"); label(); };
-  btn.addEventListener("click",()=>{ const eff=cur||sys(); cur = eff==="dark"?"light":"dark"; apply(); });
+  const btn=$("#themeBtn");
+  const sys=()=>matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
+  let cur=null;
+  const label=()=>{const eff=cur||sys();btn.textContent=eff==="dark"?"☀ Light":"☾ Dark";};
+  const apply=()=>{if(cur)document.documentElement.setAttribute("data-theme",cur);else document.documentElement.removeAttribute("data-theme");label();};
+  btn.addEventListener("click",()=>{const eff=cur||sys();cur=eff==="dark"?"light":"dark";apply();});
   matchMedia("(prefers-color-scheme:dark)").addEventListener?.("change",label);
   apply();
 }
 
-FLIGHTS && (function(){
-  const g = FLIGHTS.generated;
-  $("#foot").innerHTML = `Data from Google Flights via the fli tool · swept ${g} · BOS origin · economy · party of 3 (2 adults + 1 child, age 7)`;
-  renderGates();
+(function(){
+  const nRoutes = Object.keys(FLIGHTS.routes).length;
+  const cheapestKey = Object.keys(FLIGHTS.routes).reduce((a,b)=>FLIGHTS.routes[b].cheapest.price<FLIGHTS.routes[a].cheapest.price?b:a);
+  $("#foot").innerHTML = `${nRoutes} JetBlue nonstop routes · data from Google Flights via the fli tool · swept ${FLIGHTS.generated} · monthly sample · economy · party of 3`;
+  renderRegions();
   initTheme();
-  select("dub");
+  select(cheapestKey);
 })();
 </script>
 </body>
