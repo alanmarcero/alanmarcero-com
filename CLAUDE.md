@@ -41,10 +41,20 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ```
 ├── src/
 │   ├── components/
+│   │   ├── ErrorBoundary.jsx      # Class error boundary: catches render errors, shows a retry fallback
+│   │   ├── ErrorBoundary.test.jsx # ErrorBoundary tests
 │   │   ├── Footer.jsx             # Footer with nav links + dynamic year
 │   │   ├── Footer.test.jsx        # Footer tests
 │   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear, useRandomGlitch hook
 │   │   ├── Hero.test.jsx          # Hero tests
+│   │   ├── MidiPlayer.jsx         # GeoCities-era MIDI transport UI (play/stop, track picker)
+│   │   ├── MidiPlayer.test.jsx    # MidiPlayer tests
+│   │   ├── ModulePanel.jsx        # Shared synth-module chassis (faceplate + LED); slot-based, pure presentation
+│   │   ├── ModulePanel.test.jsx   # ModulePanel tests
+│   │   ├── SignalMeter.jsx        # Winamp-style spectrum analyzer (canvas rAF, paused off-screen)
+│   │   ├── SignalMeter.test.jsx   # SignalMeter tests
+│   │   ├── TakeMeBack.jsx         # Hero era picker that drives the Take Me Back theme switch
+│   │   ├── TakeMeBack.test.jsx    # TakeMeBack tests
 │   │   ├── MusicItem.jsx          # YouTube playlist item display (card glow)
 │   │   ├── MusicItem.test.jsx     # MusicItem tests
 │   │   ├── NoResults.jsx          # Empty state for search with no matches (aria-hidden emoji)
@@ -67,8 +77,23 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── useScrollProgress.js      # Custom hook: writes scroll-progress transform via ref + rAF (no re-render)
 │   │   ├── useScrollProgress.test.js # useScrollProgress tests
 │   ├── utils/
+│   │   ├── clipboard.js           # copyToClipboard: async Clipboard API with a legacy execCommand fallback
+│   │   ├── clipboard.test.js      # clipboard tests
+│   │   ├── queryParam.js          # writeQueryParam: set/drop one ?param via replaceState, preserving path + hash
+│   │   ├── queryParam.test.js     # queryParam tests
+│   │   ├── trackMeta.js           # isRemix: does a track title denote a remix
+│   │   ├── trackMeta.test.js      # trackMeta tests
 │   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
 │   │   └── cardGlow.test.js       # cardGlow tests
+│   ├── components/graphics/       # Decorative SVG/canvas graphics (all aria-hidden, reduced-motion aware)
+│   │   ├── index.js               # Barrel re-export for the graphics set
+│   │   ├── waveforms.js           # Pure waveform geometry: period-aligned sampling so paths tile and morph
+│   │   ├── parametric.js          # Pure Lissajous + rose-curve geometry
+│   │   ├── HeroScopeTrace.jsx     # Hero oscilloscope trace: scrolls one period, morphs square → sine → saw
+│   │   ├── LissajousHalo.jsx      # Page-foot XY scope: morphing parametric trace with a crawling beam packet
+│   │   ├── WaveformDivider.jsx    # Section divider: a scrolling tiled waveform
+│   │   ├── PatchCableOrnament.jsx # Corner ornament: a cable arcing between two jack sockets (`flip` mirrors it)
+│   │   └── SynthesistMark.jsx     # Console mark: patch cable with a marching current pulse + mini read-out
 │   ├── data/
 │   │   ├── patchBanks.js         # Hardcoded patch bank catalog
 │   │   └── patchBanks.test.ts    # Data validation tests
@@ -90,9 +115,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │       │   ├── GameCanvas.jsx    # Full-screen game wrapper: canvas, CRT overlay, HUD, game-over, TouchControls
 │       │   └── TouchControls.jsx # Mobile d-pad + action buttons (pointer: coarse only)
 │       └── games/
-│           ├── gameRegistry.js   # Game metadata + factory functions for all 11 games
+│           ├── gameRegistry.js   # Game metadata + factory functions for all 12 games
 │           ├── useGameLoop.js    # Shared requestAnimationFrame hook with delta-time clamping
 │           ├── palette.js        # Shared CRT palette constants (CYAN, VIOLET, ORANGE, BG, WHITE, MUTED)
+│           ├── gameHud.js        # emitHud(game, overrides) — the one definition of the HUD payload
+│           ├── controlGlyphs.js  # Turn a game's key map into de-duplicated display glyphs for the cabinet hint
 │           ├── space-invaders/
 │           │   ├── SpaceInvaders.js      # Canvas game: player ship, alien grid, shields, bullets
 │           │   └── SpaceInvaders.test.js
@@ -123,9 +150,13 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │           ├── centipede/
 │           │   ├── Centipede.js          # Canvas game: mushroom field, centipede chain, spider, splitting
 │           │   └── Centipede.test.js
-│           └── bird-name-generator/
-│               ├── BirdNameGenerator.js  # Canvas toy: press SPACE to discover funny real-bird-style names + pixel bird mascot
-│               └── BirdNameGenerator.test.js
+│           ├── bird-name-generator/
+│           │   ├── BirdNameGenerator.js  # Canvas toy: press SPACE to discover funny real-bird-style names + pixel bird mascot
+│           │   └── BirdNameGenerator.test.js
+│           └── life-pulse/
+│               ├── LifePulse.js          # Canvas shmup: pulse mechanic, 17 powerups, combo/graze/chain scoring, waves + bosses
+│               ├── LifePulseRenderer.js  # Pure draw functions + HUD for LifePulse (kept out of the game-logic file)
+│               └── LifePulse.test.js
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
 │   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
@@ -142,7 +173,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 737 tests across 46 suites**
+**Total: 754 tests across 49 suites**
 
 ## Key Files
 
@@ -151,7 +182,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 - `src/App.css` — Main page stylesheet (imports shared theme): hero, cards, CRT scanline sweep, glitch keyframes, animations, responsive
 - `src/components/Hero.jsx` — Centered stacked hero: circular profile image with cyan glow, gradient text name, uppercase tagline, CTA row (YouTube + Arcade links), pill-shaped search input with clear button. Contains `useRandomGlitch` hook for JS-driven randomized CRT glitch on hero name
 - `src/arcade/ArcadeApp.jsx` — Arcade page root: toggles between game picker and active game canvas
-- `src/arcade/games/gameRegistry.js` — Game metadata array (id, name, description, accent color, controls, factory function) for all 10 arcade games
+- `src/arcade/games/gameRegistry.js` — Game metadata array (id, name, description, accent color, controls, factory function) for all 12 arcade games
 - `src/config.js` — Centralized external URLs (Lambda, YouTube, GitHub) and UI constants (SCROLL_THRESHOLD, TOAST_DISMISS_MS)
 - `src/hooks/useMusicItems.js` — Custom hook: fetches music items from Lambda, returns {musicItems, musicLoading, musicError}
 - `src/hooks/useScrollProgress.js` — Custom hook: returns a ref and writes `transform: scaleX(fraction)` to it via rAF on scroll (no React re-render per scroll)
@@ -295,7 +326,7 @@ ArcadeApp
 │       └── Game-over overlay (score, Play Again, Back to Arcade)
 ```
 
-**Game Class Interface** (plain JS, no React — used by all 10 games):
+**Game Class Interface** (plain JS, no React — used by all 12 games):
 - `init(w, h)` / `resize(w, h)` — Set up game state for canvas dimensions
 - `update(dt)` / `render(ctx)` — Game loop (dt in seconds, ctx is CanvasRenderingContext2D)
 - `handleKeyDown(key)` / `handleKeyUp(key)` — Keyboard input
@@ -308,7 +339,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (737 tests, 46 suites)
+npm test                       # Jest (754 tests, 49 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -391,7 +422,7 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 
 **Architecture:** Separate `arcade.html` entry + `src/arcade/main.jsx` React root. Zero impact on main page bundle size. Vite handles shared vendor chunks (React) automatically via `build.rollupOptions.input` in `vite.config.js`.
 
-**Games** (11 canvas-based games/toys, Outrun CRT palette only):
+**Games** (12 canvas-based games/toys, Outrun CRT palette only):
 - **Space Invaders** — Cyan player ship, alien grid (cyan/violet/orange by row), destructible shields, levels increase alien speed
 - **Asteroids** — Vector-style outlines (violet ship, cyan asteroid polygons, orange thrust), wrap-around edges, asteroids split on hit
 - **Tetris** — 10x20 grid, 7 tetrominoes in palette colors, ghost piece, next-piece preview, line-clear flash, DAS key repeat
@@ -403,6 +434,7 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 - **Rhythm Catcher** — 4 lanes (arrow keys), falling notes, perfect/good timing windows, combo multiplier, pattern generation
 - **Centipede** — Player in bottom zone, 10-segment centipede chain, mushroom field, spider enemy, segment splitting on hit
 - **Bird Name Generator** — Press SPACE to generate absurd-but-real-sounding bird species (Boobie, Bushtit, Smew, etc.) combined with prefixes/colors/body parts; pixel-style bird mascot with randomized body, wings, crest, beak, and Latin name
+- **Life Pulse** — Horizontal shmup built on a deployable "pulse": 17 powerups (double, shield, nova, chain, vortex, swarm…), combo/graze/chain scoring with a run multiplier, wave progression with bosses and perfect-wave bonuses, end-of-run grade. Draw code lives in `LifePulseRenderer.js`, apart from the game logic
 
 **Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
 
@@ -418,6 +450,11 @@ from Wayback Machine captures; 2001 is an estimated GeoCities era.
 
 - `src/eras/eras.js` — era metadata (`present`, `y2001`, `y2007`, `y2014`, `y2020`).
 - `src/eras/useEra.js` — hook: reflects the era on `<html data-era>` and syncs `?era=`.
+- `src/eras/eraHero.js` — per-era hero writeups, taken from the archived pages where
+  they exist and written in-voice for the estimated GeoCities era.
+- `src/eras/bankThumbs.js` — maps a present-day patch-bank name to the synth thumbnail
+  the old site used (pulled from archive.org into `public/eras/img`); null when the
+  archive has no image for that bank.
 - `src/eras/eras.css` — all `[data-era="…"]` theme skins + GeoCities chrome + the time-travel bar.
 - `src/eras/EraChrome.jsx` — a persistent time-travel bar (all past eras) plus, for
   GeoCities, an avalanche of real period GIFs (`public/eras/gifs/` — fire, anarchy,
