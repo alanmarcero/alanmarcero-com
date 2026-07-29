@@ -1,4 +1,5 @@
 import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import { emitHud } from '../gameHud';
 
 // ---------------------------------------------------------------------------
 // Virtual game area — maze is 28x31 tiles, keep square tiles
@@ -828,14 +829,7 @@ export class PacMan {
   }
 
   _emitHud() {
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: this.score,
-        lives: this.lives,
-        level: this.level,
-        gameOver: false,
-      });
-    }
+    emitHud(this, { gameOver: false });
   }
 
   // -----------------------------------------------------------------------

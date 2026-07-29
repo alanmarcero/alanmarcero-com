@@ -1,4 +1,5 @@
 import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import { emitHud } from '../gameHud';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -410,13 +411,6 @@ export class BirdNameGenerator {
   }
 
   _emitHud() {
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: this.score,
-        lives: this.lives,
-        level: this.level,
-        gameOver: this.gameOver,
-      });
-    }
+    emitHud(this);
   }
 }

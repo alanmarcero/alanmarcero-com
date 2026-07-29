@@ -1,4 +1,5 @@
 import { CYAN, VIOLET, ORANGE, BG } from '../palette';
+import { emitHud } from '../gameHud';
 
 const SHIP_ROTATION_SPEED = 4; // rad/s
 const SHIP_THRUST = 280; // pixels/s^2
@@ -503,14 +504,7 @@ export class Asteroids {
   }
 
   _emitHud() {
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: this.score,
-        lives: this.lives,
-        level: this.level,
-        gameOver: this.gameOver,
-      });
-    }
+    emitHud(this);
   }
 
   _restart() {

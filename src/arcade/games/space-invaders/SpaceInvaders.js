@@ -1,4 +1,5 @@
 import { BG, CYAN, VIOLET, ORANGE } from '../palette';
+import { emitHud } from '../gameHud';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -605,14 +606,7 @@ export class SpaceInvaders {
   // -----------------------------------------------------------------------
 
   _emitHud() {
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: this.score,
-        lives: this.lives,
-        level: this.level,
-        gameOver: false,
-      });
-    }
+    emitHud(this, { gameOver: false });
   }
 
   // -----------------------------------------------------------------------
