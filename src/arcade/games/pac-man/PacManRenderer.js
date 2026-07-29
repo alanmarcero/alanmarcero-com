@@ -44,35 +44,74 @@ const FRUIT_COLORS = {
   key: '#8fd7ff',
 };
 
+/** How far the wall outline sits inside its tile. Sets the pipe thickness. */
+export const WALL_INSET = 1.5;
+
+const segmentCache = new WeakMap();
+
 /**
- * The maze is drawn as outlines, not filled blocks — a wall tile contributes a
- * stroke on each side that faces open space. That is what gives the arcade its
- * hollow double-line corridors instead of a solid mass.
+ * The maze as a set of line segments: every wall tile contributes a stroke on
+ * each side that faces open space, which is what gives the arcade its hollow
+ * pipes rather than a solid mass.
+ *
+ * The whole difficulty is where a segment should stop. Each end depends on the
+ * neighbour it runs toward and the diagonal past that neighbour:
+ *
+ *   neighbour open              stop at the inset — the perpendicular edge of
+ *                               this same tile terminates there too (convex corner)
+ *   neighbour wall, diagonal open   run to the tile boundary; the neighbour
+ *                               carries the same edge onward (straight run)
+ *   both wall                   overrun by the inset, to land exactly on the
+ *                               diagonal's perpendicular edge (concave corner)
+ *
+ * Get this wrong and every corner is two lines crossing past each other.
  */
+export function wallSegments(grid) {
+  const cached = segmentCache.get(grid);
+  if (cached) return cached;
+
+  const T = TILE_PX;
+  const i = WALL_INSET;
+  const solid = (c, r) => tileAt(grid, c, r) === TILE.WALL;
+  const lead = (perp, diag) => (!perp ? i : (diag ? -i : 0));
+  const trail = (perp, diag) => (!perp ? T - i : (diag ? T + i : T));
+
+  const segments = [];
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      if (!solid(col, row)) continue;
+      const x = col * T;
+      const y = row * T;
+
+      const n = solid(col, row - 1), s = solid(col, row + 1);
+      const w = solid(col - 1, row), e = solid(col + 1, row);
+      const nw = solid(col - 1, row - 1), ne = solid(col + 1, row - 1);
+      const sw = solid(col - 1, row + 1), se = solid(col + 1, row + 1);
+
+      if (!n) segments.push([x + lead(w, nw), y + i, x + trail(e, ne), y + i]);
+      if (!s) segments.push([x + lead(w, sw), y + T - i, x + trail(e, se), y + T - i]);
+      if (!w) segments.push([x + i, y + lead(n, nw), x + i, y + trail(s, sw)]);
+      if (!e) segments.push([x + T - i, y + lead(n, ne), x + T - i, y + trail(s, se)]);
+    }
+  }
+
+  segmentCache.set(grid, segments);
+  return segments;
+}
+
 export function drawMaze(ctx, grid, { flashWhite = false } = {}) {
   ctx.save();
   ctx.strokeStyle = flashWhite ? '#ffffff' : COLORS.maze;
   ctx.lineWidth = 1;
+  // Round caps close the hairline notch where two edges meet at a corner.
   ctx.lineCap = 'round';
   ctx.beginPath();
 
-  // Segments span the full tile edge so neighbouring tiles join up; only the
-  // perpendicular offset is inset. Insetting both ends leaves gaps at corners.
-  const inset = 1.5;
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      if (grid[row][col] !== TILE.WALL) continue;
-      const x = col * TILE_PX;
-      const y = row * TILE_PX;
-      const e = TILE_PX;
-      const solid = (c, r) => tileAt(grid, c, r) === TILE.WALL;
+  wallSegments(grid).forEach(([x1, y1, x2, y2]) => {
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+  });
 
-      if (!solid(col, row - 1)) { ctx.moveTo(x, y + inset); ctx.lineTo(x + e, y + inset); }
-      if (!solid(col, row + 1)) { ctx.moveTo(x, y + e - inset); ctx.lineTo(x + e, y + e - inset); }
-      if (!solid(col - 1, row)) { ctx.moveTo(x + inset, y); ctx.lineTo(x + inset, y + e); }
-      if (!solid(col + 1, row)) { ctx.moveTo(x + e - inset, y); ctx.lineTo(x + e - inset, y + e); }
-    }
-  }
   ctx.stroke();
   ctx.restore();
 
