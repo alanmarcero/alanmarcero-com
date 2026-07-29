@@ -1,5 +1,6 @@
 import { CYAN, VIOLET, ORANGE, BG, WHITE } from '../palette';
 import * as R from './LifePulseRenderer';
+import { emitHud } from '../gameHud';
 
 const GAME_W = R.GAME_W;
 const GAME_H = R.GAME_H;
@@ -126,14 +127,7 @@ export class LifePulse {
   }
 
   _emitHud() {
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: Math.floor(this.score),
-        lives: this.lives,
-        level: this.level,
-        gameOver: this.gameOver,
-      });
-    }
+    emitHud(this, { score: Math.floor(this.score) });
   }
 
   // ==================== INPUT ====================
