@@ -1,4 +1,4 @@
-import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import { CYAN, VIOLET, ORANGE, WHITE, MUTED } from '../palette';
 
 const GAME_W = 640;
 const GAME_H = 360;
@@ -647,7 +647,7 @@ export function drawPulseBomb(ctx, pulse, time) {
   });
 }
 
-export function drawPulseWave(ctx, wave, time) {
+export function drawPulseWave(ctx, wave) {
   const prog = wave.age / wave.duration;
   const rad = wave.maxRadius * prog;
   const alpha = (1 - prog) * 0.55;
@@ -668,7 +668,7 @@ export function drawPulseWave(ctx, wave, time) {
   ctx.lineWidth = 1;
 }
 
-export function drawExplosion(ctx, ex, time) {
+export function drawExplosion(ctx, ex) {
   const prog = ex.age / ex.duration;
   const rad = (ex.size || 18) * (0.5 + prog * 1.4);
   const alpha = Math.max(0.05, 1 - prog);
@@ -768,7 +768,7 @@ export function drawHud(ctx, state) {
     combo, comboTimer, highScore, gameOver, time, gameStartTime,
     kills, maxCombo, perfectWaves, grazeCount, damageTakenThisWave,
     runScoreMulti, pulseCharge, pulseStock, novaReady, wave,
-    waveBanner, timers, powerLevel, powerTimer, level, score,
+    waveBanner, timers, powerLevel, powerTimer,
     computeGrade,
   } = state;
 
