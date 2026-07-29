@@ -71,7 +71,6 @@ describe('LifePulse', () => {
     });
 
     test('render does not throw with procedural renderer', () => {
-      const canvas = { width: 640, height: 360 };
       const ctx = {
         save: jest.fn(), restore: jest.fn(), translate: jest.fn(),
         scale: jest.fn(), fillRect: jest.fn(), fillStyle: '',
@@ -108,25 +107,46 @@ describe('LifePulse', () => {
 
     test('score popup is created on powerup collect', () => {
       const before = game._scorePopups.length;
+
+      // 'double' is a scoring powerup; 'pulse' deploys a pulse and awards
+      // score without a popup, so it cannot exercise this path.
+      game._applyPowerup('double');
+
+      expect(game._scorePopups.length).toBe(before + 1);
+    });
+
+    test('pulse powerup deploys a pulse and awards score', () => {
+      const before = game.score;
+
       game._applyPowerup('pulse');
-      // pulse also creates a pulse but we award score
-      expect(game.score).toBeGreaterThan(0);
+
+      expect(game._pulses.length).toBeGreaterThan(0);
+      expect(game.score).toBeGreaterThan(before);
     });
   });
 
   describe('Combo & Graze', () => {
     test('combo increases on enemy kills (via score award path)', () => {
       game._combo = 0;
-      // Simulate a kill award path
-      game.score += 70;
-      game._combo = 1;
-      game._comboTimer = 1.8;
+      game._enemies = [{ x: 300, y: 180, hp: 0, r: 12, points: 70 }];
+
+      game._updateEnemies(0.016);
+
       expect(game._combo).toBe(1);
+    });
+
+    test('enemy kills award score', () => {
+      const before = game.score;
+      game._enemies = [{ x: 300, y: 180, hp: 0, r: 12, points: 70 }];
+
+      game._updateEnemies(0.016);
+
+      expect(game.score).toBeGreaterThan(before);
     });
 
     test('graze does not crash and can award small score', () => {
       const before = game.score;
-      game._checkGraze(0.016);
+      game._checkGraze();
       // It may or may not graze depending on state, but must not throw
       expect(game.score).toBeGreaterThanOrEqual(before);
     });

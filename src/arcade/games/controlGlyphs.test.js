@@ -24,6 +24,7 @@ describe("controlGlyphs", () => {
   });
 
   it("produces a non-empty glyph list for every registered game", () => {
+    expect(games.length).toBeGreaterThan(0);
     games.forEach((game) => {
       expect(controlGlyphs(game.controls).length).toBeGreaterThan(0);
     });
