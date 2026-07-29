@@ -134,10 +134,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │           │   ├── levels.js             # Arcade tables: speeds, waves, fright, Elroy, house counters, fruit
 │           │   ├── ghostAI.js            # Targeting + the one-tile greedy decision rule (keeps the Pinky/Inky overflow bug)
 │           │   ├── PacMan.js             # Game class: state machine, cornering movement, collisions, scoring
-│           │   ├── PacManRenderer.js     # All drawing, in authentic arcade colours
+│           │   ├── PacManRenderer.js     # All drawing, in authentic arcade colours; wallSegments() builds the maze outline
 │           │   ├── maze.test.js
 │           │   ├── levels.test.js
 │           │   ├── ghostAI.test.js
+│           │   ├── PacManRenderer.test.js
 │           │   └── PacMan.test.js
 │           ├── breakout/
 │           │   ├── Breakout.js           # Canvas game: paddle, ball, 6x10 brick grid, angle deflection
@@ -180,7 +181,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 823 tests across 52 suites**
+**Total: 841 tests across 53 suites**
 
 ## Key Files
 
@@ -346,7 +347,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (823 tests, 52 suites)
+npm test                       # Jest (841 tests, 53 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
