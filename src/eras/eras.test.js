@@ -12,6 +12,7 @@ describe("eras data", () => {
   });
 
   it("gives every era a year, label and blurb", () => {
+    expect(ERAS.length).toBeGreaterThan(0);
     ERAS.forEach((e) => {
       expect(e.year).toBeTruthy();
       expect(e.label).toBeTruthy();
