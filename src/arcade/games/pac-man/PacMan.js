@@ -40,6 +40,17 @@ const GHOST_SCORE_PAUSE = 0.7;
 const MAX_GHOST_HOPS = 4;
 const CENTER_EPS = 1e-6;
 
+/** How far the mouth hangs open when Pac-Man is stopped, so he still reads as alive. */
+const IDLE_MOUTH = 0.4;
+
+/**
+ * How close to a tile centre a pellet is swallowed. Must exceed the largest
+ * per-step distance (1.0 speed = 9.47 tiles/s over a 120 Hz step = 0.079 tiles)
+ * so a pellet can never be stepped over, but stay tight enough that the dot
+ * vanishes as the mouth shuts on it rather than ahead of it.
+ */
+const EAT_RADIUS = 0.15;
+
 export class PacMan {
   onHudUpdate = null;
 
@@ -102,7 +113,6 @@ export class PacMan {
     this._ghostChain = 0;
     this._scorePopup = null;
     this._globalDotTimer = 0;
-    this._mouthPhase = 0;
     this._footPhase = 0;
     this._energizerBlink = 0;
 
@@ -111,6 +121,7 @@ export class PacMan {
       row: PAC_START.row,
       dir: PAC_START.dir,
       wanted: PAC_START.dir,
+      moving: false,
     };
 
     this._ghosts = GHOST_NAMES.map((name, index) => this._makeGhost(name, index));
@@ -228,8 +239,6 @@ export class PacMan {
     const pac = this._pac;
     const speed = (this._frightTimer > 0 ? this._speeds.pacFright : this._speeds.pac) * dt;
 
-    this._mouthPhase = (this._mouthPhase + dt * 9) % (Math.PI * 2);
-
     // A reversal is always legal and takes effect immediately — no waiting for
     // a tile centre. This is most of what makes the controls feel responsive.
     if (pac.wanted === reverseOf(pac.dir)) {
@@ -261,6 +270,9 @@ export class PacMan {
       pac.col = wrapCol(nextCol);
       pac.row = nextRow;
     }
+    // Drives the chomp: the mouth animates off distance covered, so a stopped
+    // Pac-Man stops chewing.
+    pac.moving = !blocked;
 
     // Always eat, including when stopped against a wall — the arcade still
     // credits the pellet on the tile Pac-Man is standing on.
@@ -293,7 +305,7 @@ export class PacMan {
   }
 
   _eatTileUnder(pac) {
-    if (!atTileCenter(pac.col, 0.3) || !atTileCenter(pac.row, 0.3)) return;
+    if (!atTileCenter(pac.col, EAT_RADIUS) || !atTileCenter(pac.row, EAT_RADIUS)) return;
 
     const col = wrapCol(Math.round(pac.col));
     const row = Math.round(pac.row);
@@ -643,8 +655,27 @@ export class PacMan {
     ctx.restore();
   }
 
+  /**
+   * The chomp is driven by how far Pac-Man has travelled, never by the clock.
+   *
+   * One full open-and-close per tile, phased so the mouth is shut exactly as he
+   * crosses a tile centre — which is where the pellet sits. The bite therefore
+   * lands on the dot instead of closing on empty space, and the whole animation
+   * halts when he is stopped against a wall.
+   */
+  _mouthOpenness() {
+    const pac = this._pac;
+    if (!pac.moving) return IDLE_MOUTH;
+
+    const travelsHorizontally = pac.dir === 'left' || pac.dir === 'right';
+    const axis = travelsHorizontally ? pac.col : pac.row;
+    const offsetFromCentre = Math.abs(axis - Math.round(axis)); // 0 at centre, 0.5 between
+
+    return Math.min(1, offsetFromCentre * 2);
+  }
+
   _renderPac(ctx, dying) {
-    const openness = dying ? 0 : (Math.sin(this._mouthPhase) + 1) / 2;
+    const openness = dying ? 0 : this._mouthOpenness();
     R.drawPac(ctx, {
       col: this._pac.col,
       row: this._pac.row,
