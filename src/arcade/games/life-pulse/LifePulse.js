@@ -1,11 +1,10 @@
-import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import { CYAN, VIOLET, ORANGE, BG, WHITE } from '../palette';
 import * as R from './LifePulseRenderer';
 
 const GAME_W = R.GAME_W;
 const GAME_H = R.GAME_H;
 
 // Core tuning — pass 10: snappier feel, fairer early game
-const PLAYER_SPEED = 255;
 const BULLET_SPEED = 480;
 const ENEMY_SPEED = 88;
 const STARTING_LIVES = 3;
@@ -192,7 +191,7 @@ export class LifePulse {
     if (this._formationCooldown > 0) this._formationCooldown -= dt;
     this._updateOptions(dt);
     this._updateCombo(dt);
-    this._checkGraze(dt);
+    this._checkGraze();
     this._updateSwarm(dt);
 
     this._spawnEnemies(dt);
@@ -1610,7 +1609,7 @@ export class LifePulse {
     }
 
     for (const wave of this._pulseWaves) {
-      R.drawPulseWave(ctx, wave, this._time);
+      R.drawPulseWave(ctx, wave);
     }
 
     for (const e of this._enemies) {
@@ -1628,7 +1627,7 @@ export class LifePulse {
     }
 
     for (const ex of this._explosions) {
-      R.drawExplosion(ctx, ex, this._time);
+      R.drawExplosion(ctx, ex);
     }
 
     for (const b of this._enemyBullets) {
@@ -1708,7 +1707,7 @@ export class LifePulse {
     try {
       const v = localStorage.getItem('lifePulseHighScore');
       return v ? parseInt(v, 10) : 0;
-    } catch (e) { return 0; }
+    } catch { return 0; }
   }
 
   _saveHighScore(score) {
@@ -1717,7 +1716,9 @@ export class LifePulse {
         this._highScore = score;
         localStorage.setItem('lifePulseHighScore', String(score));
       }
-    } catch (e) {}
+    } catch {
+      // Private mode / quota — the high score is best-effort, never block play.
+    }
   }
 
   _updateCombo(dt) {
@@ -1786,7 +1787,7 @@ export class LifePulse {
     }
   }
 
-  _checkGraze(dt) {
+  _checkGraze() {
     // Small bonus + visual for near-misses (gives "point" and skill feel)
     // Focus (pass 6) greatly increases graze window for precision play
     if (!this._player.alive || this._player.invuln > 0) return;
