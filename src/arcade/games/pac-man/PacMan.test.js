@@ -154,6 +154,7 @@ describe('PacMan', () => {
       game._activateFrightened();
 
       const activeGhosts = game._ghosts.filter(g => g.state === 'active');
+      expect(activeGhosts.length).toBeGreaterThan(0);
       activeGhosts.forEach(ghost => {
         expect(ghost.frightened).toBe(true);
       });

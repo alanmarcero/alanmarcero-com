@@ -1,6 +1,12 @@
 import { patchBanks } from './patchBanks';
 
 describe('patchBanks', () => {
+  // Guards every per-bank test below: they all iterate the catalog, so an
+  // empty catalog would let the whole suite pass while asserting nothing.
+  it('ships a non-empty catalog', () => {
+    expect(patchBanks.length).toBeGreaterThan(0);
+  });
+
   it('each patch bank has required fields', () => {
     patchBanks.forEach((bank) => {
       expect(bank).toHaveProperty('name');

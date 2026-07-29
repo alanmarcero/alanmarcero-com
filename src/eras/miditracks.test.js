@@ -15,6 +15,7 @@ describe("miditracks", () => {
   });
 
   it("gives every track a name and a non-empty note list", () => {
+    expect(TRACKS.length).toBeGreaterThan(0);
     TRACKS.forEach((t) => {
       expect(t.name).toMatch(/\.mid$/);
       expect(t.notes.length).toBeGreaterThan(0);

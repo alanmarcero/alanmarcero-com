@@ -58,6 +58,7 @@ describe("buildWavePath", () => {
 
   it("keeps the wave within amplitude of the center line", () => {
     const pts = points(buildWavePath("saw", OPTS));
+    expect(pts.length).toBeGreaterThan(0);
     pts.forEach(([, y]) => {
       expect(y).toBeGreaterThanOrEqual(OPTS.mid - OPTS.amplitude - 0.01);
       expect(y).toBeLessThanOrEqual(OPTS.mid + OPTS.amplitude + 0.01);
