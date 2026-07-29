@@ -129,8 +129,15 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │           ├── tetris/
 │           │   ├── Tetris.js             # Canvas game: 10x20 grid, 7 tetrominoes, ghost piece, line-clear
 │           │   └── Tetris.test.js
-│           ├── pac-man/
-│           │   ├── PacMan.js             # Canvas game: maze, dots, power pellets, 4 ghosts with AI
+│           ├── pac-man/                  # Faithful 1980 arcade rebuild — see the design spec
+│           │   ├── maze.js               # The real 28x31 grid (240 dots + 4 energizers), tile queries, tunnel wrap
+│           │   ├── levels.js             # Arcade tables: speeds, waves, fright, Elroy, house counters, fruit
+│           │   ├── ghostAI.js            # Targeting + the one-tile greedy decision rule (keeps the Pinky/Inky overflow bug)
+│           │   ├── PacMan.js             # Game class: state machine, cornering movement, collisions, scoring
+│           │   ├── PacManRenderer.js     # All drawing, in authentic arcade colours
+│           │   ├── maze.test.js
+│           │   ├── levels.test.js
+│           │   ├── ghostAI.test.js
 │           │   └── PacMan.test.js
 │           ├── breakout/
 │           │   ├── Breakout.js           # Canvas game: paddle, ball, 6x10 brick grid, angle deflection
@@ -173,7 +180,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 754 tests across 49 suites**
+**Total: 823 tests across 52 suites**
 
 ## Key Files
 
@@ -339,7 +346,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (754 tests, 49 suites)
+npm test                       # Jest (823 tests, 52 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -422,11 +429,14 @@ aws lambda update-function-code --function-name YOUR-FUNCTION --zip-file fileb:/
 
 **Architecture:** Separate `arcade.html` entry + `src/arcade/main.jsx` React root. Zero impact on main page bundle size. Vite handles shared vendor chunks (React) automatically via `build.rollupOptions.input` in `vite.config.js`.
 
-**Games** (12 canvas-based games/toys, Outrun CRT palette only):
+**Games** (12 canvas-based games/toys. Outrun CRT palette only — with one
+deliberate exception: Pac-Man uses authentic 1980 arcade colours, because a
+blue-and-yellow Pac-Man is the whole point. Its cabinet card in the picker still
+uses the site palette so the arcade index stays consistent.):
 - **Space Invaders** — Cyan player ship, alien grid (cyan/violet/orange by row), destructible shields, levels increase alien speed
 - **Asteroids** — Vector-style outlines (violet ship, cyan asteroid polygons, orange thrust), wrap-around edges, asteroids split on hit
 - **Tetris** — 10x20 grid, 7 tetrominoes in palette colors, ghost piece, next-piece preview, line-clear flash, DAS key repeat
-- **Pac-Man** — Maze with dots, power pellets, 4 ghosts with scatter/chase/frightened AI modes
+- **Pac-Man** — A from-scratch rebuild of the 1980 arcade game (design spec: `docs/superpowers/specs/2026-07-29-pacman-arcade-rewrite-design.md`). The real maze, the real ghost algorithm — one tile of greedy lookahead, tie-broken up/left/down/right, with each ghost differing only in its target tile — and the original Pinky/Inky overflow bug preserved on purpose. Arcade speed/wave/fright/Elroy/fruit tables, cornering and buffered pre-turns, fixed 120 Hz logic step
 - **Breakout** — Paddle + ball, 6x10 brick grid with row colors/scores, angle-based paddle deflection, 3 lives
 - **Frogger** — Grid-based movement, road (vehicles) and river (logs) lanes, 5 goal slots, forward progress scoring
 - **Snake** — Grid-based timer movement, food spawning, speed increase per food, wall/self collision, 1 life
