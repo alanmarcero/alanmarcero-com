@@ -159,6 +159,119 @@ describe('PacMan', () => {
     });
   });
 
+  describe('the chomp', () => {
+    beforeEach(() => beginPlay(game));
+
+    it('shuts the mouth as he crosses a tile centre', () => {
+      game._pac.moving = true;
+      game._pac.dir = 'left';
+      game._pac.col = 10;
+
+      expect(game._mouthOpenness()).toBe(0);
+    });
+
+    it('opens the mouth widest between two tiles', () => {
+      game._pac.moving = true;
+      game._pac.dir = 'left';
+      game._pac.col = 10.5;
+
+      expect(game._mouthOpenness()).toBe(1);
+    });
+
+    it('runs one full open-and-close per tile travelled', () => {
+      game._pac.moving = true;
+      game._pac.dir = 'left';
+      const samples = [10, 10.25, 10.5, 10.75, 11].map((col) => {
+        game._pac.col = col;
+        return game._mouthOpenness();
+      });
+
+      expect(samples).toEqual([0, 0.5, 1, 0.5, 0]);
+    });
+
+    it('reads the vertical axis when travelling vertically', () => {
+      game._pac.moving = true;
+      game._pac.dir = 'up';
+      game._pac.col = 6.5;
+      game._pac.row = 20.5;
+
+      expect(game._mouthOpenness()).toBe(1);
+    });
+
+    it('stops chewing when he is stopped', () => {
+      game._pac.moving = false;
+      game._pac.dir = 'left';
+      game._pac.col = 10.5;
+
+      expect(game._mouthOpenness()).toBeLessThan(1);
+    });
+
+    it('does not animate off the clock while standing still', () => {
+      // Drive him into the wall at the left end of the start corridor.
+      game.handleKeyDown('ArrowLeft');
+      advance(game, 1.5);
+      const first = game._mouthOpenness();
+      advance(game, 0.5);
+
+      expect(game._pac.moving).toBe(false);
+      expect(game._mouthOpenness()).toBe(first);
+    });
+
+    it('never steps over a pellet, even at the fastest level speed', () => {
+      // The tightened eat window has to stay wider than one movement step or
+      // dots would be skipped. Level 5 is the 100% speed band.
+      game.level = 5;
+      game._startLevel();
+      beginPlay(game);
+      game._ghosts.forEach((gh) => { gh.state = 'house'; });
+
+      // The bottom corridor, row 29, is an unbroken run of dots.
+      game._pac.col = 26;
+      game._pac.row = 29;
+      game._pac.dir = 'left';
+      game._pac.wanted = 'left';
+      const before = game._dotsEaten;
+
+      advance(game, 3.0);
+
+      const endCol = Math.round(game._pac.col);
+      expect(26 - endCol).toBeGreaterThan(10);
+
+      // Nothing left behind anywhere he passed, start tile included.
+      const leftovers = [];
+      for (let col = endCol; col <= 26; col++) {
+        if (game._grid[29][col] === TILE.DOT) leftovers.push(col);
+      }
+
+      expect(leftovers).toEqual([]);
+      expect(game._dotsEaten - before).toBe(26 - endCol + 1);
+    });
+
+    it('swallows each pellet with the mouth almost shut on it', () => {
+      // The visible point of the whole change: sample how open the mouth is at
+      // the exact instant a dot is consumed. If dots were cleared early they
+      // would wink out in front of an open mouth instead of being bitten.
+      game._ghosts.forEach((gh) => { gh.state = 'house'; });
+      game._pac.col = 26;
+      game._pac.row = 29;
+      game._pac.dir = 'left';
+      game._pac.wanted = 'left';
+
+      const opennessAtBite = [];
+      let eaten = game._dotsEaten;
+      for (let i = 0; i < 400; i++) {
+        game.update(1 / 120);
+        if (game._dotsEaten > eaten) {
+          eaten = game._dotsEaten;
+          opennessAtBite.push(game._mouthOpenness());
+        }
+      }
+
+      expect(opennessAtBite.length).toBeGreaterThan(8);
+      expect(Math.max(...opennessAtBite)).toBeLessThan(0.35);
+    });
+  });
+
   describe('eating', () => {
     beforeEach(() => beginPlay(game));
 
