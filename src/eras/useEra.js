@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { isEra, DEFAULT_ERA } from './eras';
+import { writeQueryParam } from '../utils/queryParam';
 
 const readEraFromUrl = () => {
   if (typeof window === 'undefined') return DEFAULT_ERA;
@@ -21,22 +22,14 @@ export default function useEra() {
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const root = document.documentElement;
-    if (era === DEFAULT_ERA) {
-      root.removeAttribute('data-era');
-    } else {
-      root.setAttribute('data-era', era);
-    }
 
-    const params = new URLSearchParams(window.location.search);
-    if (era === DEFAULT_ERA) {
-      params.delete('era');
-    } else {
-      params.set('era', era);
-    }
-    const qs = params.toString();
-    const next = `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`;
-    window.history.replaceState(null, '', next);
+    // The present era is the absence of a skin: no data-era, no ?era=.
+    const isPresent = era === DEFAULT_ERA;
+    const root = document.documentElement;
+    if (isPresent) root.removeAttribute('data-era');
+    if (!isPresent) root.setAttribute('data-era', era);
+
+    writeQueryParam('era', isPresent ? null : era);
   }, [era]);
 
   useEffect(() => {
