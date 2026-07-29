@@ -575,14 +575,7 @@ export class SpaceInvaders {
 
   _triggerGameOver() {
     this.gameOver = true;
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: this.score,
-        lives: this.lives,
-        level: this.level,
-        gameOver: true,
-      });
-    }
+    emitHud(this);
   }
 
   // -----------------------------------------------------------------------
