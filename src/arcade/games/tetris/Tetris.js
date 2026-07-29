@@ -1,4 +1,5 @@
 import { BG, CYAN, VIOLET, ORANGE, WHITE } from '../palette';
+import { emitHud } from '../gameHud';
 
 const COLS = 10;
 const ROWS = 20;
@@ -359,14 +360,7 @@ export class Tetris {
   }
 
   _sendHud() {
-    if (this.onHudUpdate) {
-      this.onHudUpdate({
-        score: this.score,
-        lives: undefined,
-        level: this.level,
-        gameOver: this.gameOver,
-      });
-    }
+    emitHud(this, { lives: undefined });
   }
 
   update(dt) {
