@@ -14,6 +14,7 @@ import useEra from './eras/useEra';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollProgress from './hooks/useScrollProgress';
 import { patchBanks as patchBanksData } from './data/patchBanks';
+import { writeQueryParam } from './utils/queryParam';
 import { TOAST_DISMISS_MS } from './config';
 
 const SKELETON_COUNT = 3;
@@ -51,18 +52,8 @@ function App() {
 
   // Sync ?q= query param with searchQuery state (preserves anchors).
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(window.location.search);
-    const current = params.get('q') || '';
-    if (searchQuery === current) return;
-    if (searchQuery) {
-      params.set('q', searchQuery);
-    } else {
-      params.delete('q');
-    }
-    const qs = params.toString();
-    const next = `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`;
-    window.history.replaceState(null, '', next);
+    if (searchQuery === readSearchFromUrl()) return;
+    writeQueryParam('q', searchQuery);
   }, [searchQuery]);
 
   // Restore searchQuery from URL when back/forward navigation fires popstate.
