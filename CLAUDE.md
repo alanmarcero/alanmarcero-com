@@ -165,12 +165,31 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │               ├── LifePulse.js          # Canvas shmup: pulse mechanic, 17 powerups, combo/graze/chain scoring, waves + bosses
 │               ├── LifePulseRenderer.js  # Pure draw functions + HUD for LifePulse (kept out of the game-logic file)
 │               └── LifePulse.test.js
+│   └── tmobile/                  # /tmobile — TMUS price + insider-selling chart (separate Vite entry)
+│       ├── main.jsx              # React entry point (tmobile page)
+│       ├── TMobileApp.jsx        # Root: filter state, stat tiles, chart, table, source notes
+│       ├── TMobileApp.css        # Page styles (imports shared/theme.css); declares the 3 chart colour roles
+│       ├── chartGeometry.js      # Pure SVG geometry: scales, domains, ticks, line/area paths, marker placement
+│       ├── chartGeometry.test.js
+│       ├── insiderFilters.js     # Pure selection + formatting; chart/tiles/table all read it so the numbers agree
+│       ├── insiderFilters.test.js
+│       ├── TMobileApp.test.jsx
+│       ├── components/
+│       │   ├── PriceChart.jsx    # Inline-SVG chart: trace, sale markers, crosshair + tooltip, keyboard readout
+│       │   ├── FilterRow.jsx     # One filter row scoping everything below it
+│       │   ├── ChartLegend.jsx   # Legend mirroring each mark (line / diamond / circle)
+│       │   ├── StatTiles.jsx     # Headline figures for the current filter
+│       │   └── SellTable.jsx     # The chart's accessible twin
+│       └── data/
+│           ├── tmusInsiderSales.js      # GENERATED: 262 weekly closes + per-week sales, Sievert vs everyone else
+│           └── tmusInsiderSales.test.js # Data-integrity tests (Monday anchoring, attribution, DT exclusion)
 ├── public/
 │   ├── banks/                    # Downloadable patch zip files
 │   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
 │   └── hero-bg.webp              # Background image (outrun landscape, used in .hero-backdrop)
 ├── index.html                    # Main page HTML entry with Google Fonts, meta description, canonical URL
 ├── arcade.html                   # Arcade page HTML entry (separate Vite entry point)
+├── tmobile.html                  # TMUS page HTML entry (separate Vite entry point)
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -181,7 +200,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 841 tests across 53 suites**
+**Total: 929 tests across 58 suites**
 
 ## Key Files
 
@@ -450,6 +469,47 @@ uses the site palette so the arcade index stays consistent.):
 **Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
 
 **CRT overlay on games:** CSS div with scanline `repeating-linear-gradient` positioned over the canvas + `crtFlicker` animation, `pointer-events: none`.
+
+## TMUS Page (`/tmobile`)
+
+**URL:** `/tmobile` — served by the same generic CloudFront clean-URL rewrite as
+`/arcade`, so adding it was a pure-git change (no AWS calls). Separate Vite entry
+point; zero impact on the main-page bundle.
+
+Five years of T-Mobile US weekly closes with a marker on every week a company
+insider sold their own stock, filterable to Mike Sievert alone or to everyone
+else.
+
+**Data is baked in, not fetched** (`src/tmobile/data/tmusInsiderSales.js`), which
+keeps the page instant and matches the site's no-database posture. How it was
+built, in case it needs regenerating:
+
+- **Prices** — Yahoo Finance chart API, `interval=1wk&range=5y`. 262 weekly
+  closes, each anchored to its Monday.
+- **Sales** — every TMUS Form 4 from SEC EDGAR (`data.sec.gov/submissions/
+  CIK0001283699.json` → the raw ownership XML per accession), parsed for
+  transaction code **`S`** only. Nasdaq's own insider-activity API caps out at
+  256 records (~2 years), so it cannot cover a 5-year window; EDGAR is the source
+  Nasdaq mirrors. Verified by cross-checking all 16 overlapping Sievert sale
+  dates against the Nasdaq API — exact match on every one.
+- **Excluded: Deutsche Telekom AG.** The majority owner accounts for 755 of the
+  905 sale lines and 30.5M shares; leaving it in would swamp every executive
+  trade on the chart. 17 individual insiders and 150 sale transactions remain.
+- **Code F is not a sale.** Shares withheld to cover taxes on a vest are
+  dispositions, not sales, and are excluded — as are grants (A), option exercises
+  (M) and non-open-market dispositions.
+
+**Chart construction** follows the `dataviz` skill: one y-axis (never dual),
+2px trace, ≥8px markers each with a 2px surface ring, solid hairline grid, one
+selective direct label parked in the right gutter (where it cannot collide with
+its own trace), crosshair + tooltip listing every series at that X, a legend that
+mirrors each mark, and a table view as the accessible twin. The two sale colours
+(`#d95926`, `#9085e9`) were validated all-pairs against this dark surface with
+`validate_palette.js` (CVD ΔE 26.0, normal-vision ΔE 27.0); **marker shape**
+carries the same distinction a second time so neither series leans on hue alone.
+The price trace keeps the site's phosphor. `PriceChart` swaps to a narrower,
+taller viewBox with larger user-unit type below 640px (via `useMediaQuery`), so
+the axes stay legible in a phone-width column.
 
 ## Take Me Back (era themes)
 
