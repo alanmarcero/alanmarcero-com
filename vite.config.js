@@ -12,6 +12,7 @@ export default defineConfig({
         arcade: resolve(__dirname, 'arcade.html'),
         neworleans: resolve(__dirname, 'neworleans.html'),
         flights: resolve(__dirname, 'flights.html'),
+        tmobile: resolve(__dirname, 'tmobile.html'),
       },
     },
   },
