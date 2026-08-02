@@ -27,7 +27,7 @@ function Footer() {
             use these photographs depends on crediting the photographer and
             naming the licence. This block is that condition being met, not
             a courtesy — if it is removed the images must be removed too. */}
-        <details className="credits">
+        <details className="credits" open>
           <summary className="legend credits__summary">
             Photo credits — {credits.length} instrument photographs
           </summary>
