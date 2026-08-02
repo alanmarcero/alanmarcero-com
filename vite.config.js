@@ -13,6 +13,8 @@ export default defineConfig({
         neworleans: resolve(__dirname, 'neworleans.html'),
         flights: resolve(__dirname, 'flights.html'),
         tmobile: resolve(__dirname, 'tmobile.html'),
+        matrix: resolve(__dirname, 'matrix.html'),
+        matrixArcade: resolve(__dirname, 'matrix-arcade.html'),
       },
     },
   },

@@ -1,0 +1,255 @@
+/*
+ * Layout primitives — "Patch Sheet"
+ *
+ * Plates, panel legends, and the envelope field. Selectors here are single
+ * classes with no element qualifiers, so slice CSS can override by
+ * specificity without fighting.
+ *
+ * The rule that matters: nothing in here creates a container. No
+ * border-radius paired with a background fill and padding. Separation comes
+ * from ground changes and from each plate's own envelope field.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--panel);
+  color: var(--legend);
+  font-family: var(--body-face);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Silkscreen legend -------------------------------------------- */
+
+.legend {
+  font-family: var(--panel-face);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  color: var(--legend-dim);
+  font-size: var(--step--1);
+}
+
+.legend--wide {
+  letter-spacing: var(--legend-tracking-wide);
+  font-size: var(--step--2);
+}
+
+.legend--lit {
+  color: var(--lcd);
+}
+
+/* --- Data readout -------------------------------------------------- */
+
+.readout {
+  font-family: var(--data-face);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--lcd);
+}
+
+.readout--dim {
+  color: var(--legend-faint);
+}
+
+/* --- Shell --------------------------------------------------------- */
+
+.shell {
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.prose {
+  max-width: var(--measure-prose);
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-m);
+  top: -4rem;
+  z-index: 50;
+  padding: var(--space-xs) var(--space-m);
+  background: var(--lcd);
+  color: var(--panel);
+  font-family: var(--panel-face);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  text-decoration: none;
+  transition: top var(--dur-fast) var(--ease-panel);
+}
+
+.skip-link:focus {
+  top: var(--space-m);
+}
+
+/* --- Plate ---------------------------------------------------------
+ * A full-bleed band. Not a card: no radius, no border, no shadow, and it
+ * spans the viewport. Adjacent plates alternate ground so the stack reads
+ * like sheets rather than rows.
+ */
+
+.plate {
+  position: relative;
+  width: 100%;
+  padding-block: var(--space-2xl);
+  background: var(--panel);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.plate--raised {
+  background: var(--panel-2);
+}
+
+.plate__field {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  color: var(--wood);
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.plate__body {
+  position: relative;
+}
+
+/* --- Section head -------------------------------------------------- */
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-s) var(--space-l);
+  margin-bottom: var(--space-l);
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: var(--display-s);
+  line-height: 0.95;
+  color: var(--legend);
+}
+
+.section-stat {
+  margin: 0;
+  color: var(--legend-dim);
+  font-size: var(--step--1);
+}
+
+/* --- Envelope field ------------------------------------------------ */
+
+.envelope-field {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.envelope-field__wipe {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.envelope-field--draw .envelope-field__wipe {
+  animation: field-wipe var(--dur-slow) var(--ease-panel) both;
+}
+
+@keyframes field-wipe {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* The download affordance: a silkscreen legend over an amber rule that
+ * fills on interaction. Deliberately not a button — nothing on this page
+ * is a filled rounded rectangle. */
+
+.action {
+  position: relative;
+  display: inline-block;
+  padding-block: var(--space-2xs);
+  font-family: var(--panel-face);
+  font-weight: 600;
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  text-decoration: none;
+  color: var(--lcd);
+  background-image: linear-gradient(var(--lcd), var(--lcd));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 2px;
+  transition: background-size var(--dur-fast) var(--ease-panel),
+              color var(--dur-fast) var(--ease-panel);
+}
+
+.action:hover,
+.action:focus-visible {
+  background-size: 100% 100%;
+  color: var(--panel);
+}
+
+.action--quiet {
+  color: var(--legend-dim);
+  background-image: linear-gradient(var(--legend-faint), var(--legend-faint));
+}
+
+.action--quiet:hover,
+.action--quiet:focus-visible {
+  color: var(--panel);
+  background-image: linear-gradient(var(--legend), var(--legend));
+}
+
+/* --- Section states -------------------------------------------------- */
+
+.state {
+  margin: 0;
+  color: var(--legend-dim);
+}
+
+.state--error {
+  color: var(--nord);
+}
+
+/* --- Focus --------------------------------------------------------- */
+
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--lcd);
+  outline-offset: 3px;
+}
+
+/* --- Reduced motion ------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope-field--draw .envelope-field__wipe {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

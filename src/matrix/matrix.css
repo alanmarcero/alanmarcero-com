@@ -1,0 +1,275 @@
+/*
+ * Page composition — hero, catalog entries, footer.
+ *
+ * Entry styling lives here rather than in each section so the two catalog
+ * sections are visibly one system. Sections consume these classes; they do
+ * not ship parallel ones.
+ */
+
+/* --- Hero ----------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: min(92svh, 54rem);
+  padding-block: var(--space-3xl) var(--space-2xl);
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.hero__field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  color: var(--wood);
+  opacity: 0.72;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 92%);
+}
+
+.hero__body {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.hero__eyebrow {
+  margin: 0 0 var(--space-m);
+  color: var(--lcd);
+}
+
+.hero__title {
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 700;
+  font-size: var(--display-l);
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--legend);
+}
+
+.hero__lead {
+  margin: var(--space-l) 0 0;
+  color: var(--legend-dim);
+  font-size: var(--step-1);
+}
+
+.hero__count {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin: var(--space-xl) 0 0;
+}
+
+.hero__count-value {
+  font-size: var(--display-s);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.hero__count-label {
+  color: var(--legend-dim);
+}
+
+.hero__search {
+  margin-top: var(--space-xl);
+  max-width: 26rem;
+}
+
+.hero__search-label {
+  display: block;
+  margin-bottom: var(--space-2xs);
+}
+
+.hero__search-input {
+  width: 100%;
+  padding: var(--space-s) var(--space-m);
+  border: 0;
+  border-bottom: 2px solid var(--legend-faint);
+  background: var(--panel-3);
+  color: var(--lcd);
+  font-family: var(--data-face);
+  font-size: var(--step-0);
+  caret-color: var(--lcd);
+}
+
+.hero__search-input::placeholder {
+  color: var(--legend-faint);
+}
+
+.hero__search-input:focus {
+  outline: none;
+  border-bottom-color: var(--lcd);
+}
+
+.hero__search-result {
+  min-height: 1.5em;
+  margin: var(--space-xs) 0 0;
+  color: var(--legend-dim);
+  font-size: var(--step--1);
+}
+
+/* --- Catalog entry --------------------------------------------------
+ * Each entry is a plate: full-bleed, no container. The grid places the
+ * name and description against a large readout, with the entry's own
+ * envelope field behind the whole band.
+ */
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-l) var(--space-xl);
+}
+
+.entry__name {
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 600;
+  font-size: var(--display-s);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--legend);
+}
+
+.entry__desc {
+  grid-column: 1;
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--legend-dim);
+}
+
+.entry__meta {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.entry__count {
+  display: block;
+  font-size: var(--step-3);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.entry__unit {
+  display: block;
+  margin-top: var(--space-2xs);
+}
+
+.entry__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+  align-items: center;
+  margin-top: var(--space-xs);
+}
+
+/* A loading entry degrades to its rules — never a card-shaped skeleton. */
+
+.entry--pending .entry__name,
+.entry--pending .entry__desc {
+  color: transparent;
+  background: linear-gradient(var(--panel-3), var(--panel-3));
+  background-size: 100% 0.7em;
+  background-repeat: no-repeat;
+  background-position: 0 45%;
+}
+
+/* --- Footer ---------------------------------------------------------- */
+
+.footer {
+  padding-block: var(--space-2xl);
+  background: var(--panel-2);
+  border-top: 2px solid var(--wood);
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+  margin-top: var(--space-m);
+}
+
+.footer__link {
+  font-family: var(--panel-face);
+  font-weight: 600;
+  font-size: var(--step-1);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  text-decoration: none;
+  color: var(--legend);
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--dur-fast) var(--ease-panel),
+              color var(--dur-fast) var(--ease-panel);
+}
+
+.footer__link:hover,
+.footer__link:focus-visible {
+  color: var(--lcd);
+  border-bottom-color: var(--lcd);
+}
+
+.footer__note {
+  margin: var(--space-l) 0 0;
+  max-width: var(--measure-prose);
+  color: var(--legend-dim);
+  font-size: var(--step--1);
+}
+
+/* --- Narrow ---------------------------------------------------------- */
+
+@media (max-width: 46rem) {
+  .entry {
+    grid-template-columns: 1fr;
+  }
+
+  .entry__meta {
+    grid-column: 1;
+    grid-row: auto;
+    text-align: left;
+  }
+
+  .entry__count {
+    display: inline;
+    font-size: var(--step-2);
+  }
+
+  .entry__unit {
+    display: inline;
+    margin-left: var(--space-xs);
+  }
+}
+
+/* --- Player ----------------------------------------------------------
+ * The demo cue is an .action like any other. Once asked for, the player
+ * takes the full width of the plate body and nothing else changes.
+ */
+
+.player {
+  grid-column: 1 / -1;
+  width: min(100%, 38rem);
+  aspect-ratio: 16 / 9;
+  margin-top: var(--space-s);
+}
+
+.player__frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* .action is used on both <a> and <button>; normalise the button. */
+
+button.action {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  font-family: var(--panel-face);
+}

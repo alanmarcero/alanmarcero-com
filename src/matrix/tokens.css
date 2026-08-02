@@ -1,0 +1,83 @@
+/*
+ * Design tokens — "Patch Sheet"
+ *
+ * The contract every slice codes against. Values are drawn from the
+ * hardware the site is about: enamelled panels, silkscreen legends, amber
+ * LCD backlight, a red power LED, walnut end cheeks.
+ *
+ * Do not invent parallel values in a slice. If you need a token that is
+ * not here, raise it in the coord thread and it gets added here.
+ */
+
+:root {
+  /* --- Panel ------------------------------------------------------- */
+  --panel: #232021;        /* warm graphite enamel — the ground        */
+  --panel-2: #2e2a2b;      /* raised panel section                     */
+  --panel-3: #3a3536;      /* engraved separation, inset wells         */
+
+  /* --- Legends ----------------------------------------------------- */
+  --legend: #e8e2da;       /* silkscreen white — primary text          */
+  --legend-dim: #9a928c;   /* secondary text                           */
+  --legend-faint: #6b6460; /* tertiary, disabled, field strokes        */
+
+  /* --- Accents ----------------------------------------------------- */
+  --lcd: #ffb627;          /* amber backlight — primary accent         */
+  --lcd-dim: #8a6316;      /* amber at rest                            */
+  --nord: #e0322a;         /* power LED red — sparing, never for text  */
+  --wood: #8a5a3b;         /* walnut end cheek — large warm fields     */
+
+  /* --- Type -------------------------------------------------------- */
+  --panel-face: 'Saira Condensed', 'Saira', system-ui, sans-serif;
+  --body-face: 'Saira', system-ui, -apple-system, sans-serif;
+  --data-face: 'Martian Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* Body scale — 1.2 ratio, steady and unremarkable on purpose.       */
+  --step--2: 0.694rem;
+  --step--1: 0.833rem;
+  --step-0: 1rem;
+  --step-1: 1.2rem;
+  --step-2: 1.44rem;
+  --step-3: 1.728rem;
+
+  /* Display scale — fluid. This is where the page gets loud.          */
+  --display-s: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
+  --display-m: clamp(2.5rem, 1.4rem + 5vw, 5.5rem);
+  --display-l: clamp(3.25rem, 1.2rem + 9vw, 9rem);
+
+  /* Silkscreen legends are always tracked and always caps.            */
+  --legend-tracking: 0.16em;
+  --legend-tracking-wide: 0.28em;
+
+  /* --- Space ------------------------------------------------------- */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-s: 0.75rem;
+  --space-m: 1rem;
+  --space-l: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6.5rem;
+
+  /* --- Measure ----------------------------------------------------- */
+  --measure: 78rem;        /* outer content width                      */
+  --measure-prose: 42rem;  /* readable line length                     */
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+
+  /* --- Motion ------------------------------------------------------ */
+  --ease-panel: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur-fast: 140ms;
+  --dur-slow: 1400ms;
+}
+
+/*
+ * The panel is the ground in every mode. This is hardware, not a theme —
+ * a synth panel does not turn white in daylight. We honour reduced motion
+ * and forced colors, but we do not invert the instrument.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-slow: 0ms;
+  }
+}
