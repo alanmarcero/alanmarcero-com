@@ -275,10 +275,15 @@
   gap: 0.55rem;
 }
 
-/* The photographs are printed as duotone: warm stock in the highlights,
-   a cold ink in the shadows. Two blends, no image processing — the source
-   files stay unmodified originals, which is also what the licences are
-   easiest to honour with. Pointing at one returns it to full colour. */
+/* The photographs are printed as duotone: the stock in the shadows, a
+   tinted ink in the highlights. Two blends, no image processing — the
+   source files stay unmodified originals, which is also what the licences
+   are easiest to honour with. Pointing at one returns it to full colour.
+
+   Inverted from a white-stock duotone: `screen` drops the blacks into the
+   ground rather than `multiply` lifting the whites out of it, and the tint
+   multiplies over the top rather than lightening underneath. Same two
+   operations, opposite ends. */
 .entry__photo {
   position: relative;
   isolation: isolate;
@@ -292,8 +297,8 @@
   height: auto;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.12) brightness(1.02);
-  mix-blend-mode: multiply;
+  filter: grayscale(1) contrast(1.08) brightness(0.94);
+  mix-blend-mode: screen;
   transition: filter 0.4s ease;
 }
 
@@ -301,15 +306,16 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--shadow-ink);
-  mix-blend-mode: lighten;
+  background: var(--highlight-ink);
+  mix-blend-mode: multiply;
   pointer-events: none;
   transition: opacity 0.4s ease;
 }
 
 .entry:hover .entry__photo img,
 .entry:focus-within .entry__photo img {
-  filter: grayscale(0) contrast(1);
+  filter: grayscale(0) contrast(1) brightness(1);
+  mix-blend-mode: normal;
 }
 
 .entry:hover .entry__photo::after,
