@@ -59,8 +59,8 @@
   --space-3xl: 6.5rem;
 
   /* --- Measure ----------------------------------------------------- */
-  --measure: 78rem;        /* outer content width                      */
-  --measure-prose: 42rem;  /* readable line length                     */
+  --measure: 72rem;        /* outer content width                      */
+  --measure-prose: 46rem;  /* readable line length                     */
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
 
   /* --- Motion ------------------------------------------------------ */
