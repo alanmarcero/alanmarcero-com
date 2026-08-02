@@ -524,14 +524,24 @@ entries (`opus5ios.html`, `opus5ios-arcade.html`), zero impact on any other
 page's bundle. **It reuses the content and shares nothing with the other
 pages' design.** The era themes are deliberately absent from it.
 
-**The idea: a printed technical sheet.** Warm stock (`#efebe0`), one ink for
-the text and two for the figures (`#1e34c4` blue, `#c33413` vermilion), and
-hairline rules doing the work that boxes and shadows do elsewhere. **There
+**The idea: a technical sheet printed in reverse** — a press proof pulled on
+black stock. Near-black ground (`#131316`), warm off-white ink (`#e8e6df`),
+two figure inks (`#8b9bff` blue, `#ff6a45` vermilion), and hairline rules
+doing the work that boxes and shadows do elsewhere. **Dark only**, like the
+rest of the site. **There
 are no cards** — nothing on either route has a background panel, a corner
 radius, a shadow, or a border on more than one side. Every separation is a
 1px rule. Actions are words with a rule under them and a mark in front, not
 pills. Set in Instrument Serif (display), Inter Tight (text) and Azeret Mono
 (every machine-set figure: counts, keys, licences, axis labels).
+
+The tokens are named for the ground/mark relationship, not for literal light
+and dark: `--paper` is the stock and `--ink` is what is struck onto it, so
+every rule reads the same way it would on white. The figure inks are NOT the
+white-stock pair brightened — the print-weight blue and vermilion that read
+7.5:1 and 4.6:1 on paper collapse below 2:1 on black, so both were re-mixed.
+Each HTML entry sets the ground in an inline `<style>` ahead of the
+stylesheet, or a dark page flashes white on first paint.
 
 ```
 src/opus5ios/
@@ -579,9 +589,10 @@ for a photograph of a product that does not exist; a lookalike photo could.
 exactly one freely-licensed photograph exists anywhere. Pillow only, no
 macOS-only binaries, and it never upscales: small originals get one
 derivative and the page's `srcset` is built from the `widths` the data
-records. Printed as **duotone via two CSS blends** (grayscale + `multiply`
-on warm stock, a cold ink over it with `lighten`), so the committed files
-stay unmodified originals; hovering a plate returns it to full colour. The
+records. Printed as **duotone via two CSS blends** (grayscale + `screen`,
+which drops the blacks into the stock, then a tint over it with `multiply`),
+so the committed files stay unmodified originals; hovering a plate drops
+both blends and returns it to full colour. The
 colophon credits block is the CC BY / BY-SA attribution condition being met
 — remove it and the images have to go too.
 
@@ -594,9 +605,9 @@ sheet. The runtime's three CRT overlay divs are hidden rather than deleted
 component). `Pictogram.test.js` asserts the marks and the game registry stay
 in step in both directions.
 
-**Contrast is measured, not eyeballed:** blue 7.5:1, vermilion 4.6:1 and the
+**Contrast is measured, not eyeballed:** blue 7.3:1, vermilion 6.6:1 and the
 faintest text 5.2:1 on the stock, because the mono legends and the vermilion
-plate numbers are small type. A lighter, prettier red failed them.
+plate numbers are small type.
 
 ## Take Me Back (era themes)
 

@@ -1,38 +1,50 @@
 /*
- * Paper — the ground everything on /opus5ios is printed on.
+ * The ground everything on /opus5ios is printed on.
  *
  * Tokens, reset, and the three typefaces. Imported by both the catalogue
  * and the arcade so the two routes are demonstrably the same publication.
  *
- * The whole page is a printed technical sheet: warm stock, one ink for the
- * text and two for the figures, hairline rules doing the work that boxes
- * and shadows do elsewhere. There are no filled panels here on purpose —
- * a rule costs one pixel and separates just as well.
+ * The page is a technical sheet printed in reverse — a press proof pulled
+ * on black stock. One ink for the text and two for the figures, hairline
+ * rules doing the work that boxes and shadows do elsewhere. There are no
+ * filled panels here on purpose: a rule costs one pixel and separates just
+ * as well.
+ *
+ * Dark only, like the rest of the site. The tokens carry the ground/mark
+ * relationship rather than literal light and dark, so `--paper` is the
+ * stock (now black) and `--ink` is what is struck onto it (now light) —
+ * every rule below reads the same way it did on white.
  */
 
 :root {
-  /* Stock. Warm rather than white: a pure #fff ground makes the vermilion
-     look like a warning and the photographs look like clippings. */
-  --paper: #efebe0;
-  --paper-tint: #e6e1d3;
+  /* Stock. Near-black with a trace of blue, never #000 — a true black
+     ground flattens the photographs' shadows into the page and leaves the
+     duotone nothing to sit against. */
+  --paper: #131316;
+  --paper-tint: #1a1a1f;
 
-  /* Ink. Near-black, slightly warm, never #000 — true black on warm stock
-     reads as a hole punched in the page. */
-  --ink: #17181c;
-  --ink-soft: #5b5b52;
-  --ink-faint: #64614f;
+  /* Ink. Warm off-white rather than #fff: pure white on a black ground
+     glares and thins the serif's hairlines to nothing. */
+  --ink: #e8e6df;
+  --ink-soft: #a7a49a;
+  --ink-faint: #8a877c;
 
-  --rule: #cbc5b3;
-  --rule-strong: #17181c;
+  --rule: #34353c;
+  --rule-strong: #e8e6df;
 
-  /* The two figure inks. Both are measured against the stock rather than
-     picked by eye: blue reads 7.5:1 and vermilion 4.6:1 on #efebe0, so
-     either can carry the small mono type — the plate numbers are set in
-     vermilion at 13px and a prettier, lighter red would have failed them.
-     --ink-faint is the lightest text on the page at 5.2:1. */
-  --blue: #1e34c4;
-  --vermilion: #c33413;
-  --shadow-ink: #1a2358;
+  /* The two figure inks, re-mixed for the dark ground — the print-weight
+     blue and vermilion that read at 7.5:1 and 4.6:1 on white collapse to
+     under 2:1 on black, so both are lifted rather than reused. Measured,
+     not picked by eye: blue 7.3:1, vermilion 6.6:1, and --ink-faint (the
+     lightest text on the page) 5.2:1. All three carry small mono type —
+     the plate numbers are 13px vermilion. */
+  --blue: #8b9bff;
+  --vermilion: #ff6a45;
+
+  /* Duotone: the ink the photographs' highlights are tinted toward. On
+     white stock this was a cold shadow ink; inverted, it is the highlight
+     that gets the colour and the shadows fall back to the stock. */
+  --highlight-ink: #c0c8f7;
 
   --serif: 'Instrument Serif', 'Times New Roman', serif;
   --sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -459,8 +471,12 @@ a {
   stroke-width: 0.75;
 }
 
+/* On black stock the keybed is a negative: the naturals are outlined and
+   the accidentals are the only filled shapes, so they take a mid tone
+   rather than the ink — filled with the ink they out-shout the naturals
+   and the bed reads as a barcode. */
 .plan__black-key {
-  fill: var(--ink);
+  fill: var(--rule);
   stroke: var(--ink);
 }
 
