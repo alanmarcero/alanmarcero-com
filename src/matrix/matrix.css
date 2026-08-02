@@ -282,7 +282,7 @@ button.action {
  */
 
 .entry--pictured {
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr) auto;
 }
 
 .entry__photo {
@@ -304,7 +304,7 @@ button.action {
   /* They were photographed in a dozen different rooms. Desaturating and
      dimming settles them onto the panel instead of letting them glow off
      it, without misrepresenting the instrument. */
-  filter: grayscale(0.55) contrast(1.04) brightness(0.72);
+  filter: grayscale(0.42) contrast(1.08) brightness(0.86);
   /* ONE gradient layer on purpose: compositing two needs `mask-composite`,
      whose -webkit- keywords differ from the standard ones, and getting
      that pair wrong masks the image out entirely rather than failing
@@ -312,8 +312,8 @@ button.action {
   /* `closest-side` ends the gradient at the nearest edge, so the fade is
      guaranteed to land on all four sides. A percentage-sized radial put
      its solid radius past the edge midpoints and left them hard. */
-  -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 38%, transparent 100%);
-  mask-image: radial-gradient(closest-side at 50% 50%, #000 38%, transparent 100%);
+  -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 50% 50%, #000 55%, transparent 100%);
   transition: filter var(--dur-fast) var(--ease-panel);
 }
 
@@ -432,4 +432,16 @@ button.action {
     width: 60%;
     opacity: 0.2;
   }
+}
+
+/* An entry with no photograph keeps the same column so the titles stay on
+   one left edge down the whole catalogue; its own envelope field steps
+   forward and does the portrait's job. */
+
+.entry__photo--field {
+  height: 11rem;
+  color: var(--lcd-dim);
+  opacity: 0.85;
+  -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 50%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 50% 50%, #000 50%, transparent 100%);
 }

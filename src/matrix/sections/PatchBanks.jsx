@@ -53,8 +53,8 @@ function PatchBanks({ banks, searchQuery }) {
             />
           </div>
 
-          <div className={`shell plate__body entry ${image ? 'entry--pictured' : ''}`}>
-            {image && (
+          <div className="shell plate__body entry entry--pictured">
+            {image ? (
               <figure className="entry__photo">
                 <img
                   src={`/synths/${image.slug}-960.webp`}
@@ -65,6 +65,22 @@ function PatchBanks({ banks, searchQuery }) {
                   alt={image.alt}
                   loading="lazy"
                   decoding="async"
+                />
+              </figure>
+            ) : (
+              /* No photograph exists for this entry — the SH-01A has none
+                 licensed for reuse, CODEX is a plugin, the MIDI bank is not
+                 an instrument. Rather than leaving a hole and letting the
+                 title jump to the gutter, the bank's own envelope field
+                 steps forward and becomes the portrait. */
+              <figure className="entry__photo entry__photo--field" aria-hidden="true">
+                <EnvelopeField
+                  seed={`${bank.name} portrait`}
+                  count={bank.count || 48}
+                  aspect={1.7}
+                  cellWidth={10}
+                  cellHeight={8}
+                  gap={3}
                 />
               </figure>
             )}
