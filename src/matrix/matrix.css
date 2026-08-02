@@ -445,3 +445,54 @@ button.action {
   -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 50%, transparent 100%);
   mask-image: radial-gradient(closest-side at 50% 50%, #000 50%, transparent 100%);
 }
+
+/* --- Photo credits ---------------------------------------------------
+ * CC BY / BY-SA permission is conditional on this being visible. Folded
+ * by default because it is legal text, not reading matter — but present,
+ * findable, and complete.
+ */
+
+.credits {
+  margin-top: var(--space-xl);
+  max-width: var(--measure-prose);
+}
+
+.credits__summary {
+  cursor: pointer;
+  color: var(--legend-dim);
+}
+
+.credits__summary:hover {
+  color: var(--lcd);
+}
+
+.credits__list {
+  margin: var(--space-m) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--step--2);
+  color: var(--legend-faint);
+  line-height: 1.7;
+}
+
+.credits__item + .credits__item {
+  margin-top: var(--space-xs);
+}
+
+.credits__subject {
+  color: var(--legend-dim);
+}
+
+.credits__author {
+  color: var(--legend-dim);
+}
+
+.credits__link {
+  color: var(--legend-dim);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.credits__link:hover {
+  color: var(--lcd);
+}
