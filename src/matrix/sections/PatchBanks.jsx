@@ -1,5 +1,6 @@
 import EnvelopeField from '../graphics/EnvelopeField';
 import YouTubeFacade from '../YouTubeFacade';
+import { imageFor } from '../data/synthImages';
 
 /**
  * The catalog. One plate per instrument, each carrying its own field of
@@ -33,11 +34,14 @@ function PatchBanks({ banks, searchQuery }) {
         </div>
       )}
 
-      {banks.map((bank, index) => (
-        <article
-          key={bank.downloadLink}
-          className={`plate ${index % 2 === 1 ? 'plate--raised' : ''}`}
-        >
+      {banks.map((bank, index) => {
+        const image = imageFor(bank.name);
+
+        return (
+          <article
+            key={bank.downloadLink}
+            className={`plate ${index % 2 === 1 ? 'plate--raised' : ''}`}
+          >
           <div className="plate__field">
             <EnvelopeField
               seed={bank.name}
@@ -49,7 +53,22 @@ function PatchBanks({ banks, searchQuery }) {
             />
           </div>
 
-          <div className="shell plate__body entry">
+          <div className={`shell plate__body entry ${image ? 'entry--pictured' : ''}`}>
+            {image && (
+              <figure className="entry__photo">
+                <img
+                  src={`/synths/${image.slug}-960.webp`}
+                  srcSet={`/synths/${image.slug}-480.webp 480w, /synths/${image.slug}-960.webp 960w`}
+                  sizes="(max-width: 46rem) 100vw, 20rem"
+                  width={image.width}
+                  height={image.height}
+                  alt={image.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            )}
+
             <h3 className="entry__name">{bank.name}</h3>
             <p className="entry__desc">{bank.description}</p>
 
@@ -91,8 +110,9 @@ function PatchBanks({ banks, searchQuery }) {
               ))}
             </div>
           </div>
-        </article>
-      ))}
+          </article>
+        );
+      })}
     </section>
   );
 }

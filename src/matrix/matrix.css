@@ -273,3 +273,160 @@ button.action {
   cursor: pointer;
   font-family: var(--panel-face);
 }
+
+
+/* --- Instrument photograph -------------------------------------------
+ * The machine sits ON the panel, not in a frame. The edges fade out so the
+ * photograph dissolves into the plate instead of terminating in a
+ * rectangle — a hard-edged image with a background is the card we removed.
+ */
+
+.entry--pictured {
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr) auto;
+}
+
+.entry__photo {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  margin: 0;
+  align-self: center;
+}
+
+.entry__photo img {
+  display: block;
+  width: 100%;
+  height: 11rem;
+  /* `cover`, not `contain`: the instruments arrive in wildly different
+     aspect ratios and letting each size itself left a ragged column. One
+     footprint per entry gives the catalogue a rhythm to scan down. */
+  object-fit: cover;
+  object-position: center;
+  /* They were photographed in a dozen different rooms. Desaturating and
+     dimming settles them onto the panel instead of letting them glow off
+     it, without misrepresenting the instrument. */
+  filter: grayscale(0.55) contrast(1.04) brightness(0.72);
+  /* ONE gradient layer on purpose: compositing two needs `mask-composite`,
+     whose -webkit- keywords differ from the standard ones, and getting
+     that pair wrong masks the image out entirely rather than failing
+     visibly. It did exactly that once already. */
+  -webkit-mask-image: radial-gradient(105% 115% at 50% 50%, #000 52%, transparent 92%);
+  mask-image: radial-gradient(105% 115% at 50% 50%, #000 52%, transparent 92%);
+  transition: filter var(--dur-fast) var(--ease-panel);
+}
+
+.plate:hover .entry__photo img {
+  filter: grayscale(0.2) contrast(1.04) brightness(0.92);
+}
+
+.entry--pictured .entry__name,
+.entry--pictured .entry__desc,
+.entry--pictured .entry__actions {
+  grid-column: 2;
+}
+
+.entry--pictured .entry__meta {
+  grid-column: 3;
+}
+
+/* --- Music: the listening room ---------------------------------------
+ * One continuous ground instead of alternating plates, a tighter rhythm
+ * than the catalogue, and bars instead of envelope contours.
+ */
+
+.music {
+  padding-block: var(--space-3xl) var(--space-2xl);
+  background: var(--panel-2);
+  border-top: 2px solid var(--wood);
+}
+
+.music__head {
+  margin-bottom: var(--space-xl);
+}
+
+.tracklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--panel-3);
+}
+
+.track {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-l);
+  padding-block: var(--space-m);
+  border-bottom: 1px solid var(--panel-3);
+}
+
+.track__spectrum {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(42%, 22rem);
+  height: 100%;
+  color: var(--wood);
+  opacity: 0.32;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 70%);
+  mask-image: linear-gradient(to right, transparent, #000 70%);
+  pointer-events: none;
+}
+
+.track__title {
+  position: relative;
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 600;
+  font-size: var(--step-2);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--legend);
+}
+
+.track__desc {
+  position: relative;
+  grid-column: 1;
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--legend-dim);
+  font-size: var(--step--1);
+}
+
+.track__action {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.track--pending .track__title {
+  color: transparent;
+  background: linear-gradient(var(--panel-3), var(--panel-3));
+  background-size: 12rem 0.8em;
+  background-repeat: no-repeat;
+  background-position: 0 40%;
+}
+
+@media (max-width: 46rem) {
+  .entry--pictured {
+    grid-template-columns: 1fr;
+  }
+
+  .entry__photo {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .entry--pictured .entry__name,
+  .entry--pictured .entry__desc,
+  .entry--pictured .entry__actions,
+  .entry--pictured .entry__meta {
+    grid-column: 1;
+  }
+
+  .track__spectrum {
+    width: 60%;
+    opacity: 0.2;
+  }
+}
