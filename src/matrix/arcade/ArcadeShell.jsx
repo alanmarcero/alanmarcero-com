@@ -77,7 +77,13 @@ function ArcadeShell() {
         </div>
       </header>
 
-      <main id="cabinets" className="cabinets">
+      {/*
+        tabIndex={-1} is what makes the skip link above actually work. Without
+        it the browser scrolls to this element and leaves focus on <body>, so
+        the next Tab returns to the top of the page — the link looks right,
+        announces right, and does nothing for the keyboard user it exists for.
+      */}
+      <main id="cabinets" className="cabinets" tabIndex={-1}>
         <h2 className="visually-hidden">Games</h2>
         <ul className="cabinet-list">
           {games.map((game, index) => (
