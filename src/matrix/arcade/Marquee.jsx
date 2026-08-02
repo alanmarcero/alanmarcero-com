@@ -7,14 +7,16 @@ function Marquee() {
 
   return (
     <div className="marquee">
+      {/*
+        Decorative. The word is real text in the heading below, so labelling
+        the drawing too would announce "Arcade" twice for one thing on screen.
+      */}
       <svg
         className="marquee__frame"
         viewBox="0 0 440 96"
         preserveAspectRatio="xMidYMid meet"
-        role="img"
-        aria-label="Arcade"
+        aria-hidden="true"
       >
-        <title>Arcade</title>
         <rect
           x="3"
           y="3"
@@ -35,7 +37,12 @@ function Marquee() {
           );
         })}
       </svg>
-      <p className="marquee__word">Arcade</p>
+      {/*
+        The marquee word is this page's title, so it is the h1 — the arcade
+        route had no h1 at all and its outline started at a visually-hidden
+        h2. Mirrors Hero's <h1 className="hero__title"> on /matrix.
+      */}
+      <h1 className="marquee__word">Arcade</h1>
     </div>
   );
 }
