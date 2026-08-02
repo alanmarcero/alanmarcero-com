@@ -59,7 +59,12 @@ function PatchBanks({ banks, searchQuery }) {
             </p>
 
             <div className="entry__actions">
-              <a className="action" href={bank.downloadLink} download>
+              <a
+                className="action"
+                href={bank.downloadLink}
+                download
+                aria-label={`Download the ${bank.name} bank`}
+              >
                 Download the bank
               </a>
 
