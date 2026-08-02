@@ -309,8 +309,11 @@ button.action {
      whose -webkit- keywords differ from the standard ones, and getting
      that pair wrong masks the image out entirely rather than failing
      visibly. It did exactly that once already. */
-  -webkit-mask-image: radial-gradient(105% 115% at 50% 50%, #000 52%, transparent 92%);
-  mask-image: radial-gradient(105% 115% at 50% 50%, #000 52%, transparent 92%);
+  /* `closest-side` ends the gradient at the nearest edge, so the fade is
+     guaranteed to land on all four sides. A percentage-sized radial put
+     its solid radius past the edge midpoints and left them hard. */
+  -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 38%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 50% 50%, #000 38%, transparent 100%);
   transition: filter var(--dur-fast) var(--ease-panel);
 }
 
