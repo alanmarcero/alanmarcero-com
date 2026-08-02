@@ -1,0 +1,134 @@
+/* Arcade layout — the cabinet room. Same panel language as the catalog. */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.arcade-hero {
+  padding-block: var(--space-3xl) var(--space-2xl);
+  background: var(--panel);
+}
+
+.marquee {
+  position: relative;
+  max-width: 34rem;
+  color: var(--lcd);
+}
+
+.marquee__frame {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.marquee__bulb {
+  opacity: 0.35;
+  animation: bulb-warm 900ms var(--ease-panel) both;
+  animation-delay: calc(var(--bulb) * 32ms);
+}
+
+@keyframes bulb-warm {
+  from { opacity: 0.1; }
+  to { opacity: 0.85; }
+}
+
+.marquee__word {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 700;
+  font-size: clamp(2rem, 7vw, 3.6rem);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking-wide);
+  color: var(--lcd);
+}
+
+.arcade-hero__lead {
+  margin: var(--space-xl) 0 0;
+  color: var(--legend-dim);
+  font-size: var(--step-1);
+}
+
+.arcade-hero__back {
+  margin-top: var(--space-l);
+}
+
+.cabinet-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cabinet__body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-s) var(--space-l);
+}
+
+.cabinet__led {
+  width: 0.6rem;
+  height: 0.6rem;
+  align-self: center;
+}
+
+.cabinet__name {
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 600;
+  font-size: var(--display-s);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.cabinet__launch {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--legend);
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-panel);
+}
+
+.cabinet__launch:hover,
+.cabinet__launch:focus-visible {
+  color: var(--lcd);
+}
+
+.cabinet__desc {
+  grid-column: 2;
+  margin: 0;
+  color: var(--legend-dim);
+}
+
+.cabinet__keys {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 46rem) {
+  .cabinet__body {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .cabinet__keys {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    text-align: left;
+  }
+}
