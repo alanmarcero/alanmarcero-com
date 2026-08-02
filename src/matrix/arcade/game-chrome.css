@@ -305,3 +305,25 @@
     visibility: hidden;
   }
 }
+
+/*
+ * Portrait phones: put the keys *under* the screen, not over it.
+ *
+ * The controls are a child of `.game-canvas-area`, so they overlay the
+ * playfield by default. In landscape that is fine — the frame is wide and
+ * the action sits in the middle. In portrait the screen is only a couple of
+ * hundred pixels tall and every game puts the player at the bottom, which is
+ * exactly where the keys land: at 360x640 they covered the ship and the
+ * shields.
+ *
+ * `top: 100%` lets the absolutely-positioned block overflow below its
+ * containing box, which reaches the space the centred screen leaves free
+ * without touching the DOM the runtime owns.
+ */
+@media (pointer: coarse) and (orientation: portrait) {
+  .touch-controls {
+    top: 100%;
+    inset-block-end: auto;
+    padding-block-start: var(--space-l);
+  }
+}
