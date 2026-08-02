@@ -53,10 +53,19 @@ function PatchBanks({ banks, searchQuery }) {
             <h3 className="entry__name">{bank.name}</h3>
             <p className="entry__desc">{bank.description}</p>
 
-            <p className="entry__meta">
-              <span className="readout entry__count">{bank.count}</span>
-              <span className="legend entry__unit">patches</span>
-            </p>
+            {/* Not every entry is counted in patches — the MIDI bank has no
+                count, and a bare "patches" label under an empty readout is
+                worse than no readout at all. */}
+            {bank.count ? (
+              <p className="entry__meta">
+                <span className="readout entry__count">{bank.count}</span>
+                <span className="legend entry__unit">patches</span>
+              </p>
+            ) : (
+              <p className="entry__meta">
+                <span className="legend entry__unit">MIDI files</span>
+              </p>
+            )}
 
             <div className="entry__actions">
               <a
