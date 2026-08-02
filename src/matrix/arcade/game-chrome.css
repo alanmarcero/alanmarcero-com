@@ -1,0 +1,307 @@
+/*
+ * Game chrome — the frame around a running cabinet.
+ *
+ * Scope, because this file sits on a directive boundary:
+ *
+ *   The game is not re-worked (user directive 7). `GameCanvas`, the loop,
+ *   the HUD markup and `TouchControls` are the existing runtime, mounted
+ *   unchanged. Not one line of game logic is touched by this file.
+ *
+ *   The game's *styling* is replaced (user directives 2 and 4). The runtime
+ *   imports no CSS of its own — it emits class names against whatever
+ *   stylesheet an ancestor loaded, which used to be `src/arcade/ArcadeApp.css`.
+ *   That file is named on the forbidden list, and half of it styles a
+ *   skeuomorphic CRT picker this redesign exists to replace. So the runtime
+ *   keeps its markup and gets the Patch Sheet language instead.
+ *
+ * Every class name below is emitted by the unchanged runtime. If a rule
+ * looks oddly specific, that is why — the DOM is a given, not a choice.
+ *
+ * Two contracts this file must not break, both load-bearing:
+ *   1. `.game-canvas-area` must have a non-zero computed size. The runtime
+ *      sets the canvas bitmap from `parent.clientWidth/clientHeight`; a
+ *      zero-height parent is a blank game.
+ *   2. `.game-canvas-area` must stay a positioned ancestor. The CRT layers,
+ *      the touch controls and the game-over panel all position against it.
+ */
+
+/* --- The cabinet ---------------------------------------------------- */
+
+.game-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100dvh;
+  background: var(--panel);
+  color: var(--legend);
+  font-family: var(--body-face);
+}
+
+/* --- Legend strip ----------------------------------------------------
+ * A rail, not a bar: an engraved rule underneath, no fill of its own.
+ */
+
+.game-hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-m) var(--space-l);
+  padding: var(--space-m) var(--gutter);
+  border-block-end: 1px solid var(--panel-3);
+}
+
+.game-hud-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+/* Silkscreen label, LCD value — the two type roles the panel has. */
+.game-hud-stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  font-family: var(--panel-face);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  color: var(--legend-faint);
+}
+
+.game-hud-stat span {
+  font-family: var(--data-face);
+  font-size: var(--step-0);
+  letter-spacing: 0;
+  color: var(--lcd);
+  /* Digits must not reflow the strip as the score climbs. */
+  font-variant-numeric: tabular-nums;
+}
+
+.game-hud-actions {
+  display: flex;
+  gap: var(--space-l);
+}
+
+/* Panel switches read as legends with a rule under them, never as pills. */
+.game-hud-btn {
+  padding: 0 0 var(--space-2xs);
+  border: 0;
+  border-block-end: 1px solid var(--legend-faint);
+  background: none;
+  font-family: var(--panel-face);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  color: var(--legend-dim);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-panel),
+    border-color var(--dur-fast) var(--ease-panel);
+}
+
+.game-hud-btn:hover,
+.game-hud-btn:focus-visible {
+  color: var(--lcd);
+  border-block-end-color: var(--lcd);
+}
+
+.game-hud-btn.is-copied {
+  color: var(--lcd);
+  border-block-end-color: var(--lcd-dim);
+}
+
+.game-exit-btn:hover,
+.game-exit-btn:focus-visible {
+  /* The one destructive control on the panel gets the power-LED red. */
+  color: var(--nord);
+  border-block-end-color: var(--nord);
+}
+
+/* --- The screen ------------------------------------------------------
+ * A fixed-aspect region, framed and left alone. Width is derived from the
+ * space actually available so the aspect stays exact instead of being
+ * letterboxed inside a taller box.
+ */
+
+.game-canvas-area {
+  position: relative;
+  align-self: center;
+  width: min(100% - var(--gutter) * 2, (100dvh - 9rem) * 1.6);
+  aspect-ratio: 16 / 10;
+  margin-inline: auto;
+  outline: 1px solid var(--panel-3);
+  background: var(--panel);
+}
+
+.game-canvas-area canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * The runtime renders three decorative CRT layers. They belong to the old
+ * skeuomorphic arcade — scanlines, glass reflection, tube vignette — and the
+ * brief replaced that language. Removing the nodes would mean editing the
+ * game, which directive 7 forbids, so they are neutralised here instead and
+ * the vignette is re-used as the one thing worth keeping: a soft seat that
+ * sets the screen into the panel.
+ */
+
+.game-crt-overlay,
+.game-crt-reflection {
+  display: none;
+}
+
+.game-crt-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 var(--space-2xl) rgb(0 0 0 / 0.55);
+}
+
+/* --- Game over -------------------------------------------------------
+ * A panel wash over the screen. Deliberately not a dialog box sitting in
+ * the middle of the frame.
+ */
+
+.game-over-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-m);
+  padding: var(--gutter);
+  text-align: center;
+  background: rgb(35 32 33 / 0.92);
+}
+
+.game-over-title {
+  margin: 0;
+  font-family: var(--panel-face);
+  font-weight: 700;
+  font-size: var(--display-s);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking-wide);
+  color: var(--nord);
+}
+
+.game-over-score {
+  margin: 0;
+  font-family: var(--data-face);
+  font-size: var(--step-1);
+  font-variant-numeric: tabular-nums;
+  color: var(--lcd);
+}
+
+.game-over-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-l);
+  margin-block-start: var(--space-s);
+}
+
+.game-restart-btn,
+.game-back-btn {
+  padding: 0 0 var(--space-2xs);
+  border: 0;
+  border-block-end: 1px solid var(--legend-faint);
+  background: none;
+  font-family: var(--panel-face);
+  font-size: var(--step-0);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  color: var(--legend);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-panel),
+    border-color var(--dur-fast) var(--ease-panel);
+}
+
+.game-restart-btn:hover,
+.game-restart-btn:focus-visible,
+.game-back-btn:hover,
+.game-back-btn:focus-visible {
+  color: var(--lcd);
+  border-block-end-color: var(--lcd);
+}
+
+/* --- Touch controls --------------------------------------------------
+ * Emitted by the unchanged runtime on every game, and styled here because
+ * the old stylesheet was their only source. Hidden unless the device
+ * actually has a coarse pointer — the desktop panel has a keyboard.
+ */
+
+.touch-controls {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .touch-controls {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: var(--space-m);
+    pointer-events: none;
+  }
+
+  .touch-dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 3.25rem);
+    grid-auto-rows: 3.25rem;
+    gap: var(--space-2xs);
+  }
+
+  .touch-action-buttons {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-xs);
+  }
+
+  .touch-btn,
+  .touch-action-btn {
+    /* Panel keys: engraved outline, amber legend, no fill and no radius. */
+    display: grid;
+    place-items: center;
+    min-width: 3.25rem;
+    min-height: 3.25rem;
+    padding: 0;
+    border: 1px solid var(--legend-faint);
+    background: rgb(35 32 33 / 0.72);
+    font-family: var(--panel-face);
+    font-size: var(--step-0);
+    text-transform: uppercase;
+    letter-spacing: var(--legend-tracking);
+    color: var(--lcd);
+    pointer-events: auto;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    transition:
+      color var(--dur-fast) var(--ease-panel),
+      border-color var(--dur-fast) var(--ease-panel);
+  }
+
+  .touch-action-btn {
+    min-width: 4rem;
+    padding-inline: var(--space-s);
+  }
+
+  .touch-btn--active,
+  .touch-action-btn--active {
+    border-color: var(--lcd);
+    color: var(--panel);
+    background: var(--lcd);
+  }
+
+  /* Grid placeholder — holds a cell, draws nothing. */
+  .touch-btn--spacer {
+    visibility: hidden;
+  }
+}
