@@ -15,6 +15,8 @@ export default defineConfig({
         tmobile: resolve(__dirname, 'tmobile.html'),
         matrix: resolve(__dirname, 'matrix.html'),
         matrixArcade: resolve(__dirname, 'matrix-arcade.html'),
+        opus5ios: resolve(__dirname, 'opus5ios.html'),
+        opus5iosArcade: resolve(__dirname, 'opus5ios-arcade.html'),
       },
     },
   },

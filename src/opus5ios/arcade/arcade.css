@@ -1,0 +1,161 @@
+/*
+ * The arcade sheet.
+ *
+ * Same stock, same rules, same three typefaces as the catalogue — this is
+ * a section of the publication, not a second site. What differs is the
+ * furniture: a wireframe band instead of a schematic, and a list of
+ * machines instead of a list of instruments.
+ */
+
+/* ---- the attract band ------------------------------------------------- */
+
+.attract-band {
+  border-block: 1px solid var(--rule);
+  overflow: hidden;
+}
+
+.attract {
+  display: block;
+  width: 100%;
+  height: clamp(7rem, 16vw, 11rem);
+}
+
+.attract__horizon {
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.attract__floor line {
+  stroke: var(--blue);
+  stroke-width: 1;
+  stroke-opacity: 0.4;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The rows crawl toward the viewer, each one starting where the row behind
+   it was — so the floor reads as moving rather than as sliding. */
+.attract__row {
+  animation: attract-crawl 3.4s linear infinite;
+  animation-delay: calc(var(--row-index) * -0.34s);
+  transform-origin: center;
+}
+
+@keyframes attract-crawl {
+  from {
+    opacity: 0.15;
+    transform: translateY(0) scaleY(1);
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 0.15;
+    transform: translateY(14px) scaleY(1);
+  }
+}
+
+.attract__sun {
+  fill: none;
+  stroke: var(--vermilion);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ---- the machines ----------------------------------------------------- */
+
+.machines {
+  padding-top: clamp(2.5rem, 6vw, 4.5rem);
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.machines:focus {
+  outline: none;
+}
+
+.machine {
+  display: grid;
+  grid-template-columns: 2.5rem 3rem minmax(0, 1fr);
+  gap: 0.35rem 1rem;
+  align-items: start;
+  padding-block: 1.35rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 46rem) {
+  .machine {
+    grid-template-columns: 3.5rem 4.5rem minmax(0, 1fr) 14rem;
+    column-gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+}
+
+.machine__index {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.mark {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.18s ease, transform 0.18s ease;
+}
+
+.machine__mark {
+  width: 3rem;
+}
+
+.machine:hover .mark,
+.machine:focus-within .mark {
+  stroke: var(--vermilion);
+  transform: translateX(2px);
+}
+
+.machine__name {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.machine__launch {
+  text-align: left;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.machine__launch:hover,
+.machine__launch:focus-visible {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+}
+
+.machine__desc {
+  margin-top: 0.15rem;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+
+.machine__keys {
+  grid-column: 3 / -1;
+  font-size: 0.625rem;
+}
+
+@media (min-width: 46rem) {
+  .machine__keys {
+    grid-column: auto;
+    text-align: right;
+  }
+}

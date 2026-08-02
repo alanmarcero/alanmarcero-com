@@ -190,6 +190,11 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.html                    # Main page HTML entry with Google Fonts, meta description, canonical URL
 ├── arcade.html                   # Arcade page HTML entry (separate Vite entry point)
 ├── tmobile.html                  # TMUS page HTML entry (separate Vite entry point)
+├── opus5ios.html                 # /opus5ios entry — the printed-sheet redesign (see its own section)
+├── opus5ios-arcade.html          # /opus5ios-arcade entry
+├── scripts/
+│   ├── fetch-synth-images.py            # GENERATOR: the earlier pages' instrument photographs
+│   └── fetch-opus5ios-synth-images.py   # GENERATOR: /opus5ios's own set (different frames)
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -200,7 +205,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 929 tests across 58 suites**
+**Total: 1,033 tests across 66 suites**
 
 ## Key Files
 
@@ -510,6 +515,88 @@ carries the same distinction a second time so neither series leans on hue alone.
 The price trace keeps the site's phosphor. `PriceChart` swaps to a narrower,
 taller viewBox with larger user-unit type below 640px (via `useMediaQuery`), so
 the axes stay legible in a phone-width column.
+
+## Opus5ios sheet (`/opus5ios`, `/opus5ios-arcade`)
+
+A second, independent design of the main page and the arcade, served by the
+same generic CloudFront clean-URL rewrite as `/arcade` — two more Vite
+entries (`opus5ios.html`, `opus5ios-arcade.html`), zero impact on any other
+page's bundle. **It reuses the content and shares nothing with the other
+pages' design.** The era themes are deliberately absent from it.
+
+**The idea: a printed technical sheet.** Warm stock (`#efebe0`), one ink for
+the text and two for the figures (`#1e34c4` blue, `#c33413` vermilion), and
+hairline rules doing the work that boxes and shadows do elsewhere. **There
+are no cards** — nothing on either route has a background panel, a corner
+radius, a shadow, or a border on more than one side. Every separation is a
+1px rule. Actions are words with a rule under them and a mark in front, not
+pills. Set in Instrument Serif (display), Inter Tight (text) and Azeret Mono
+(every machine-set figure: counts, keys, licences, axis labels).
+
+```
+src/opus5ios/
+├── main.jsx / CatalogueApp.jsx   # /opus5ios root: one search narrows both sections
+├── Masthead.jsx                  # name at sheet width, bio, the counts, the schematic
+├── Catalogue.jsx                 # one plate per bank: number | machine | figure
+├── Releases.jsx                  # tracklist (tighter rhythm than the catalogue)
+├── Colophon.jsx                  # links + the photo credits block
+├── Demo.jsx                      # click-to-load YouTube facade
+├── hooks/useReleases.js          # Lambda fetch, written for this route
+├── data/synthImages.js           # GENERATED — see the script below
+├── styles/paper.css              # tokens, reset, shared furniture (masthead/section/colophon/actions/figures)
+├── styles/broadsheet.css         # catalogue-only layout
+├── graphics/                     # every figure is drawn here, pure geometry + a thin component
+│   ├── seed.js                   # FNV-1a + mulberry32: same bank, same drawing, every time
+│   ├── waveTrace.js/.jsx         # summed-harmonic oscillator trace (and its mirrored silhouette)
+│   ├── filterCurve.js + FilterRule.jsx  # 2-pole low-pass response, used as the section rule
+│   ├── faceplate.js + FaceplatePlan.jsx # drawn plan view for banks with no photograph
+│   └── SignalChain.jsx           # the masthead schematic: OSC→MIX→VCF→VCA→FX→OUT
+└── arcade/
+    ├── main.jsx / ArcadeSheet.jsx  # /opus5ios-arcade: the machine list
+    ├── Pictogram.jsx               # 12 hand-drawn marks, one per game
+    ├── attractGrid.js + AttractBand.jsx  # wireframe floor to a horizon
+    ├── GameStage.jsx               # mounts the shared runtime unchanged
+    ├── arcade.css / game-chrome.css
+```
+
+**The figures are generated from the page's own data, not decoration.** Each
+bank's scope trace is a harmonic series seeded from the bank's name, so no
+two plates share a wave and a plate always draws the same one. The geometry
+lives in pure modules with tests (`seed`, `waveTrace`, `filterCurve`,
+`faceplate`, `attractGrid` — 62 tests); the components are thin.
+
+**Three banks have no photograph and are drawn instead** — Roland SH-01A (no
+freely-licensed photograph exists; re-checked Commons and Openverse
+2026-08-02), Waves CODEX (a plugin), Audio Demo MIDIs (not an instrument).
+They get a seeded plan view — chassis, control sections, knobs with pointer
+lines, sliders, switches, sometimes a keybed. A drawing cannot be mistaken
+for a photograph of a product that does not exist; a lookalike photo could.
+
+**Photographs.** `scripts/fetch-opus5ios-synth-images.py` →
+`public/opus5ios/synths/*.webp` + `src/opus5ios/data/synthImages.js`. A
+**different Commons file per instrument** from the one the other pages use
+(closer, more graphic frames for a wide plate) — except the JP-08, for which
+exactly one freely-licensed photograph exists anywhere. Pillow only, no
+macOS-only binaries, and it never upscales: small originals get one
+derivative and the page's `srcset` is built from the `widths` the data
+records. Printed as **duotone via two CSS blends** (grayscale + `multiply`
+on warm stock, a cold ink over it with `lighten`), so the committed files
+stay unmodified originals; hovering a plate returns it to full colour. The
+colophon credits block is the CC BY / BY-SA attribution condition being met
+— remove it and the images have to go too.
+
+**Arcade.** The games are not re-worked: `GameCanvas`, the loop, the HUD and
+the touch controls are the existing runtime, mounted unchanged and lazily.
+It imports no CSS of its own, so `arcade/game-chrome.css` covers every class
+name it emits — a printed transport strip above a dark screen mounted in the
+sheet. The runtime's three CRT overlay divs are hidden rather than deleted
+(a printed page has no phosphor, and the routes that do want them share the
+component). `Pictogram.test.js` asserts the marks and the game registry stay
+in step in both directions.
+
+**Contrast is measured, not eyeballed:** blue 7.5:1, vermilion 4.6:1 and the
+faintest text 5.2:1 on the stock, because the mono legends and the vermilion
+plate numbers are small type. A lighter, prettier red failed them.
 
 ## Take Me Back (era themes)
 
