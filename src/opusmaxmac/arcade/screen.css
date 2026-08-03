@@ -1,0 +1,325 @@
+/*
+ * The chrome a running machine wears.
+ *
+ * The runtime (`src/arcade/components/GameCanvas.jsx` and `TouchControls.jsx`)
+ * is shared with three other routes and imports no stylesheet of its own, so
+ * every class name it emits has to be covered here or it renders unstyled.
+ * This file is that cover, written in this route's language: the same serif,
+ * the same two hues, figures with tabular-nums, and no panel or radius
+ * anywhere.
+ *
+ * The idea is an eyepiece. A strip of readouts across the top, then the field
+ * — darker than the sky around it, ringed once — and the field darkening
+ * toward its edge, because that is what looking through one actually does.
+ */
+
+/* The whole viewport is the game, so a focus ring drawn round the stage marks
+   nothing. The ring on the field is what says where you are. */
+.stage:focus,
+.stage:focus-visible {
+  outline: none;
+}
+
+/* Nothing behind the game should scroll while it is running: the arrows and
+   Space are the game's, and the page under them is not a place to be. */
+body.is-playing {
+  overflow: hidden;
+}
+
+.game-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  background: var(--dusk);
+}
+
+/* ---- the transport strip ----------------------------------------------- */
+
+.game-hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1.5rem;
+  padding: 0.85rem clamp(0.9rem, 3vw, 2rem) 0.35rem;
+}
+
+.game-hud-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.75rem;
+}
+
+/*
+ * A readout is a gloss with a figure attached, but the runtime's markup
+ * cannot carry the `.gloss` class, so the recipe is restated here. There is
+ * no monospace on this route: the figures are the same serif, held in column
+ * by tabular-nums, which is what an almanac has always done.
+ */
+.game-hud-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+.game-hud-stat span {
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.35rem;
+}
+
+/* An action is a word with the leader's dots under it — the register line's
+   ink, at the size a transport strip can spare. */
+.game-hud-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--quiet);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--rose-mark);
+  text-underline-offset: 0.3em;
+  transition: color 160ms var(--ease), text-decoration-color 160ms var(--ease);
+}
+
+.game-hud-btn:hover,
+.game-hud-btn:focus-visible,
+.game-hud-btn.is-copied {
+  color: var(--rose-lit);
+  text-decoration-color: var(--rose-lit);
+  text-decoration-style: solid;
+}
+
+/* Leaving is the one thing on this strip anybody needs to find. */
+.game-exit-btn {
+  color: var(--ink);
+}
+
+/* ---- the field --------------------------------------------------------- */
+
+.game-canvas-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  /* A margin of sky all the way round, so the field reads as mounted in the
+     page rather than as the page running out. */
+  margin: clamp(0.7rem, 2vw, 1.6rem);
+  background: var(--dusk-deep);
+  outline: 1px solid var(--rose-mark);
+}
+
+.game-canvas-area canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * The runtime renders three overlays for the CRT designs it was built for.
+ * Two of them have nothing to be reinterpreted as here — there is no phosphor
+ * on this page and no glass over it. Hidden rather than deleted: the runtime
+ * is shared with the routes that want them.
+ */
+.game-crt-overlay,
+.game-crt-reflection {
+  display: none;
+}
+
+/*
+ * The vignette is the exception, and it is kept because an eyepiece has one:
+ * a circular field falls off toward its edge. Gentle on purpose — several of
+ * these games put things a player needs in the corners, and a vignette dark
+ * enough to be admired is dark enough to lose a ship in.
+ */
+.game-crt-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    farthest-corner at 50% 50%,
+    transparent 56%,
+    color-mix(in srgb, var(--dusk-deep) 28%, transparent) 84%,
+    color-mix(in srgb, var(--dusk-deep) 62%, transparent) 100%
+  );
+}
+
+/* ---- the end of a run -------------------------------------------------- */
+
+.game-over-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--dusk) 93%, transparent);
+}
+
+.game-over-title {
+  font-size: clamp(2.6rem, 9vw, 5rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.game-over-score {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rose);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-over-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.75rem;
+  margin-top: 1rem;
+}
+
+.game-restart-btn,
+.game-back-btn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--rose-mark);
+  text-underline-offset: 0.3em;
+  transition: color 160ms var(--ease), text-decoration-color 160ms var(--ease);
+}
+
+.game-restart-btn {
+  color: var(--ink);
+}
+
+.game-back-btn {
+  color: var(--quiet);
+}
+
+.game-restart-btn:hover,
+.game-restart-btn:focus-visible,
+.game-back-btn:hover,
+.game-back-btn:focus-visible {
+  color: var(--rose-lit);
+  text-decoration-color: var(--rose-lit);
+  text-decoration-style: solid;
+}
+
+/* ---- touch controls -----------------------------------------------------
+   Only on a touch screen. On a pointer device they would sit over the field
+   doing nothing at all. */
+
+.touch-controls {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .touch-controls {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    /* The bottom row of a d-pad is exactly where an iPhone draws its home
+       bar, and a swipe there leaves the game. */
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    pointer-events: none;
+  }
+
+  .touch-dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 3.25rem);
+    gap: 0.4rem;
+  }
+
+  .touch-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  /* Outlines and no fills, so the field stays readable through the controls.
+     3.25rem is 52px, comfortably over the 44px a thumb needs. */
+  .touch-btn,
+  .touch-action-btn {
+    pointer-events: auto;
+    min-width: 3.25rem;
+    min-height: 3.25rem;
+    font-family: var(--face);
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+    color: var(--rose);
+    background: none;
+    outline: 1px solid var(--rose);
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .touch-action-btn {
+    min-width: 4.5rem;
+    padding-inline: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Held, not filled. */
+  .touch-btn:active,
+  .touch-action-btn:active {
+    color: var(--rose-lit);
+    outline: 2px solid var(--rose-lit);
+  }
+
+  .touch-btn--spacer {
+    visibility: hidden;
+  }
+}
+
+/*
+ * At 320px in portrait the d-pad covers about 39% of the play field. This
+ * buys that band back without touching the runtime's markup: the canvas sizes
+ * itself to the parent's client height, which excludes a border, so a
+ * transparent one shortens the field — and the field's own background paints
+ * on through it, so the band below reads as part of the instrument rather
+ * than as a gap.
+ */
+@media (pointer: coarse) and (orientation: portrait) {
+  .game-canvas-area {
+    border-bottom: 9rem solid transparent;
+  }
+
+  /* An absolutely positioned child is offset from the padding box, which the
+     border is outside of, so the controls have to be pushed down into the
+     band they just bought or they sit back over the field. */
+  .touch-controls {
+    bottom: -9rem;
+  }
+}
