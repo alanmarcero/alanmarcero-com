@@ -28,6 +28,19 @@ import { numeralFor } from './dial';
 // actually chosen a machine — the list itself stays a text page.
 const RunningGame = lazy(() => import('./RunningGame'));
 
+/*
+ * Whether the arrival has already been seen, at module scope so it survives the
+ * list being unmounted.
+ *
+ * Choosing a machine replaces this whole tree with the game, so coming back
+ * mounts every row fresh — and a fresh node carrying a CSS animation always runs
+ * it. Left alone, quitting a game rebuilds the page in front of you, and because
+ * the arrival fills `backwards` the row that the focus restore has just moved to
+ * starts at `opacity: 0`. The page arrives once per visit; after that the rows
+ * are simply there.
+ */
+let hasArrived = false;
+
 const gameIdFromHash = () => {
   if (typeof window === 'undefined') return null;
   const id = window.location.hash.replace(/^#/, '');
@@ -36,6 +49,8 @@ const gameIdFromHash = () => {
 
 function Machines() {
   const [runningId, setRunningId] = useState(gameIdFromHash);
+  const arriving = useRef(!hasArrived).current;
+  const arrival = arriving ? ' rise' : '';
   /*
    * The dial follows the pointer and the keyboard, and it has to track them
    * separately. With one shared value, moving the mouse across the list and off
@@ -51,6 +66,10 @@ function Machines() {
   // reader restarts at the top of the document.
   const launchRefs = useRef(new Map());
   const lastPlayedRef = useRef(null);
+
+  useEffect(() => {
+    hasArrived = true;
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -113,24 +132,24 @@ function Machines() {
       <header className="masthead">
         <div className="page masthead__grid">
           <div>
-            <p className="gloss rise">Twelve machines · free · no sign-in</p>
-            <h1 className="masthead__title rise" style={{ animationDelay: '70ms' }}>
+            <p className={`gloss${arrival}`}>Twelve machines · free · no sign-in</p>
+            <h1 className={`masthead__title${arrival}`} style={arriving ? { animationDelay: '70ms' } : undefined}>
               Arcade
             </h1>
-            <p className="prose masthead__lead rise" style={{ animationDelay: '140ms' }}>
+            <p className={`prose masthead__lead${arrival}`} style={arriving ? { animationDelay: '140ms' } : undefined}>
               Every machine here was written from scratch as a canvas game: the maze,
               the ghost targeting, the scatter and chase tables, the collision maths.
               There is no emulator and no ROM behind any of them. Keyboard on a
               desktop; touch controls appear on a phone.
             </p>
-            <div className="masthead__act rise" style={{ animationDelay: '210ms' }}>
+            <div className={`masthead__act${arrival}`} style={arriving ? { animationDelay: '210ms' } : undefined}>
               <Line as="a" value="Eleven banks" href="/opus-max-mac">
                 Back to the patch banks
               </Line>
             </div>
           </div>
 
-          <figure className="masthead__figure bloom" style={{ animationDelay: '280ms' }}>
+          <figure className={`masthead__figure${arriving ? ' bloom' : ''}`} style={arriving ? { animationDelay: '280ms' } : undefined}>
             <AzimuthDial items={games} activeId={activeId} />
             <figcaption className="gloss gloss--quiet masthead__caption">
               One sector per machine · the lit sector is the row you are on
@@ -157,9 +176,9 @@ function Machines() {
 
             return (
               <li
-                className="machine rise"
+                className={`machine${arrival}`}
                 key={game.id}
-                style={{ animationDelay: `${index * 45}ms` }}
+                style={arriving ? { animationDelay: `${index * 45}ms` } : undefined}
                 onMouseEnter={() => setHoveredId(game.id)}
                 onMouseLeave={clearHover}
                 onFocus={() => setFocusedId(game.id)}

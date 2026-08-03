@@ -470,6 +470,11 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  /* The bearings sit at radius 46.5 in a box that ends at 50, and three tracked
+     digits are ~8.7 units wide — so the leading 2 of "270" falls outside the
+     viewport, which a UA clips by default. `.orrery` needs this for the same
+     reason. */
+  overflow: visible;
   /* Above the rim wash, so the marks are what the wash is for. */
   z-index: 1;
   transition: opacity 320ms var(--ease);
