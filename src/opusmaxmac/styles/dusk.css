@@ -493,31 +493,46 @@ a {
 }
 
 @media (forced-colors: active) {
+  /*
+   * `!important` throughout, and not for want of trying something tidier: this
+   * file is imported before the two route stylesheets, so every one of their
+   * single-class figure rules outranks a `.fig *` selector and the marks keep
+   * their rose. Measured with the light forced palette, without this: the limb,
+   * 64 ticks and 10 rings stay #a3707f at 4.05:1 on white, and the lit ring
+   * stays #ffb0c3 at 1.71:1.
+   */
   .fig,
   .fig * {
-    stroke: CanvasText;
-    fill: none;
-  }
-
-  .fig [data-lit],
-  .fig [data-body] {
-    stroke: Highlight;
-    fill: Highlight;
+    stroke: CanvasText !important;
+    fill: none !important;
   }
 
   /*
-   * Text is the exception. SVG's default stroke-width is one *user unit*, and
-   * the labels in these figures are 4-5 units tall — stroked, a bearing reads
-   * as a smear the width of its own letters. Fill it and leave it alone.
+   * Text is filled, never stroked. SVG's default stroke-width is one *user
+   * unit*, and these labels are 4-5 units tall — stroked, a bearing comes out a
+   * smear the width of its own letters.
    */
   .fig text {
-    stroke: none;
-    fill: CanvasText;
+    stroke: none !important;
+    fill: CanvasText !important;
   }
 
+  /*
+   * A lit mark is outlined in Highlight, not filled with it. Filling is what
+   * turns `.orrery__orbit.is-active` — a circle of radius 44 — into a solid disc
+   * over the whole figure, and every lit keycap into a block with its glyph
+   * painted the same colour as the block.
+   */
+  .fig [data-lit],
+  .fig [data-body] {
+    stroke: Highlight !important;
+  }
+
+  /* Only the marks that are genuinely solid: the bodies, and the glyphs. */
+  .fig circle[data-body],
   .fig text[data-lit],
   .fig text[data-body] {
-    fill: Highlight;
+    fill: Highlight !important;
   }
 
   .plate__photo {
@@ -535,6 +550,7 @@ a {
     outline-color: Highlight;
   }
 }
+
 
 /* ---- motion ------------------------------------------------------------ */
 

@@ -57,16 +57,39 @@ function RunningGame({ game, onExit }) {
   useEffect(() => {
     const holdKey = (event) => {
       if (!HELD_KEYS.has(event.key)) return;
-      // Not when a button has focus. Cancelling a button's keydown is what
-      // stops Space activating it, so swallowing Space here would leave the
-      // game-over overlay's own "Play again" unusable from the keyboard —
-      // trading one Space bug for a worse one. A focused button means the
-      // reader is aiming at the chrome, not at the game.
-      if (event.target instanceof HTMLButtonElement) return;
+      /*
+       * The game-over overlay is the one exception, and it has to be scoped to
+       * the overlay rather than to buttons in general. Cancelling a button's
+       * keydown is what stops Space activating it, so exempting every button
+       * would hand Space back to whichever chrome button a click left focus on
+       * — press "Copy Link", play Space Invaders, and every shot re-copies the
+       * URL, which is the bug this handler exists for. Exempting only the
+       * overlay keeps "Play again" operable without giving the strip a way in.
+       */
+      const target = event.target;
+      if (target instanceof Element && target.closest('.game-over-overlay')) return;
       event.preventDefault();
     };
     window.addEventListener('keydown', holdKey, true);
     return () => window.removeEventListener('keydown', holdKey, true);
+  }, []);
+
+  /*
+   * Clicking a button in the chrome leaves focus on it. Handing focus back to
+   * the stage is what makes the keydown guard above sufficient: the strip's
+   * buttons never hold focus while a game is running, and after "Play again"
+   * the overlay is gone, so the stage is where focus belongs anyway.
+   */
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return undefined;
+    const reclaimFocus = (event) => {
+      if (event.target instanceof Element && event.target.closest('button')) {
+        stageRef.current?.focus();
+      }
+    };
+    stage.addEventListener('click', reclaimFocus);
+    return () => stage.removeEventListener('click', reclaimFocus);
   }, []);
 
   useEffect(() => {
