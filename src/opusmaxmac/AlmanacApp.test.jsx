@@ -105,7 +105,9 @@ describe('AlmanacApp', () => {
     expect(within(log()).getByText('Nordlight (Original Mix)')).toBeInTheDocument();
     expect(within(log()).queryByText('Bonzai Nights')).not.toBeInTheDocument();
 
-    expect(screen.getByText('2 banks · 1 releases')).toBeInTheDocument();
+    // Counted, and counted grammatically — "1 releases" is not a figure anyone
+    // wants read back to them by a live region.
+    expect(screen.getByText('2 banks · 1 release')).toBeInTheDocument();
   });
 
   it('puts both back when the finder is cleared', async () => {

@@ -81,8 +81,8 @@ function Orrery({ banks, activeIndex = null, paused = false, className = '' }) {
       data-paused={paused ? 'true' : 'false'}
       aria-label={
         `Interval orrery: the ${bodies.length} patch banks drawn as orbits, one per ` +
-        'just-intonation interval from 1:1 to 2:1. Each bank’s interval and patch count ' +
-        'are listed with its entry below.'
+        'just-intonation interval from 1:1 to 2:1. Each bank’s patch count is listed ' +
+        'with its entry below, and the lit ring is the entry being read.'
       }
     >
       <defs>
@@ -181,8 +181,18 @@ function Orrery({ banks, activeIndex = null, paused = false, className = '' }) {
                   r={active ? body.haloRadius * 1.5 : body.haloRadius}
                   fill={`url(#${haloId})`}
                 />
+                {/*
+                  A bank with no patch count is drawn hollow. Filled, it would
+                  be the faintest and smallest of the eleven — the figure
+                  asserting a magnitude for the one entry whose readout says
+                  there is none.
+                */}
                 <circle
-                  className={`orrery__body${active ? ' is-active' : ''}`}
+                  className={[
+                    'orrery__body',
+                    body.unlisted && 'orrery__body--unlisted',
+                    active && 'is-active',
+                  ].filter(Boolean).join(' ')}
                   data-body=""
                   cx={CENTRE + distance}
                   cy={CENTRE}

@@ -36,7 +36,15 @@ const gameIdFromHash = () => {
 
 function Machines() {
   const [runningId, setRunningId] = useState(gameIdFromHash);
-  const [activeId, setActiveId] = useState(null);
+  /*
+   * The dial follows the pointer and the keyboard, and it has to track them
+   * separately. With one shared value, moving the mouse across the list and off
+   * it again blanks the dial while a row is still focused — the figure then
+   * says nothing about a row the keyboard reader is standing on.
+   */
+  const [hoveredId, setHoveredId] = useState(null);
+  const [focusedId, setFocusedId] = useState(null);
+  const activeId = hoveredId ?? focusedId;
 
   // One launch button per machine, so focus can be put back where it came
   // from. Without this, leaving a game drops focus on <body> and a keyboard
@@ -48,11 +56,13 @@ function Machines() {
     if (typeof window === 'undefined') return;
     const desiredHash = runningId ? `#${runningId}` : '';
     if (window.location.hash === desiredHash) return;
-    window.history.pushState(
-      null,
-      '',
-      `${window.location.pathname}${window.location.search}${desiredHash}`,
-    );
+    const url = `${window.location.pathname}${window.location.search}${desiredHash}`;
+    // Starting a machine pushes, so Back leaves the game. Leaving one replaces,
+    // because pushing on the way out too would mean Back re-enters the game
+    // just left, and a visitor who played three machines could not get off the
+    // page in fewer than six presses.
+    if (runningId) window.history.pushState(null, '', url);
+    else window.history.replaceState(null, '', url);
   }, [runningId]);
 
   // Both events matter: `hashchange` for someone editing the address bar,
@@ -83,7 +93,8 @@ function Machines() {
   }, [runningId]);
 
   const exitGame = useCallback(() => setRunningId(null), []);
-  const clearActive = useCallback(() => setActiveId(null), []);
+  const clearHover = useCallback(() => setHoveredId(null), []);
+  const clearFocus = useCallback(() => setFocusedId(null), []);
 
   const runningGame = getGameById(runningId);
 
@@ -107,10 +118,10 @@ function Machines() {
               Arcade
             </h1>
             <p className="prose masthead__lead rise" style={{ animationDelay: '140ms' }}>
-              Every machine here was written from scratch as a canvas game — the maze,
-              the ghost targeting, the wave tables, the collision maths. There is no
-              emulator and no ROM behind any of them. Keyboard on a desktop; touch
-              controls appear on a phone.
+              Every machine here was written from scratch as a canvas game: the maze,
+              the ghost targeting, the scatter and chase tables, the collision maths.
+              There is no emulator and no ROM behind any of them. Keyboard on a
+              desktop; touch controls appear on a phone.
             </p>
             <div className="masthead__act rise" style={{ animationDelay: '210ms' }}>
               <Line as="a" value="Eleven banks" href="/opus-max-mac">
@@ -149,10 +160,10 @@ function Machines() {
                 className="machine rise"
                 key={game.id}
                 style={{ animationDelay: `${index * 45}ms` }}
-                onMouseEnter={() => setActiveId(game.id)}
-                onMouseLeave={clearActive}
-                onFocus={() => setActiveId(game.id)}
-                onBlur={clearActive}
+                onMouseEnter={() => setHoveredId(game.id)}
+                onMouseLeave={clearHover}
+                onFocus={() => setFocusedId(game.id)}
+                onBlur={clearFocus}
               >
                 <div className="machine__entry">
                   <h3 className="machine__name">
