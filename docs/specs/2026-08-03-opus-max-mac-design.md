@@ -275,7 +275,12 @@ runtime:
   keys while a game runs. Without it the document behind the fixed wrapper
   scrolls, and — because focus can be left on a HUD button by a click — Space
   both fires and re-activates that button, so playing Space Invaders after
-  pressing "Copy Link" re-copies the URL on every shot.
+  pressing "Copy Link" re-copies the URL on every shot. The **game-over overlay
+  is exempt**, scoped to the overlay rather than to buttons in general:
+  cancelling a button's keydown is exactly what stops Space activating it, so a
+  blanket exemption would hand Space straight back to the strip and reinstate
+  the bug. A click on any button in the stage also returns focus to the stage,
+  which is what makes the narrow exemption sufficient.
 - Focus moves into the stage on mount, with an `.sr-only` description saying
   Escape leaves and naming the controls; leaving a game returns focus to the
   button that started it, rather than dropping it on `<body>`.
