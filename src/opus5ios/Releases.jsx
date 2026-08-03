@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Demo from './Demo';
-import WaveTrace from './graphics/WaveTrace';
+import WaveTrace from './graphics/WaveTrace.jsx';
 import FilterRule from './graphics/FilterRule';
 
 const PENDING_ROWS = 4;

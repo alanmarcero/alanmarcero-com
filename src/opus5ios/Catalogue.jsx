@@ -1,5 +1,5 @@
 import Demo from './Demo';
-import WaveTrace from './graphics/WaveTrace';
+import WaveTrace from './graphics/WaveTrace.jsx';
 import FaceplatePlan from './graphics/FaceplatePlan';
 import { imageFor, srcSetFor, sourceFor } from './data/synthImages';
 
