@@ -1,0 +1,666 @@
+/*
+ * The register page's own layout. Tokens and furniture come from dusk.css.
+ *
+ * Three ideas do all the work here:
+ *
+ *   The frontispiece is the plate facing the title page — the name, what there
+ *   is of it, and the orrery.
+ *
+ *   The register is rows, not blocks. Eleven banks scan as a list, and one
+ *   instrument sits beside them showing whichever row is being read, so the
+ *   page carries one large photograph instead of eleven small ones.
+ *
+ *   Everything separates by rhythm. No panels, no radii, no shadows, and no
+ *   rules between items.
+ */
+
+/* ---- the frontispiece -------------------------------------------------- */
+
+.frontispiece__inner {
+  display: grid;
+  gap: clamp(1.4rem, 3vw, 2.4rem) clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'strip'
+    'lede'
+    'plate'
+    'deck';
+  padding-block: clamp(2.5rem, 7vw, 6rem) clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.frontispiece__strip {
+  grid-area: strip;
+}
+
+.frontispiece__lede {
+  grid-area: lede;
+}
+
+.frontispiece__deck {
+  grid-area: deck;
+}
+
+.frontispiece__plate {
+  grid-area: plate;
+}
+
+@media (min-width: 62rem) {
+  .frontispiece__inner {
+    grid-template-columns: minmax(0, 1fr) clamp(18rem, 32vw, 25rem);
+    grid-template-areas:
+      'strip strip'
+      'lede  plate'
+      'deck  plate';
+    align-items: start;
+  }
+}
+
+.frontispiece__name {
+  font-size: var(--d1);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.028em;
+  color: var(--ink);
+}
+
+.frontispiece__name em {
+  font-style: italic;
+}
+
+.frontispiece__role {
+  margin-top: 0.9rem;
+}
+
+.frontispiece__figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem clamp(1.5rem, 4vw, 2.75rem);
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.frontispiece__acts {
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  max-width: 23rem;
+}
+
+.orrery {
+  width: 100%;
+  height: auto;
+  /* The halos and the outermost graduations sit past the viewBox edge. */
+  overflow: visible;
+}
+
+.frontispiece__caption {
+  margin-top: 1.1rem;
+  max-width: 25rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--quiet);
+}
+
+.frontispiece__key {
+  letter-spacing: 0.2em;
+  margin-bottom: 0.55rem;
+}
+
+.frontispiece__caption em {
+  font-style: italic;
+  color: var(--prose);
+}
+
+.frontispiece__pause {
+  margin-top: 0.7rem;
+  color: var(--rose);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--rose-mark);
+  text-underline-offset: 0.25em;
+  transition: color 160ms var(--ease), text-decoration-color 160ms var(--ease);
+}
+
+.frontispiece__pause:hover,
+.frontispiece__pause:focus-visible {
+  color: var(--rose-lit);
+  text-decoration-color: var(--rose-lit);
+}
+
+/* ---- the orrery -------------------------------------------------------- */
+
+/*
+ * The instrument's strokes are `non-scaling-stroke`: the figure is drawn in a
+ * 100-unit box and rendered anywhere from 280 to 400px, so a stroke-width in
+ * user units would be a different hairline at every size. The orbit rings are
+ * the one exception, and the note above them says why.
+ *
+ * Nothing here is dimmed with opacity. A mark a reader has to make sense of gets
+ * a colour that clears 3:1 on its ground, and opacity multiplies straight into
+ * that ratio.
+ */
+
+.orrery__limb,
+.orrery__orbit {
+  fill: none;
+}
+
+.orrery__limb,
+.orrery__tick {
+  stroke: var(--rose-mark);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/*
+ * The rings are the one thing in the figure measured in user units rather than
+ * pinned to a screen pixel, and they have to be: `non-scaling-stroke` moves dash
+ * lengths into screen space as well as stroke widths, so a dash of one
+ * circumference came out a quarter of the way round the ring — the figure drew
+ * as a fan of arcs instead of eleven circles. 0.3 of a unit is 0.9–1.4px across
+ * the sizes this is rendered at, which is the hairline that was wanted anyway.
+ */
+.orrery__orbit {
+  stroke: var(--rose-mark);
+  stroke-width: 0.3;
+}
+
+.orrery__tick--major {
+  stroke: var(--rose);
+  stroke-width: 1.4;
+}
+
+/* The spokes are the one purely decorative mark in the figure, and the only
+   thing on either route allowed to use --haze. */
+.orrery__spoke {
+  stroke: var(--haze);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.orrery__orbit {
+  transition: stroke 220ms var(--ease), stroke-width 220ms var(--ease);
+}
+
+.orrery__orbit.is-active {
+  stroke: var(--rose-lit);
+  stroke-width: 0.62;
+}
+
+.orrery__radius {
+  stroke: var(--rose-lit);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.orrery__body {
+  fill: var(--ink);
+  transition: fill 220ms var(--ease);
+}
+
+.orrery__body.is-active {
+  fill: var(--rose-lit);
+}
+
+.orrery__observer line {
+  stroke: var(--rose);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.orrery__observer circle {
+  fill: var(--rose);
+}
+
+/* ---- the finder -------------------------------------------------------- */
+
+.finder {
+  padding-block: clamp(1.75rem, 4vw, 3rem) 0;
+}
+
+.finder__field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  max-width: 26rem;
+  margin-top: 0.5rem;
+}
+
+/* The brackets are the field. An ephemeris brackets the figure it is
+   qualifying, and there is no box anywhere else on this page either. */
+.finder__field::before {
+  content: '[';
+  color: var(--rose);
+}
+
+.finder__field::after {
+  content: ']';
+  color: var(--rose);
+}
+
+.finder__input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px dotted var(--rose-mark);
+  border-radius: 0;
+  padding-block: 0.2rem;
+  appearance: none;
+  caret-color: var(--rose-lit);
+  transition: border-bottom-color 160ms var(--ease);
+}
+
+.finder__input::placeholder {
+  color: var(--quiet);
+  opacity: 1;
+}
+
+.finder__input:focus {
+  border-bottom-color: var(--rose-lit);
+  border-bottom-style: solid;
+}
+
+.finder__result {
+  /* Reserved, so the register does not jump up the page on the first keystroke. */
+  min-height: 1.5em;
+  margin-top: 0.6rem;
+}
+
+/* ---- the register ------------------------------------------------------ */
+
+.register {
+  padding-block: clamp(2.25rem, 5vw, 4rem) 0;
+}
+
+.register:focus {
+  outline: none;
+}
+
+.register__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 3.5rem);
+  margin-top: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+.register__rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.25rem, 4vw, 3.25rem);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  grid-template-areas:
+    'designation name'
+    '.           text'
+    '.           plate'
+    '.           acts';
+}
+
+.entry__designation {
+  grid-area: designation;
+  text-align: right;
+  padding-top: 0.34rem;
+  font-size: 0.8125rem;
+  transition: color 200ms var(--ease);
+}
+
+/* The row the bench is currently showing. The designation is the only thing
+   that changes — dimming the rows that are not current would make ten of the
+   eleven harder to read in order to point at one. */
+.entry[data-current='true'] .entry__designation {
+  color: var(--rose-lit);
+}
+
+.entry__name {
+  grid-area: name;
+  font-size: var(--d3);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.entry__text {
+  grid-area: text;
+  margin-top: 0.4rem;
+  max-width: 32rem;
+}
+
+.entry__plate {
+  grid-area: plate;
+  margin-top: 1.2rem;
+  max-width: 16rem;
+}
+
+.entry__acts {
+  grid-area: acts;
+  margin-top: 0.9rem;
+  max-width: 23rem;
+}
+
+.entry__absent {
+  padding-block: 0.1rem;
+}
+
+/* ---- the bench --------------------------------------------------------- */
+
+/*
+ * One instrument for the whole register, which follows the row being read.
+ * Below 62rem there is nowhere to park it, so each row carries its own figure
+ * instead — and the swap is made in JavaScript on a media query rather than in
+ * CSS, because a `display: none` <img> is still an <img> the browser fetches.
+ */
+
+@media (min-width: 62rem) {
+  .register__body {
+    grid-template-columns: minmax(0, 1fr) clamp(16rem, 27vw, 22rem);
+    align-items: start;
+  }
+
+  .bench {
+    position: sticky;
+    top: clamp(2rem, 9vh, 5rem);
+  }
+}
+
+.bench__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.bench__readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.bench__readout .line {
+  font-size: 0.875rem;
+}
+
+.bench__readout .line__label {
+  color: var(--prose);
+}
+
+/* ---- a plate ----------------------------------------------------------- */
+
+.plate {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+/*
+ * The photograph has no edge. It is masked to a circle with a soft falloff so
+ * it fades into the sky rather than ending at a border — this page has no
+ * borders — and it is printed cool and quiet so it sits with the two inks
+ * instead of shouting over them. Hovering or focusing the plate returns the
+ * photograph to full colour and drops the graticule back, because at that
+ * point you are looking at the instrument rather than the page.
+ */
+.plate__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.46) contrast(1.04) brightness(0.74);
+  /* 52%/63% of the gradient's own radius puts the photograph's edge just
+     inside the graticule's limb — see the note in Aperture.jsx. */
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 63%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 63%);
+  transition: filter 320ms var(--ease);
+}
+
+.plate:hover .plate__photo,
+.plate:focus-within .plate__photo {
+  filter: none;
+}
+
+/*
+ * The rim falls away, which is both what an eyepiece does and what makes the
+ * graticule readable: the graduations and the bearings are engraved over the
+ * outer third of the photograph, and a bright sky or a white studio backdrop
+ * underneath them leaves rose-on-white. Darkening the rim puts the marks back
+ * on the ground they were measured against, and leaves the middle — where the
+ * instrument is — untouched. It lifts with the graticule on hover.
+ */
+.plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgb(18 12 42 / 0) 30%,
+    rgb(18 12 42 / 0.4) 58%,
+    rgb(18 12 42 / 0.78) 80%
+  );
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 63%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 63%);
+  transition: opacity 320ms var(--ease);
+}
+
+.plate:hover::after,
+.plate:focus-within::after {
+  opacity: 0;
+}
+
+.plate__graticule {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Above the rim wash, so the marks are what the wash is for. */
+  z-index: 1;
+  transition: opacity 320ms var(--ease);
+}
+
+.plate:hover .plate__graticule,
+.plate:focus-within .plate__graticule {
+  opacity: 0.4;
+}
+
+.plate__limb,
+.plate__tick,
+.plate__hair {
+  fill: none;
+  stroke: var(--rose-mark);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.plate__tick--major {
+  stroke: var(--rose);
+  stroke-width: 1.4;
+}
+
+.plate__bearing {
+  fill: var(--rose);
+  font-family: var(--face);
+  font-size: 4.4px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.airy {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.plate-figure__caption {
+  margin-top: 0.7rem;
+  max-width: 22rem;
+}
+
+/* ---- the log ----------------------------------------------------------- */
+
+.tracklist {
+  padding-block: clamp(2.75rem, 6vw, 5rem) 0;
+}
+
+.tracklist__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.track {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  grid-template-areas:
+    'index title'
+    '.     play'
+    '.     screen';
+  align-items: baseline;
+}
+
+@media (min-width: 46rem) {
+  .track {
+    grid-template-columns: 2.5rem minmax(0, 1fr) 8.5rem;
+    grid-template-areas:
+      'index title play'
+      '.     screen screen';
+  }
+}
+
+.track__index {
+  grid-area: index;
+  text-align: right;
+}
+
+.track__title {
+  grid-area: title;
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.track .act {
+  grid-area: play;
+  margin-top: 0.15rem;
+}
+
+.track .eyepiece {
+  grid-area: screen;
+}
+
+/* ---- narrow ------------------------------------------------------------ */
+
+/*
+ * A leader only works when its two ends are on the same line. In a phone-width
+ * column "Roland JP-8000, JP-8080, JE-8086, and Airwave" runs to three lines and
+ * the run of dots collapses into a stub hanging off the last of them — which
+ * reads as a mistake, because it is one. Below this width the figure goes under
+ * the name instead and the dots are dropped.
+ */
+@media (max-width: 44rem) {
+  .entry__name .line,
+  .track__title .line {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .entry__name .line__leader,
+  .track__title .line__leader {
+    display: none;
+  }
+
+  .entry__name .line__value,
+  .track__title .line__value {
+    margin-top: 0.15rem;
+  }
+}
+
+/* ---- the arrival ------------------------------------------------------- */
+
+/*
+ * One orchestrated arrival and one ambient loop, and that is the whole motion
+ * budget for the page. The resting state is the base style above; this block
+ * only adds the way in, so a reader who asks for less motion gets the finished
+ * page rather than a blank one.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .frontispiece__strip {
+    animation-delay: 60ms;
+  }
+
+  .frontispiece__name {
+    animation-delay: 150ms;
+  }
+
+  .frontispiece__role {
+    animation-delay: 260ms;
+  }
+
+  @keyframes orrery-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes orrery-draw {
+    from {
+      stroke-dashoffset: var(--circumference);
+    }
+  }
+
+  @keyframes orrery-appear {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /*
+    The rings draw themselves in, outermost first. Each circle brings its own
+    circumference along as --circumference so one keyframe covers eleven radii;
+    pathLength="1" would be tidier and does not survive non-scaling-stroke.
+  */
+  .orrery__orbit {
+    stroke-dasharray: var(--circumference);
+    animation: orrery-draw 1000ms var(--ease) backwards;
+    animation-delay: calc(var(--ring) * 70ms + 140ms);
+  }
+
+  .orrery__bodies {
+    animation: orrery-appear 900ms var(--ease) backwards;
+    animation-delay: 820ms;
+  }
+
+  /*
+    Each body turns at its own interval's period. The rotation has to sit on a
+    child of the group carrying the epoch phase, because that phase is an SVG
+    attribute and survives this rule not applying at all.
+
+    transform-box: view-box makes 50% 50% resolve to the viewBox centre, which
+    is the origin the bodies orbit — the default reference box would spin each
+    body about its own bounding box instead.
+  */
+  .orrery__turn {
+    transform-box: view-box;
+    /* (50, 50) is the centre of the figure's `0 0 100 100` box, which is why
+       the figure is drawn there — see the note in Orrery.jsx. */
+    transform-origin: 50% 50%;
+    animation: orrery-turn var(--period) linear infinite;
+  }
+
+  .orrery[data-paused='true'] .orrery__turn {
+    animation-play-state: paused;
+  }
+}

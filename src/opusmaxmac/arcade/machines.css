@@ -1,0 +1,252 @@
+/*
+ * /opus-max-mac-arcade — the list of machines and the dial that reflects it.
+ *
+ * Demonstrably the same publication as the register: dusk.css carries the
+ * tokens, the leadered line, the glosses and the imprint, and this file adds
+ * only what the arcade has that the main page does not — a dial as its
+ * masthead figure, twelve rows that are each a launch, and a diagram of the
+ * keys each one answers to.
+ *
+ * No panels, no radii, no rules. A row is held apart from its neighbours by
+ * vertical rhythm, and held together by the leader running from the machine's
+ * name out to its keys — the register line's device, doing the register
+ * line's job one column further out.
+ */
+
+/* ---- the masthead ------------------------------------------------------ */
+
+.masthead {
+  padding-block: clamp(3rem, 8vw, 6.5rem) clamp(1.5rem, 4vw, 3rem);
+}
+
+.masthead__grid {
+  display: grid;
+  gap: clamp(2.25rem, 6vw, 4rem);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .masthead__grid {
+    grid-template-columns: minmax(0, 1fr) clamp(17rem, 32%, 24rem);
+    align-items: center;
+  }
+}
+
+/*
+ * 300 is safe here and nowhere smaller: --d1 bottoms out at 2.6rem, which is
+ * where a light serif on this ground still has stems to see.
+ */
+.masthead__title {
+  margin-top: 0.5rem;
+  font-size: var(--d1);
+  font-weight: 300;
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.masthead__lead {
+  margin-top: 1.35rem;
+}
+
+.masthead__act {
+  margin-top: 1.9rem;
+}
+
+.masthead__figure {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.masthead__caption {
+  max-width: 22rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ---- the dial ---------------------------------------------------------- */
+
+/*
+ * The dial reads the list; it does not drive it. `pointer-events: none` is
+ * the whole reason that stays true — a sector that lights under the cursor
+ * but does nothing when clicked is a lie, and every reader believes it once.
+ */
+.dial {
+  pointer-events: none;
+  width: 100%;
+  max-width: 24rem;
+  margin-inline: auto;
+}
+
+/*
+ * A sector is an unfilled wedge, and the figure sets both of its states as
+ * presentation attributes so it is correct before any stylesheet arrives.
+ * These two rules restate those colours — a stylesheet outranks a
+ * presentation attribute, so leaving them out would not leave them alone —
+ * and add the two things an attribute cannot carry: a transition, and the
+ * heavier stroke that lets the lit sector be found without looking for it.
+ */
+.dial__sector {
+  fill: none;
+  stroke: var(--rose-mark);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 200ms var(--ease), stroke-width 200ms var(--ease);
+}
+
+.dial__sector.is-active {
+  stroke: var(--rose-lit);
+  stroke-width: 1.5;
+}
+
+/* The figure draws every graduation alike and marks the majors with a class,
+   which is this rule's job: a scale needs two weights to read as a scale. */
+.dial__tick {
+  stroke: var(--rose-mark);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dial__tick--major {
+  stroke: var(--rose);
+  stroke-width: 1.5;
+}
+
+/* Size and colour belong to the figure, which knows its own units. The weight
+   is the page's: a small figure on this ground needs 600 to keep its stems. */
+.dial__numeral,
+.dial__reading {
+  font-weight: 600;
+}
+
+/* ---- the machines ------------------------------------------------------ */
+
+.machines {
+  padding-block: clamp(1.75rem, 4vw, 3rem) 0;
+}
+
+.machine-list {
+  margin-top: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+/*
+ * Two columns and no third: the entry, and the keys it answers to. An index
+ * column would number twelve things nobody works through in order, and the
+ * keys are already stated twice — as the diagram, and as a sentence for a
+ * screen reader.
+ */
+.machine {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(6.5rem, 17vw, 9.5rem);
+  gap: 0.5rem clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+  padding-block: clamp(1.15rem, 2.6vw, 1.8rem);
+}
+
+/* The name line is a register line: the label, the run of dots, and then the
+   figure — which here is the row's own sector on the dial above. */
+.machine__name {
+  display: grid;
+  grid-template-columns: auto minmax(1.25rem, 1fr) auto;
+  /* Named, because auto-placement will not do here: the leader is the first
+     child in source order and claiming column 2 for it pushes the name that
+     follows onto a second row. */
+  grid-template-areas: 'name leader sector';
+  align-items: baseline;
+  gap: 0 0.6rem;
+  font-size: clamp(1.3rem, 1rem + 0.9vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* The leader is generated rather than marked up, so it sits between the two
+   real cells without a third element in the heading a screen reader has to
+   walk past. */
+.machine__name::before {
+  content: '';
+  grid-area: leader;
+  /* Same reasoning as `.line__leader` in dusk.css: an empty grid item has no
+     baseline, so it is hung off the row's bottom edge instead. */
+  align-self: end;
+  margin-bottom: 0.3em;
+  border-bottom: 1px dotted var(--rose-mark);
+  transition: border-bottom-color 160ms var(--ease);
+}
+
+.machine__name .line__value {
+  grid-area: sector;
+}
+
+.machine__launch {
+  grid-area: name;
+  color: var(--ink);
+  transition: color 160ms var(--ease);
+}
+
+.machine:hover .machine__launch,
+.machine:focus-within .machine__launch {
+  color: var(--rose-lit);
+}
+
+.machine:hover .machine__name::before,
+.machine:focus-within .machine__name::before {
+  border-bottom-color: var(--rose-lit);
+}
+
+.machine:hover .machine__name .line__value,
+.machine:focus-within .machine__name .line__value {
+  color: var(--rose-lit);
+}
+
+.machine__desc {
+  margin-top: 0.3rem;
+  max-width: var(--measure);
+  color: var(--prose);
+}
+
+/* The diagram sits in a column of fixed width so all twelve read as one
+   table rather than as twelve drawings at twelve scales. */
+.keys {
+  width: 100%;
+}
+
+/* ---- narrow ------------------------------------------------------------ */
+
+@media (max-width: 44rem) {
+  .machine {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .keys {
+    max-width: 9.5rem;
+  }
+
+  /* A leader needs both its ends on one line, and "Bird Name Generator" does
+     not stay on one at this width. The sector goes under the name instead. */
+  .machine__name {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'name'
+      'sector';
+  }
+
+  .machine__name::before {
+    display: none;
+  }
+
+  .machine__name .line__value {
+    margin-top: 0.1rem;
+  }
+}
+
+/*
+ * A name is the launch button, and on a touch screen a line of type is not a
+ * target. The padding is on the button rather than the row so the leader
+ * stays on the name's baseline.
+ */
+@media (pointer: coarse) {
+  .machine__launch {
+    padding-block: 0.6rem;
+  }
+}

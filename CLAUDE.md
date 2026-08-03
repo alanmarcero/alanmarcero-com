@@ -192,9 +192,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── tmobile.html                  # TMUS page HTML entry (separate Vite entry point)
 ├── opus5ios.html                 # /opus5ios entry — the printed-sheet redesign (see its own section)
 ├── opus5ios-arcade.html          # /opus5ios-arcade entry
+├── opus-max-mac.html             # /opus-max-mac entry — the dusk ephemeris (see its own section)
+├── opus-max-mac-arcade.html      # /opus-max-mac-arcade entry
 ├── scripts/
-│   ├── fetch-synth-images.py            # GENERATOR: the earlier pages' instrument photographs
-│   └── fetch-opus5ios-synth-images.py   # GENERATOR: /opus5ios's own set (different frames)
+│   ├── fetch-synth-images.py                # GENERATOR: the earlier pages' instrument photographs
+│   ├── fetch-opus5ios-synth-images.py       # GENERATOR: /opus5ios's own set (different frames)
+│   └── fetch-opus-max-mac-photographs.py    # GENERATOR: /opus-max-mac's set (square-cropped for a circular plate)
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -608,6 +611,113 @@ in step in both directions.
 **Contrast is measured, not eyeballed:** blue 7.3:1, vermilion 6.6:1 and the
 faintest text 5.2:1 on the stock, because the mono legends and the vermilion
 plate numbers are small type.
+
+## Opus-max-mac ephemeris (`/opus-max-mac`, `/opus-max-mac-arcade`)
+
+A fourth, independent design of the main page and the arcade, on the same
+generic CloudFront clean-URL rewrite — two more Vite entries, zero impact on any
+other page's bundle. **It reuses the content and shares nothing with the other
+pages' design.** The era themes are deliberately absent. Full design record:
+`docs/specs/2026-08-03-opus-max-mac-design.md`.
+
+**The idea: an observatory almanac, printed at dusk.** Kepler's *Harmonices
+Mundi* put the planets' orbital periods in musical ratios, so a catalogue of
+tuned sounds plotted as orbits is the oldest version of the same idea. The
+signature is the **interval orrery** — eleven banks as eleven bodies, one per
+just interval, turning at that interval's period.
+
+**The palette is the twilight sky, and it is not a metaphor:** deep indigo
+overhead (`--dusk #171334`), and every mark the instrument makes in the rose of
+the **Belt of Venus** (`--rose`, `--rose-lit`, `--rose-mark`) — the sunlit band
+you see looking away from the sunset, during the hour you go out to observe. Two
+hues, three jobs: indigo-white is what you read, rose is what the instrument
+draws, lit rose is what is alive. **Dark only.**
+
+**One typeface, Spectral**, at 300/400/600. There is **no monospace on this
+route**: all three other designs pair a display face with a text face and set
+every machine-made figure in a mono, so this one sets its figures in the same
+serif with `tabular-nums`, as an almanac always has.
+
+**There are no cards, and no hairline rules between items either** — the first
+belongs to the pages this replaces, the second to `/opus5ios`. With both
+unavailable, separation is rhythm plus one device: the **register line**, a label
+left, a figure right, a run of dots between (`.line` / `.act`). It carries the
+bank names, every action, the bench readout and the tracklist, so a thing you can
+do looks like a thing you can read.
+
+```
+src/opusmaxmac/
+├── main.jsx / AlmanacApp.jsx      # one search narrows both sections
+├── Frontispiece.jsx               # the plate facing the title page: name, counts, the orrery
+├── Finder.jsx  Line.jsx  Eyepiece.jsx
+├── Register.jsx                   # the eleven banks as ROWS, with one instrument beside them
+├── Plate.jsx                      # a photograph, or a drawn Airy pattern when there is none
+├── Tracklist.jsx  Imprint.jsx
+├── hooks/usePlaylist.js           # Lambda fetch, written for this route
+├── hooks/useNearestRow.js         # which row the bench is showing (a band across the viewport)
+├── data/plates.js                 # GENERATED — see the script
+├── styles/dusk.css                # tokens, reset, shared furniture (both routes)
+├── styles/ephemeris.css           # main-page layout only
+├── graphics/
+│   ├── quasirandom.js             # R2 + golden-angle sequences — the only "scatter", and it is
+│   │                              #   deterministic: no PRNG and no hashing anywhere
+│   ├── orbits.js + Orrery.jsx     # the signature
+│   ├── graticule.js + Aperture.jsx    # the circular photographic plate
+│   └── airy.js + AiryDisc.jsx     # what a telescope draws when there is no photograph
+└── arcade/
+    ├── main.jsx / Machines.jsx    # the machine list; h1 is "Arcade"
+    ├── dial.js + AzimuthDial.jsx  # twelve sectors, the one you point at lit
+    ├── keycaps.js + KeyCluster.jsx  # each game's keys, drawn from its own controls map
+    ├── RunningGame.jsx            # mounts the shared runtime unchanged
+    └── machines.css / screen.css
+```
+
+**Say which figures are measurements and which are labels.** The interval is a
+**designation**, assigned by register position exactly as the numeral is — no
+field in `patchBanks.js` ranks eleven banks distinctly (`count` has five distinct
+values, `audioDemo.length` three), so a scale of eleven cannot be earned from the
+data, and the orrery's caption says so in those words. The patch count is the one
+**measurement**: it sets each body's size, and seven of the eleven hold 128
+patches, so seven match. Period comes from the interval; radius from Kepler's
+third law, so **radii descend** with register index and entry I is the outermost
+ring. Bodies are drawn small because Kepler crowds two pairs to 1.85 units;
+`closestApproach()` exists so a test holds the body scale to the real gap.
+
+**The register is rows, not blocks** — one instrument (`.bench`) sits beside it
+and shows whichever row is being read, so the page carries one large photograph
+instead of eleven small ones. Below 62rem each row carries its own figure, and
+the swap happens in JS on a media query rather than in CSS, because a
+`display: none` `<img>` is still an `<img>` the browser fetches.
+
+**Photographs.** `scripts/fetch-opus-max-mac-photographs.py` →
+`public/opus-max-mac/plates/*.webp` + `src/opusmaxmac/data/plates.js`. A **third**
+distinct Commons file per instrument. The plate is a circle, so the generator
+**centre-crops to a square** before resizing — the frames were picked by doing
+exactly that crop and masking it to a circle. Square derivatives at 320/640,
+never upscaled. Three banks have no photograph and get a drawn Airy pattern
+instead (SH-01A — none exists anywhere; CODEX — a plugin; the MIDI set — not an
+instrument); **that is not the same three banks with no audio demo**, which are
+the JP-08, CODEX and the MIDI set. Both sets are derived, never hardcoded. The
+imprint credits block is the CC BY / BY-SA condition being met — remove it and
+the photographs have to go too.
+
+**Arcade.** The games are not re-worked: `GameCanvas`, the loop, the HUD and the
+touch controls are the existing runtime, mounted unchanged and lazily.
+`screen.css` covers every class name it emits. Of its three CRT overlay divs,
+the scanlines and the reflection are hidden and **the vignette is kept and
+restyled as the eyepiece's own**, because a circular field darkening at its edge
+is what looking through one does. Each row is two columns — the name (which is
+the button) and a **key cluster** drawn from that game's own `controls.keyboard`,
+used arrows lit and unused ones left as outlines, which replaces the old design's
+mark column *and* its keys column with one thing derived from data.
+
+**Contrast is measured against all three grounds a mark can land on**, not just
+the darkest: ink 13.6:1, prose 11.0:1, rose 7.5:1 and `--rose-mark` 3.5:1 on
+`--dusk`, still 3.5:1 on the brightest field. Prose is deliberately *not* the
+brightest ink — maximum contrast on a dark ground is where a serif blooms.
+Entrance animations live **inside `prefers-reduced-motion: no-preference`** so
+the resting state is the base style, and the orrery has a real pause control
+(WCAG 2.2.2 wants one on the page; an OS preference is not one).
 
 ## Take Me Back (era themes)
 
