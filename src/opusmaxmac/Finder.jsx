@@ -9,6 +9,19 @@ import { useRef } from 'react';
  * is qualifying, and here they mark where the typing goes. The underline is
  * the writing line, not a border.
  */
+/** "1 banks" is not a count anybody wants read back to them. */
+const countOf = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+/**
+ * What the status line says. The release half is dropped while the log is still
+ * being fetched and after a failure — the page cannot honestly report zero
+ * releases when it does not yet know how many there are.
+ */
+const summarise = (bankCount, trackCount) =>
+  [countOf(bankCount, 'bank', 'banks'), trackCount === null ? null : countOf(trackCount, 'release', 'releases')]
+    .filter(Boolean)
+    .join(' · ');
+
 function Finder({ query, onQueryChange, bankCount, trackCount }) {
   const inputRef = useRef(null);
 
@@ -41,7 +54,7 @@ function Finder({ query, onQueryChange, bankCount, trackCount }) {
       </div>
 
       <p className="gloss gloss--quiet finder__result" role="status">
-        {query ? `${bankCount} banks · ${trackCount} releases` : ''}
+        {query ? summarise(bankCount, trackCount) : ''}
       </p>
     </div>
   );

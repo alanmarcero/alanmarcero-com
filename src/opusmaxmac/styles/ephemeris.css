@@ -205,6 +205,19 @@
   fill: var(--rose-lit);
 }
 
+/* The one bank with no patch count is drawn open. A filled body at the floor of
+   the scale would be the figure claiming the faintest magnitude for the entry
+   whose readout says it has none; a hollow one claims nothing. */
+.orrery__body--unlisted {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.28;
+}
+
+.orrery__body--unlisted.is-active {
+  stroke: var(--rose-lit);
+}
+
 .orrery__observer line {
   stroke: var(--rose);
   stroke-width: 1;
@@ -276,10 +289,6 @@
 
 .register {
   padding-block: clamp(2.25rem, 5vw, 4rem) 0;
-}
-
-.register:focus {
-  outline: none;
 }
 
 .register__body {

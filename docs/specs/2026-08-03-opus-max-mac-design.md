@@ -136,6 +136,13 @@ outermost ring and XI the innermost — because a higher interval is a faster
 vibration and Kepler puts a faster body closer in. That is intended, and the
 test asserts that direction.
 
+The magnitude is **not** printed in the bench beside the patch count it is
+computed from — two figures a line apart read as two measurements, and seven of
+the eleven would print the same 2.0 anyway. It stays inside the figure, where
+size and brightness already carry it; the one bank with no count is drawn
+**hollow** rather than at the floor of the scale, so the figure claims nothing
+for the entry whose readout says there is nothing to claim.
+
 Bodies are drawn small (0.4–0.8 units in the 100-unit field) because Kepler
 crowds two of the eleven pairs to 1.85 units apart; `closestApproach()` exists so
 a test can hold the body scale to the real gap rather than to a comment. Size is
@@ -182,8 +189,7 @@ one list.
       Download ···························· ZIP             ╰────────╯
       Hear it ····························· DEMO 1          DESIGNATION ·· I
  II   Nord Lead 3 and Nord Rack 3 ·········· 128 PATCHES     INTERVAL ····· 1:1
-      …                                                      MAGNITUDE ···· 2.0
-                                                             PATCHES ······ 128
+      …                                                      PATCHES ······ 128
 ```
 
 The register is **rows, not blocks**, and one instrument sits beside it showing

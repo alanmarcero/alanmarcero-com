@@ -21,11 +21,17 @@ import Plate from './Plate';
 
 const WIDE = '(min-width: 62rem)';
 
-/** What the bench prints beside the plate. Absent figures are said to be absent. */
+/**
+ * What the bench prints beside the plate. Absent figures are said to be absent.
+ *
+ * Magnitude is not among them. It is computed from the patch count, and printing
+ * it a line above the count it comes from reads as two measurements where there
+ * is one — and seven of the eleven banks would print the same 2.0 anyway. It
+ * stays inside the figure, where size and brightness already carry it.
+ */
 const readout = (bank, body) => [
   { label: 'Designation', value: body.designation },
   { label: 'Interval', value: `${body.interval.label} · ${body.interval.cents}¢` },
-  { label: 'Magnitude', value: body.unlisted ? 'Unlisted' : body.magnitude.toFixed(1) },
   { label: 'Patches', value: bank.count ? String(bank.count) : 'MIDI files' },
 ];
 
@@ -56,8 +62,8 @@ function Register({ banks, bodyFor, query, onCurrentChange }) {
         </div>
 
         <p className="section-note prose">
-          Load them straight into the instrument. Every bank is free, and free to use in
-          whatever you make with it.
+          Patches for the machines below, and the MIDI files from the demos. All free to
+          download, and free to use in whatever you make with them.
         </p>
 
         {banks.length === 0 && (
@@ -119,6 +125,11 @@ function Register({ banks, bodyFor, query, onCurrentChange }) {
                             demos.length > 1
                               ? `Hear ${bank.name}, demo ${demoIndex + 1} of ${demos.length}`
                               : `Hear ${bank.name}`
+                          }
+                          subject={
+                            demos.length > 1
+                              ? `${bank.name}, demo ${demoIndex + 1}`
+                              : bank.name
                           }
                         />
                       ))}

@@ -30,9 +30,18 @@ describe('the scale', () => {
   });
 
   it('carries on into the next octave rather than repeating a ring', () => {
-    expect(intervalAt(11)).toMatchObject({ label: '2:1', cents: 1200 });
-    expect(intervalAt(12)).toMatchObject({ label: '32:15', cents: 1312 });
-    expect(intervalAt(21).value).toBeGreaterThan(intervalAt(10).value);
+    // The unison belongs to the first octave only: repeated, 1:1 an octave up
+    // would be the same ratio as the 2:1 below it, and a twelfth bank would
+    // sit on the eleventh's ring with one body hidden under the other.
+    expect(intervalAt(11)).toMatchObject({ label: '32:15', cents: 1312 });
+    expect(intervalAt(11).value).toBeGreaterThan(intervalAt(10).value);
+    expect(intervalAt(20)).toMatchObject({ label: '4:1', cents: 2400 });
+    expect(intervalAt(21).value).toBeGreaterThan(intervalAt(20).value);
+  });
+
+  it('never gives two positions the same interval', () => {
+    const labels = Array.from({ length: 30 }, (_unused, index) => intervalAt(index).label);
+    expect(new Set(labels).size).toBe(labels.length);
   });
 });
 

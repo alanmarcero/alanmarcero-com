@@ -366,8 +366,10 @@ a {
   width: 100%;
   max-width: 32rem;
   aspect-ratio: 16 / 9;
+  /* A ground and nothing else. An iframe needs something behind it before it
+     paints, but the rule that went round it made the one filled box on a page
+     that says it has none. */
   background: var(--dusk-deep);
-  outline: 1px solid var(--rose-mark);
 }
 
 .eyepiece iframe {
@@ -457,6 +459,26 @@ a {
   top: 0.75rem;
 }
 
+/* ---- where a skip link lands -------------------------------------------- */
+
+/*
+ * The destination of a skip link is a landmark, not a control: it takes focus so
+ * the next Tab carries on from there. `:focus` rather than `:focus-visible`
+ * because a pointer never lands here and browsers disagree about whether
+ * programmatic focus counts as visible — and the ring goes round the section's
+ * head rather than round several screens of register, which is what outlining
+ * the section itself would do.
+ */
+[tabindex='-1']:focus {
+  outline: none;
+}
+
+[tabindex='-1']:focus > .page > .section-head,
+[tabindex='-1']:focus > .section-head {
+  outline: 2px solid var(--rose-lit);
+  outline-offset: 8px;
+}
+
 /* ---- figures ----------------------------------------------------------- */
 
 /*
@@ -480,6 +502,21 @@ a {
   .fig [data-lit],
   .fig [data-body] {
     stroke: Highlight;
+    fill: Highlight;
+  }
+
+  /*
+   * Text is the exception. SVG's default stroke-width is one *user unit*, and
+   * the labels in these figures are 4-5 units tall — stroked, a bearing reads
+   * as a smear the width of its own letters. Fill it and leave it alone.
+   */
+  .fig text {
+    stroke: none;
+    fill: CanvasText;
+  }
+
+  .fig text[data-lit],
+  .fig text[data-body] {
     fill: Highlight;
   }
 

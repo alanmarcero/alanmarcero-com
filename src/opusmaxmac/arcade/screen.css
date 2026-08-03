@@ -199,17 +199,56 @@ body.is-playing {
   margin-top: 1rem;
 }
 
+/*
+ * The two choices after a game get the bracket the finder uses, because here
+ * there is room for it and these are the only two things on the screen. The
+ * strip at the top keeps the route's dotted-link texture instead: a leader needs
+ * two ends and a line of small caps has neither.
+ */
 .game-restart-btn,
 .game-back-btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: var(--rose-mark);
-  text-underline-offset: 0.3em;
-  transition: color 160ms var(--ease), text-decoration-color 160ms var(--ease);
+  transition: color 160ms var(--ease);
+}
+
+.game-restart-btn::before,
+.game-back-btn::before {
+  content: '[';
+}
+
+.game-restart-btn::after,
+.game-back-btn::after {
+  content: ']';
+}
+
+.game-restart-btn::before,
+.game-restart-btn::after,
+.game-back-btn::before,
+.game-back-btn::after {
+  color: var(--rose);
+  transition: color 160ms var(--ease), transform 160ms var(--ease);
+}
+
+.game-restart-btn:hover::before,
+.game-restart-btn:focus-visible::before,
+.game-back-btn:hover::before,
+.game-back-btn:focus-visible::before {
+  color: var(--rose-lit);
+  transform: translateX(-2px);
+}
+
+.game-restart-btn:hover::after,
+.game-restart-btn:focus-visible::after,
+.game-back-btn:hover::after,
+.game-back-btn:focus-visible::after {
+  color: var(--rose-lit);
+  transform: translateX(2px);
 }
 
 .game-restart-btn {
