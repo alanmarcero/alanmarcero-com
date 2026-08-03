@@ -125,12 +125,14 @@ describe('Register', () => {
     expect(row).not.toHaveTextContent(/\d+ patches/);
   });
 
-  it('reports the missing count on the bench too, rather than a magnitude', () => {
+  it('reports the missing count on the bench too, and prints no magnitude at all', () => {
     mockMatchMedia(true);
     registerOf([bankNamed('Audio Demo MIDIs')]);
 
     expect(lineValue('Patches')).toBe('MIDI files');
-    expect(lineValue('Magnitude')).toBe('Unlisted');
+    // Magnitude is computed from the patch count, so printing it beside the
+    // count would read as a second measurement. It stays inside the figure.
+    expect(screen.queryByText('Magnitude')).not.toBeInTheDocument();
   });
 
   it('tells the reader when a bank has no demo instead of stopping', () => {

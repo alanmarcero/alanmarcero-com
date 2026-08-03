@@ -70,6 +70,7 @@ function Tracklist({ tracks, loading, error, query }) {
                   value="Video"
                   cue="Play"
                   label={`Play ${track.title}`}
+                  subject={track.title}
                 />
               </li>
             ))}

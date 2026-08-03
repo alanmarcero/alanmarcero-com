@@ -15,7 +15,7 @@ function Imprint() {
             <p className="gloss">Published by</p>
             <p className="imprint__mark">Alan Marcero</p>
             <p className="imprint__note">
-              The patch banks are free to download and free to use in your own music.
+              Patch banks, music, and twelve machines written from scratch.
             </p>
           </div>
 
@@ -42,7 +42,9 @@ function Imprint() {
           */}
           <div>
             <p className="gloss">
-              Photographs · {credits.length} instruments · Wikimedia Commons
+              {/* Plates, not instruments: eight photographs cover far more than
+                  eight machines — one bank alone names four. */}
+              Photographs · {credits.length} plates · Wikimedia Commons
             </p>
             <ul className="credits">
               {credits.map((credit) => (

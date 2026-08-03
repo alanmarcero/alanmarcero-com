@@ -90,8 +90,18 @@ export const designationFor = (index) => ROMAN[index] ?? String(index + 1);
  * first rather than sharing its ring.
  */
 export const intervalAt = (index) => {
-  const octave = Math.floor(index / INTERVALS.length);
-  const [num, den] = INTERVALS[index % INTERVALS.length];
+  /*
+   * Only the first octave holds the unison. Repeating it would make 1:1 an
+   * octave up the same ratio as the 2:1 below it — a twelfth bank would share
+   * the eleventh's ring exactly, same radius, same period, one body hidden
+   * under another. So every octave after the first is the ten steps above the
+   * unison, not all eleven.
+   */
+  const above = INTERVALS.slice(1);
+  const first = index < INTERVALS.length;
+  const offset = index - INTERVALS.length;
+  const octave = first ? 0 : 1 + Math.floor(offset / above.length);
+  const [num, den] = first ? INTERVALS[index] : above[offset % above.length];
   const numerator = num * 2 ** octave;
   return {
     num: numerator,

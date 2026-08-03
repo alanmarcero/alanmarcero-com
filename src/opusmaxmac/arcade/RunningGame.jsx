@@ -57,6 +57,12 @@ function RunningGame({ game, onExit }) {
   useEffect(() => {
     const holdKey = (event) => {
       if (!HELD_KEYS.has(event.key)) return;
+      // Not when a button has focus. Cancelling a button's keydown is what
+      // stops Space activating it, so swallowing Space here would leave the
+      // game-over overlay's own "Play again" unusable from the keyboard —
+      // trading one Space bug for a worse one. A focused button means the
+      // reader is aiming at the chrome, not at the game.
+      if (event.target instanceof HTMLButtonElement) return;
       event.preventDefault();
     };
     window.addEventListener('keydown', holdKey, true);

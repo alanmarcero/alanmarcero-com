@@ -29,6 +29,11 @@ function Frontispiece({ banks, bodies, totalPatches, releaseCount, currentBank =
     .map((body) => `${body.designation} ${body.interval.label}`)
     .join('   ·   ');
 
+  // Derived, like every other count on the page. Written into the caption by
+  // hand, they would disagree with the figure above them the day a bank is added.
+  const largest = Math.max(...banks.map((bank) => bank.count || 0));
+  const matching = banks.filter((bank) => bank.count === largest).length;
+
   return (
     <header className="frontispiece">
       <div className="page frontispiece__inner">
@@ -55,9 +60,7 @@ function Frontispiece({ banks, bodies, totalPatches, releaseCount, currentBank =
           <p className="prose">
             The tracks have been played by Ferry Corsten, Paul van Dyk, Sean Tyas and
             Daniel Kandi, aired on A State of Trance and BBC Radio 1&rsquo;s Essential
-            Mix, and released on Armada, Bonzai and Ministry of Sound. Everything in
-            the register below is free to download, and free to use in whatever you
-            make with it.
+            Mix, and released on Armada, Bonzai and Ministry of Sound.
           </p>
 
           <div className="frontispiece__figures">
@@ -102,13 +105,20 @@ function Frontispiece({ banks, bodies, totalPatches, releaseCount, currentBank =
           <figcaption className="frontispiece__caption">
             <p className="gloss gloss--quiet frontispiece__key">{key}</p>
             <p>
-              Eleven banks as eleven orbits, spaced by Kepler&rsquo;s third law. The
-              interval on a ring is a <em>designation</em>, assigned by position in the
-              register exactly as the numeral is — it is not derived from the bank. What
-              the figure measures is the patch count, which sets how large and bright
-              each body is: seven of the eleven hold 128 patches, so seven of them
-              match.
+              {bodies.length} banks as {bodies.length} orbits, spaced by
+              Kepler&rsquo;s third law. The interval on a ring is a{' '}
+              <em>designation</em>, assigned by position in the register exactly as the
+              numeral is — it is not derived from the bank. What the figure measures is
+              the patch count, which sets how large and bright each body is:{' '}
+              {matching} of the {bodies.length} hold {largest} patches, so {matching} of
+              them match. The one bank with no count is drawn hollow.
             </p>
+            {/*
+              A toggle says its state through `aria-pressed`, so the label has to
+              hold still. Swapping it to "Resume" as well would announce "Resume
+              the orrery, pressed" — the state saying the resume has already
+              happened while the label says it has not.
+            */}
             {!reducedMotion && (
               <button
                 type="button"
@@ -116,7 +126,7 @@ function Frontispiece({ banks, bodies, totalPatches, releaseCount, currentBank =
                 aria-pressed={paused}
                 onClick={() => setPaused((wasPaused) => !wasPaused)}
               >
-                {paused ? 'Resume the orrery' : 'Pause the orrery'}
+                Pause the orrery
               </button>
             )}
           </figcaption>

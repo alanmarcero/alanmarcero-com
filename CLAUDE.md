@@ -208,7 +208,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,033 tests across 66 suites**
+**Total: 1,262 tests across 83 suites**
 
 ## Key Files
 
@@ -374,7 +374,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (841 tests, 53 suites)
+npm test                       # Jest (1,262 tests, 83 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -659,8 +659,8 @@ src/opusmaxmac/
 ├── styles/dusk.css                # tokens, reset, shared furniture (both routes)
 ├── styles/ephemeris.css           # main-page layout only
 ├── graphics/
-│   ├── quasirandom.js             # R2 + golden-angle sequences — the only "scatter", and it is
-│   │                              #   deterministic: no PRNG and no hashing anywhere
+│   ├── quasirandom.js             # the golden-angle sequence the orrery's phases walk — the
+│   │                              #   only "scatter", and deterministic: no PRNG, no hashing
 │   ├── orbits.js + Orrery.jsx     # the signature
 │   ├── graticule.js + Aperture.jsx    # the circular photographic plate
 │   └── airy.js + AiryDisc.jsx     # what a telescope draws when there is no photograph
@@ -712,9 +712,11 @@ used arrows lit and unused ones left as outlines, which replaces the old design'
 mark column *and* its keys column with one thing derived from data.
 
 **Contrast is measured against all three grounds a mark can land on**, not just
-the darkest: ink 13.6:1, prose 11.0:1, rose 7.5:1 and `--rose-mark` 3.5:1 on
-`--dusk`, still 3.5:1 on the brightest field. Prose is deliberately *not* the
-brightest ink — maximum contrast on a dark ground is where a serif blooms.
+the darkest. On `--dusk` / `--field` / `--field-lit`: ink 13.6 / 12.2 / 10.9:1,
+prose 11.0 / 9.8 / 8.7:1, rose 7.5 / 6.7 / 5.9:1, `--rose-mark` 4.4 / 3.9 /
+3.5:1 — so a mark that carries meaning clears 3:1 on every ground it can land
+on, not only on the darkest. Prose is deliberately *not* the brightest ink —
+maximum contrast on a dark ground is where a serif blooms.
 Entrance animations live **inside `prefers-reduced-motion: no-preference`** so
 the resting state is the base style, and the orrery has a real pause control
 (WCAG 2.2.2 wants one on the page; an OS preference is not one).

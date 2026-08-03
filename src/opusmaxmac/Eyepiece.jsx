@@ -5,8 +5,8 @@ import Line from './Line';
  * A video that only becomes a player once someone asks for it, and stops
  * being one when they are done.
  *
- * Nothing from youtube.com loads until the click, so eleven banks with
- * fourteen demos between them — plus fifty releases — cost no third-party
+ * Nothing from youtube.com loads until the click, so eleven banks with twelve
+ * demos between them, plus every release in the log, cost no third-party
  * requests on arrival.
  *
  * The cue is a register line like every other instruction on the page, not a
@@ -15,8 +15,11 @@ import Line from './Line';
  *
  * Returns a fragment rather than a wrapper, so a caller laying its row out on
  * a grid can place the cue and the screen in two different cells.
+ *
+ * `label` is the whole instruction ("Hear the Nord Lead 3 bank"); `subject` is
+ * the thing on its own, because "Stop " + label would announce two verbs.
  */
-function Eyepiece({ videoId, label, cue = 'Hear it', value }) {
+function Eyepiece({ videoId, label, subject = label, cue = 'Hear it', value }) {
   const [playing, setPlaying] = useState(false);
 
   return (
@@ -26,7 +29,7 @@ function Eyepiece({ videoId, label, cue = 'Hear it', value }) {
         className="act--quiet"
         value={value}
         onClick={() => setPlaying((wasPlaying) => !wasPlaying)}
-        aria-label={playing ? `Stop ${label}` : label}
+        aria-label={playing ? `Stop ${subject}` : label}
         aria-expanded={playing}
       >
         {playing ? 'Stop' : cue}

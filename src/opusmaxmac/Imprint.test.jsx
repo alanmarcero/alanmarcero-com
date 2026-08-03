@@ -65,11 +65,14 @@ describe('Imprint', () => {
     });
   });
 
-  it('says how many instruments it is crediting, and where they came from', () => {
+  it('counts the plates it is crediting, not the instruments they show', () => {
     render(<Imprint />);
 
-    expect(screen.getByText(`Photographs · ${credits.length} instruments · Wikimedia Commons`))
+    // Eight photographs cover far more than eight machines — one bank alone
+    // names four — so "instruments" would be a miscount.
+    expect(screen.getByText(`Photographs · ${credits.length} plates · Wikimedia Commons`))
       .toBeInTheDocument();
+    expect(screen.queryByText(/instruments · Wikimedia Commons/)).not.toBeInTheDocument();
   });
 
   it('sends the elsewhere links out in a new tab, safely', () => {

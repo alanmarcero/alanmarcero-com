@@ -122,13 +122,15 @@ describe('Frontispiece', () => {
     const pause = screen.getByRole('button', { name: 'Pause the orrery' });
     expect(pause).toHaveAttribute('aria-pressed', 'false');
 
+    // The label holds still and only `aria-pressed` moves. A toggle that
+    // changes both announces "Resume the orrery, pressed" — the state saying
+    // the resume has happened while the label says it has not.
     fireEvent.click(pause);
-    const resume = screen.getByRole('button', { name: 'Resume the orrery' });
-    expect(resume).toHaveAttribute('aria-pressed', 'true');
+    expect(pause).toHaveAttribute('aria-pressed', 'true');
+    expect(pause).toHaveAccessibleName('Pause the orrery');
 
-    fireEvent.click(resume);
-    expect(screen.getByRole('button', { name: 'Pause the orrery' }))
-      .toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(pause);
+    expect(pause).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('drops the pause control when the reader has already asked for less motion', () => {

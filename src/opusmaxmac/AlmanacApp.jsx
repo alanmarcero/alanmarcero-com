@@ -65,7 +65,7 @@ function AlmanacApp() {
           query={query}
           onQueryChange={setQuery}
           bankCount={banks.length}
-          trackCount={tracks.length}
+          trackCount={loading || error ? null : tracks.length}
         />
 
         <Register
