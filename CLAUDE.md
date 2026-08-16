@@ -194,10 +194,12 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── opus5ios-arcade.html          # /opus5ios-arcade entry
 ├── opus-max-mac.html             # /opus-max-mac entry — the dusk ephemeris (see its own section)
 ├── opus-max-mac-arcade.html      # /opus-max-mac-arcade entry
+├── flights.html                  # /flights entry — the Boston nonstop fare board (see its own section)
 ├── scripts/
 │   ├── fetch-synth-images.py                # GENERATOR: the earlier pages' instrument photographs
 │   ├── fetch-opus5ios-synth-images.py       # GENERATOR: /opus5ios's own set (different frames)
-│   └── fetch-opus-max-mac-photographs.py    # GENERATOR: /opus-max-mac's set (square-cropped for a circular plate)
+│   ├── fetch-opus-max-mac-photographs.py    # GENERATOR: /opus-max-mac's set (square-cropped for a circular plate)
+│   └── sweep-flights.py                     # GENERATOR: re-checks /flights' favourites and rewrites flights.html
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -720,6 +722,63 @@ maximum contrast on a dark ground is where a serif blooms.
 Entrance animations live **inside `prefers-reduced-motion: no-preference`** so
 the resting state is the base style, and the orrery has a real pause control
 (WCAG 2.2.2 wants one on the page; an OS preference is not one).
+
+## Flights board (`/flights`)
+
+A single self-contained `flights.html` — no React, no build step, no shared
+CSS. Cheapest **nonstop** round trip out of Boston Logan, 5 nights, 3 seats
+(2 adults + 1 child), sampled across the next 12 months and grouped by
+region. `noindex, nofollow`; light and dark, with a manual toggle.
+
+**The shortlist is the point.** `FLIGHTS.favourites` is a list of route keys
+rendered above the regional board, each scored against one rule: **fly
+JetBlue unless another nonstop saves more than `FLIGHTS.threshold`**
+($500). `call()` is the whole rule — it compares `r.jb` against `r.all` and
+returns *Fly JetBlue* / *Stay JetBlue* / *Worth switching* / *No JetBlue*,
+shown on the gate and spelled out on the selected route. Two of the
+favourites run the other way (`dir: "in"`, Charlotte and Asheville into
+Boston, priced for one traveller); they get their own group rather than a
+separate board. A favourite is removed from its region so no gate appears
+twice.
+
+**Re-checking it: `scripts/sweep-flights.py`.** Edit `FAVOURITES` and run
+it; it rewrites the `FLIGHTS` blob in place, and `--dry-run` prints the JSON
+instead. Read that file's docstring before touching it — three traps live
+there, and each one produces a board that looks right:
+
+- **The fli MCP does not work.** `GetShoppingResults` returns gRPC INTERNAL
+  inside an HTTP 200, which the client reports as `{"success": true,
+  "count": 0}`, so a dead endpoint looks like a route with no flights.
+  `flights` 0.9.0 is the latest release; there is no upgrade. The sweep goes
+  through `fast-flights` against Google's own results page instead.
+- **Asking for nonstop is not `max_stops=0`.** The field is a literal stop
+  count, and proto3 drops a scalar sitting at its default — so `0`
+  serialises to nothing, the filter vanishes, and connecting itineraries
+  come back looking like a nonstop board. The sweep serialises a sentinel
+  and rewrites that one byte to zero.
+- **A child in the party empties whole routes.** Tokyo, Hong Kong and
+  Montego Bay return *nothing* for 2 adults + 1 child and price normally
+  for 3 adults — a gap in what JAL, Cathay and the Caribbean carriers file,
+  not a route with no service. A route that comes back completely empty is
+  re-priced as adults, which sets `adultsOnly` on the record; the gate
+  flags it and the fine print explains it. Same seat count, so totals stay
+  comparable.
+
+What the sweep basis cannot do, each said on the page rather than hidden:
+fares carry **no checked bag** (the bag filter lived in fli's RPC; no `tfs`
+field reproduces it), the **return leg** shown is a second same-carrier
+look-up rather than the flight paired inside the fare, and a JetBlue figure
+is *the cheapest nonstop round trip that departs on JetBlue*, since Google
+pairs each outbound with whatever return is cheapest.
+
+Two month states are distinct and must stay that way: `min: null` is **no
+nonstop that month**, `beyond: true` is **not on sale yet**, past the
+airlines' booking window. Conflating them marks every route seasonal for
+being far away. Where a nonstop round trip barely prices at all (Amsterdam
+does not price as one at all, though nonstops fly both ways), the record
+carries `oneWay` — the two one-way nonstops — and `conn`, what one stop
+buys; both are surfaced and both are stated as absent from the chart, which
+only ever charts nonstop round trips.
 
 ## Take Me Back (era themes)
 
