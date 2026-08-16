@@ -107,6 +107,10 @@ STOPS_ONE_OR_FEWER = 1
 _STOPS_SENTINEL = 7                       # 0x07: never appears in the ASCII payload
 _STOPS_TAG = bytes([(5 << 3) | 0])        # FlightData.max_stops, varint
 
+# Below this many priced days out of the sample, sampling is not measuring
+# the route and every departure gets checked instead.
+DENSE_SCAN_BELOW = 12
+
 WORKERS = 4
 ATTEMPTS = 3                    # an empty page is indistinguishable from no service
 EMPTY_ATTEMPTS = 2              # ...but most empties are just past the booking window
@@ -280,18 +284,45 @@ def query(legs, party, max_stops):
     return None
 
 
+def window() -> tuple[date, date]:
+    """The next MONTHS whole months, from the start of next month."""
+    today = date.today()
+    year, month = today.year, today.month + 1
+    if month > 12:
+        month, year = 1, year + 1
+    first = date(year, month, 1)
+    end_year, end_month = year + (month - 1 + MONTHS) // 12, (month - 1 + MONTHS) % 12 + 1
+    return first, date(end_year, end_month, 1)
+
+
 def sample_dates() -> list[tuple[date, date]]:
     """Four departures a month across the next 12 months, each a 5-night stay."""
-    today = date.today()
+    first, end = window()
     out = []
-    year, month = today.year, today.month
-    for _ in range(MONTHS):
-        month += 1
-        if month > 12:
-            month, year = 1, year + 1
-        for day in SAMPLE_DAYS:
-            dep = date(year, month, day)
-            out.append((dep, dep + timedelta(days=NIGHTS)))
+    day = first
+    while day < end:
+        if day.day in SAMPLE_DAYS:
+            out.append((day, day + timedelta(days=NIGHTS)))
+        day += timedelta(days=1)
+    return out
+
+
+def every_date() -> list[tuple[date, date]]:
+    """Every departure in the window.
+
+    Four days a month estimates a route flown daily perfectly well, and is
+    close to useless on one with a handful of bookable days a year — the
+    odds of landing on them are slim, and the board then quotes a fare
+    hundreds of dollars above what is actually for sale. Edinburgh proved
+    it: sampling said $3,130 in May, and the cheapest nonstop round trip
+    in the whole window was $2,568 on 9 October, two days off a sample.
+    """
+    first, end = window()
+    out = []
+    day = first
+    while day < end:
+        out.append((day, day + timedelta(days=NIGHTS)))
+        day += timedelta(days=1)
     return out
 
 
@@ -299,6 +330,22 @@ def sample_dates() -> list[tuple[date, date]]:
 
 def month_label(d: date) -> str:
     return d.strftime("%b %Y")
+
+
+def month_slots() -> list[tuple[str, str]]:
+    """(ym, label) for every month in the window, in order.
+
+    Taken from the window rather than from the sampled dates, so the chart
+    still has twelve columns whichever sampling a route used.
+    """
+    first, end = window()
+    slots, day = [], first
+    while day < end:
+        key = day.strftime("%Y-%m")
+        if not slots or slots[-1][0] != key:
+            slots.append((key, month_label(day)))
+        day += timedelta(days=1)
+    return slots
 
 
 def leg_dict(option: Option) -> dict | None:
@@ -327,12 +374,9 @@ def build_view(samples: list[tuple[date, date, list[Option]]], seats: int, only_
     for dep, _, best in rows:
         priced.setdefault(dep.strftime("%Y-%m"), []).append(best.price)
 
-    monthly, labelled = [], {}
-    for dep, _ in sample_dates():
-        labelled.setdefault(dep.strftime("%Y-%m"), month_label(dep))
-    for ym, label in labelled.items():
-        monthly.append({"ym": ym, "label": label,
-                        "min": min(priced[ym]) if ym in priced else None})
+    monthly = [{"ym": ym, "label": label,
+                "min": min(priced[ym]) if ym in priced else None}
+               for ym, label in month_slots()]
 
     counts: dict[str, dict] = {}
     for _, _, best in rows:
@@ -443,7 +487,7 @@ def as_adults(party):
             "label": f"{party['seats']} adults"}
 
 
-def sweep_route(route, log):
+def sweep_route(route, log, force_daily=False):
     party = OUT_PARTY if route["dir"] == "out" else IN_PARTY
     origin = HOME if route["dir"] == "out" else route["code"]
     far = route["code"] if route["dir"] == "out" else HOME
@@ -451,14 +495,14 @@ def sweep_route(route, log):
 
     pairs = sample_dates()
 
-    def collect(for_party):
+    def collect(for_party, dates=None):
         def one(pair):
             dep, ret = pair
             options = query([(dep, origin, far), (ret, far, origin)], for_party, STOPS_NONSTOP)
             return dep, ret, [o for o in (options or []) if o.stops == 0]
 
         with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-            return list(pool.map(one, pairs))
+            return list(pool.map(one, dates if dates is not None else pairs))
 
     samples = collect(party)
 
@@ -473,6 +517,24 @@ def sweep_route(route, log):
         party = as_adults(party)
         log(f"    nothing prices with a child on board — re-pricing {party['seats']} seats as adults")
         samples = collect(party)
+
+    # On a route that flies most days, four departures a month estimate the
+    # monthly floor well. On one that prices a handful of days a year they
+    # mostly land on nothing, and the fare that survives is whichever thin
+    # date happened to be sampled — which is how Edinburgh came to be quoted
+    # at $3,130 next May while $2,568 sat unbought on 9 October. Where the
+    # sample comes back that sparse, stop sampling and check every day.
+    flown = sum(1 for _, _, options in samples if options)
+    scan = "sampled"
+    if force_daily or flown <= DENSE_SCAN_BELOW:
+        log(f"    {flown}/{len(samples)} sampled days price — checking every departure")
+        dense = collect(party, every_date())
+        # Only take the wider scan if it did at least as well; a run of
+        # blank pages must not be allowed to erase a route that priced.
+        if sum(1 for _, _, options in dense if options) >= flown:
+            samples, scan = dense, "daily"
+        else:
+            log("    every-departure pass came back thinner than the sample — keeping the sample")
 
     all_view = build_view(samples, party["seats"], only_preferred=False)
     jb_view = build_view(samples, party["seats"], only_preferred=True)
@@ -503,6 +565,7 @@ def sweep_route(route, log):
         "bags": 0,
         "party": party["label"],
         "fav": True,
+        "scan": scan,
         "all": all_view,
         "jb": jb_view,
     }
@@ -543,6 +606,58 @@ def sweep_route(route, log):
     return record
 
 
+# --- Confirming what is already on the board ---------------------------
+
+def party_for(record) -> dict:
+    """Reconstruct the party a record was priced for, from the record."""
+    seats = record.get("seats", OUT_PARTY["seats"])
+    if record.get("adultsOnly") or seats == 1:
+        return {"adults": seats, "children": 0, "seats": seats, "label": f"{seats} adults"}
+    return {"adults": seats - 1, "children": 1, "seats": seats,
+            "label": f"{seats - 1} adults + 1 child"}
+
+
+def confirm(data, log) -> int:
+    """Re-ask Google for each favourite's headline itinerary, exactly as shown.
+
+    A full sweep takes hours; this is one query per figure, so it answers
+    "is the number on the board still real?" in about a minute. Returns
+    the number of figures that no longer price as shown.
+    """
+    print(f"{'ROUTE':9s} {'VIEW':5s} {'DEPART':11s} {'RETURN':11s} {'BOARD':>7s} {'LIVE':>7s}  VERDICT")
+    drifted = 0
+    for key in data.get("favourites", []):
+        record = data["routes"].get(key)
+        if not record:
+            continue
+        party = party_for(record)
+        origin = record.get("origin", data["origin"])
+        far = data["origin"] if record.get("dir") == "in" else record["code"]
+        for label in ("all", "jb"):
+            view = record.get(label)
+            if not view:
+                continue
+            cheapest = view["cheapest"]
+            dep, ret = date.fromisoformat(cheapest["dep"]), date.fromisoformat(cheapest["ret"])
+            options = query([(dep, origin, far), (ret, far, origin)], party, STOPS_NONSTOP) or []
+            if label == "jb":
+                options = [o for o in options if o.carrier == PREFERRED]
+            live = min((o.price for o in options if o.stops == 0), default=None)
+            shown = cheapest["price"]
+            if live is None:
+                verdict, bad = "GONE — no longer prices", True
+            elif live == shown:
+                verdict, bad = "confirmed", False
+            else:
+                move = live - shown
+                verdict = f"{'+' if move > 0 else ''}{move} ({'dearer' if move > 0 else 'cheaper'})"
+                bad = abs(move) > shown * 0.02
+            drifted += bool(bad)
+            print(f"{key:9s} {label:5s} {dep.isoformat():11s} {ret.isoformat():11s} "
+                  f"{shown:7d} {live if live is not None else 0:7d}  {verdict}")
+    return drifted
+
+
 # --- Writing the board -------------------------------------------------
 
 def load_board() -> tuple[str, dict]:
@@ -570,7 +685,16 @@ def merge(data: dict, records: list[dict]) -> dict:
     data["regions"] = [r for r in data["regions"] if r["keys"]]
     data["favourites"] = favourites
     data["favSweep"] = date.today().isoformat()
-    data["favSampling"] = f"{len(SAMPLE_DAYS)} departures/month × {MONTHS} months"
+    # Say which basis actually produced these numbers rather than describing
+    # the default, because the two differ by hundreds of dollars on a thin route.
+    daily = sum(1 for r in records if r.get("scan") == "daily")
+    if daily == len(records):
+        data["favSampling"] = f"every departure across the next {MONTHS} months"
+    elif daily:
+        data["favSampling"] = (f"{len(SAMPLE_DAYS)} departures a month across {MONTHS} months, "
+                               f"and every date on the {daily} thinnest routes")
+    else:
+        data["favSampling"] = f"{len(SAMPLE_DAYS)} departures a month across {MONTHS} months"
     data["threshold"] = SWITCH_THRESHOLD
     return data
 
@@ -591,6 +715,12 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true", help="print the swept JSON, leave the board alone")
     ap.add_argument("--only", help="comma-separated codes to sweep (default: all favourites)")
+    ap.add_argument("--daily", action="store_true",
+                    help="check every departure on every route, not just the thin ones. "
+                         "~365 queries a route instead of 48 — slow, and the accurate answer")
+    ap.add_argument("--confirm", action="store_true",
+                    help="re-ask Google for each favourite's headline fare and report drift; "
+                         "one query per figure, so it finishes in about a minute")
     ap.add_argument("--write-from", nargs="+", metavar="FILE",
                     help="skip the sweep; write the board from saved --dry-run JSON. "
                          "Later files win on a route both contain.")
@@ -598,6 +728,13 @@ def main():
 
     def log(msg):
         print(msg, file=sys.stderr, flush=True)
+
+    if args.confirm:
+        _, data = load_board()
+        drifted = confirm(data, log)
+        print(f"\n{drifted} figure(s) no longer price as shown." if drifted
+              else "\nEvery figure on the shortlist still prices as shown.")
+        sys.exit(1 if drifted else 0)
 
     if args.write_from:
         # A sweep is slow enough to be worth keeping: --dry-run it to a file,
@@ -620,7 +757,7 @@ def main():
         records = []
         for route in wanted:
             log(f"{route['code']} {route['city']} ({route['dir']})")
-            records.append(sweep_route(route, log))
+            records.append(sweep_route(route, log, force_daily=args.daily))
 
     if args.dry_run:
         json.dump(records, sys.stdout, indent=1)
