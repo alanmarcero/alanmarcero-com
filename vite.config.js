@@ -11,6 +11,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         arcade: resolve(__dirname, 'arcade.html'),
         neworleans: resolve(__dirname, 'neworleans.html'),
+        neworleansTours: resolve(__dirname, 'neworleans-tours.html'),
         flights: resolve(__dirname, 'flights.html'),
         tmobile: resolve(__dirname, 'tmobile.html'),
         matrix: resolve(__dirname, 'matrix.html'),
