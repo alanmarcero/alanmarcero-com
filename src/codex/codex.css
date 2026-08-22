@@ -540,7 +540,7 @@ body {
 .codex-finder__clear {
   display: inline-flex;
   align-items: center;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   color: var(--amber) !important;
   font-family: var(--mono) !important;
   font-size: 0.68rem !important;
@@ -880,6 +880,10 @@ body {
   text-transform: uppercase;
   text-decoration: none;
   transition: color 160ms var(--ease), border-color 160ms var(--ease);
+}
+
+.codex-page .action {
+  min-width: 2.75rem;
 }
 
 .codex-action:hover,
