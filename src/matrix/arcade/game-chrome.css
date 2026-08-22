@@ -327,3 +327,46 @@
     padding-block-start: var(--space-l);
   }
 }
+
+/* --- The page around the cabinet -------------------------------------
+ * Added with the title bar in `GameView`. See that file for why the bar
+ * exists; this is the part that keeps contract 1 (above) true once the
+ * cabinet is no longer the whole page.
+ */
+
+.game-page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100dvh;
+  background: var(--panel);
+}
+
+/*
+ * `.game-wrapper` claims the viewport when it is the page. Here it is a row,
+ * so it must stop claiming it — otherwise bar + 100dvh overflows and the
+ * canvas starts below the fold. `min-height: 0` also lets its own inner
+ * `1fr` row resolve, which is what gives `.game-canvas-area` its height.
+ */
+.game-page > .game-wrapper {
+  min-height: 0;
+  height: 100%;
+}
+
+/* A rail like the legend strip: engraved rule, no fill of its own. */
+.game-page__bar {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-m);
+  padding: var(--space-s) var(--gutter);
+  border-block-end: 1px solid var(--panel-3);
+}
+
+.game-page__title {
+  margin: 0;
+  font-family: var(--panel-face);
+  font-size: var(--display-s);
+  font-weight: 600;
+  letter-spacing: var(--legend-tracking-wide);
+  text-transform: uppercase;
+  color: var(--lcd);
+}
