@@ -88,13 +88,44 @@
   min-width: 0;
 }
 
-.work__artists {
+/* The numeric prefix is the main site's one typographic move that transfers
+ * without dragging its container along: "01 — SOUND DESIGN" in tracked mono.
+ * A numbered list says "this is a catalogue of six things"; six unnumbered
+ * headings say "here are some headings".
+ *
+ * Both parts are TEXT, so both take a text-safe token. --seam (3.00:1 here)
+ * would have been the tempting choice for the quiet number and it is a
+ * stroke token — the same trap --legend-faint and the main site's
+ * --ink-faint both set independently.
+ */
+.work__index {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
   margin: 0 0 var(--space-2xs);
-  font-family: var(--panel-face);
-  font-size: var(--step--1);
-  font-weight: 600;
+  font-family: var(--data-face);
+  font-size: var(--step--2);
   text-transform: uppercase;
   letter-spacing: var(--legend-tracking);
+  color: var(--legend-dim);
+}
+
+.work__num {
+  font-variant-numeric: tabular-nums;
+  color: var(--legend-dim);
+}
+
+.work__artists {
+  min-width: 0;
+  color: var(--legend-dim);
+}
+
+/* The em-dash separator lives in CSS because it is punctuation between two
+ * fields, not content of either — and it must not appear when a work has no
+ * credited artist.
+ */
+.work__artists::before {
+  content: '— ';
   color: var(--legend-dim);
 }
 
@@ -146,9 +177,40 @@
  * someone else's before he got to it. Amber, because it is the accent this
  * building already uses for "the live value", and it clears AA on this
  * ground at 8.08:1.
+ *
+ * Amber is also, measured, THE SAME COLOUR as the main site's --amber
+ * (#ffb627 vs #ffb454 is 1.005:1). Half this merge was already done before
+ * anyone looked.
  */
 .take--remixer .take__version {
   color: var(--lcd);
+}
+
+/* --- the active take ----------------------------------------------------
+ * The imported phosphor, spent here and nowhere else in this section.
+ *
+ * m1's token contract defines --phosphor as THE SIGNAL: "the system
+ * responding to you: focus, liveness, the active take." This section is
+ * nine takes of which one is playing, so that definition lands on it almost
+ * literally — and it makes phosphor scarce BY SEMANTICS rather than by my
+ * remembering to be sparing, which was the whole risk.
+ *
+ * Deliberately NOT on the play affordance: an idle button is not the system
+ * responding to anything. Nine idle buttons in phosphor would spend the
+ * signal colour on nine non-signals, and then the one take actually playing
+ * would have nothing left to say so with.
+ *
+ * The bloom is a text-shadow on a live readout, never a box-shadow on a
+ * container — "import the glow, not the module". Phosphor is 9.80:1 on this
+ * ground, the highest-headroom text colour in either palette.
+ */
+.take:has(.player) .take__version {
+  color: var(--phosphor);
+  text-shadow: var(--bloom-phosphor);
+}
+
+.take:has(.player) .take__role {
+  color: var(--phosphor);
 }
 
 .take__role {
@@ -201,6 +263,13 @@
   color: transparent;
   background: var(--panel-3);
   border-radius: 2px;
+}
+
+/* The separator is punctuation between two real fields. In a skeleton there
+ * are no fields yet, so it would be a dash floating beside a grey bar.
+ */
+.work--pending .work__artists::before {
+  content: none;
 }
 
 .work--pending .work__title {
