@@ -262,9 +262,17 @@ body {
 
 /* --- Focus --------------------------------------------------------- */
 
+/* Focus is the clearest case of phosphor's meaning: it is the system
+   acknowledging you, not data at rest. The main site spends phosphor on
+   exactly this, and moving it off --lcd frees amber to mean readout only.
+   11.18:1 on --panel, so it is the most visible ring available. The bloom
+   is the imported effect and it belongs here — a focus ring emits, so it
+   is light rather than a container. */
+
 :where(a, button, input, [tabindex]):focus-visible {
-  outline: 2px solid var(--lcd);
+  outline: 2px solid var(--phosphor);
   outline-offset: 3px;
+  box-shadow: var(--bloom-phosphor);
 }
 
 /* --- Reduced motion ------------------------------------------------ */
