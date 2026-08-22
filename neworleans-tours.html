@@ -146,6 +146,42 @@
   footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--hair-strong);font-size:.82rem;color:var(--faint);line-height:1.6}
   footer a{color:var(--ac);text-decoration:none}
   footer a:hover{text-decoration:underline}
+
+  /* ---------- verified-deals block (added 2026-08-22) ---------- */
+  .vbanner{margin:1.4rem 0 0;background:var(--card);border:1px solid var(--hair);border-left:4px solid var(--ac);
+    border-radius:12px;padding:1rem 1.2rem;box-shadow:var(--shadow)}
+  .vbanner h2{font-family:var(--serif);font-size:1.18rem;margin:0 0 .35rem;color:var(--ac);display:flex;align-items:center;gap:.5rem}
+  .vbanner p{margin:.4rem 0 0;font-size:.92rem;color:var(--muted)}
+  .vbanner p b{color:var(--ink)}
+  .vbanner .legend{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
+  .vbanner .legend span{font-size:.75rem;font-family:var(--mono);padding:.2rem .5rem;border-radius:5px}
+  .lg-v{background:var(--green-soft);color:var(--green)}
+  .lg-u{background:var(--kid-soft);color:var(--kid)}
+  .lg-m{background:var(--plum-soft);color:var(--plum)}
+
+  .fbar{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0 .3rem;align-items:center}
+  .fchip{font:600 .8rem var(--sans);color:var(--muted);background:var(--card);
+    border:1px solid var(--hair-strong);border-radius:999px;padding:.32rem .8rem;cursor:pointer;transition:all .15s}
+  .fchip:hover{border-color:var(--ac);color:var(--ac)}
+  .fchip[aria-pressed="true"]{background:var(--ac);border-color:var(--ac);color:#fff}
+  .fcount{font-size:.8rem;color:var(--faint);margin-left:.2rem}
+
+  .vfy{font-size:.73rem;color:var(--faint);font-family:var(--mono);margin:.1rem 0 .7rem;line-height:1.5;
+    padding-left:.55rem;border-left:2px solid var(--hair-strong);word-break:break-word}
+  .vfy a{color:var(--ac);text-decoration:none}
+  .vfy a:hover{text-decoration:underline}
+  .vfy .vok{color:var(--green);font-weight:700}
+
+  .delta{background:var(--green-soft);border-radius:8px;padding:.55rem .7rem;margin-bottom:.7rem;font-size:.8rem;color:var(--muted)}
+  .delta .drow{display:flex;justify-content:space-between;gap:.6rem}
+  .delta .dsave{margin-top:.35rem;font-weight:700;color:var(--green);font-size:.82rem}
+
+  .mech{background:var(--plum-soft);color:var(--plum);font-size:.78rem;font-weight:600;padding:.35rem .6rem;
+    border-radius:6px;margin-bottom:.8rem;display:flex;align-items:flex-start;gap:.4rem;line-height:1.4}
+  .unver{background:var(--kid-soft);color:var(--kid);font-size:.78rem;font-weight:600;padding:.35rem .6rem;
+    border-radius:6px;margin-bottom:.8rem;display:flex;align-items:flex-start;gap:.4rem;line-height:1.4}
+  .tcard[hidden]{display:none}
+  .nores{color:var(--muted);font-size:.9rem;padding:1rem .2rem}
 </style>
 </head>
 <body>
@@ -183,6 +219,227 @@
       </p>
     </div>
 
+    <!-- ============ VERIFIED DEALS (added 2026-08-22) ============ -->
+    <div class="vbanner">
+      <h2>✓ Verified 2026-08-22 — how to read the prices on this page</h2>
+      <p>
+        <b>A price and a coupon expire, and the expiry is not printed on them.</b> Every deal in this
+        section carries the <b>date it was checked</b> and <b>the page it was checked against</b>, so a
+        reader can tell a fresh number from a stale one. Cards elsewhere on this page were written in
+        one pass in August 2026 and carry only a blanket footer claim — treat those as undated.
+      </p>
+      <p>
+        Where an operator publishes a price directly, that is the number shown, because
+        <b>operator-direct is usually cheaper than the aggregator</b> — and where it is not, that is
+        said too. <b>No promo code appears here unless it was found on the seller's own page.</b>
+        Discount <i>mechanisms</i> (free-tour-plus-tip, advance purchase, combo, city pass, kids-free
+        ages) are preferred over codes: they rot far more slowly.
+      </p>
+      <div class="legend">
+        <span class="lg-v">✓ Verified = checked on the named page, on the named date</span>
+        <span class="lg-m">◆ Mechanism = a durable discount, not an expiring code</span>
+        <span class="lg-u">✗ Unverified = claim could not be confirmed at source</span>
+      </div>
+    </div>
+
+    <div class="shead"><span class="ic">⭐</span> Best current deals — French Quarter, Downtown &amp; Garden District</div>
+    <p class="sintro">
+      Seven options that qualify on geography: they run in the French Quarter, downtown or the Garden
+      District, or they depart from a downtown hotel. Checked against operator and aggregator pages on
+      2026-08-22.
+    </p>
+
+    <div class="fbar" id="fbar">
+      <button class="fchip" data-filter="all" aria-pressed="true">All</button>
+      <button class="fchip" data-filter="free" aria-pressed="false">Free / tip-based</button>
+      <button class="fchip" data-filter="under35" aria-pressed="false">Under $35</button>
+      <button class="fchip" data-filter="fq" aria-pressed="false">French Quarter</button>
+      <button class="fchip" data-filter="gd" aria-pressed="false">Garden District</button>
+      <button class="fchip" data-filter="family" aria-pressed="false">Kids free / family</button>
+      <button class="fchip" data-filter="pass" aria-pressed="false">Pass or combo</button>
+      <span class="fcount" id="fcount"></span>
+    </div>
+
+    <div class="tour-grid" id="vgrid">
+
+      <div class="tcard highlight" data-tags="free fq gd under35 walking">
+        <span class="badge-top">Cheapest way in</span>
+        <div>
+          <span class="tnum">Verified #1</span>
+          <div class="tname">Nola Tour Guy — French Quarter &amp; St. Louis Cemetery</div>
+          <div class="tloc">📍 Meets Washington Artillery Park, 768 Decatur St — in the French Quarter</div>
+          <div class="tdesc">Free daily walking tour covering Jackson Square, Pirates Alley, Royal Street, Bourbon Street history, Storyville, the Faulkner and Tennessee Williams houses, and St. Louis Cemetery No. 1. Same ground the paid French Quarter tours cover.</div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Departs</span><span class="val">Daily 10:00 AM</span></div>
+            <div class="mitem"><span class="lbl">Cost</span><span class="val">Free + tip</span></div>
+            <div class="mitem"><span class="lbl">Suggested</span><span class="val">$20–25 / person</span></div>
+            <div class="mitem"><span class="lbl">Group of 4</span><span class="val">Book private if &gt;6</span></div>
+          </div>
+          <div class="price-box">
+            <div class="per-person"><b>$0</b> + tip / person</div>
+            <div class="group-total"><span class="gt-lbl">Total for 4 (tips)</span><span class="gt-val">$80 – $100</span></div>
+          </div>
+          <div class="mech">◆ Free-tour-plus-tip. There is no code to expire and no advance payment — the price is whatever you decide it was worth.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · operator page —
+            <a href="https://www.nolatourguy.com/free-walking-tours-nola-tour-guy/" target="_blank" rel="noopener">nolatourguy.com › free-walking-tours</a><br>
+            Also runs Garden District, cemetery, voodoo, ghost, cocktail-history and jazz tours, plus a Spanish-language French Quarter tour. Parties over 6 must book a private tour.</div>
+          <a href="https://www.nolatourguy.com/book-a-tour/" target="_blank" rel="noopener" class="btn-book">Book Nola Tour Guy (free)</a>
+        </div>
+      </div>
+
+      <div class="tcard" data-tags="free fq gd under35 walking">
+        <div>
+          <span class="tnum">Verified #2</span>
+          <div class="tname">Free Tours by Foot — small-group walks</div>
+          <div class="tloc">📍 French Quarter &amp; Garden District departures</div>
+          <div class="tdesc">Runs a French Quarter walking tour, a Garden District walking tour and a French Quarter ghost tour, plus cemetery, voodoo and food walks. Small groups of 12–14 rather than the 30-plus crowds the free-tour model usually produces.</div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Small group</span><span class="val">12–14 people</span></div>
+            <div class="mitem"><span class="lbl">Fixed price</span><span class="val">$19 – $29</span></div>
+            <div class="mitem"><span class="lbl">Voodoo tour</span><span class="val">Name your price</span></div>
+            <div class="mitem"><span class="lbl">Self-guided</span><span class="val">Free + audio</span></div>
+          </div>
+          <div class="price-box">
+            <div class="per-person"><b>$19 – $29</b> / person</div>
+            <div class="group-total"><span class="gt-lbl">Total for 4</span><span class="gt-val">$76 – $116</span></div>
+          </div>
+          <div class="mech">◆ Three price tiers on one operator: fixed small-group, name-your-own-price, and free self-guided routes with maps. Pick the tier, not a coupon.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · operator page —
+            <a href="https://freetoursbyfoot.com/new-orleans-tours/" target="_blank" rel="noopener">freetoursbyfoot.com › new-orleans-tours</a><br>
+            Per-tour prices are on each tour's own page; the $19–29 band is what the operator advertises for small-group walks.</div>
+          <a href="https://freetoursbyfoot.com/new-orleans-tours/" target="_blank" rel="noopener" class="btn-book">See Free Tours by Foot</a>
+        </div>
+      </div>
+
+      <div class="tcard highlight" data-tags="gd under35 walking">
+        <span class="badge-top">Biggest gap found</span>
+        <div>
+          <span class="tnum">Verified #3</span>
+          <div class="tname">Garden District — book direct, not through Viator</div>
+          <div class="tloc">📍 Garden District (Magazine St / Lafayette Cemetery area)</div>
+          <div class="tdesc">The same neighbourhood walk — mansions, cemetery, Anne Rice and Commander's Palace ground — is sold at wildly different prices depending on where you buy it. This is the single largest direct-versus-aggregator gap found on this page.</div>
+        </div>
+        <div>
+          <div class="delta">
+            <div class="drow"><span>Nola Tour Guy (direct)</span><b>Free + tip</b></div>
+            <div class="drow"><span>NOLA Legendary Walking Tours (direct)</span><b>$29.99</b></div>
+            <div class="drow"><span>Viator — Mansions, Cocktails &amp; Magnolias</span><b>$85</b></div>
+            <div class="drow"><span>Viator — Garden District Food, Drinks &amp; History</span><b>$98</b></div>
+            <div class="dsave">Booking direct instead of the $85 Viator listing saves about $55 per person — roughly $220 for a party of 4.</div>
+          </div>
+          <div class="mech">◆ Operator-direct. The gap is the deal; no code required. The Viator listings include food or cocktails, so compare what is bundled before assuming they are the same walk.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · direct price —
+            <a href="https://www.neworleanslegendarywalkingtours.com/new-orleans-tours/garden-district-walking-tour" target="_blank" rel="noopener">neworleanslegendarywalkingtours.com</a>;
+            aggregator prices from <a href="https://www.viator.com/New-Orleans-attractions/d675" target="_blank" rel="noopener">Viator</a> listings checked the same day.<br>
+            Viator figures are list prices seen on that date and move with season and demand — re-check both sides before booking.</div>
+          <a href="https://www.neworleanslegendarywalkingtours.com/new-orleans-tours/garden-district-walking-tour" target="_blank" rel="noopener" class="btn-book">Book direct — $29.99</a>
+        </div>
+      </div>
+
+      <div class="tcard" data-tags="fq under35 cemetery">
+        <div>
+          <span class="tnum">Verified #4</span>
+          <div class="tname">St. Louis Cemetery No. 1 — official tour</div>
+          <div class="tloc">📍 425 Basin St — edge of the French Quarter, walkable</div>
+          <div class="tdesc">The city's oldest cemetery and Marie Laveau's tomb. Worth knowing before you shop: there is no cheaper way in, because there is no unaccompanied way in.</div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Adult</span><span class="val">$33</span></div>
+            <div class="mitem"><span class="lbl">After dark</span><span class="val">from $49</span></div>
+            <div class="mitem"><span class="lbl">Departures</span><span class="val">Every 15 min</span></div>
+            <div class="mitem"><span class="lbl">Last tour</span><span class="val">3:45 PM</span></div>
+          </div>
+          <div class="price-box">
+            <div class="per-person"><b>$33</b> / adult</div>
+            <div class="group-total"><span class="gt-lbl">Total for 4</span><span class="gt-val">$132</span></div>
+          </div>
+          <div class="mech">◆ Structural, not promotional: the Archdiocese of New Orleans requires every visitor to be escorted by a licensed guide after repeated vandalism. Senior, child and military discounts exist; a "free self-guided" option does not, and any listing offering one is wrong.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · official tour operator —
+            <a href="https://cemeterytourneworleans.com/" target="_blank" rel="noopener">cemeterytourneworleans.com</a>
+            and the city tourism listing at
+            <a href="https://www.neworleans.com/listing/st-louis-cemetery-no-1/32159/" target="_blank" rel="noopener">neworleans.com</a><br>
+            Groups capped at 20 per departure. Also reachable free of charge on Nola Tour Guy's tip-based French Quarter walk (card #1), which includes the cemetery.</div>
+          <a href="https://cemeterytourneworleans.com/" target="_blank" rel="noopener" class="btn-book">Book the official tour</a>
+        </div>
+      </div>
+
+      <div class="tcard highlight" data-tags="fq family cruise">
+        <span class="badge-top">Aggregator wins</span>
+        <div>
+          <span class="tnum">Verified #5</span>
+          <div class="tname">Steamboat Natchez — daytime jazz cruise</div>
+          <div class="tloc">📍 Toulouse Street Wharf, 400 Toulouse St — French Quarter</div>
+          <div class="tdesc">Live jazz on the Mississippi aboard the last authentic steam-powered sternwheeler on the river. Departs from the Quarter itself, so no transport to arrange.</div>
+        </div>
+        <div>
+          <div class="delta">
+            <div class="drow"><span>Direct — adult</span><b>$43.50</b></div>
+            <div class="drow"><span>Direct — child 6–12</span><b>$21.00</b></div>
+            <div class="drow"><span>Direct — ages 2–5</span><b>Free</b></div>
+            <div class="drow"><span>Groupon listing</span><b>$38.15</b></div>
+            <div class="dsave">The one case on this page where the aggregator beat the operator: about $5.35 per adult below the direct price.</div>
+          </div>
+          <div class="mech">◆ Kids 2–5 sail free and 6–12 are half price — a family discount built into the fare rather than a code. Lunch cruise runs $65 adult / $33 child if you want the meal.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · direct fares —
+            <a href="https://www.steamboatnatchez.com/cruises-2/harborcruise.html" target="_blank" rel="noopener">steamboatnatchez.com</a>;
+            Groupon price from its <a href="https://www.groupon.com/deals/steamboat-natchez-1" target="_blank" rel="noopener">Steamboat Natchez deal page</a>.<br>
+            <span style="color:var(--kid)">✗ Not verified:</span> Groupon advertises stacking sitewide promo codes at checkout and one was referenced against this deal. We could not confirm it on Groupon's own page, so treat it as a mechanism to check at checkout, not a code to count on.</div>
+          <a href="https://www.steamboatnatchez.com/cruises-2/harborcruise.html" target="_blank" rel="noopener" class="btn-book">Compare both before booking</a>
+        </div>
+      </div>
+
+      <div class="tcard" data-tags="pass fq gd family">
+        <div>
+          <span class="tnum">Verified #6</span>
+          <div class="tname">Go City New Orleans — All-Inclusive Pass</div>
+          <div class="tloc">📍 Covers French Quarter, Garden District &amp; downtown attractions</div>
+          <div class="tdesc">One pass covering 25-plus attractions on 1, 2, 3 or 5 consecutive days. Only worth it at volume — but this itinerary is exactly the volume case, because several tours already on this page are included.</div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Attractions</span><span class="val">25+</span></div>
+            <div class="mitem"><span class="lbl">Advertised saving</span><span class="val">up to 50%</span></div>
+            <div class="mitem"><span class="lbl">Durations</span><span class="val">1 / 2 / 3 / 5 days</span></div>
+            <div class="mitem"><span class="lbl">Entry</span><span class="val">Skip-the-line at some</span></div>
+          </div>
+          <div class="mech">◆ City pass. Included and relevant here: Garden District Home &amp; History Tour (French Quarter Phantoms), Cities of the Dead cemetery tour, Haunted History walking tour, the New Orleans School of Cooking demo, Creole Queen paddlewheeler, Jazz Museum and the National WWII Museum.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · inclusion list —
+            <a href="https://gocity.com/new-orleans/en-us" target="_blank" rel="noopener">gocity.com/new-orleans</a><br>
+            <span style="color:var(--kid)">✗ Not verified:</span> current 2026 dollar prices per pass length were not published on the pages checked. Price it against your actual shortlist before buying — a pass only saves money if you use more than about three included attractions per day.</div>
+          <a href="https://gocity.com/new-orleans/en-us" target="_blank" rel="noopener" class="btn-book">Price the Go City pass</a>
+        </div>
+      </div>
+
+      <div class="tcard" data-tags="fq pass food">
+        <div>
+          <span class="tnum">Verified #7</span>
+          <div class="tname">New Orleans School of Cooking — demo class</div>
+          <div class="tloc">📍 Early-1800s molasses warehouse, French Quarter</div>
+          <div class="tdesc">Gumbo, jambalaya and pralines cooked in front of you with the history attached, then you eat what was made. Indoors and seated — the reliable option for an afternoon that turns into a thunderstorm.</div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Format</span><span class="val">Demo + meal</span></div>
+            <div class="mitem"><span class="lbl">Go City</span><span class="val">Included</span></div>
+            <div class="mitem"><span class="lbl">10 AM class</span><span class="val">+$15 upgrade</span></div>
+            <div class="mitem"><span class="lbl">Location</span><span class="val">Walk from Quarter</span></div>
+          </div>
+          <div class="mech">◆ Included on the Go City All-Inclusive Pass, which is the durable saving here — if the pass is already in your plan for the cemetery and Garden District tours, this class costs nothing extra beyond the $15 upgrade for the 10:00 AM–12:30 PM sitting.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · pass inclusion and upgrade fee —
+            <a href="https://gocity.com/en/new-orleans/attractions/cooking-demo-class" target="_blank" rel="noopener">gocity.com › cooking-demo-class</a><br>
+            <span style="color:var(--kid)">✗ Not verified:</span> the school's own walk-up ticket price was not published on the pages checked. Third-party New Orleans cooking classes started around $42 on the same date, so treat that as a ceiling to beat, not the school's rate.</div>
+          <a href="https://gocity.com/en/new-orleans/attractions/cooking-demo-class" target="_blank" rel="noopener" class="btn-book">See class &amp; pass details</a>
+        </div>
+      </div>
+
+    </div>
+    <p class="nores" id="nores" hidden>No tour in this section matches that filter. <button class="fchip" data-filter="all" type="button">Show all</button></p>
+
     <!-- CATEGORY 1: SWAMP TOURS -->
     <div class="shead"><span class="ic">🐊</span> 1. Standalone Swamp Tours (With Downtown Hotel Shuttle)</div>
     <p class="sintro">7 options featuring round-trip motorcoach / van pickup directly from French Quarter &amp; Downtown hotels to the bayou launch.</p>
@@ -205,10 +462,13 @@
             <div class="mitem"><span class="lbl">Plantation?</span><span class="val">NO (100% Swamp Only)</span></div>
           </div>
           <div class="price-box">
-            <div class="per-person"><b>$65 – $70</b> / person</div>
-            <div class="group-total"><span class="gt-lbl">Total for 4</span><span class="gt-val">$260 – $280</span></div>
+            <div class="per-person"><b>$39.99</b> / person <span style="font-size:.72rem;color:var(--faint)">operator-direct</span></div>
+            <div class="group-total"><span class="gt-lbl">Total for 4</span><span class="gt-val">$159.96</span></div>
           </div>
-          <div class="deal-tag">🏷️ Direct promo code <b>SAVE10</b> (10% off) or <b>SWAMPGHOST</b> combo</div>
+          <div class="deal-tag">🏷️ Combos: + French Quarter walking tour <b>$57.98</b> (walk 40% off) · + Ghost Bus <b>$67.36</b> · + City &amp; Cemetery Bus <b>$68.99</b></div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · operator's own published price list —
+            <a href="https://www.cajunencounters.com/tours/tour-packages-and-discounts" target="_blank" rel="noopener">cajunencounters.com › tour-packages-and-discounts</a><br>
+            <b>Corrected on this date:</b> this card previously read $65–$70/person with codes SAVE10 / SWAMPGHOST. The operator lists the swamp tour at $39.99 and publishes no such codes. Durable instead: GovX military/government verification, 10–30% off; phone-booked multi-tour savings $8/$16/$24/$32 for 2/3/4/5 tours.</div>
           <a href="https://www.cajunencounters.com/" target="_blank" rel="noopener" class="btn-book">Book Cajun Encounters</a>
         </div>
       </div>
@@ -717,9 +977,9 @@
             <td class="tbname">Cajun Encounters</td>
             <td>Swamp (Honey Island)</td>
             <td><span class="tag-yes">YES (Hotel Shuttle)</span></td>
-            <td>$65 - $70</td>
-            <td class="tbprice">$260 - $280</td>
-            <td><code>SAVE10</code> (10%) / <code>SWAMPGHOST</code></td>
+            <td>$39.99</td>
+            <td class="tbprice">$159.96</td>
+            <td>Combo −40% walk · GovX 10–30% <span style="color:var(--kid)">(codes unverified, removed 2026-08-22)</span></td>
           </tr>
           <tr>
             <td>2</td>
@@ -919,9 +1179,54 @@
   </div>
 
   <footer>
-    <b>New Orleans Master Tour Directory — September 2026.</b> Prices and voucher codes verified as of August 2026. All swamp tours listed offer standalone tickets with round-trip shuttle transportation from French Quarter &amp; Downtown hotels.<br><br>
-    Sources: <a href="https://www.cajunencounters.com/">Cajun Encounters</a> · <a href="https://www.jeanlafitteswamptour.com/">Jean Lafitte</a> · <a href="https://www.docgumbo.com/">Doctor Gumbo</a> · <a href="https://gocity.com/new-orleans/en-us">Go City</a> · <a href="https://tastebudtours.com/">Tastebud Tours</a>
+    <b>New Orleans Master Tour Directory.</b> This page now holds prices of <b>two different vintages</b>, and the difference matters more than either number.<br><br>
+    <b>Checked 2026-08-22:</b> everything in the ⭐ <i>Best current deals</i> section, plus the Cajun Encounters price and its matrix row. Each of those carries the page it was checked against, inline. Where a figure could not be confirmed at source it is marked <span style="color:var(--kid)">✗ Not verified</span> rather than quietly dropped.<br><br>
+    <b>Written August 2026, undated since:</b> every other card. The original footer here claimed "prices and voucher codes verified as of August 2026" for the whole page at once — one sentence covering 20 cards and 9 promo codes. A blanket claim like that cannot go stale in any particular place, so nothing in it can ever be found wrong; that is weaker than no claim, because it reads as diligence. Those cards' codes have <b>not</b> been confirmed at source. Verify any code at the seller's own page before you rely on it.<br><br>
+    <b>Two codes were removed on 2026-08-22</b> (SAVE10, SWAMPGHOST): the operator's published price list does not contain them, and its swamp tour is $39.99 rather than the $65–$70 previously shown here.<br><br>
+    Sources checked 2026-08-22: <a href="https://www.cajunencounters.com/tours/tour-packages-and-discounts">Cajun Encounters packages</a> · <a href="https://www.nolatourguy.com/free-walking-tours-nola-tour-guy/">Nola Tour Guy</a> · <a href="https://freetoursbyfoot.com/new-orleans-tours/">Free Tours by Foot</a> · <a href="https://cemeterytourneworleans.com/">Cemetery Tour New Orleans</a> · <a href="https://www.steamboatnatchez.com/cruises-2/harborcruise.html">Steamboat Natchez</a> · <a href="https://gocity.com/new-orleans/en-us">Go City</a> · <a href="https://www.neworleanslegendarywalkingtours.com/new-orleans-tours/garden-district-walking-tour">NOLA Legendary Walking Tours</a><br>
+    Earlier sources (undated): <a href="https://www.jeanlafitteswamptour.com/">Jean Lafitte</a> · <a href="https://www.docgumbo.com/">Doctor Gumbo</a> · <a href="https://tastebudtours.com/">Tastebud Tours</a>
   </footer>
 </div>
+
+<script>
+/* Filter for the verified-deals grid only. Progressive enhancement:
+   without JS every card is already visible, and nothing below this
+   section depends on it. */
+(function () {
+  var grid = document.getElementById('vgrid');
+  var bar  = document.getElementById('fbar');
+  var out  = document.getElementById('fcount');
+  var none = document.getElementById('nores');
+  if (!grid || !bar) return;
+
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.tcard'));
+  var total = cards.length;
+
+  function apply(filter) {
+    var shown = 0;
+    cards.forEach(function (c) {
+      var tags = ' ' + (c.getAttribute('data-tags') || '') + ' ';
+      var hit  = filter === 'all' || tags.indexOf(' ' + filter + ' ') !== -1;
+      c.hidden = !hit;
+      if (hit) shown++;
+    });
+    Array.prototype.forEach.call(bar.querySelectorAll('.fchip'), function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-filter') === filter));
+    });
+    if (none) none.hidden = shown !== 0;
+    if (out) out.textContent = shown === total
+      ? 'showing all ' + total
+      : 'showing ' + shown + ' of ' + total;
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.fchip') : null;
+    if (!btn || !btn.getAttribute('data-filter')) return;
+    apply(btn.getAttribute('data-filter'));
+  });
+
+  apply('all');
+})();
+</script>
 </body>
 </html>
