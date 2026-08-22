@@ -11,20 +11,25 @@
  *   --lcd           8.08:1     the remixer credit — data at rest
  *   --phosphor      9.80:1     the active take only — the signal
  *
- * TEXT ON THE SPECTRUM FIELD, which is the ground that actually matters
- * here, because the field sits under the right-hand column:
+ * NO TEXT SITS ON THE SPECTRUM FIELD ANY MORE, and that is the whole
+ * reason the numbers above are the only ones that matter. The field is a
+ * baseline strip in the bottom padding; measured at both 1200px and 390px,
+ * across all six works, zero text elements overlap its band. Freed of the
+ * text constraint it runs at opacity 0.45 — 2.04:1 against the ground,
+ * matching .plate__field's 2.03, where behind the text it could only be
+ * 1.23:1 and was very nearly no mark at all.
  *
- *   field at --wood #b98a5c, opacity 0.14, composited  -> #413732
- *   --legend-well on that field                         4.82:1
- *   --lcd         on that field                         6.59:1
- *   --phosphor    on that field                         7.99:1
- *   --legend      on that field                         8.98:1
+ * The two requirements were provably incompatible while it sat behind text:
+ * field >= 1.50 needs opacity >= 0.27, --legend-well >= 4.50 needs <= 0.18.
+ * Moving the field is what let both be true instead of trading them.
  *
  * NOT used for text here, and each for its own reason:
  *
- *   --legend-dim   4.63:1 bare, but only 4.22:1 over the field even at the
- *                  mask's weakest point — it fails AA everywhere the field
- *                  reaches, so this file uses --legend-well instead.
+ *   --legend-dim   4.63:1 bare, which now passes since the field moved off
+ *                  the text. Kept as --legend-well anyway: it is stronger
+ *                  at 5.91, it is what the m1 consumer registry records for
+ *                  this file, and reverting would spend a registry update
+ *                  to make a label dimmer.
  *   --lcd-dim      2.62:1   strokes only
  *   --wood         4.62:1 raw — a FIELD, never a word
  *   --phosphor-dim 4.00:1 on this ground. Ground-restricted per m1: it is
@@ -89,30 +94,56 @@
  * title, sitting behind the type and never competing with it. --wood at
  * 2.43:1 is exactly why this is a field and not a word.
  */
-/* Opacity dropped 0.28 -> 0.14 on 2026-08-22 because --wood changed under
- * this file. m1 lifted it #8a5a3b -> #b98a5c so the CATALOGUE's envelope
- * field would stop reading as absent at ITS opacity of 0.42. That is a
- * correct fix for that consumer and it made this one fail: a lighter field
- * over a dark ground LOWERS contrast for the light text sitting on it.
+/* MOVED OUT FROM BEHIND THE TEXT, 2026-08-22, because the two requirements
+ * on this element are provably incompatible while text sits on it.
  *
- * Measured at 1200px: .take__version spans 0.61–0.81 of this element's
- * width and the mask reaches full strength at 0.72, so part of that label
- * sits on the field's brightest zone. At 0.28 it read 3.82:1 — below AA.
- * At 0.14 the same pair reads 4.82:1.
+ * History in two steps. First --wood moved under this file: m1 lifted it
+ * #8a5a3b -> #b98a5c so the CATALOGUE's field would stop reading as absent
+ * at ITS opacity of 0.42. A lighter field on a dark ground LOWERS contrast
+ * for light text on top, so my labels fell to 3.82:1 and I dropped opacity
+ * 0.28 -> 0.14 to get them back over AA.
  *
- * A contrast number is not a property of a token, it is a property of a
- * token ON A GROUND — and the ground here is composited from a value
- * another slice owns.
+ * Then M5's owner measured what I could not see from here: the generator
+ * lays down 27.8% ink coverage, and at 0.14 the mark renders at 1.23:1 —
+ * against a 3:1 WCAG non-text floor, and below the 2.78 at which
+ * --legend-faint is declared NON-TEXT ONLY. Nearly no mark at all. They
+ * also established that geometry has no move: at that coverage, bar width,
+ * count and gap cannot raise tonal difference when the tone is 1.23:1.
+ *
+ * SOLVING BOTH CONSTRAINTS AT ONCE, on --panel-2, at the mask plateau:
+ *
+ *   field >= 1.50 (perceptible as tone)  needs opacity >= 0.27
+ *   --legend-well on field >= 4.50 (AA)  needs opacity <= 0.18
+ *
+ * The ranges do not overlap. No opacity satisfies both, so this was never
+ * a question of picking a number on the curve — it was a LAYOUT question
+ * wearing a colour question's clothes.
+ *
+ * So the field moves to the baseline: a full-width strip in the bottom
+ * padding, where the work already reserves 1.5rem and no text is rendered.
+ * Freed of the text constraint it runs at 0.45 — 2.03:1, matching
+ * .plate__field, the one unmasked reference site in the system. A level
+ * strip under a title is also better vocabulary for this building than a
+ * ghost behind it: hardware shows you the signal on a meter, not through
+ * the legend.
  */
 .work__spectrum {
   position: absolute;
-  inset: 0 0 0 auto;
-  width: min(38%, 20rem);
-  height: 100%;
+  inset: auto 0 0 0;
+  /* width:100% and not width:auto. This is an <svg> with viewBox 320x64 and
+   * preserveAspectRatio="none" — a replaced element, so `auto` resolves from
+   * its 5:1 intrinsic ratio rather than stretching between left:0 and
+   * right:0. It rendered 70px wide instead of 1056 and looked like a
+   * deliberate tick mark. */
+  width: 100%;
+  height: 0.875rem;
   color: var(--wood);
-  opacity: 0.14;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 72%);
-  mask-image: linear-gradient(to right, transparent, #000 72%);
+  opacity: 0.45;
+  /* Fades at both ends now. The old single-sided ramp existed to get out of
+   * the way of the title on the left; a baseline strip has nothing to dodge,
+   * so it can simply stop being a hard edge at either end. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
   pointer-events: none;
 }
 
@@ -343,10 +374,8 @@
     justify-content: start;
   }
 
-  /* Full width at narrow, so the field is under EVERYTHING rather than one
-   * column. 0.10 keeps --legend-well at 5.08:1 over it. */
-  .work__spectrum {
-    width: 100%;
-    opacity: 0.10;
-  }
+  /* The narrow override existed because the field ran full width UNDER the
+   * text at this size, which is where it was worst. As a baseline strip it
+   * is already full width and already clear of the text, so there is
+   * nothing left to compensate for and no override to keep. */
 }
