@@ -2,20 +2,43 @@
  * Music section — "a work, and the takes of it"
  *
  * Scoped to this slice. Every value here comes from tokens.css; nothing in
- * this file invents a colour, a step, or a space. The contrast pairs used
- * for TEXT were measured against --panel-2, which is this section's ground:
+ * this file invents a colour, a step, or a space.
  *
- *   --legend       on --panel-2   11.01:1
- *   --legend-dim   on --panel-2    4.63:1
- *   --legend-well  on --panel-2    5.91:1
- *   --lcd          on --panel-2    8.08:1
+ * TEXT ON THE BARE GROUND (--panel-2), re-measured 2026-08-22:
  *
- * And the two that are NOT used for text here, because they cannot be:
+ *   --legend       11.01:1     work titles
+ *   --legend-well   5.91:1     index, artists, version and role labels
+ *   --lcd           8.08:1     the remixer credit — data at rest
+ *   --phosphor      9.80:1     the active take only — the signal
  *
- *   --lcd-dim      on --panel-2    2.62:1   rules and strokes only
- *   --wood         on --panel-2    2.43:1   the spectrum field only
+ * TEXT ON THE SPECTRUM FIELD, which is the ground that actually matters
+ * here, because the field sits under the right-hand column:
+ *
+ *   field at --wood #b98a5c, opacity 0.14, composited  -> #413732
+ *   --legend-well on that field                         4.82:1
+ *   --lcd         on that field                         6.59:1
+ *   --phosphor    on that field                         7.99:1
+ *   --legend      on that field                         8.98:1
+ *
+ * NOT used for text here, and each for its own reason:
+ *
+ *   --legend-dim   4.63:1 bare, but only 4.22:1 over the field even at the
+ *                  mask's weakest point — it fails AA everywhere the field
+ *                  reaches, so this file uses --legend-well instead.
+ *   --lcd-dim      2.62:1   strokes only
+ *   --wood         4.62:1 raw — a FIELD, never a word
+ *   --phosphor-dim 4.00:1 on this ground. Ground-restricted per m1: it is
+ *                  text-safe on --panel and not on --panel-2. Unused here.
+ *   --seam         3.00:1   a stroke token; tempting for the quiet index
+ *                  number and wrong for it, because that number is text.
  *
  * --legend-faint stays non-text per its own contract: hairlines, nothing else.
+ *
+ * THE HEADER ITSELF WENT STALE ONCE ALREADY. It claimed --wood at 2.43:1
+ * after m1 had changed the token to #b98a5c, and listed --legend-dim as a
+ * pair this file used after it had stopped. A comment stating measured
+ * numbers is an artifact that can be wrong, so re-measure it when a token
+ * you consume moves — nothing else will catch it.
  */
 
 /* --- the list ------------------------------------------------------------
@@ -66,13 +89,28 @@
  * title, sitting behind the type and never competing with it. --wood at
  * 2.43:1 is exactly why this is a field and not a word.
  */
+/* Opacity dropped 0.28 -> 0.14 on 2026-08-22 because --wood changed under
+ * this file. m1 lifted it #8a5a3b -> #b98a5c so the CATALOGUE's envelope
+ * field would stop reading as absent at ITS opacity of 0.42. That is a
+ * correct fix for that consumer and it made this one fail: a lighter field
+ * over a dark ground LOWERS contrast for the light text sitting on it.
+ *
+ * Measured at 1200px: .take__version spans 0.61–0.81 of this element's
+ * width and the mask reaches full strength at 0.72, so part of that label
+ * sits on the field's brightest zone. At 0.28 it read 3.82:1 — below AA.
+ * At 0.14 the same pair reads 4.82:1.
+ *
+ * A contrast number is not a property of a token, it is a property of a
+ * token ON A GROUND — and the ground here is composited from a value
+ * another slice owns.
+ */
 .work__spectrum {
   position: absolute;
   inset: 0 0 0 auto;
   width: min(38%, 20rem);
   height: 100%;
   color: var(--wood);
-  opacity: 0.28;
+  opacity: 0.14;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 72%);
   mask-image: linear-gradient(to right, transparent, #000 72%);
   pointer-events: none;
@@ -107,17 +145,17 @@
   font-size: var(--step--2);
   text-transform: uppercase;
   letter-spacing: var(--legend-tracking);
-  color: var(--legend-dim);
+  color: var(--legend-well);
 }
 
 .work__num {
   font-variant-numeric: tabular-nums;
-  color: var(--legend-dim);
+  color: var(--legend-well);
 }
 
 .work__artists {
   min-width: 0;
-  color: var(--legend-dim);
+  color: var(--legend-well);
 }
 
 /* The em-dash separator lives in CSS because it is punctuation between two
@@ -126,7 +164,7 @@
  */
 .work__artists::before {
   content: '— ';
-  color: var(--legend-dim);
+  color: var(--legend-well);
 }
 
 .work__title {
@@ -213,13 +251,19 @@
   color: var(--phosphor);
 }
 
+/* --legend-well rather than --legend-dim: this label sits on the spectrum
+ * field, where legend-dim reads 4.22:1 even at the mask's weakest point and
+ * fails AA at EVERY opacity down to 0.10. legend-well clears at 4.82:1.
+ * The token that fails here is not too dark — the ground under it is too
+ * light, and that ground is composited from another slice's token.
+ */
 .take__role {
   grid-column: 1;
   font-family: var(--panel-face);
   font-size: var(--step--2);
   text-transform: uppercase;
   letter-spacing: var(--legend-tracking);
-  color: var(--legend-dim);
+  color: var(--legend-well);
 }
 
 .take__action {
@@ -299,8 +343,10 @@
     justify-content: start;
   }
 
+  /* Full width at narrow, so the field is under EVERYTHING rather than one
+   * column. 0.10 keeps --legend-well at 5.08:1 over it. */
   .work__spectrum {
     width: 100%;
-    opacity: 0.16;
+    opacity: 0.10;
   }
 }
