@@ -2,7 +2,7 @@
  * /codex — a synthesis of the four existing alanmarcero.com systems.
  *
  * Opus 5 iOS supplies the broadside scale, rules, plates, and wave figures.
- * Opus 5 Mac supplies the dusk ground, orrery, leadered register, and bench.
+ * Opus 5 Mac supplies the orrery, leadered register, and bench.
  * Matrix supplies the data-derived envelope fields and full-width bands.
  * The primary site supplies phosphor, live-signal motion, and the operator mark.
  */
@@ -17,27 +17,30 @@ html {
 
 body {
   margin: 0;
-  background: #171334;
+  background: #0a0c0d;
 }
 
 .codex-page {
-  --dusk: #171334;
-  --dusk-deep: #0e0b21;
-  --field: #221c46;
-  --field-lit: #2c2458;
-  --ink: #e8e6df;
-  --prose: #cfc7e2;
-  --quiet: #a7a1c4;
-  --rule: #4c4668;
-  --rule-strong: #8c85aa;
-  --rose: #dc93a9;
-  --rose-lit: #ffb0c3;
-  --rose-mark: #a3707f;
-  --haze: #372e61;
+  /* The primary site's chassis, signal, and ink values — one palette shared
+     across / and /codex rather than a route-specific colour theme. */
+  --dusk: #0a0c0d;
+  --dusk-deep: #0c0f10;
+  --field: #14181a;
+  --field-lit: #191e21;
+  --ink: #e8edee;
+  --prose: #99a6ab;
+  --quiet: #99a6ab;
+  --rule: #232a2e;
+  --rule-strong: #2f383d;
+  --rose: #ffb454;
+  --rose-lit: #ffb454;
+  --rose-mark: #2f383d;
+  --haze: #232a2e;
   --phosphor: #4af2a4;
   --phosphor-dim: #2c9a68;
   --phosphor-glow: rgb(74 242 164 / 0.16);
-  --amber: #ffb627;
+  --amber: #ffb454;
+  --amber-glow: rgb(255 180 84 / 0.14);
   --lcd: var(--amber);
   --paper: var(--dusk);
   --paper-tint: var(--field);
@@ -47,23 +50,28 @@ body {
   --ink-faint: var(--quiet);
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --serif: 'Instrument Serif', Georgia, serif;
-  --text: 'Spectral', Georgia, serif;
-  --shell: 84rem;
-  --measure: 38rem;
-  --gutter: clamp(1.1rem, 4vw, 4.25rem);
+  --text: 'Archivo', sans-serif;
+  --shell: 72rem;
+  --measure: 36rem;
+  --gutter: 1.5rem;
   --ease: cubic-bezier(0.22, 0.61, 0.24, 1);
 
   min-height: 100vh;
   overflow-x: clip;
   background-color: var(--dusk);
   background-image:
-    radial-gradient(110% 38% at 50% 103%, rgb(220 147 169 / 0.13), transparent 62%),
-    radial-gradient(120% 64% at 50% -8%, #2b1d4a 0%, #1d1740 35%, var(--dusk) 72%, var(--dusk-deep) 100%);
-  background-attachment: fixed;
+    radial-gradient(120% 80% at 50% 0%, rgb(74 242 164 / 0.045), transparent 60%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 95px,
+      #0e1112 95px,
+      #0e1112 96px
+    );
   color: var(--prose);
   font-family: var(--text);
-  font-size: 1.0625rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
   font-variant-numeric: tabular-nums lining-nums;
   -webkit-font-smoothing: antialiased;
 }
@@ -168,7 +176,7 @@ body {
 .codex-hero {
   position: relative;
   isolation: isolate;
-  min-height: min(62rem, 100svh);
+  min-height: min(49rem, 100svh);
   overflow: hidden;
 }
 
@@ -178,7 +186,7 @@ body {
   inset: auto 0 0;
   height: 42%;
   z-index: -1;
-  background: linear-gradient(transparent, rgb(14 11 33 / 0.84) 74%, var(--dusk-deep));
+  background: linear-gradient(transparent, rgb(10 12 13 / 0.9) 72%, var(--dusk));
   pointer-events: none;
 }
 
@@ -186,8 +194,8 @@ body {
   position: absolute;
   inset: 0;
   z-index: -2;
-  color: var(--rose-mark);
-  opacity: 0.46;
+  color: var(--phosphor-dim);
+  opacity: 0.22;
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 90%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 90%);
 }
@@ -210,7 +218,7 @@ body {
 
 .codex-hero__inner {
   padding-top: 1rem;
-  padding-bottom: clamp(3rem, 7vw, 6rem);
+  padding-bottom: clamp(3rem, 5vw, 4.5rem);
 }
 
 .codex-meta {
@@ -219,7 +227,7 @@ body {
   justify-content: space-between;
   gap: 0.4rem 2rem;
   padding-bottom: 0.65rem;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line-strong);
   font-family: var(--mono);
   font-size: 0.65rem;
   font-weight: 500;
@@ -234,17 +242,18 @@ body {
 
 .codex-hero__title {
   font-family: var(--serif);
-  font-size: clamp(4rem, 14.3vw, 12.2rem);
+  font-size: clamp(4rem, 12.8vw, 10.8rem);
   font-weight: 400;
   line-height: 0.82;
   letter-spacing: -0.035em;
   color: var(--ink);
-  margin-top: clamp(2.3rem, 5vw, 4rem) !important;
+  margin-top: clamp(2rem, 4vw, 3rem) !important;
   white-space: nowrap;
   animation: codex-rise 700ms var(--ease) both;
 }
 
 .codex-hero__title em {
+  margin-left: 0.045em;
   font-style: italic;
   color: var(--phosphor);
   text-shadow: 0 0 36px var(--phosphor-glow);
@@ -253,20 +262,21 @@ body {
 .codex-hero__deck {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(2.5rem, 6vw, 5rem);
+  gap: clamp(2.5rem, 5vw, 4rem);
   align-items: start;
-  margin-top: clamp(2.6rem, 6vw, 5rem);
+  margin-top: clamp(2.25rem, 4vw, 3.25rem);
 }
 
 .codex-hero__copy {
-  max-width: 42rem;
+  min-width: 0;
+  max-width: 39rem;
 }
 
 .codex-hero__lead {
   max-width: var(--measure);
-  color: var(--ink);
-  font-size: clamp(1.08rem, 1rem + 0.45vw, 1.35rem);
-  line-height: 1.58;
+  color: var(--prose);
+  font-size: clamp(1rem, 0.96rem + 0.28vw, 1.16rem);
+  line-height: 1.7;
   text-wrap: pretty;
 }
 
@@ -290,7 +300,7 @@ body {
   font-size: clamp(2.7rem, 5vw, 4.3rem);
   line-height: 0.86;
   letter-spacing: -0.025em;
-  text-shadow: 0 0 20px rgb(255 182 39 / 0.12);
+  text-shadow: 0 0 20px var(--amber-glow);
 }
 
 .codex-hero__actions,
@@ -316,7 +326,7 @@ body {
 .codex-page .line__leader {
   align-self: end;
   margin-bottom: 0.3em;
-  border-bottom: 1px dotted var(--rose-mark);
+  border-bottom: 1px dotted var(--line-strong);
   transition: border-color 160ms var(--ease);
 }
 
@@ -352,7 +362,7 @@ body {
 
 .codex-hero__instrument {
   position: relative;
-  width: min(100%, 26rem);
+  width: min(100%, 23rem);
   justify-self: center;
 }
 
@@ -386,7 +396,7 @@ body {
 .codex-hero__instrument figcaption {
   margin-top: 1.3rem;
   max-width: 25rem;
-  color: var(--quiet);
+  color: var(--prose);
   font-size: 0.9rem;
   line-height: 1.55;
 }
@@ -396,12 +406,12 @@ body {
 }
 
 .codex-quiet-action {
-  color: var(--rose);
+  color: var(--amber);
   font-family: var(--mono) !important;
   font-size: 0.67rem !important;
   letter-spacing: 0.11em;
   text-transform: uppercase;
-  text-decoration: underline dotted var(--rose-mark);
+  text-decoration: underline dotted var(--line-strong);
   text-underline-offset: 0.3em;
 }
 
@@ -483,8 +493,30 @@ body {
 /* Search: the Mac brackets around the iOS writing line. */
 
 .codex-finder {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid var(--rule);
+  padding-top: clamp(1.75rem, 3vw, 2.5rem);
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.codex-finder__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 44rem;
+}
+
+.codex-finder__shortcut {
+  min-width: 1.4rem;
+  padding: 0.08rem 0.35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  color: var(--quiet);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
 }
 
 .codex-finder__field {
@@ -497,7 +529,7 @@ body {
 
 .codex-finder__field::before,
 .codex-finder__field::after {
-  color: var(--rose);
+  color: var(--amber);
   font-family: var(--serif);
   font-size: 2.1rem;
   line-height: 1;
@@ -511,7 +543,7 @@ body {
   min-width: 0;
   padding: 0.2rem 0 0.35rem;
   border: 0;
-  border-bottom: 1px dotted var(--rose-mark);
+  border-bottom: 1px dotted var(--line-strong);
   border-radius: 0;
   outline: none;
   appearance: none;
@@ -552,7 +584,7 @@ body {
   justify-content: space-between;
   gap: 0.5rem 2rem;
   padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line-strong);
 }
 
 .codex-section-head h2 {
@@ -606,19 +638,19 @@ body {
 }
 
 .codex-entry:nth-child(even) {
-  background: rgb(44 36 88 / 0.34);
+  background: rgb(20 24 26 / 0.68);
 }
 
 .codex-entry[data-current='true'] {
-  background: rgb(44 36 88 / 0.7);
+  background: var(--field-lit);
 }
 
 .codex-entry__field {
   position: absolute;
   inset: 0;
   z-index: -1;
-  color: var(--rose-mark);
-  opacity: 0.16;
+  color: var(--phosphor-dim);
+  opacity: 0.13;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 42%, transparent 100%);
 }
@@ -666,7 +698,7 @@ body {
 }
 
 .codex-entry__value {
-  color: var(--rose);
+  color: var(--amber);
   font-family: var(--mono);
   font-size: 0.64rem;
   font-weight: 600;
@@ -766,9 +798,9 @@ body {
 }
 
 .codex-page .trace__fill {
-  fill: var(--rose);
+  fill: var(--amber);
   fill-opacity: 0.16;
-  stroke: var(--rose);
+  stroke: var(--amber);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -790,7 +822,7 @@ body {
   content: '';
   position: absolute;
   inset: 4%;
-  border: 1px solid var(--rose-mark);
+  border: 1px solid var(--line-strong);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -822,7 +854,7 @@ body {
   right: 14%;
   bottom: 14%;
   padding: 0.3rem 0.5rem;
-  background: rgb(14 11 33 / 0.76);
+  background: rgb(12 15 16 / 0.84);
   border: 1px solid var(--rule);
 }
 
@@ -874,7 +906,7 @@ body {
   border-block: 1px solid var(--rule);
   background:
     linear-gradient(90deg, rgb(74 242 164 / 0.018), transparent 48%),
-    rgb(14 11 33 / 0.64);
+    rgb(12 15 16 / 0.72);
 }
 
 .codex-tracks {
@@ -965,7 +997,7 @@ body {
 }
 
 .codex-credits a {
-  color: var(--rose-lit);
+  color: var(--phosphor);
   text-underline-offset: 0.2em;
 }
 
@@ -1037,11 +1069,59 @@ body {
 
   .codex-hero__title {
     white-space: normal;
+    margin-top: 2.25rem !important;
   }
 
   .codex-hero__title em {
     display: block;
     margin-left: 0.32em;
+  }
+
+  .codex-hero__deck {
+    gap: 3rem;
+    margin-top: 2.25rem;
+  }
+
+  .codex-hero__lead {
+    font-size: 1rem;
+    line-height: 1.68;
+  }
+
+  .codex-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+    margin-top: 2rem;
+  }
+
+  .codex-stat__value {
+    font-size: clamp(2.7rem, 14vw, 3.4rem);
+  }
+
+  .codex-hero__actions {
+    max-width: 100%;
+    margin-top: 1.75rem;
+  }
+
+  .codex-hero__instrument {
+    width: min(84vw, 20rem);
+  }
+
+  .codex-finder__field {
+    gap: 0.45rem;
+  }
+
+  .codex-finder__field::before,
+  .codex-finder__field::after {
+    font-size: 1.7rem;
+  }
+
+  .codex-finder input {
+    font-size: clamp(1.55rem, 7vw, 2rem);
+  }
+
+  .codex-section-head h2 {
+    font-size: clamp(2.75rem, 14vw, 3.75rem);
   }
 
   .codex-entry {
