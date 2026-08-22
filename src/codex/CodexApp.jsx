@@ -242,6 +242,40 @@ function BankFigure({ bank }) {
   );
 }
 
+function BankThumbnail({ bank }) {
+  const image = imageFor(bank.name);
+  if (!image) return null;
+
+  const picture = (
+    <img
+      src={sourceFor(image)}
+      srcSet={srcSetFor(image)}
+      sizes="(max-width: 62rem) 80vw, 1px"
+      width={image.width}
+      height={image.height}
+      alt={image.alt}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+
+  if (!image.linkImage) {
+    return <div className="codex-entry__thumbnail">{picture}</div>;
+  }
+
+  return (
+    <a
+      className="codex-entry__thumbnail"
+      href={image.source}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`View ${bank.name} on ${image.sourceName || 'its source site'}`}
+    >
+      {picture}
+    </a>
+  );
+}
+
 function Register({ banks, query, rowRef, activeIndex, onPreview }) {
   const currentBank = banks[activeIndex] || banks[0];
 
@@ -303,6 +337,7 @@ function Register({ banks, query, rowRef, activeIndex, onPreview }) {
                         </span>
                       </h3>
                       <p className="codex-entry__description">{bank.description}</p>
+                      <BankThumbnail bank={bank} />
                       <WaveTrace
                         seed={bank.name}
                         cycles={2}
