@@ -149,6 +149,37 @@ describe('what the parse makes visible', () => {
   });
 });
 
+describe('the numbered index borrowed from the main site', () => {
+  it('numbers works 01..N zero-padded, in list order', () => {
+    renderMusic(state({ items: NINE }));
+    expect([...document.querySelectorAll('.work__num')].map((e) => e.textContent))
+      .toEqual(['01', '02', '03', '04', '05', '06']);
+  });
+
+  it('omits the artist span entirely when a work has no credited artist', () => {
+    // No " - " separator, so the whole string is the work and there is no
+    // artist. The em-dash separator is a CSS ::before on that span, so its
+    // absence is what suppresses the dash — there is no dash to hide.
+    renderMusic(state({ items: [item('Untitled Sketch', 'z')] }));
+    expect(document.querySelector('.work__num').textContent).toBe('01');
+    expect(document.querySelector('.work__artists')).toBeNull();
+  });
+
+  it('numbers the loading skeleton too, so the index does not appear on data arrival', () => {
+    renderMusic(state({ loading: true }));
+    const nums = [...document.querySelectorAll('.work--pending .work__num')].map((e) => e.textContent);
+    expect(nums.length).toBeGreaterThan(0);
+    expect(nums[0]).toBe('01');
+  });
+
+  /* Not tested here, and named rather than left implied: the phosphor
+     treatment of the active take is a `.take:has(.player)` CSS rule, and
+     jsdom implements neither :has() nor stylesheet computation. It was
+     verified in Chromium against served dist instead — 0 phosphor elements
+     in the section before any click, exactly 2 after (both on the one active
+     take), bloom as text-shadow with box-shadow none. */
+});
+
 describe('the facade stays a facade', () => {
   it('loads no iframe until asked', () => {
     renderMusic(state({ items: NINE }));
