@@ -194,3 +194,39 @@ describe('Hero thesis block', () => {
     expect(container.querySelector('.hero__count-label').textContent).toMatch(/patches across 24 instruments/);
   });
 });
+
+describe('Hero split-colour headline (merged from the main site)', () => {
+  const props = {
+    totalPatches: 1148,
+    instrumentCount: 24,
+    searchQuery: '',
+    onSearchChange: () => {},
+    resultsCount: null,
+  };
+
+  // The whole safety argument for splitting the h1 is that a <span> adds no
+  // text. If that ever stops being true the name breaks silently, so it is
+  // asserted rather than assumed.
+  it('keeps one heading whose accessible name is still the full name', () => {
+    render(<Hero {...props} />);
+    const h1 = screen.getByRole('heading', { level: 1 });
+    expect(h1.textContent.replace(/\s+/g, ' ').trim()).toBe('Alan Marcero');
+  });
+
+  it('inks only the second word, so the split is real and not decorative', () => {
+    const { container } = render(<Hero {...props} />);
+    const signal = container.querySelector('.hero__title-signal');
+    expect(signal).toBeTruthy();
+    expect(signal.textContent).toBe('Marcero');
+    // The first word must NOT be inside the accent span.
+    expect(signal.textContent).not.toMatch(/Alan/);
+  });
+
+  it('scopes the merged colour to the hero, not to a shared token', () => {
+    const { container } = render(<Hero {...props} />);
+    // The declaration lives on .hero in hero.css; assert the element that
+    // carries it exists, so a future move of the block is visible here.
+    expect(container.querySelector('.hero')).toBeTruthy();
+    expect(container.querySelector('.hero__title-signal').closest('.hero')).toBeTruthy();
+  });
+});
