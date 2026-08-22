@@ -246,16 +246,39 @@
    * dependency is otherwise invisible from either end:
    *
    *   NOTHING OVER IT  (raising helps; raise freely)
-   *     .hero__field         matrix.css      @0.72
-   *     .plate__field        layout.css      @0.42
+   *     .hero__field         matrix.css      @0.72  --panel
+   *     .plate__field        layout.css      @0.42  --panel   field 2.03
+   *     .work__spectrum   sections/music.css @0.45  --panel-2 field 2.04
+   *                       baseline strip, inset: auto 0 0 0, so zero text
+   *                       overlap at 1200px and 390px. 27.8% coverage —
+   *                       see INK COVERAGE below.
    *   TEXT OVER IT     (raising hurts; re-measure text-on-field)
-   *     .work__spectrum   sections/music.css @0.14  --panel-2
-   *                       field 1.23 / legend-well 4.82  (margin 0.32)
-   *     .work__spectrum   sections/music.css @0.10  --panel-2, <=40rem,
-   *                       full width — field 1.16 / legend-well 5.08.
-   *                       The narrow case runs under EVERYTHING rather
-   *                       than one column, so it carries the most text.
-   *                       Both rows are D3's file, not mine.
+   *     — none currently. .work__spectrum was here at @0.14 and @0.10
+   *       and MOVED OUT: agent-cd2997fc showed the two constraints were
+   *       provably incompatible while text sat on it (field >= 1.50 wants
+   *       opacity >= 0.27; legend-well >= 4.50 wants <= 0.18 — no
+   *       overlap), so rather than pick a point on that curve they moved
+   *       the field to a baseline strip in the bottom padding. Both sides
+   *       then improved instead of trading: field 1.23 -> 2.04, labels
+   *       back on bare ground at 5.91 and 11.01. The <=40rem @0.10
+   *       override is deleted too — it existed only to compensate for the
+   *       overlap that no longer happens.
+   *
+   *       KEEP THIS CATEGORY. It is empty by repair, not by nature, and
+   *       the next consumer that puts text on a field belongs in it.
+   *
+   * --- INK COVERAGE, and why one alpha means different things ---------
+   * agent-a85101c8's addition, and it is the number that stops someone
+   * normalising these opacities "for consistency":
+   *
+   *   .work__spectrum   27.80% coverage   filled bars
+   *   lissajous trace    6.22% coverage   1.25px hairline
+   *
+   * A 4.5x difference in ink at the SAME alpha. Opacity scales a mark's
+   * contribution; coverage decides how much mark there is to scale. Two
+   * consumers at 0.45 are not two consumers at the same strength, and
+   * nothing in the opacity value says so. Record coverage next to opacity
+   * for any new field consumer.
    *
    * If you add a --wood consumer, add a line. If you put text over a
    * field, say so here, because nobody editing this token can see it.
