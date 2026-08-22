@@ -172,6 +172,26 @@ body {
   top: 1rem;
 }
 
+/* The primary console's signal path doubles as orientation on the long page. */
+
+.codex-scroll-progress {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 90;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    var(--phosphor-dim),
+    var(--phosphor) 72%,
+    var(--amber)
+  );
+  box-shadow: 0 0 10px var(--phosphor-glow);
+  pointer-events: none;
+}
+
 /* Masthead: the iOS broadside is set inside Matrix's live field. */
 
 .codex-hero {
@@ -594,6 +614,30 @@ body {
   font-weight: 400;
   line-height: 1.4;
   text-align: center;
+}
+
+.codex-finder__clear {
+  color: var(--amber) !important;
+  font-family: var(--mono) !important;
+  font-size: 0.68rem !important;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  text-decoration: underline dotted var(--line-strong);
+  text-underline-offset: 0.3em;
+}
+
+.codex-finder__clear span {
+  display: inline-block;
+  margin-left: 0.2rem;
+  color: var(--phosphor);
+  font-size: 1rem;
+  line-height: 0;
+}
+
+.codex-finder__clear:hover {
+  color: var(--phosphor) !important;
 }
 
 .codex-finder__field {
