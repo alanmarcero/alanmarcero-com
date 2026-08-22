@@ -76,7 +76,10 @@ export function envelopePoints(random, width, height) {
  * @param {number} options.cellWidth
  * @param {number} options.cellHeight
  * @param {number} [options.gap]     space between cells
- * @returns {{ d: string, width: number, height: number, rows: number }}
+ * @param {number[]} [options.groups] glyphs per group, in draw order; when
+ *                                   given, `bands` carries one path string
+ *                                   per group. Omit for a single path.
+ * @returns {{ d: string, bands: string[]|null, width: number, height: number, rows: number }}
  */
 export function buildFieldPath({
   seed,
@@ -85,6 +88,7 @@ export function buildFieldPath({
   cellWidth,
   cellHeight,
   gap = 2,
+  groups = null,
 }) {
   const random = seededRandom(hashString(seed));
   const rows = Math.ceil(count / columns);
@@ -108,10 +112,51 @@ export function buildFieldPath({
 
   return {
     d: segments.join(''),
+    bands: bandsFrom(segments, groups),
     width: columns * stepX - gap,
     height: rows * stepY - gap,
     rows,
   };
+}
+
+/**
+ * Split the field's subpaths into one path string per group.
+ *
+ * WHY THIS EXISTS. The field draws one glyph per patch, and a patch belongs
+ * to an instrument — but the generator was only ever told a total. 1,148
+ * glyphs in one undifferentiated grid is wallpaper by construction, whatever
+ * its scale or contrast, because nothing in it corresponds to anything. The
+ * docstring on `columnsForAspect` has always aspired to "data, not
+ * wallpaper"; a flat count cannot get there.
+ *
+ * Given `groups` — patch counts per instrument, in the same order the field
+ * is drawn — this returns a path per instrument, so a consumer can give them
+ * different weight and the field starts showing where one machine ends and
+ * the next begins.
+ *
+ * Passing no groups returns null and the caller draws the single path exactly
+ * as before, byte for byte. Nothing is required to supply groups.
+ *
+ * Counts that do not sum to the field's glyph count are honoured as far as
+ * they go rather than rejected: a caller whose data drifted gets a partial
+ * banding and a whole field, not an exception in a render path.
+ */
+function bandsFrom(segments, groups) {
+  if (!Array.isArray(groups) || groups.length === 0) return null;
+
+  const bands = [];
+  let cursor = 0;
+
+  groups.forEach((size) => {
+    if (!Number.isInteger(size) || size <= 0) return;
+    const slice = segments.slice(cursor, cursor + size);
+    if (slice.length === 0) return;
+    bands.push(slice.join(''));
+    cursor += size;
+  });
+
+  if (cursor < segments.length) bands.push(segments.slice(cursor).join(''));
+  return bands.length > 0 ? bands : null;
 }
 
 /**
