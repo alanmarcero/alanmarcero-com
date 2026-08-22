@@ -1,0 +1,226 @@
+/*
+ * Music section — "a work, and the takes of it"
+ *
+ * Scoped to this slice. Every value here comes from tokens.css; nothing in
+ * this file invents a colour, a step, or a space. The contrast pairs used
+ * for TEXT were measured against --panel-2, which is this section's ground:
+ *
+ *   --legend       on --panel-2   11.01:1
+ *   --legend-dim   on --panel-2    4.63:1
+ *   --legend-well  on --panel-2    5.91:1
+ *   --lcd          on --panel-2    8.08:1
+ *
+ * And the two that are NOT used for text here, because they cannot be:
+ *
+ *   --lcd-dim      on --panel-2    2.62:1   rules and strokes only
+ *   --wood         on --panel-2    2.43:1   the spectrum field only
+ *
+ * --legend-faint stays non-text per its own contract: hairlines, nothing else.
+ */
+
+/* --- the list ------------------------------------------------------------
+ * No outer border. The catalogue earns its plates by being a reference
+ * shelf; a listening list is lighter, and a rule between works is enough
+ * to say "next".
+ */
+.worklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* --- a work -------------------------------------------------------------
+ * Two columns: identity on the left, takes on the right. They meet at a
+ * shared baseline so a one-take work reads as a single line and a two-take
+ * work grows downward instead of pushing its title around.
+ */
+.work {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-s) var(--space-xl);
+  padding-block: var(--space-l);
+  border-bottom: 1px solid var(--panel-3);
+}
+
+.work:first-child {
+  border-top: 1px solid var(--panel-3);
+}
+
+/* A work with more than one take is the interesting case — it is the same
+ * music twice. Give it room and a warmer ground so the page shows, without
+ * a word, that these three works are the ones that got reworked.
+ */
+.work--multi {
+  padding-block: var(--space-xl);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--panel-3) 55%, transparent),
+    transparent 62%
+  );
+}
+
+/* --- the spectrum -------------------------------------------------------
+ * Unchanged in role from the old row: a deterministic field seeded by the
+ * title, sitting behind the type and never competing with it. --wood at
+ * 2.43:1 is exactly why this is a field and not a word.
+ */
+.work__spectrum {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(38%, 20rem);
+  height: 100%;
+  color: var(--wood);
+  opacity: 0.28;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 72%);
+  mask-image: linear-gradient(to right, transparent, #000 72%);
+  pointer-events: none;
+}
+
+/* --- identity -----------------------------------------------------------
+ * Three tiers where there used to be one. The artist is a silkscreen
+ * legend, the work is the loud thing, and the version is data.
+ */
+.work__id {
+  position: relative;
+  grid-column: 1;
+  min-width: 0;
+}
+
+.work__artists {
+  margin: 0 0 var(--space-2xs);
+  font-family: var(--panel-face);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  color: var(--legend-dim);
+}
+
+.work__title {
+  margin: 0;
+  font-family: var(--panel-face);
+  font-size: var(--step-3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--legend);
+  text-wrap: balance;
+}
+
+/* --- takes --------------------------------------------------------------
+ * One take is a line. Several takes stack, each labelled by its version,
+ * so "Famicom" and "Famicom (Temple 1 Remix)" sit together as one work
+ * with two readings rather than two strangers with similar names.
+ */
+.takes {
+  position: relative;
+  grid-column: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-xs);
+  justify-items: end;
+}
+
+.take {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: var(--space-xs) var(--space-m);
+  justify-content: end;
+}
+
+.take__version {
+  font-family: var(--data-face);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--legend-well);
+  white-space: nowrap;
+}
+
+/* The one genuinely different kind of credit on this list: a track that was
+ * someone else's before he got to it. Amber, because it is the accent this
+ * building already uses for "the live value", and it clears AA on this
+ * ground at 8.08:1.
+ */
+.take--remixer .take__version {
+  color: var(--lcd);
+}
+
+.take__role {
+  grid-column: 1;
+  font-family: var(--panel-face);
+  font-size: var(--step--2);
+  text-transform: uppercase;
+  letter-spacing: var(--legend-tracking);
+  color: var(--legend-dim);
+}
+
+.take__action {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+/* A take whose player is open needs the whole width — the facade replaces
+ * itself in place, and a 16:9 frame does not belong in an end-aligned
+ * column.
+ */
+.take:has(.player) {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: stretch;
+  width: 100%;
+}
+
+.take:has(.player) .take__action {
+  grid-column: 1;
+  grid-row: auto;
+}
+
+/* --- pending ------------------------------------------------------------
+ * The skeleton mirrors the real shape at three works rather than four flat
+ * rows, so the list does not visibly change geometry when the data lands.
+ */
+.work--pending .work__artists,
+.work--pending .work__title {
+  color: transparent;
+  background: var(--panel-3);
+  border-radius: 2px;
+}
+
+.work--pending .work__title {
+  max-width: 22ch;
+}
+
+.work--pending .work__artists {
+  max-width: 12ch;
+}
+
+/* --- narrow -------------------------------------------------------------
+ * Below the fold of a phone the two columns stop being two columns. Takes
+ * move under the title and align left, which is where a thumb expects them.
+ */
+@media (max-width: 40rem) {
+  .work {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-s);
+  }
+
+  .takes {
+    grid-column: 1;
+    justify-items: start;
+  }
+
+  .take {
+    justify-content: start;
+  }
+
+  .work__spectrum {
+    width: 100%;
+    opacity: 0.16;
+  }
+}
