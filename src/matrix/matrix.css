@@ -195,7 +195,9 @@
 .footer {
   padding-block: var(--space-2xl);
   background: var(--panel-2);
-  border-top: 2px solid var(--wood);
+  /* was 2px --wood: a one-off seam predating the token. --wood is now the
+     field colour only; section boundaries use --seam like every band. */
+  border-top: 1px solid var(--seam);
 }
 
 .footer__links {
@@ -347,7 +349,9 @@ button.action {
 .music {
   padding-block: var(--space-3xl) var(--space-2xl);
   background: var(--panel-2);
-  border-top: 2px solid var(--wood);
+  /* was 2px --wood: a one-off seam predating the token. --wood is now the
+     field colour only; section boundaries use --seam like every band. */
+  border-top: 1px solid var(--seam);
 }
 
 .music__head {
