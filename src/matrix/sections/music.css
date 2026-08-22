@@ -204,7 +204,12 @@
   font-size: var(--step-3);
   font-weight: 600;
   line-height: 1.1;
-  letter-spacing: 0.01em;
+  /* Was a raw 0.01em. m1's tracking scale named it: caps need LESS tracking
+   * as they grow and MORE as they get heavier, so a --step-3 title at 600
+   * takes --track-card. Six raw values across four files turned out to be
+   * six correct optical compensations and no rule; a seventh site would
+   * have invented a seventh, right and incompatible. */
+  letter-spacing: var(--track-card);
   color: var(--legend);
   text-wrap: balance;
 }
@@ -236,7 +241,9 @@
 .take__version {
   font-family: var(--data-face);
   font-size: var(--step--2);
-  letter-spacing: 0.04em;
+  /* Small mono caps need air, which is the opposite direction from the
+   * title above — hence a separate step rather than one tracking value. */
+  letter-spacing: var(--track-mono-caps);
   text-transform: uppercase;
   color: var(--legend-well);
   white-space: nowrap;
