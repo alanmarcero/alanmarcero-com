@@ -7,22 +7,22 @@ import Footer from './Footer';
 import PatchBanks from './sections/PatchBanks';
 import Music from './sections/Music';
 import { patchBanks } from '../data/patchBanks';
+import { totalPatches, instrumentCount, matchesQuery } from './lib/catalog';
 
-const TOTAL_PATCHES = patchBanks.reduce((sum, bank) => sum + (bank.count || 0), 0);
-const INSTRUMENT_COUNT = patchBanks.filter((bank) => bank.count).length;
+const TOTAL_PATCHES = totalPatches(patchBanks);
 
-const matches = (query, ...fields) => {
-  if (!query) return true;
-  const needle = query.toLowerCase();
-  return fields.some((field) => (field || '').toLowerCase().includes(needle));
-};
+// Instruments, not banks. Ten banks cover twenty-four machines, so counting
+// banks here understated the catalog by more than half in the hero's headline
+// claim. See src/matrix/lib/catalog.js for why this is read from explicit
+// data rather than parsed out of bank names.
+const INSTRUMENT_COUNT = instrumentCount(patchBanks);
 
 function MatrixApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [musicCount, setMusicCount] = useState(0);
 
   const visibleBanks = patchBanks.filter(
-    (bank) => matches(searchQuery, bank.name, bank.description),
+    (bank) => matchesQuery(searchQuery, bank.name, bank.description),
   );
 
   const resultsCount = searchQuery
