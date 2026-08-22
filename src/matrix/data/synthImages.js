@@ -25,6 +25,7 @@
 export const synthImages = {
   "Sequential Prophet 08 and Rev2": {
     slug: "prophet-08",
+    brightness: 1.344,
     alt: "A Sequential (Dave Smith Instruments) Prophet '08 synthesiser seen from the left",
     author: "Mac Rutan from Oviedo, FL, U.S.A.",
     licence: "CC BY-SA 2.0",
@@ -35,6 +36,7 @@ export const synthImages = {
   },
   "Nord Lead 3 and Nord Rack 3": {
     slug: "nord-lead-3",
+    brightness: 1.12,
     alt: "The knob panel of a Clavia Nord Lead 3",
     author: "Zak Mensah from Bristol, UK",
     licence: "CC BY 2.0",
@@ -45,6 +47,7 @@ export const synthImages = {
   },
   "Access Virus TI and TI2, OsTIrus, Adam Szabo Viper": {
     slug: "virus-ti",
+    brightness: 1.217,
     alt: "An Access Virus TI keyboard synthesiser",
     author: "Matroskin",
     licence: "Public domain",
@@ -55,6 +58,7 @@ export const synthImages = {
   },
   "Alesis A6 Andromeda": {
     slug: "andromeda-a6",
+    brightness: 0.647,
     alt: "An Alesis A6 Andromeda analogue synthesiser, front view",
     author: "Creator:SynthAddict",
     licence: "CC BY-SA 4.0",
@@ -65,6 +69,7 @@ export const synthImages = {
   },
   "Roland JP-8000, JP-8080, JE-8086, and Airwave": {
     slug: "jp-8000",
+    brightness: 0.932,
     alt: "A Roland JP-8000 synthesiser",
     author: "Danny Darko at English Wikipedia",
     licence: "Public domain",
@@ -75,6 +80,7 @@ export const synthImages = {
   },
   "Moog Slim Phatty and Little Phatty": {
     slug: "little-phatty",
+    brightness: 0.954,
     alt: "A Moog Little Phatty synthesiser, angled from the right",
     author: "David Hilowitz from San Antonio, USA",
     licence: "CC BY 2.0",
@@ -85,6 +91,7 @@ export const synthImages = {
   },
   "Nord Lead 2X, Nord Lead 2, DiscoDSP Discovery Pro": {
     slug: "nord-lead-2x",
+    brightness: 0.968,
     alt: "A Clavia Nord Lead 2X, front view",
     author: "Clavia_Nord_Lead_2x.jpg: Candyman777 \u00b7 derivative work: Clusternote",
     licence: "CC BY-SA 3.0",
@@ -95,6 +102,7 @@ export const synthImages = {
   },
   "Roland JP-08": {
     slug: "jp-08",
+    brightness: 1.553,
     alt: "A Roland Boutique JP-08 desktop synthesiser",
     author: "Samboy",
     licence: "CC0",
@@ -106,6 +114,41 @@ export const synthImages = {
 };
 
 export const imageFor = (bankName) => synthImages[bankName] || null;
+
+/**
+ * Per-image exposure correction, as a multiplier on the shared photo filter.
+ *
+ * WHY THESE NUMBERS EXIST. The eight photographs come from eight
+ * photographers on Wikimedia Commons under eight lighting setups. Measured
+ * against `--panel` (#232021) through the shared filter, their figure-ground
+ * contrast ranged from 1.44:1 (jp-08, nearly invisible on the ground) to
+ * 4.89:1 (andromeda-a6, floating off it) — a 3.40x spread. A uniform filter
+ * over a heterogeneous corpus cannot fix that: it preserves the spread and
+ * scales it down, so no single value of `brightness()` helps. Each photo
+ * needs its own correction. These bring all eight to 3.00:1 — the WCAG
+ * non-text floor — collapsing the spread to 1.00x.
+ *
+ * WHY A SCALAR AND NOT A FILTER STRING. The aesthetic (grayscale, contrast,
+ * base brightness) belongs to the shared surface, not here. A whole filter
+ * string would pin these eight images to one moment's aesthetic; a
+ * multiplier stays proportionally correct when that aesthetic is retuned.
+ *
+ * RETURNS A NUMBER OR `undefined`, NEVER `null` OR `''`. The consumer spreads
+ * this into a style object as a custom property, and React omits `undefined`
+ * while emitting empty text for `null` — which yields
+ * `brightness(calc(0.86 * ))`, invalid CSS, which drops the whole `filter`
+ * declaration and renders the photo completely unfiltered. Quietest possible
+ * bug, loudest possible failure. An image with no measurement must emit no
+ * property at all and inherit the shared default.
+ *
+ * @param {string} bankName
+ * @returns {number|undefined}
+ */
+export const photoBrightnessFor = (bankName) => {
+  const image = synthImages[bankName];
+  if (!image) return undefined;
+  return typeof image.brightness === 'number' ? image.brightness : undefined;
+};
 
 /** Every credited image, for the attribution surface. */
 export const credits = Object.entries(synthImages)
