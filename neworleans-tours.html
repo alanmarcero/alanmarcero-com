@@ -124,11 +124,11 @@
   .mitem .lbl{color:var(--faint);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;display:block}
   .mitem .val{font-weight:600;color:var(--ink)}
 
-  .price-box{background:var(--paper);border-radius:10px;padding:.65rem .85rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center}
+  .price-box{background:var(--paper);border-radius:10px;padding:.65rem .85rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center;gap:.7rem;flex-wrap:wrap}
   .price-box .per-person{font-size:.85rem;color:var(--muted)}
   .price-box .per-person b{color:var(--ink);font-size:1.08rem}
   .price-box .group-total{text-align:right}
-  .price-box .group-total .gt-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--faint)}
+  .price-box .group-total .gt-lbl{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);white-space:nowrap}
   .price-box .group-total .gt-val{font-size:1.15rem;font-weight:700;color:var(--green)}
 
   .deal-tag{background:var(--sun-soft);color:var(--sun);font-size:.78rem;font-weight:600;padding:.3rem .6rem;border-radius:6px;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
@@ -184,10 +184,14 @@
   .delta .drow{display:flex;justify-content:space-between;gap:.6rem}
   .delta .dsave{margin-top:.35rem;font-weight:700;color:var(--green);font-size:.82rem}
 
-  .mech{background:var(--plum-soft);color:var(--plum);font-size:.78rem;font-weight:600;padding:.35rem .6rem;
-    border-radius:6px;margin-bottom:.8rem;display:flex;align-items:flex-start;gap:.4rem;line-height:1.4}
-  .unver{background:var(--kid-soft);color:var(--kid);font-size:.78rem;font-weight:600;padding:.35rem .6rem;
-    border-radius:6px;margin-bottom:.8rem;display:flex;align-items:flex-start;gap:.4rem;line-height:1.4}
+  /* These two are prose, not chips. display:flex turned every inline <b> and
+     <i> into its own flex item, so a note carrying emphasis shattered into
+     narrow columns. Block keeps the emphasis inline where it belongs. */
+  .mech{background:var(--plum-soft);color:var(--plum);font-size:.78rem;font-weight:600;padding:.4rem .6rem;
+    border-radius:6px;margin-bottom:.8rem;display:block;line-height:1.45}
+  .mech b,.unver b{font-weight:800}
+  .unver{background:var(--kid-soft);color:var(--kid);font-size:.78rem;font-weight:600;padding:.4rem .6rem;
+    border-radius:6px;margin-bottom:.8rem;display:block;line-height:1.45}
   .tcard[hidden]{display:none}
   .nores{color:var(--muted);font-size:.9rem;padding:1rem .2rem}
   /* A retracted figure stays visible on purpose — a correction without its
@@ -481,9 +485,307 @@
     </div>
     <p class="nores" id="nores" hidden>No tour in this section matches that filter. <button class="fchip" data-filter="all" type="button">Show all</button></p>
 
+    <!-- ============ GETTING TO THE SWAMP (added 2026-08-22) ============ -->
+    <div class="shead" id="swamp-transport"><span class="ic">🚐</span> 1. Getting to the swamp, and back, without a plantation</div>
+    <p class="sintro">
+      The swamp is the one thing on this page that is not walkable, so the ride is the decision and the
+      boat is the detail. Every figure below is for <b>3 adults + one 7-year-old</b> and excludes any
+      plantation stop. Checked at each operator's own page on 2026-08-22.
+    </p>
+
+    <div class="alert-box" style="border-left-color:var(--green)">
+      <h2>🏨 Your hotel is on Airboat Adventures' printed pickup list, by name</h2>
+      <p>
+        Most operators say "downtown hotel pickup" and leave you to find out at booking whether that
+        includes yours. Airboat Adventures publishes the actual roster, and
+        <b>"Dauphine Orleans, 415 Dauphine St, New Orleans, LA 70112"</b> is on it — one of 37-plus
+        Quarter and downtown hotels. The van comes to the door; there is no walk to a meeting point
+        and no phone call needed to find out.
+      </p>
+      <p style="margin-top:.5rem">
+        <b>Take the covered pontoon, not the airboat.</b> Airboat Adventures' own page draws the line:
+        airboats are minimum age 5, and "the covered pontoon boat on the other hand, is suitable for
+        all ages." Pontoon $35 adult / $15 youth 5–12, plus a flat $30 per person round trip for the
+        van — <b>$240</b> for the four of you, pickup window opening 8:30 AM for the 9:45 AM boat.
+      </p>
+    </div>
+
+    <div class="alert-box" style="border-left-color:var(--kid);margin-top:1rem">
+      <h2>🚫 The "no Uber back from the bayou" warning is true, and the operators say so themselves</h2>
+      <p>
+        This one usually circulates as travel-blog folklore. It is not. Airboat Adventures, on its own
+        site: <b>"Uber and cab services are not available in this area so we make it easy for you to
+        get here."</b> New Orleans Kayak Swamp Tours is blunter: <b>"PLEASE do not use Uber… our tour
+        leaves from a roadside boat launch with no physical address. Also, rural Louisiana doesn't
+        always have the best Uber service."</b>
+      </p>
+      <p style="margin-top:.5rem">
+        The outbound leg generally works. It is the return — from a rural launch with no street
+        address, after the boat has docked — that fails, and you find out when it is already too late
+        to fix. Uber's own route pages put New Orleans → Marrero at 12 miles / $28 average and
+        Slidell → New Orleans at ~30 miles / ~$50, but the Marrero figure is to the <i>town</i>; the
+        dock sits about nine miles further down Barataria Blvd. Read $90–120 round trip as a floor,
+        and as a bet on a ride that may not come.
+      </p>
+    </div>
+
+    <div class="tbl-wrap" style="margin-top:1.1rem">
+      <table class="comp-tbl">
+        <thead>
+          <tr>
+            <th>How you get there</th>
+            <th>Operator &amp; boat</th>
+            <th>Adult / child 7</th>
+            <th>Total, 3 adults + 1 child</th>
+            <th>Door to door</th>
+            <th>Ride risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tbname">Departs in the Quarter</td>
+            <td>Gray Line Swamp &amp; Bayou — covered boat, 400 Toulouse St</td>
+            <td>$65 / $32 <span style="color:var(--faint)">(2–5 free)</span></td>
+            <td class="tbprice">$227</td>
+            <td>3 h 45 m</td>
+            <td><span class="tag-yes">None — no shuttle to chase</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Operator shuttle</td>
+            <td>Ultimate Swamp Adventures — covered pontoon, Westwego</td>
+            <td>$59 / $35</td>
+            <td class="tbprice">$212</td>
+            <td>3 h 45 m</td>
+            <td><span class="tag-yes">Solved</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Operator shuttle</td>
+            <td>Louisiana Tour Company — roofed boat <b>with a restroom</b>, Marrero</td>
+            <td>$60 / $40</td>
+            <td class="tbprice">$220</td>
+            <td>~4 h, back by noon</td>
+            <td><span class="tag-yes">Solved</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Operator shuttle</td>
+            <td>Cajun Pride — covered pontoon, Manchac (LaPlace)</td>
+            <td>$60 / $40</td>
+            <td class="tbprice">$220</td>
+            <td>~4 h</td>
+            <td><span class="tag-yes">Solved</span> <span style="color:var(--faint)">— confirm your hotel by phone</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Groupon, ride included</td>
+            <td>Bayou Swamp Tours — covered pontoon, 1 h 45 m</td>
+            <td>flat per person, no child rate</td>
+            <td class="tbprice">$278 → $222.40</td>
+            <td>~4 h</td>
+            <td><span class="tag-yes">Included</span> <span style="color:var(--faint)">— you must phone to reserve</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Operator shuttle</td>
+            <td>Airboat Adventures — covered pontoon, Lafitte</td>
+            <td>$35 + $30 / $15 + $30</td>
+            <td class="tbprice">$240</td>
+            <td>~4 h</td>
+            <td><span class="tag-yes">Solved — picks up at your door</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Operator shuttle</td>
+            <td>Jean Lafitte Swamp Tours — covered boat, Marrero</td>
+            <td>$62 / $42</td>
+            <td class="tbprice">$228</td>
+            <td>~3 h 30 m</td>
+            <td><span class="tag-yes">Solved</span> <span style="color:var(--faint)">— Fri–Mon only, and not your hotel</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Operator shuttle</td>
+            <td>Dr. Wagner's Honey Island — Slidell, the longest run</td>
+            <td>$69.99 / $48.99</td>
+            <td class="tbprice">$258.96</td>
+            <td>~5 h</td>
+            <td><span class="tag-yes">Solved</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Drive yourself</td>
+            <td>One-day rental from 1317 Canal St + the cheapest dock ticket</td>
+            <td>car ~$75–110 all-in, + booster $14</td>
+            <td class="tbprice">~$210–250</td>
+            <td>~5 h incl. driving</td>
+            <td><span class="tag-no">You are the ride</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Rideshare</td>
+            <td>Any dock ticket + Uber out and back</td>
+            <td>$108–120 tickets + $90–120 fares</td>
+            <td class="tbprice">~$200–240</td>
+            <td>~4 h <i>if it works</i></td>
+            <td><span class="tag-no">The return leg may not come</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Private SUV</td>
+            <td>Black car held 4–5 h at $150/h, 3 h minimum</td>
+            <td>transport only</td>
+            <td class="tbprice">$600–750</td>
+            <td>as you like</td>
+            <td><span class="tag-yes">None</span></td>
+          </tr>
+          <tr>
+            <td class="tbname">Public transit</td>
+            <td>RTA + Jefferson Parish Transit</td>
+            <td>$1–2 fares</td>
+            <td class="tbprice">—</td>
+            <td>2 h+ each way</td>
+            <td><span class="tag-no">Not viable with a 7-year-old</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tour-grid" style="margin-top:1.1rem">
+
+      <div class="tcard highlight">
+        <span class="badge-top">Our pick</span>
+        <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/gray-line-swamp.jpg)" role="presentation"><span class="tph-emoji">🚐</span></span>
+          <span class="tnum">Verdict</span>
+          <div class="tname">Gray Line Swamp &amp; Bayou — because there is no shuttle to catch</div>
+          <div class="tloc">📍 400 Toulouse St, the Steamboat Natchez dock — about half a mile from your hotel</div>
+          <div class="tdesc">
+            Every other operator on this page solves transport by sending a van to fetch you, which
+            means a 30-minute pickup window you have to stand outside for and a phone call the day
+            before to confirm it. Gray Line is the only one whose swamp tour <b>departs from inside
+            the French Quarter</b>: you walk to the river, check in at the Lighthouse ticket office,
+            and the round-trip coach is already in the ticket price. At 3 h 45 m it is roughly half
+            the length of the plantation combos, which is the day you said you did not want.
+          </div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Adults 13+</span><span class="val">$65</span></div>
+            <div class="mitem"><span class="lbl">Children 6–12</span><span class="val">$32</span></div>
+            <div class="mitem"><span class="lbl">Ages 2–5</span><span class="val">Free</span></div>
+            <div class="mitem"><span class="lbl">Seniors 65+</span><span class="val">$58</span></div>
+          </div>
+          <div class="price-box">
+            <div class="per-person"><b>$227</b> all in <span style="font-size:.72rem;color:var(--faint)">transport included</span></div>
+            <div class="group-total"><span class="gt-lbl">3 adults + 1 child</span><span class="gt-val">3×$65 + $32</span></div>
+          </div>
+          <div class="mech">◆ Structural, not promotional: the ride is inside the fare rather than sold as a $25–30 per-head add-on, so there is no shuttle upcharge to reason about and nothing extra to forfeit if the morning rains out.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · operator page and its live booking engine —
+            <a href="https://www.graylineneworleans.com/swamp-tours/swamp-bayou-tour/" target="_blank" rel="noopener">graylineneworleans.com › swamp-bayou-tour</a><br>
+            The rate card that rendered was stamped for 23 Aug 2026 and showed no seasonal variation, but <b>the September dates were not directly confirmed</b> — re-check when you book. Gray Line's swamp+Whitney and swamp+Oak Alley products are separate SKUs at $131 running 7 h 45 m; make sure you are buying this one.</div>
+          <a href="https://www.graylineneworleans.com/swamp-tours/swamp-bayou-tour/" target="_blank" rel="noopener" class="btn-book">Book the standalone Swamp &amp; Bayou</a>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <span class="badge-top" style="background:var(--brass)">Cheapest with the ride solved</span>
+        <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/ultimate-swamp-adventures.jpg)" role="presentation"><span class="tph-emoji">🌲</span></span>
+          <span class="tnum">Runner-up</span>
+          <div class="tname">Ultimate Swamp Adventures — $212, and the shortest drive of any operator</div>
+          <div class="tloc">📍 450 Laroussini St, Westwego — 15 minutes from downtown</div>
+          <div class="tdesc">
+            Fifteen minutes out, against 25 to Marrero and 45 to Slidell — which matters if the
+            7-year-old does not travel well. Covered pontoon with shade. The 8:45–9:45 AM pickup puts
+            you back at the hotel by 12:30 PM, so the whole thing is over before the afternoon heat.
+          </div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Adult + pickup</span><span class="val">$59</span></div>
+            <div class="mitem"><span class="lbl">Child 12 &amp; under</span><span class="val">$35</span></div>
+            <div class="mitem"><span class="lbl">Self-drive</span><span class="val">$35 / $15</span></div>
+            <div class="mitem"><span class="lbl">Back by</span><span class="val">12:30 PM</span></div>
+          </div>
+          <div class="price-box">
+            <div class="per-person"><b>$212</b> with pickup <span style="font-size:.72rem;color:var(--faint)">$120 if you drive</span></div>
+            <div class="group-total"><span class="gt-lbl">3 adults + 1 child</span><span class="gt-val">3×$59 + $35</span></div>
+          </div>
+          <div class="mech">◆ The only operator found that <b>discounts the child's shuttle seat</b> as well as the boat ticket — $20 off the van where everyone else charges a flat $30 per body regardless of age. It is also the one child rate their own website does not print: the homepage says "$35 – $59 per person", which is the self-drive-versus-pickup spread, not an adult-versus-child one. A family reading the site would assume the 7-year-old pays adult fare and overpay by $24.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · read off their live booking engine, item 47203 —
+            <a href="https://fareharbor.com/embeds/book/ultimateswamptour/items/47203/?full-items=yes&amp;flow=46254" target="_blank" rel="noopener">fareharbor.com › ultimateswamptour</a><br>
+            Note the domain moved: ultimateswampadventures.com now redirects to ultimateswamptour.com. Go City includes this tour, but <b>explicitly not the ride</b> — "Transportation to Westwego is not included but can be purchased for a discounted price" — so a pass does not solve the hard part.</div>
+          <a href="https://ultimateswamptour.com/" target="_blank" rel="noopener" class="btn-book">Book Ultimate Swamp</a>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/airboat-adventures.jpg)" role="presentation"><span class="tph-emoji">💨</span></span>
+          <span class="tnum">Don't</span>
+          <div class="tname">Airboats, and why the 48-inch line is the reason</div>
+          <div class="tloc">📍 Every operator that runs one</div>
+          <div class="tdesc">
+            An airboat is the fun-sounding upgrade and it is the wrong boat twice over for this party.
+            It is open to the sun and very loud, which is the opposite of shade-first. And it roughly
+            doubles the bill, because the child discount that exists on every pontoon vanishes on
+            airboats: Ultimate Swamp and Airboat Adventures both list a single flat "Person" rate.
+            Same four people, same operator, same morning — <b>$212 on the pontoon, $460 on the small
+            airboat.</b>
+          </div>
+        </div>
+        <div>
+          <div class="tmeta">
+            <div class="mitem"><span class="lbl">Height floor</span><span class="val">48 inches</span></div>
+            <div class="mitem"><span class="lbl">A 7-year-old is</span><span class="val">~47–49 in</span></div>
+            <div class="mitem"><span class="lbl">Child rate</span><span class="val">Almost never</span></div>
+            <div class="mitem"><span class="lbl">Shade</span><span class="val">None</span></div>
+          </div>
+          <div class="mech">◆ Three operators publish the same gate. Louisiana Tour Company: "children less than 48″ … are not allowed to ride airboats." Bayou Swamp Tours requires riders be "at least 5 years of age AND 48 inches tall." Ultimate Swamp's small-airboat listing says "Must be 48 inches and taller." An average 7-year-old sits right on that line, so it is a coin flip resolved <i>at the dock</i>, after the money is spent and the van has driven 25 minutes out of town. Peek's hotel-pickup airboat is worse still: minimum age 8 outright.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · three operators' own pages —
+            <a href="https://louisianaswamp.com/swamp-tours/airboat-swamp-tour/" target="_blank" rel="noopener">louisianaswamp.com</a> ·
+            <a href="https://airboatadventures.com/pickup-locations/" target="_blank" rel="noopener">airboatadventures.com</a><br>
+            Airboat Adventures and Gray Line gate on <i>age</i> (5+) rather than height, which a 7-year-old passes cleanly — so if someone insists on an airboat, those two carry the least risk of being turned away.</div>
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/barataria-preserve.jpg)" role="presentation"><span class="tph-emoji">🚧</span></span>
+          <span class="tnum">Ruled out</span>
+          <div class="tname">The free national-park boardwalk is closed until 2028</div>
+          <div class="tloc">📍 Barataria Preserve, Jean Lafitte National Historical Park</div>
+          <div class="tdesc">
+            The obvious zero-cost answer — a mile of shaded NPS boardwalk with alligators under it and
+            no boat to buy — is mostly gone for this trip. It is worth knowing, because it is still
+            recommended everywhere.
+          </div>
+        </div>
+        <div>
+          <div class="mech">◆ From the park's own FAQ: <b>"All trails at the Barataria Preserve and the Visitor Center are closed, with the exception of Twin Canals Trail,"</b> from 2 February 2026, for roughly two years of Hurricane Ida reconstruction. What survives is Twin Canals: 0.6 miles one way, dirt and gravel rather than elevated boardwalk, muddy after rain, no restrooms and no shade structure. The free ranger-led walk runs Wednesdays and Thursdays at 1:00 PM, which is the worst hour of a Louisiana September day.</div>
+          <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · the park's own FAQ —
+            <a href="https://home.nps.gov/jela/planyourvisit/frequently-asked-questions-baratariapreserve.htm" target="_blank" rel="noopener">nps.gov › barataria FAQ</a><br>
+            <b>The shaded mile has moved.</b> NPS points at the town-run Wetland Trace at 4905 City Park Drive, Jean Lafitte: a one-mile raised boardwalk through cypress swamp with covered pavilions and benches. Adults $10, <b>children 12 and under free with a parent</b> — <b>$30</b> for your four. Open Tue–Sun 10–4, so it rules out Monday 14 Sep. It still needs a car, so it only makes sense bolted onto a driving day. Do not cite nps.gov/jela/planyourvisit/construction.htm — it is stale and still lists trails that are shut.</div>
+          <a href="https://louisianawetlandscenter.com/" target="_blank" rel="noopener" class="btn-book">Wetland Trace — $30 for the four of you</a>
+        </div>
+      </div>
+
+    </div>
+
+    <ul class="tips-list" style="margin-top:1.1rem">
+      <li>
+        <b>📅 Book the swamp for the first clear morning, not the last day</b>
+        Sep 10 is the statistical peak of the Atlantic hurricane season — roughly 75% of seasons since 1966 carry a named storm on that date. Boat tours cancel for weather, and Cajun Encounters is the strictest of the operators checked: bookings made inside 36 hours are final, with one courtesy reschedule. Leave a day behind it.
+      </li>
+      <li>
+        <b>🚗 A rental car costs the same as the shuttle, and buys you a driving day</b>
+        Avis and Budget share 1317 Canal St, 0.8 miles from the hotel, and both offer free customer pick-up with 24 hours' notice. But a booster is legally required for the 7-year-old in a rental (RS 32:295) at $14/day from Avis, the office shuts at 1 PM on Sunday, and the all-in day lands at roughly $210–250 — statistically identical to the shuttle, except somebody drives.
+      </li>
+      <li>
+        <b>👶 A tour van is exempt from the booster law; a rental car is not</b>
+        Louisiana RS 32:295 requires a belt-positioning booster and a rear seat for a child under 13 — but its own definition of "motor vehicle" excludes a commercial van or taxi. An operator's shuttle sits outside the requirement entirely. Uber and Lyft are TNCs, named nowhere in the statute; treat rideshare as the grey area it is.
+      </li>
+      <li>
+        <b>🅿️ Same-day return means you never pay to park</b>
+        Dauphine Orleans charges $50 per car per night for valet. Every swamp launch checked has free parking, so a car collected and returned the same day costs nothing to keep. If it has to stay overnight, the 939 Toulouse St lot is from $15, four minutes' walk, against $40 at most of the nearer garages.
+      </li>
+    </ul>
+
     <!-- CATEGORY 1: SWAMP TOURS -->
-    <div class="shead"><span class="ic">🐊</span> 1. Standalone Swamp Tours (With Downtown Hotel Shuttle)</div>
-    <p class="sintro">7 options featuring round-trip motorcoach / van pickup directly from French Quarter &amp; Downtown hotels to the bayou launch.</p>
+    <div class="shead"><span class="ic">🐊</span> 2. The swamp boats themselves, priced for your four</div>
+    <p class="sintro">The seven boats the shuttle table above chooses between, in full. Prices are the operator's own, for 3 adults + one 7-year-old, with no plantation attached.</p>
 
     <div class="tour-grid">
       <!-- 1. Cajun Encounters -->
@@ -674,7 +976,7 @@
     </div>
 
     <!-- CATEGORY 2: FRENCH QUARTER FOOD TOURS -->
-    <div class="shead"><span class="ic">🎷</span> 2. French Quarter Food &amp; Culinary Walking Tours</div>
+    <div class="shead"><span class="ic">🎷</span> 3. French Quarter Food &amp; Culinary Walking Tours</div>
     <p class="sintro">6 top-rated walking food tours exploring Creole classics, muffulettas, po'boys, and beignets in the historic French Quarter.</p>
 
     <div class="tour-grid">
@@ -838,7 +1140,7 @@
     </div>
 
     <!-- CATEGORY 3: GARDEN DISTRICT FOOD TOURS -->
-    <div class="shead"><span class="ic">🌳</span> 3. Garden District &amp; Magazine Street Food Tours</div>
+    <div class="shead"><span class="ic">🌳</span> 4. Garden District &amp; Magazine Street Food Tours</div>
     <p class="sintro">4 options pairing opulent 19th-century Greek Revival mansions and historic cemeteries with Magazine Street's culinary scene.</p>
 
     <div class="tour-grid">
@@ -950,7 +1252,7 @@
     </div>
 
     <!-- CATEGORY 4: PACKAGES & COMBOS -->
-    <div class="shead"><span class="ic">📦</span> 4. Discount Packages, Attraction Passes &amp; Combos</div>
+    <div class="shead"><span class="ic">📦</span> 5. Discount Packages, Attraction Passes &amp; Combos</div>
     <p class="sintro">3 bundled packages and unique dining formats for groups wanting maximum value or VIP private transportation.</p>
 
     <div class="tour-grid">
@@ -1036,7 +1338,7 @@
     </div>
 
     <!-- MASTER MATRIX -->
-    <div class="shead"><span class="ic">📊</span> 5. Complete 20-Tour Master Comparison Matrix for 4</div>
+    <div class="shead"><span class="ic">📊</span> 6. Complete Master Comparison Matrix</div>
     <p class="sintro">Quick summary reference table comparing all 20 evaluated tours, pricing for 4, and promo codes.</p>
 
     <div class="tbl-wrap">
@@ -1238,7 +1540,7 @@
     </div>
 
     <!-- PRO TIPS -->
-    <div class="shead"><span class="ic">💡</span> 6. Crucial Booking Tips for a Group of 4</div>
+    <div class="shead"><span class="ic">💡</span> 7. Crucial Booking Tips</div>
     <ul class="tips-list">
       <li>
         <b>🚫 NEVER take Uber/Lyft to the Swamp</b>

@@ -134,6 +134,10 @@ SOURCES: dict[str, tuple[str, list[str]]] = {
         "https://confederacyofcruisers.com/tours/",
         "https://confederacyofcruisers.com/",
     ]),
+    # the free boardwalk that is shut until 2028
+    "barataria-preserve": ("Barataria Preserve (NPS)", [
+        "https://www.nps.gov/jela/planyourvisit/barataria-preserve.htm",
+    ]),
     # --- drink tours ---
     # Old New Orleans Rum and Seven Three Distilling are deliberately absent:
     # the first's domain now 404s through a redirect to celebrationdistillation
@@ -175,6 +179,14 @@ DIRECT: dict[str, tuple[str, str]] = {
         "https://www.cajunprideswamptours.com/wp-content/uploads/2024/05/GatorPatrolBoatPic_1384389969.jpg",
         "site-wide og:image is Saint Joseph Plantation; this is the covered "
         "pontoon from /gallery/swamp-tours/, which is what the card describes",
+    ),
+    # nps.gov's Barataria page carries four "structured_data" images and only
+    # one is of this park -- the others are generic NPS furniture, including a
+    # mountain scene from a park 1,500 miles away. Pinned to the right one.
+    # NPS photographs are works of the federal government and public domain.
+    "barataria-preserve": (
+        "https://www.nps.gov/common/uploads/structured_data/FB1B892F-B120-F212-F3365E9299950D0C.jpg?w=1200&h=900&mode=crop",
+        "the Barataria visitor center, which is the thing the card says is shut",
     ),
 }
 
