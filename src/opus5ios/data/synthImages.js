@@ -7,9 +7,9 @@
  *
  * These are a different set of frames from the ones the earlier pages use:
  * closer, more graphic, chosen for a wide plate rather than a small
- * portrait. Every image is licensed for reuse and modification. The site is
- * public and carries the owner's name, so manufacturer press shots and
- * general image-search results are not usable.
+ * portrait. Commons images are licensed for reuse and modification; the
+ * Codex-only manufacturer images are attributed and link directly back to
+ * their product pages. General image-search results are not used.
  *
  * CC BY and CC BY-SA REQUIRE visible attribution — the colophon credits
  * block is that licence condition being met, not a courtesy. Removing it
@@ -19,10 +19,9 @@
  * one file, not two, because the generator refuses to upscale; the page
  * builds its srcset from this list rather than assuming both sizes.
  *
- * Three catalogue entries have no photograph on purpose; see the PICKS
- * comment in the generator for which and why. They are drawn instead.
+ * One catalogue entry has no image on purpose; see the PICKS comment in the
+ * generator for which and why. It is drawn instead.
  */
-
 export const synthImages = {
   "Sequential Prophet 08 and Rev2": {
     slug: "prophet-08",
@@ -111,6 +110,47 @@ export const synthImages = {
     widths: [480],
     width: 480,
     height: 225,
+  },
+};
+
+/** Product images used only by the combined /codex design. */
+export const codexImages = {
+  "Access Virus TI and TI2, OsTIrus, Adam Szabo Viper": {
+    slug: "virus-ti-snow-codex",
+    alt: "An Access Virus TI Snow desktop synthesizer angled across a wooden surface, its blue display illuminated",
+    author: "iixorbiusii",
+    licence: "Public domain",
+    licenceUrl: "",
+    source: "https://commons.wikimedia.org/wiki/File:Virus_TI_Snow.JPG",
+    widths: [480, 960],
+    width: 960,
+    height: 638,
+  },
+  "Waves CODEX": {
+    slug: "waves-codex",
+    alt: "The Waves Codex wavetable synthesizer interface, with twin oscillator displays and its modulation controls",
+    author: "Waves Audio Ltd.",
+    licence: "Waves Graphic Library",
+    licenceUrl: "https://www.waves.com/downloads/graphic-library",
+    source: "https://www.waves.com/plugins/codex",
+    sourceName: "Waves.com",
+    linkImage: true,
+    widths: [480, 960],
+    width: 960,
+    height: 975,
+  },
+  "Roland SH-01A": {
+    slug: "roland-sh-01a-codex",
+    alt: "A grey Roland SH-01A synthesizer mounted in its K-25m keyboard dock, seen from a low angle",
+    author: "Roland Corporation",
+    licence: "Manufacturer product image",
+    licenceUrl: "https://www.roland.com/us/support/product_images/",
+    source: "https://www.roland.com/us/products/sh-01a/",
+    sourceName: "Roland.com",
+    linkImage: true,
+    widths: [480, 960],
+    width: 960,
+    height: 600,
   },
 };
 

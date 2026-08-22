@@ -69,9 +69,9 @@ describe('the shipped catalog', () => {
     expect(instrumentCount(patchBanks)).toBeGreaterThan(patchBankCount(patchBanks));
   });
 
-  it('reports 1,148 patches across 24 instruments in 10 banks', () => {
+  it('reports 1,148 patches across 25 instruments in 10 banks', () => {
     expect(totalPatches(patchBanks)).toBe(1148);
-    expect(instrumentCount(patchBanks)).toBe(24);
+    expect(instrumentCount(patchBanks)).toBe(25);
     expect(patchBankCount(patchBanks)).toBe(10);
   });
 

@@ -57,8 +57,8 @@ export const patchBanks = [
   },
   {
     name: 'Nord Lead 2X, Nord Lead 2, DiscoDSP Discovery Pro',
-    instruments: ['Nord Lead 2X', 'Nord Lead 2', 'DiscoDSP Discovery Pro'],
-    description: '128 trance patches importable via SysEx into NL2X/NL2 hardware or DiscoDSP Discovery Pro.',
+    instruments: ['Nord Lead 2X', 'Nord Lead 2', 'DiscoDSP Discovery Pro', 'The Usual Suspects Nodal Red 2x'],
+    description: '128 trance patches for Nord Lead 2/2X hardware, DiscoDSP Discovery Pro, and The Usual Suspects Nodal Red 2x.',
     count: 128,
     audioDemo: ['821zcTGdt1c', 'fLQ8gW8Op-Q'],
     downloadLink: '/banks/Alan_M_Nord_Lead_2x.zip'

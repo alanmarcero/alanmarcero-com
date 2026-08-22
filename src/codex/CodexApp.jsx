@@ -3,30 +3,30 @@ import './codex.css';
 import { patchBanks } from '../data/patchBanks';
 import { YOUTUBE_CHANNEL_URL, GITHUB_URL } from '../config';
 import useMusicItems from '../hooks/useMusicItems';
-import useInViewport from '../hooks/useInViewport';
-import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import useScrollProgress from '../hooks/useScrollProgress';
 import useNearestRow from '../opusmaxmac/hooks/useNearestRow';
 import EnvelopeField from '../matrix/graphics/EnvelopeField';
 import WaveTrace from '../opus5ios/graphics/WaveTrace.jsx';
 import FaceplatePlan from '../opus5ios/graphics/FaceplatePlan';
 import Demo from '../opus5ios/Demo';
-import Orrery from '../opusmaxmac/graphics/Orrery';
 import Line from '../opusmaxmac/Line';
 import SynthesistMark from '../components/graphics/SynthesistMark';
 import SignalMeter from '../components/SignalMeter';
 import NoResults from '../components/NoResults';
 import {
-  credits,
-  imageFor,
+  codexImages,
+  credits as opusCredits,
+  imageFor as opusImageFor,
   sourceFor,
   srcSetFor,
 } from '../opus5ios/data/synthImages';
 
 const TOTAL_PATCHES = patchBanks.reduce((sum, bank) => sum + (bank.count || 0), 0);
-const INSTRUMENT_COUNT = new Set(
-  patchBanks.flatMap((bank) => bank.instruments || []),
-).size;
+const imageFor = (bankName) => codexImages[bankName] || opusImageFor(bankName);
+const credits = [
+  ...opusCredits.filter(({ bank }) => !codexImages[bank]),
+  ...Object.entries(codexImages).map(([bank, image]) => ({ bank, ...image })),
+];
 
 const matches = (query, ...fields) => {
   if (!query) return true;
@@ -41,11 +41,7 @@ const isTypingTarget = (element) => element && (
   || element.isContentEditable
 );
 
-function Hero({ releaseCount, activeBankIndex }) {
-  const [paused, setPaused] = useState(false);
-  const reducedMotion = usePrefersReducedMotion();
-  const [figureRef, inView] = useInViewport({ rootMargin: '160px' });
-
+function Hero() {
   return (
     <header className="codex-hero">
       <div className="codex-hero__field" aria-hidden="true">
@@ -82,23 +78,6 @@ function Hero({ releaseCount, activeBankIndex }) {
               Essential Mix. Released on Armada, Bonzai, and Ministry of Sound.
             </p>
 
-            <div className="codex-stats" aria-label="Catalogue totals">
-              <p className="codex-stat">
-                <span className="codex-stat__value">{TOTAL_PATCHES.toLocaleString()}</span>
-                <span className="codex-label">Patches, free</span>
-              </p>
-              <p className="codex-stat">
-                <span className="codex-stat__value">{INSTRUMENT_COUNT}</span>
-                <span className="codex-label">Instruments</span>
-              </p>
-              {releaseCount !== null && (
-                <p className="codex-stat">
-                  <span className="codex-stat__value">{releaseCount}</span>
-                  <span className="codex-label">Releases &amp; remixes</span>
-                </p>
-              )}
-            </div>
-
             <div className="codex-hero__actions">
               <Line
                 as="a"
@@ -116,32 +95,21 @@ function Hero({ releaseCount, activeBankIndex }) {
             </div>
           </div>
 
-          <figure className="codex-hero__instrument" ref={figureRef}>
-            <div className="codex-hero__dial">
-              <Orrery
-                banks={patchBanks}
-                activeIndex={activeBankIndex}
-                paused={paused || !inView}
-              />
+          <div className="codex-hero__instrument" aria-hidden="true">
+            <div className="codex-hero__speaker">
+              <div className="codex-speaker__cone">
+                <WaveTrace
+                  seed="alan-marcero-speaker"
+                  variant="silhouette"
+                  cycles={3}
+                  className="codex-speaker__trace"
+                />
+              </div>
               <div className="codex-hero__mark">
                 <SynthesistMark size={112} />
               </div>
             </div>
-            <figcaption>
-              <p className="codex-label">Eleven banks in orbit</p>
-              <p>One envelope in the field for every patch in the catalogue.</p>
-              {!reducedMotion && (
-                <button
-                  type="button"
-                  className="codex-quiet-action"
-                  aria-pressed={paused}
-                  onClick={() => setPaused((wasPaused) => !wasPaused)}
-                >
-                  Pause the orrery
-                </button>
-              )}
-            </figcaption>
-          </figure>
+          </div>
         </div>
       </div>
     </header>
@@ -193,6 +161,14 @@ function Finder({ query, onQueryChange, bankCount, releaseCount }) {
         )}
       </div>
       <div className="codex-finder__field">
+        <svg
+          className="codex-finder__icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle cx="10.5" cy="10.5" r="6.5" />
+          <path d="m15.5 15.5 5 5" />
+        </svg>
         <input
           id="codex-find"
           ref={inputRef}
@@ -205,7 +181,6 @@ function Finder({ query, onQueryChange, bankCount, releaseCount }) {
             onQueryChange('');
             inputRef.current?.focus();
           }}
-          placeholder="Nord, Virus, trance…"
           autoComplete="off"
           spellCheck="false"
         />
@@ -219,27 +194,40 @@ function Finder({ query, onQueryChange, bankCount, releaseCount }) {
 
 function BankFigure({ bank }) {
   const image = imageFor(bank.name);
+  const visual = (
+    <div className="codex-bank-figure__visual">
+      {image ? (
+        <img
+          src={sourceFor(image)}
+          srcSet={srcSetFor(image)}
+          sizes="(max-width: 62rem) 72vw, 24rem"
+          width={image.width}
+          height={image.height}
+          alt={image.alt}
+          decoding="async"
+        />
+      ) : (
+        <FaceplatePlan seed={bank.name} />
+      )}
+      <div className="codex-bank-figure__scope" aria-hidden="true">
+        <WaveTrace seed={bank.name} cycles={2} />
+      </div>
+    </div>
+  );
 
   return (
     <figure className="codex-bank-figure">
-      <div className="codex-bank-figure__visual">
-        {image ? (
-          <img
-            src={sourceFor(image)}
-            srcSet={srcSetFor(image)}
-            sizes="(max-width: 62rem) 72vw, 24rem"
-            width={image.width}
-            height={image.height}
-            alt={image.alt}
-            decoding="async"
-          />
-        ) : (
-          <FaceplatePlan seed={bank.name} />
-        )}
-        <div className="codex-bank-figure__scope" aria-hidden="true">
-          <WaveTrace seed={bank.name} cycles={2} />
-        </div>
-      </div>
+      {image?.linkImage ? (
+        <a
+          className="codex-bank-figure__link"
+          href={image.source}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`View ${bank.name} on ${image.sourceName || 'its source site'}`}
+        >
+          {visual}
+        </a>
+      ) : visual}
       <figcaption>
         <p className="codex-label">Current instrument</p>
         <p className="codex-bank-figure__name">{bank.name}</p>
@@ -279,8 +267,6 @@ function Register({ banks, query, rowRef, activeIndex, onPreview }) {
             <ol className="codex-register__rows">
               {banks.map((bank, index) => {
                 const demos = bank.audioDemo || [];
-                const coverage = (bank.instruments || []).length;
-
                 return (
                   <li
                     className="codex-entry"
@@ -317,11 +303,6 @@ function Register({ banks, query, rowRef, activeIndex, onPreview }) {
                         </span>
                       </h3>
                       <p className="codex-entry__description">{bank.description}</p>
-                      {coverage > 0 && (
-                        <p className="codex-entry__fits codex-label">
-                          Fits {coverage} {coverage === 1 ? 'instrument' : 'instruments'} · {bank.instruments.join(' · ')}
-                        </p>
-                      )}
                       <WaveTrace
                         seed={bank.name}
                         cycles={2}
@@ -383,8 +364,6 @@ function Releases({ items, loading, error, query }) {
           <h2 id="codex-releases-title">Music and remixes</h2>
           <p className="codex-label">YouTube · Spotify · Pandora</p>
         </div>
-        <p className="codex-section-note">Made with the same patches the catalogue gives away.</p>
-
         {loading && <p className="codex-state" role="status">Loading releases…</p>}
         {error && (
           <p className="codex-state" role="status">
@@ -454,7 +433,7 @@ function Colophon() {
           </nav>
 
           <div>
-            <p className="codex-label">Photographs · {credits.length} instruments · Wikimedia Commons</p>
+            <p className="codex-label">Images · {credits.length} instruments · Commons + manufacturers</p>
             <ul className="codex-credits">
               {credits.map((item) => (
                 <li key={item.slug}>
@@ -473,8 +452,6 @@ function Colophon() {
         </div>
 
         <div className="codex-footer__fine codex-label">
-          <p>Set in Saira Condensed, Archivo and IBM Plex Mono</p>
-          <p>Figures drawn from the data on this page</p>
           <p>&copy; {new Date().getFullYear()} Alan Marcero</p>
         </div>
       </div>
@@ -497,10 +474,6 @@ function CodexApp() {
   const releases = musicItems.filter((item) => matches(query, item.title, item.description));
   const [rowRef, activeIndex] = useNearestRow(banks.length);
   const currentIndex = previewIndex ?? activeIndex;
-  const activeBank = banks[currentIndex] || banks[0];
-  const activeBankIndex = activeBank
-    ? patchBanks.findIndex((bank) => bank.name === activeBank.name)
-    : null;
   const hasNoResults = Boolean(query)
     && banks.length === 0
     && releases.length === 0
@@ -515,10 +488,7 @@ function CodexApp() {
         className="codex-scroll-progress"
         aria-hidden="true"
       />
-      <Hero
-        releaseCount={musicLoading || musicError ? null : musicItems.length}
-        activeBankIndex={activeBankIndex}
-      />
+      <Hero />
       <main id="codex-main">
         <Finder
           query={query}
