@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
-import Hero, { describeResults, visibleResults, ANNOUNCE_DELAY_MS } from './Hero';
+import Hero, {
+  describeResults,
+  visibleResults,
+  count,
+  pluralize,
+  ANNOUNCE_DELAY_MS,
+} from './Hero';
 
 const baseProps = {
   totalPatches: 1148,
@@ -137,5 +143,54 @@ describe('Hero search wiring', () => {
     render(<Hero {...baseProps} />);
     expect(liveRegion()).toBeTruthy();
     expect(liveRegion().getAttribute('role')).toBe('status');
+  });
+});
+
+describe('one agreement rule, two presentations', () => {
+  // The hero shows figure and noun apart; the live region shows them
+  // together. They previously pluralized independently and shipped
+  // "1 releases", so the rule is split from the formatting rather than
+  // duplicated.
+  it('agrees in number whether or not the figure is attached', () => {
+    expect(pluralize(1, 'patch', 'patches')).toBe('patch');
+    expect(pluralize(2, 'patch', 'patches')).toBe('patches');
+    expect(count(1, 'instrument')).toBe('1 instrument');
+    expect(count(24, 'instrument')).toBe('24 instruments');
+  });
+
+  it('groups thousands, so the shared rule is usable for the hero figure', () => {
+    expect(count(1148, 'patch', 'patches')).toBe('1,148 patches');
+  });
+});
+
+describe('Hero thesis block', () => {
+  const props = {
+    totalPatches: 1148,
+    instrumentCount: 24,
+    searchQuery: '',
+    onSearchChange: () => {},
+    resultsCount: null,
+  };
+
+  it('states in text what the aria-hidden field depicts', () => {
+    const { container } = render(<Hero {...props} />);
+    const note = container.querySelector('.hero__field-note');
+    expect(note).toBeTruthy();
+    expect(note.textContent).toMatch(/every patch/i);
+    // The claim must not live only in the picture: the field is hidden.
+    expect(container.querySelector('.hero__field').getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('pluralizes the instrument count through the shared rule', () => {
+    const { container } = render(<Hero {...props} instrumentCount={1} />);
+    const label = container.querySelector('.hero__count-label').textContent;
+    expect(label).toMatch(/1 instrument\b/);
+    expect(label).not.toMatch(/1 instruments/);
+  });
+
+  it('keeps the figure and its noun as separate elements', () => {
+    const { container } = render(<Hero {...props} />);
+    expect(container.querySelector('.hero__count-value').textContent).toBe('1,148');
+    expect(container.querySelector('.hero__count-label').textContent).toMatch(/patches across 24 instruments/);
   });
 });
