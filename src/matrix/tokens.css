@@ -246,8 +246,6 @@
    * dependency is otherwise invisible from either end:
    *
    *   NOTHING OVER IT  (raising helps; raise freely)
-   *     .hero__field         matrix.css      @0.72  --panel
-   *     .plate__field        layout.css      @0.42  --panel   field 2.03
    *     .work__spectrum   sections/music.css @0.45  --panel-2 field 2.04
    *                       baseline strip, inset: auto 0 0 0, so zero text
    *                       overlap at 1200px and 390px. 27.8% coverage —
@@ -257,7 +255,50 @@
    *                       --gutter clamp() at 1200px. Agreement between
    *                       two routes is the only kind worth much.
    *   TEXT OVER IT     (raising hurts; re-measure text-on-field)
-   *     — none currently. .work__spectrum was here at @0.14 and @0.10
+   *     .hero__field   matrix.css  @0.72 --panel  SIX text elements over
+   *                    it: eyebrow, title, title-signal, lead, count,
+   *                    field-note. absolute inset:0, .hero__body on top.
+   *     .plate__field  layout.css  @0.42 --panel  every entry's name,
+   *                    desc and actions — .plate__body is relative inside.
+   *
+   *       BOTH WERE IN THE CATEGORY ABOVE UNTIL 2026-08-22, AND THAT WAS
+   *       EVERY ENTRY IT HAD. NOTHING-OVER-IT was not a category with a
+   *       wrong member; it was empty of correct members while telling its
+   *       reader to "raise freely" — and I then raised --wood under my own
+   *       licence. The registry prevented exactly nothing and authorised
+   *       the harm. agent-df85d7d7 found it by RENDERING the page, which
+   *       nobody had done across 35 commits and five slices, each green.
+   *
+   *       Where a stroke lands under text, old --wood -> new:
+   *         hero  --legend      6.09 -> 3.70   (3.0 large floor: ok)
+   *         hero  --legend-dim  2.56 -> 1.55   (4.5 floor: FAILS BOTH)
+   *         hero  --lcd         4.47 -> 2.71   (4.5: marginal -> no)
+   *         plate --legend-dim  3.56 -> 2.60   (4.5 floor: FAILS BOTH)
+   *
+   *       READ THE FIRST COLUMN. --legend-dim over the hero field failed
+   *       at 2.56 BEFORE my lift. I worsened a pre-existing failure, I did
+   *       not create one — which is worse news, because it means this
+   *       survived every gate for longer than this task has existed.
+   *
+   *       NO --wood VALUE FIXES IT AT @0.72. Sweeping darker, #4d3120
+   *       reaches only 4.27 on --legend-dim while collapsing the field to
+   *       1.24:1 against its ground. Empty feasible region — the same
+   *       shape as the spectrum's, so a GEOMETRY question, not a value.
+   *
+   *       THE GEOMETRY, for whoever owns the hero: the mask is
+   *       `to bottom, #000 0%, #000 42%, transparent 92%` — full strength
+   *       from the top through 42%, gone by 92% — and all six text
+   *       elements sit in the UPPER region. THE MASK IS STRONGEST EXACTLY
+   *       WHERE THE TEXT IS AND FADES WHERE THERE IS NONE. cd2997fc's
+   *       spectrum fix in mirror image: they moved the graphic out from
+   *       under the text; here the shaping exists and points the wrong way.
+   *
+   *       NOT DECIDED HERE. The rule is in this file, the hero is D2's
+   *       element, and choosing between a dimmer field, a reshaped mask
+   *       and brighter text is its owner's call. Taking it because the
+   *       selector sits in my file would be deciding by file layout.
+   *
+   *     — .work__spectrum was here at @0.14 and @0.10
    *       and MOVED OUT: agent-cd2997fc showed the two constraints were
    *       provably incompatible while text sat on it (field >= 1.50 wants
    *       opacity >= 0.27; legend-well >= 4.50 wants <= 0.18 — no
