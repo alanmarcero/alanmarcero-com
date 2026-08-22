@@ -346,6 +346,40 @@
    * field, say so here, because nobody editing this token can see it.
    */
 
+  /* --- CASCADE POSITION OF THE FILES THIS CONTRACT LIVES IN ---------
+   * Verified from the built output 2026-08-22. matrix.html loads exactly
+   * TWO stylesheets, in this order:
+   *
+   *   1. matrix-*.css   <- matrix.css, hero.css, music.css, patchbanks.css
+   *   2. layout-*.css   <- tokens.css and layout.css, ALONE
+   *
+   * So the two files this contract lives in LOAD LAST. layout.css wins
+   * every SAME-SPECIFICITY tie against every other matrix stylesheet, by
+   * asset order — and no measurement taken inside matrix-*.css can
+   * observe that, because order is a property of the document and not of
+   * the rule. (agatha-13 found it; reproduced here by grepping distinct
+   * markers per source file against each emitted bundle.)
+   *
+   * BUT SPECIFICITY OUTRANKS ORDER, and that is the trap. matrix.css's
+   * `.hero__search-input:focus` at (0,2,0) beat layout.css's
+   * `:where(a,button,input,[tabindex]):focus-visible` at (0,1,0) despite
+   * loading first — which is how the page's one input silently stopped
+   * speaking the focus language.
+   *
+   * SO THE COMBINATION IN THAT FOCUS RULE IS THE WORST AVAILABLE:
+   * `:where()` contributes ZERO specificity, so putting it in the
+   * LAST-LOADING sheet makes a selector simultaneously the strongest
+   * thing by order and the weakest thing by specificity. The two
+   * properties pull in opposite directions inside one selector, and
+   * whichever the reader happens to be thinking about tells them the
+   * opposite of the truth.
+   *
+   * Practical rule: in these two files, reach for order when you want a
+   * DEFAULT that anything may override, and reach for specificity when
+   * you want a rule that HOLDS. `:where()` is the right tool for the
+   * first and actively wrong for the second.
+   */
+
   /* --- THIS IS A TABLE OF TOKENS, NOT OF MARKS ----------------------
    * Every ratio here is token-on-ground at full opacity. MARKS RENDER AT
    * OPACITIES, so any claim comparing two marks has to be recomputed at
