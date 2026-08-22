@@ -31,7 +31,8 @@ body {
   --prose: #99a6ab;
   --quiet: #99a6ab;
   --rule: #232a2e;
-  --rule-strong: #2f383d;
+  --line-strong: #2f383d;
+  --rule-strong: var(--line-strong);
   --rose: #ffb454;
   --rose-lit: #ffb454;
   --rose-mark: #2f383d;
@@ -49,7 +50,7 @@ body {
   --ink-soft: var(--prose);
   --ink-faint: var(--quiet);
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --serif: 'Instrument Serif', Georgia, serif;
+  --display: 'Saira Condensed', 'Arial Narrow', sans-serif;
   --text: 'Archivo', sans-serif;
   --shell: 72rem;
   --measure: 36rem;
@@ -241,11 +242,12 @@ body {
 }
 
 .codex-hero__title {
-  font-family: var(--serif);
-  font-size: clamp(4rem, 12.8vw, 10.8rem);
-  font-weight: 400;
-  line-height: 0.82;
-  letter-spacing: -0.035em;
+  font-family: var(--display);
+  font-size: clamp(4.5rem, 14.2vw, 12rem);
+  font-weight: 600;
+  line-height: 0.76;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
   color: var(--ink);
   margin-top: clamp(2rem, 4vw, 3rem) !important;
   white-space: nowrap;
@@ -253,8 +255,9 @@ body {
 }
 
 .codex-hero__title em {
-  margin-left: 0.045em;
-  font-style: italic;
+  margin-left: 0.07em;
+  font-style: normal;
+  font-weight: 700;
   color: var(--phosphor);
   text-shadow: 0 0 36px var(--phosphor-glow);
 }
@@ -296,8 +299,9 @@ body {
 
 .codex-stat__value {
   color: var(--amber);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.7rem, 5vw, 4.3rem);
+  font-weight: 500;
   line-height: 0.86;
   letter-spacing: -0.025em;
   text-shadow: 0 0 20px var(--amber-glow);
@@ -357,6 +361,49 @@ body {
 
 .codex-page .act:hover .line__value,
 .codex-page .act:focus-visible .line__value {
+  color: var(--phosphor);
+}
+
+/* The primary site's phosphor switch, expressed through the Mac register line. */
+
+.codex-page .codex-primary-action.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.72rem 0.9rem;
+  border: 1px solid var(--phosphor);
+  border-radius: 3px;
+  background: var(--phosphor);
+  color: var(--dusk-deep);
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 0 22px var(--phosphor-glow);
+  transition:
+    background-color 180ms var(--ease),
+    color 180ms var(--ease),
+    box-shadow 180ms var(--ease);
+}
+
+.codex-primary-action .line__leader {
+  display: none;
+}
+
+.codex-page .codex-primary-action .line__value {
+  color: var(--dusk-deep);
+}
+
+.codex-page .codex-primary-action:hover,
+.codex-page .codex-primary-action:focus-visible {
+  background: transparent;
+  color: var(--phosphor);
+  box-shadow: 0 0 30px var(--phosphor-glow);
+}
+
+.codex-page .codex-primary-action:hover .line__value,
+.codex-page .codex-primary-action:focus-visible .line__value {
   color: var(--phosphor);
 }
 
@@ -530,7 +577,7 @@ body {
 .codex-finder__field::before,
 .codex-finder__field::after {
   color: var(--amber);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 2.1rem;
   line-height: 1;
 }
@@ -550,8 +597,9 @@ body {
   background: none;
   color: var(--ink);
   caret-color: var(--phosphor);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.7rem, 4vw, 2.7rem);
+  font-weight: 500;
   line-height: 1.05;
 }
 
@@ -589,11 +637,12 @@ body {
 
 .codex-section-head h2 {
   color: var(--ink);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.6rem, 6vw, 5.2rem);
-  font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.025em;
+  font-weight: 600;
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
 }
 
 .codex-section-note {
@@ -608,7 +657,7 @@ body {
   color: var(--quiet);
 }
 
-/* Register: Matrix bands with the Mac bench and iOS plate typography. */
+/* Register: Matrix bands with the Mac bench and iOS plate hierarchy. */
 
 .codex-register {
   padding-bottom: clamp(4.5rem, 9vw, 8rem);
@@ -634,15 +683,33 @@ body {
   overflow: hidden;
   padding: clamp(2rem, 4vw, 3.25rem) clamp(0rem, 2vw, 1.25rem);
   border-bottom: 1px solid var(--rule);
-  transition: background-color 220ms var(--ease);
+  transition: background-color 220ms var(--ease), box-shadow 220ms var(--ease);
 }
 
-.codex-entry:nth-child(even) {
-  background: rgb(20 24 26 / 0.68);
+.codex-entry::before {
+  content: '';
+  position: absolute;
+  inset: 18% auto 18% 0;
+  width: 1px;
+  background: var(--line-strong);
+  transform: scaleY(0.45);
+  transition: background-color 220ms var(--ease), transform 220ms var(--ease);
+}
+
+.codex-entry:hover {
+  background: rgb(20 24 26 / 0.48);
 }
 
 .codex-entry[data-current='true'] {
-  background: var(--field-lit);
+  background: linear-gradient(90deg, var(--field-lit), rgb(25 30 33 / 0.64));
+  box-shadow: inset 0 1px var(--line-strong), inset 0 -1px var(--line-strong);
+}
+
+.codex-entry[data-current='true']::before {
+  width: 2px;
+  background: var(--phosphor);
+  box-shadow: 0 0 14px var(--phosphor-glow);
+  transform: scaleY(1);
 }
 
 .codex-entry__field {
@@ -685,10 +752,10 @@ body {
   align-items: baseline;
   gap: 0 0.65rem;
   color: var(--ink);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.6rem, 3vw, 2.25rem);
-  font-weight: 400;
-  line-height: 1.08;
+  font-weight: 500;
+  line-height: 1.02;
 }
 
 .codex-entry__leader {
@@ -870,9 +937,10 @@ body {
 .codex-bank-figure__name {
   margin-top: 0.35rem !important;
   color: var(--ink);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.7rem, 3vw, 2.35rem);
-  line-height: 1.1;
+  font-weight: 500;
+  line-height: 1.02;
 }
 
 .codex-bank-figure__readout {
@@ -932,10 +1000,10 @@ body {
 
 .codex-track h3 {
   color: var(--ink);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(1.4rem, 2.5vw, 2rem);
-  font-weight: 400;
-  line-height: 1.12;
+  font-weight: 500;
+  line-height: 1.04;
 }
 
 .codex-track__trace {
@@ -962,9 +1030,10 @@ body {
 .codex-footer__mark {
   margin-top: 0.4rem !important;
   color: var(--ink);
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(2.5rem, 5vw, 4rem);
-  line-height: 0.95;
+  font-weight: 500;
+  line-height: 0.88;
 }
 
 .codex-footer__note {
@@ -1089,13 +1158,13 @@ body {
 
   .codex-stats {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem 1rem;
+    grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 0.7rem;
     margin-top: 2rem;
   }
 
   .codex-stat__value {
-    font-size: clamp(2.7rem, 14vw, 3.4rem);
+    font-size: clamp(2.35rem, 12vw, 3.2rem);
   }
 
   .codex-hero__actions {
