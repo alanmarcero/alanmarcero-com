@@ -13,14 +13,26 @@ import './hero.css';
 export const ANNOUNCE_DELAY_MS = 600;
 
 /**
+ * A count and its noun, agreeing in number.
+ *
+ * Shared by both renderers on purpose. They previously pluralized
+ * independently — the spoken one did, the visible one did not — and any
+ * search matching exactly one release showed "1 releases" on screen while
+ * the live region said "1 release". Two implementations of one rule is the
+ * defect generator, so there is now one.
+ */
+export const count = (n, singular, plural = `${singular}s`) =>
+  `${n} ${n === 1 ? singular : plural}`;
+
+/**
  * The visible readout. Terser than the spoken one, and it omits an unknown
  * release count for the same reason: "0 releases" during a cold load is not
  * a smaller truth, it is a wrong one.
  */
 export const visibleResults = ({ patches, music }) =>
   music === null || music === undefined
-    ? `${patches} banks`
-    : `${patches} banks, ${music} releases`;
+    ? count(patches, 'bank')
+    : `${count(patches, 'bank')}, ${count(music, 'release')}`;
 
 /**
  * What the live region says.
@@ -38,7 +50,7 @@ export const visibleResults = ({ patches, music }) =>
 export const describeResults = (resultsCount, query) => {
   if (!resultsCount) return '';
   const { patches, music } = resultsCount;
-  const banks = `${patches} ${patches === 1 ? 'bank' : 'banks'}`;
+  const banks = count(patches, 'bank');
 
   if (music === null || music === undefined) {
     return patches === 0
@@ -48,7 +60,7 @@ export const describeResults = (resultsCount, query) => {
 
   if (patches === 0 && music === 0) return `No matches for “${query}”.`;
 
-  const releases = `${music} ${music === 1 ? 'release' : 'releases'}`;
+  const releases = count(music, 'release');
   return `${banks}, ${releases} for “${query}”.`;
 };
 
