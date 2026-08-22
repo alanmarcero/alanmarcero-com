@@ -1294,6 +1294,24 @@ body {
   }
 }
 
+@media (max-width: 24rem) {
+  .codex-stats {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+
+  .codex-stat:nth-child(3) {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+  }
+
+  .codex-stat:nth-child(3) .codex-stat__value {
+    font-size: 2.35rem;
+  }
+}
+
 @keyframes codex-field-wipe {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
