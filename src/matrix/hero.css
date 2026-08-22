@@ -72,3 +72,49 @@
 
    The field's colour belongs to whoever owns the token, and its density
    belongs to D5, which is actively measuring it. Not mine either way.
+
+/* --- Merged from the main site: colour and light, not geometry --------- */
+
+/* The main site is a PHOSPHOR system — #4af2a4 with an rgba(74,242,164,.16)
+   bloom — and its strongest single gesture is the split-colour headline:
+   one name, two inks. It is pure type, so it arrives here without importing
+   any container geometry. That distinction is the whole scope of the merge:
+   the two systems separate by different means (phosphor by containers and
+   shadow rings, Patch Sheet by ground and engraving with a measured ceiling
+   behind it), and importing radius would REPLACE a separation mechanism
+   rather than add one.
+
+   Measured on our own ground before use, not taken from the main site's
+   docs — which describe a cyan/violet CRT system this site does not have:
+     phosphor on --panel    11.18:1
+     phosphor on --panel-3   8.34:1   (AA floor 4.5)
+     --legend on --panel    12.56:1   (the ink half, for comparison)
+   Both halves of the headline therefore sit in the same legibility band as
+   existing primary text. The merge costs nothing here.
+
+   WITHDRAWAL CONDITION — read this before adding a second local copy.
+   --phosphor is defined in src/shared/theme.css, which MatrixApp does not
+   import, so the variable does not resolve in /matrix. This is a
+   SLICE-LOCAL declaration, not a token. If the shared-surface slice
+   promotes phosphor into tokens.css, DELETE this block and reference the
+   token — do not leave a parallel value. A slice-local override that
+   outlives its reason is the same object as a stale comment, except it
+   still executes. (Learned the hard way at f1efc26, where I pinned the
+   hero field to a local colour after its token owner had already fixed the
+   token, winning 0.02:1 and silently decoupling the largest field on the
+   site from the variable that exists to control it.) */
+.hero {
+  --hero-signal: #4af2a4;
+  --hero-bloom: rgba(74, 242, 164, 0.16);
+}
+
+/* The bloom sits on identity because that is where the main site puts it.
+   Kept to the phosphor half only: the ink half is already the page's
+   highest-contrast element and a glow on it would read as a print defect
+   rather than as light. */
+.hero__title-signal {
+  color: var(--hero-signal);
+  text-shadow:
+    0 0 0.35em var(--hero-bloom),
+    0 0 1.1em var(--hero-bloom);
+}

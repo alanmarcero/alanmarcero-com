@@ -122,7 +122,13 @@ function Hero({
           Synthesizer sound design
         </p>
 
-        <h1 className="hero__title">Alan Marcero</h1>
+        {/* The main site's strongest single gesture: one name, two inks.
+            A <span> inside the existing h1 changes no text content, so the
+            accessible name stays "Alan Marcero" — asserted in a test rather
+            than assumed. */}
+        <h1 className="hero__title">
+          Alan <span className="hero__title-signal">Marcero</span>
+        </h1>
 
         <p className="hero__lead prose">
           Patch banks for the hardware you already own — Prophet 08, Virus TI,
