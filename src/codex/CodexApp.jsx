@@ -345,6 +345,11 @@ function Register({ banks, query, rowRef, activeIndex, onPreview }) {
                                 ? `Demo ${demoIndex + 1} of ${demos.length} — ${bank.name}`
                                 : `Hear it — ${bank.name}`
                             }
+                            stopLabel={
+                              demos.length > 1
+                                ? `Stop demo ${demoIndex + 1} — ${bank.name}`
+                                : `Stop demo — ${bank.name}`
+                            }
                           />
                         ))}
                         {demos.length === 0 && (
@@ -403,7 +408,12 @@ function Releases({ items, loading, error, query }) {
                   cycles={5}
                   className="codex-track__trace"
                 />
-                <Demo videoId={item.videoId} cue="Play" label={`Play ${item.title}`} />
+                <Demo
+                  videoId={item.videoId}
+                  cue="Play"
+                  label={`Play ${item.title}`}
+                  stopLabel={`Stop ${item.title}`}
+                />
               </li>
             ))}
           </ol>
