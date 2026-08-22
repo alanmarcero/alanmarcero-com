@@ -230,3 +230,39 @@ describe('Hero split-colour headline (merged from the main site)', () => {
     expect(container.querySelector('.hero__title-signal').closest('.hero')).toBeTruthy();
   });
 });
+
+describe('Hero live region stays invisible', () => {
+  const props = {
+    totalPatches: 1148,
+    instrumentCount: 24,
+    searchQuery: 'nord',
+    onSearchChange: () => {},
+    resultsCount: { patches: 2, music: 1 },
+  };
+
+  // The two-element design exists so the same fact reaches eyes and screen
+  // readers on different tempos. If the live region ever becomes visible it
+  // duplicates the readout on screen, which is the one outcome the split was
+  // built to avoid -- and a colour pass over this file is exactly the kind of
+  // change that would do it without meaning to.
+  //
+  // WHAT THIS CANNOT CHECK: jsdom does not apply stylesheets, so this asserts
+  // the element carries the class whose job is to hide it, not that it is
+  // actually hidden. The class's contents are verified by reading hero.css.
+  it('carries the offscreen class, so a colour pass cannot surface it', () => {
+    const { container } = render(<Hero {...props} />);
+    const region = container.querySelector('#hero-search-announce');
+    expect(region).toBeTruthy();
+    expect(region.classList.contains('hero__search-announce')).toBe(true);
+  });
+
+  it('is a distinct element from the visible readout, not the same node', () => {
+    const { container } = render(<Hero {...props} />);
+    const visible = container.querySelector('.hero__search-result');
+    const spoken = container.querySelector('#hero-search-announce');
+    expect(visible).not.toBe(spoken);
+    // The visible one is hidden from AT; the spoken one is not.
+    expect(visible.getAttribute('aria-hidden')).toBe('true');
+    expect(spoken.getAttribute('aria-hidden')).toBeNull();
+  });
+});
