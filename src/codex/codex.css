@@ -625,6 +625,12 @@ body {
   opacity: 1;
 }
 
+.codex-finder input::-webkit-search-cancel-button,
+.codex-finder input::-webkit-search-decoration {
+  display: none;
+  appearance: none;
+}
+
 .codex-finder input:focus {
   border-bottom-color: var(--phosphor);
   border-bottom-style: solid;
