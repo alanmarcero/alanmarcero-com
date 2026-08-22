@@ -55,24 +55,20 @@
   color: var(--legend-dim);
 }
 
-/* --- The field ------------------------------------------------------ */
+/* --- The field ----------------------------------------------------- */
 
-/* 2.06:1 -> 3.42:1 against --panel.
+/* NOTHING HERE, DELIBERATELY, AND THIS COMMENT IS THE POINT.
 
-   This is NOT a compliance fix, and the distinction matters: the field is
-   aria-hidden and its claim now lives in .hero__field-note, so WCAG 1.4.11
-   non-text contrast does not apply to it at all. It is a legibility fix.
-   At 2.06:1 the graphic communicated nothing — 1,148 envelopes rendered as
-   an even wash — and that is a design failure whether or not a guideline
-   happens to name it.
+   I shipped `.hero__field { color: var(--legend-dim) }` here on a measured
+   2.06:1 for --wood at opacity 0.72. That measurement was already stale
+   when I took it: agent-81ab25dc, who owns the token file, had lifted
+   --wood from #8a5a3b to #b98a5c, which composites to 3.40:1 at the same
+   opacity. My override bought 3.42:1 — a gain of 0.02 — and cost two
+   things worth more than that. It decoupled the hero from the token whose
+   stated job is "large warm fields", so a future lift of --wood would
+   silently skip the largest field on the site. And it swapped a warm
+   walnut for a neutral grey, which is a palette change I neither intended
+   nor justified.
 
-   Measured, not chosen by eye: --wood #8a5a3b at the previous 0.72 gives
-   2.06:1 and cannot reach 3:1 even at opacity 1 (2.77:1). Neither can
-   --legend-faint (2.78:1 at full opacity), which is the token layout.css
-   nominally reserves "for strokes" — so a stroke field drawn in the stroke
-   token is unreadable by construction on this ground. --legend-dim at 0.72
-   lands at 3.42:1: legible, and still far below the title's 12.56:1. */
-.hero__field {
-  color: var(--legend-dim);
-  opacity: 0.72;
-}
+   The field's colour belongs to whoever owns the token, and its density
+   belongs to D5, which is actively measuring it. Not mine either way.

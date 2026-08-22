@@ -113,7 +113,6 @@ function Hero({
           cellWidth={8}
           cellHeight={6}
           gap={2}
-          strokeWidth={1.25}
           draw
         />
       </div>
