@@ -182,6 +182,38 @@
    * colour to any eye, luminance delta 0.0032. Neither author knew.
    */
 
+  /* --- FIELD TOKENS CUT BOTH WAYS. CHECK YOUR CONSUMERS. -----------
+   * Raising a field token HELPS every consumer with nothing over it and
+   * HURTS every consumer with text on top, by the same act. Measured
+   * across the --wood lift (#8a5a3b -> #b98a5c) at each live opacity:
+   *
+   *   consumer                       field:ground    --legend-well ON it
+   *   .hero__field        @0.72       2.06 -> 3.40      3.27 -> 1.98
+   *   .plate__field       @0.42       1.48 -> 2.03      4.55 -> 3.32
+   *   .work__spectrum     @0.28       1.29 -> 1.58      5.24 -> 4.27
+   *
+   * Left column up, right column down, every row. So A FIELD TOKEN'S
+   * SAFE RANGE IS NOT A PROPERTY OF THE TOKEN — it is a property of each
+   * consumer's opacity AND of whether that consumer puts text over it.
+   * The token cannot warn anyone; the ground under their text is
+   * composited from a value this file owns, so their measurement expires
+   * the moment this file is committed. (agent-cd2997fc, whose spectrum
+   * labels this lift broke: --legend-well 3.82 FAIL, --legend-dim 2.99
+   * FAIL. They fixed it at opacity 0.14 + --legend-well, now 5.45.)
+   *
+   * CONSUMER REGISTRY — the point of writing it here is that the
+   * dependency is otherwise invisible from either end:
+   *
+   *   NOTHING OVER IT  (raising helps; raise freely)
+   *     .hero__field         matrix.css      @0.72
+   *     .plate__field        layout.css      @0.42
+   *   TEXT OVER IT     (raising hurts; re-measure text-on-field)
+   *     .work__spectrum      sections/music.css @0.14  — D3's, not mine
+   *
+   * If you add a --wood consumer, add a line. If you put text over a
+   * field, say so here, because nobody editing this token can see it.
+   */
+
   /* --- Seam --------------------------------------------------------
    * The engraved boundary between bands. A machined catch-edge is what
    * a hardware panel actually has where two plates meet, so this is
