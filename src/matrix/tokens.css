@@ -96,8 +96,13 @@
    *                         (linear mask, #000 42% -> transparent 92%)
    *   .entry__photo--field  peak 3.00  ->  34% of its AREA
    *                         (radial closest-side, #000 55%)
-   *   .track__spectrum      --wood @0.32 (0.20 narrow), masked
-   *                         the faintest of the four
+   *   .work__spectrum       --wood @0.32, masked — the faintest of the
+   *                         four, and it is NOT in this file: D3's
+   *                         rewrite moved SpectrumBars to .work__spectrum
+   *                         in sections/music.css, so the fourth field
+   *                         site now belongs to that slice. The
+   *                         .track__spectrum rule this line first cited
+   *                         was already dead when I wrote it.
    *   .plate__field         2.03, UNMASKED — the only honest single number
    *
    * I shipped the photo-fallback's 3.00 earlier today as though it
