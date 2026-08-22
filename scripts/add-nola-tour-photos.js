@@ -27,6 +27,12 @@ const PHOTOS = {
   'Go City New Orleans — All-Inclusive Pass': [`${T}/go-city-nola.jpg`, '🎟️'],
   'New Orleans School of Cooking — demo class': [`${D}/new-orleans-school-of-cooking.jpg`, '🍲'],
 
+  // ---- getting to the swamp (the decision section) ----
+  'Gray Line Swamp &amp; Bayou — because there is no shuttle to catch': [`${T}/gray-line-swamp.jpg`, '🚐'],
+  'Ultimate Swamp Adventures — $212, and the shortest drive of any operator': [`${T}/ultimate-swamp-adventures.jpg`, '🌲'],
+  'Airboats, and why the 48-inch line is the reason': [`${T}/airboat-adventures.jpg`, '💨'],
+  'The free national-park boardwalk is closed until 2028': [`${T}/barataria-preserve.jpg`, '🚧'],
+
   // ---- swamp ----
   'Cajun Encounters Swamp Tour': [`${T}/cajun-encounters.jpg`, '🐊'],
   'Jean Lafitte Swamp Tour': [`${T}/jean-lafitte-swamp.jpg`, '🐊'],
@@ -75,7 +81,14 @@ const unmapped = [];
    immediately before the .tnum chip. The CSS pulls it out to the card edges
    with negative margins, the same trick .et-photo uses on the base page. */
 html = html.replace(
-  /(<div class="tcard[^"]*"[^>]*>\s*)((?:<span class="badge-top"[^>]*>[\s\S]*?<\/span>\s*)?)(<div>\s*)(<span class="tnum">)/g,
+  /* The badge group is [^<]* rather than [\s\S]*? on purpose. A lazy
+     any-character group still expands on backtracking, so on a re-run it would
+     grow from an ALREADY-photographed card's opening tag all the way to the
+     next unphotographed card's .tnum -- and since the swallowed span carries
+     the word "tphoto", the idempotence guard below then skipped a card that
+     genuinely had no photo. Badge text contains no tags, so [^<]* is both
+     correct and unable to cross a card boundary. */
+  /(<div class="tcard[^"]*"[^>]*>\s*)((?:<span class="badge-top"[^>]*>[^<]*<\/span>\s*)?)(<div>\s*)(<span class="tnum">)/g,
   (match, open, badge, innerOpen, tnum, offset) => {
     /* The offset argument, NOT html.indexOf(match). Card markup repeats
        verbatim -- every plain card opens with the same three lines -- so
