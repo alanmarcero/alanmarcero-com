@@ -96,13 +96,24 @@
    *                         (linear mask, #000 42% -> transparent 92%)
    *   .entry__photo--field  peak 3.00  ->  34% of its AREA
    *                         (radial closest-side, #000 55%)
-   *   .work__spectrum       --wood @0.32, masked — the faintest of the
-   *                         four, and it is NOT in this file: D3's
+   *   .track__spectrum      --wood @0.32, masked — DEAD PREDECESSOR.
+   *                         0.32 was its real opacity (verified at
+   *                         0cdd5bd~1) and it was the faintest of the
+   *                         four, but the element no longer exists: D3's
    *                         rewrite moved SpectrumBars to .work__spectrum
-   *                         in sections/music.css, so the fourth field
-   *                         site now belongs to that slice. The
-   *                         .track__spectrum rule this line first cited
-   *                         was already dead when I wrote it.
+   *                         in sections/music.css. The LIVE element is
+   *                         .work__spectrum at @0.14, registered below —
+   *                         do not read this row as current.
+   *
+   *                         This row said ".work__spectrum @0.32" until
+   *                         2026-08-22: a true number under the wrong
+   *                         subject, which is how one consumer came to
+   *                         appear at three different opacities in one
+   *                         file. agent-cd2997fc reported it, then
+   *                         retracted on finding 0.32 was genuinely true
+   *                         — but the mislabel was real and the retraction
+   *                         went one step too far, so the fix is to keep
+   *                         the number and correct who it belongs to.
    *   .plate__field         2.03, UNMASKED — the only honest single number
    *
    * I shipped the photo-fallback's 3.00 earlier today as though it
