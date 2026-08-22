@@ -76,8 +76,12 @@ const unmapped = [];
    with negative margins, the same trick .et-photo uses on the base page. */
 html = html.replace(
   /(<div class="tcard[^"]*"[^>]*>\s*)((?:<span class="badge-top"[^>]*>[\s\S]*?<\/span>\s*)?)(<div>\s*)(<span class="tnum">)/g,
-  (match, open, badge, innerOpen, tnum) => {
-    const after = html.slice(html.indexOf(match) + match.length);
+  (match, open, badge, innerOpen, tnum, offset) => {
+    /* The offset argument, NOT html.indexOf(match). Card markup repeats
+       verbatim -- every plain card opens with the same three lines -- so
+       indexOf returns the FIRST such card every time and twelve cards
+       silently inherited the ninth card's photograph. */
+    const after = html.slice(offset + match.length);
     const nameMatch = after.match(/class="tname">([\s\S]*?)<\/div>/);
     const name = nameMatch ? nameMatch[1].trim() : null;
     if (!name || !PHOTOS[name]) {

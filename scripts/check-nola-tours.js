@@ -32,6 +32,26 @@ cardBlocks.forEach((block, i) => {
   if (!/class="vfy"|class="unver"/.test(block)) fail(`no dated verification state: ${name}`);
 });
 
+/* ---------- photo assignment ---------- */
+/* The insertion script once used html.indexOf(match) instead of the match
+   offset, and because plain cards open with byte-identical markup, twelve of
+   them silently inherited one swamp photo. Nothing about that page was
+   invalid -- it just quietly lied. Assert the shape that failure had. */
+const photoUse = new Map();
+cardBlocks.forEach((block, i) => {
+  const nameMatch = block.match(/class="tname">([^<]+)/);
+  const name = nameMatch ? nameMatch[1].trim() : `card #${i + 1}`;
+  const photo = block.match(/tphoto has-img" style="background-image:url\(([^)]+)\)/);
+  if (!photo) { fail(`no photo: ${name}`); return; }
+  const list = photoUse.get(photo[1]) || [];
+  list.push(name);
+  photoUse.set(photo[1], list);
+});
+photoUse.forEach((names, src) => {
+  if (names.length > 3) fail(`${names.length} cards share ${src}: ${names.slice(0, 4).join(', ')}…`);
+});
+note(`distinct photos: ${photoUse.size} across ${cardBlocks.length} cards`);
+
 /* ---------- retracted figures ---------- */
 const strikes = html.match(/<s(?![a-z])[^>]*>/g) || [];
 strikes.forEach((s) => {
