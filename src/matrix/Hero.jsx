@@ -13,7 +13,11 @@ import './hero.css';
 export const ANNOUNCE_DELAY_MS = 600;
 
 /**
- * A count and its noun, agreeing in number.
+ * Noun agreement, split from number formatting so a layout that shows the
+ * two apart (the hero puts the figure at display scale and the noun beneath
+ * it) uses the SAME rule as one that shows them together. One rule, two
+ * presentations — the alternative is a second implementation, which is how
+ * "1 releases" shipped.
  *
  * Shared by both renderers on purpose. They previously pluralized
  * independently — the spoken one did, the visible one did not — and any
@@ -21,8 +25,11 @@ export const ANNOUNCE_DELAY_MS = 600;
  * the live region said "1 release". Two implementations of one rule is the
  * defect generator, so there is now one.
  */
-export const count = (n, singular, plural = `${singular}s`) =>
-  `${n} ${n === 1 ? singular : plural}`;
+export const pluralize = (n, singular, plural = `${singular}s`) =>
+  (n === 1 ? singular : plural);
+
+export const count = (n, singular, plural) =>
+  `${n.toLocaleString()} ${pluralize(n, singular, plural)}`;
 
 /**
  * The visible readout. Terser than the spoken one, and it omits an unknown
@@ -106,6 +113,7 @@ function Hero({
           cellWidth={8}
           cellHeight={6}
           gap={2}
+          strokeWidth={1.25}
           draw
         />
       </div>
@@ -122,13 +130,30 @@ function Hero({
           Nord Lead 3, Moog, JP-8000 and more. Every bank is free to download.
         </p>
 
+        {/* The thesis, at the weight it earns. This is the strongest
+            sentence on the page and it previously read as a small readout
+            under the lead. Both nouns route through count() — they were
+            hardcoded plurals, the same defect that shipped "1 releases",
+            two call sites further along. */}
         <p className="hero__count">
           <span className="readout hero__count-value">
             {totalPatches.toLocaleString()}
           </span>
           <span className="legend hero__count-label">
-            patches across {instrumentCount} instruments
+            {pluralize(totalPatches, 'patch', 'patches')}
+            {' across '}
+            {count(instrumentCount, 'instrument')}
           </span>
+        </p>
+
+        {/* What the field behind this text IS, said in words. The graphic
+            is aria-hidden, so without this sentence the site's central
+            claim existed only as a picture — withheld from any reader who
+            cannot see it. Saying it here is what MAKES the graphic
+            legitimately decorative rather than load-bearing. */}
+        <p className="hero__field-note">
+          One envelope drawn behind this text for every patch in the
+          catalog.
         </p>
 
         <div className="hero__search">
