@@ -15,15 +15,29 @@
   --panel-2: #2e2a2b;      /* raised panel section                     */
   --panel-3: #3a3536;      /* engraved separation, inset wells         */
 
-  /* --- Legends ----------------------------------------------------- */
-  --legend: #e8e2da;       /* silkscreen white — primary text          */
-  --legend-dim: #9a928c;   /* secondary text                           */
-  --legend-faint: #6b6460; /* tertiary, disabled, field strokes        */
+  /* --- Legends -----------------------------------------------------
+   * Contrast ratios are part of this contract, not a nicety. Measured
+   * against the grounds each one is actually used on; if you change a
+   * value, re-measure it, because nothing else here will catch you.
+   *
+   * There are TWO legible text tiers, not three. --legend-faint reads
+   * 2.78:1 on --panel and 2.44:1 on --panel-2, which fails WCAG AA at
+   * every size — so it is a NON-TEXT token. Strokes, rules, disabled
+   * affordances, field lines. Never content.
+   */
+  --legend: #e8e2da;       /* primary text      12.6:1 panel / 11.0:1 panel-2 */
+  --legend-dim: #9a928c;   /* secondary text     5.3:1 panel /  4.6:1 panel-2 */
+  --legend-faint: #6b6460; /* NON-TEXT ONLY — strokes, rules, disabled        */
+  --legend-well: #aea6a0;  /* text on inset wells (--panel-3)  5.0:1          */
 
   /* --- Accents ----------------------------------------------------- */
   --lcd: #ffb627;          /* amber backlight — primary accent         */
   --lcd-dim: #8a6316;      /* amber at rest                            */
-  --nord: #e0322a;         /* power LED red — sparing, never for text  */
+  --nord: #e0322a;         /* power LED at rest — sparing, NEVER for text
+                            * 3.58:1 on panel: fails AA for normal text.  */
+  --nord-lit: #f4736a;     /* the LED lit — the ONLY red allowed on text
+                            * 5.8:1 panel / 5.1:1 panel-2. Use for error
+                            * copy; --nord stays a light, not a word.     */
   --wood: #8a5a3b;         /* walnut end cheek — large warm fields     */
 
   /* --- Type -------------------------------------------------------- */

@@ -60,7 +60,9 @@ body {
 }
 
 .readout--dim {
-  color: var(--legend-faint);
+  /* Was --legend-faint (2.78:1). A dimmed readout is still a reading;
+     the faint token is for strokes. */
+  color: var(--legend-dim);
 }
 
 /* --- Shell --------------------------------------------------------- */
@@ -229,7 +231,10 @@ body {
 }
 
 .state--error {
-  color: var(--nord);
+  /* --nord is documented "never for text" and measures 3.58:1 — this rule
+     was the token's own contract being broken by the file that defines it.
+     An error message is the worst place in a UI to lose contrast. */
+  color: var(--nord-lit);
 }
 
 /* --- Focus --------------------------------------------------------- */
