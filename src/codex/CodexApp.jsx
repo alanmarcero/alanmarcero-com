@@ -420,7 +420,9 @@ function Colophon() {
         <div className="codex-footer__grid">
           <div>
             <p className="codex-label">Published by</p>
-            <p className="codex-footer__mark">Alan Marcero</p>
+            <p className="codex-footer__mark">
+              <span>Alan</span> <span>Marcero</span>
+            </p>
             <p className="codex-footer__note">
               Patch banks are free to download and free to use in your own music.
             </p>
