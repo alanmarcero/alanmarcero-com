@@ -293,8 +293,8 @@ function Register({ banks, query, rowRef, activeIndex, onPreview }) {
 
         {banks.length === 0 ? (
           <p className="codex-state">
-            Nothing in the catalogue matches &ldquo;{query}&rdquo;. Try the
-            instrument&rsquo;s name — Nord, Virus, Prophet, Moog, JP-8000.
+            Nothing in the catalogue matches &ldquo;{query}&rdquo;. Try another
+            instrument or track name.
           </p>
         ) : (
           <div className="codex-register__layout">
