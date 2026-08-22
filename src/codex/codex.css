@@ -156,6 +156,9 @@ body {
   left: var(--gutter);
   top: -5rem;
   z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
   padding: 0.7rem 1rem;
   background: var(--phosphor);
   color: var(--dusk-deep) !important;
@@ -601,6 +604,7 @@ body {
 .codex-finder input {
   flex: 1;
   min-width: 0;
+  min-height: 2.75rem;
   padding: 0.2rem 0 0.35rem;
   border: 0;
   border-bottom: 1px dotted var(--line-strong);
@@ -862,7 +866,7 @@ body {
 .codex-page .action {
   display: inline-flex;
   align-items: center;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   padding: 0.45rem 0;
   border: 0;
   border-bottom: 1px solid var(--rose-mark);
@@ -1193,6 +1197,9 @@ body {
 }
 
 .codex-credits a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
   color: var(--phosphor);
   text-underline-offset: 0.2em;
 }
