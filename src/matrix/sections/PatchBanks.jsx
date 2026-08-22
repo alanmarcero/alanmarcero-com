@@ -3,6 +3,14 @@ import YouTubeFacade from '../YouTubeFacade';
 import { imageFor } from '../data/synthImages';
 
 /**
+ * A bank's name reduced to something usable as a DOM id. Names carry
+ * commas, slashes and spaces ("Roland JP-8000, JP-8080, JE-8086, and
+ * Airwave"), none of which belong in an id referenced by aria-labelledby.
+ */
+export const headingIdFor = (name) =>
+  `bank-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`;
+
+/**
  * The catalog. One plate per instrument, each carrying its own field of
  * envelopes — one glyph per patch in that bank, generated from the bank's
  * own name, so no two instruments share a texture.
@@ -36,11 +44,13 @@ function PatchBanks({ banks, searchQuery }) {
 
       {banks.map((bank, index) => {
         const image = imageFor(bank.name);
+        const headingId = headingIdFor(bank.name);
 
         return (
           <article
             key={bank.downloadLink}
             className={`plate ${index % 2 === 1 ? 'plate--raised' : ''}`}
+            aria-labelledby={headingId}
           >
           <div className="plate__field">
             <EnvelopeField
@@ -85,7 +95,7 @@ function PatchBanks({ banks, searchQuery }) {
               </figure>
             )}
 
-            <h3 className="entry__name">{bank.name}</h3>
+            <h3 id={headingId} className="entry__name">{bank.name}</h3>
             <p className="entry__desc">{bank.description}</p>
 
             {/* Not every entry is counted in patches — the MIDI bank has no
@@ -107,20 +117,32 @@ function PatchBanks({ banks, searchQuery }) {
                 className="action"
                 href={bank.downloadLink}
                 download
-                aria-label={`Download the ${bank.name} bank`}
+                /* WCAG 2.5.3 Label in Name: the accessible name must
+                   CONTAIN the visible text. "Download the ${bank.name}
+                   bank" splits the visible "Download the bank" around the
+                   instrument, so a voice-control user saying "click
+                   Download the bank" matches nothing. Suffixing keeps the
+                   visible string intact and still gives all eleven links
+                   distinct names. */
+                aria-label={`Download the bank — ${bank.name}`}
               >
                 Download the bank
               </a>
 
-              {(bank.audioDemo || []).map((videoId, index, demos) => (
+              {/* `cue` is the visible text and `label` becomes aria-label,
+                  which OVERRIDES it — so every label here begins with its own
+                  cue verbatim. The previous pair ("Hear it" / "Hear <name>")
+                  dropped the word "it" from the accessible name and failed
+                  WCAG 2.5.3 on all four single-demo banks. */}
+              {(bank.audioDemo || []).map((videoId, demoIndex, demos) => (
                 <YouTubeFacade
                   key={videoId}
                   videoId={videoId}
-                  cue={demos.length > 1 ? `Demo ${index + 1}` : 'Hear it'}
+                  cue={demos.length > 1 ? `Demo ${demoIndex + 1}` : 'Hear it'}
                   label={
                     demos.length > 1
-                      ? `Hear ${bank.name}, demo ${index + 1} of ${demos.length}`
-                      : `Hear ${bank.name}`
+                      ? `Demo ${demoIndex + 1} of ${demos.length} — ${bank.name}`
+                      : `Hear it — ${bank.name}`
                   }
                 />
               ))}
