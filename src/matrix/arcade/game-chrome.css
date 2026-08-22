@@ -28,6 +28,16 @@
 /* --- The cabinet ---------------------------------------------------- */
 
 .game-wrapper {
+  /*
+   * How much vertical space the chrome takes, so `.game-canvas-area` below
+   * can size the cabinet to what is left. This was the literal `9rem` in
+   * that formula — a constant encoding "the HUD is the only chrome", which
+   * stopped being true the moment `GameView` added a title bar and produced
+   * an 18px overflow that no jsdom test could see. Named so that anything
+   * adding chrome adjusts it in the same place.
+   */
+  --chrome-reserve: 9rem;
+
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100dvh;
@@ -126,7 +136,7 @@
 .game-canvas-area {
   position: relative;
   align-self: center;
-  width: min(100% - var(--gutter) * 2, (100dvh - 9rem) * 1.6);
+  width: min(100% - var(--gutter) * 2, (100dvh - var(--chrome-reserve)) * 1.6);
   aspect-ratio: 16 / 10;
   margin-inline: auto;
   outline: 1px solid var(--panel-3);
@@ -348,6 +358,10 @@
  * `1fr` row resolve, which is what gives `.game-canvas-area` its height.
  */
 .game-page > .game-wrapper {
+  /* The bar is chrome too. Without this the cabinet is sized as though the
+   * HUD were still alone above it, and the page overflows by the bar. */
+  --chrome-reserve: 12rem;
+
   min-height: 0;
   height: 100%;
 }
@@ -364,7 +378,7 @@
 .game-page__title {
   margin: 0;
   font-family: var(--panel-face);
-  font-size: var(--display-s);
+  font-size: var(--step-1);
   font-weight: 600;
   letter-spacing: var(--legend-tracking-wide);
   text-transform: uppercase;
