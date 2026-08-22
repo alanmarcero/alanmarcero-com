@@ -97,16 +97,15 @@ export function buildLissajous({ seed, width, height, samples = 240, inset = 6 }
  */
 export function packetDash(fraction = 0.05) {
   const clamped = Math.min(0.5, Math.max(0.005, fraction));
+
   // Round the packet, then DERIVE the gap from the rounded value. Rounding
   // both independently broke the sum: round(0.995) is 1, so a 0.005 packet
-  // emitted "0.01 1" — a dash pattern 1% longer than the path, which drifts
-  // the packet every lap. Caught by the sums-to-the-whole-path test.
+  // emitted "0.01 1" — a dash pattern 1% longer than the path, drifting the
+  // packet a little every lap. Caught by the sums-to-the-whole-path test.
+  const on = round(clamped);
+
   return {
-  // Round the packet, then DERIVE the gap from the rounded value. Rounding
-  // both independently broke the sum: round(0.995) is 1, so a 0.005 packet
-  // emitted "0.01 1" — a dash pattern 1% longer than the path, which drifts
-  // the packet every lap. Caught by the sums-to-the-whole-path test.
-    dashArray: `${round(clamped)} ${round(1 - round(clamped))}`,
+    dashArray: `${on} ${round(1 - on)}`,
     pathLength: 1,
   };
 }
