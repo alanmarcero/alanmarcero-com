@@ -1,6 +1,7 @@
+import './patchbanks.css';
 import EnvelopeField from '../graphics/EnvelopeField';
 import YouTubeFacade from '../YouTubeFacade';
-import { imageFor } from '../data/synthImages';
+import { imageFor, photoBrightnessFor } from '../data/synthImages';
 
 /**
  * A bank's name reduced to something usable as a DOM id. Names carry
@@ -9,6 +10,23 @@ import { imageFor } from '../data/synthImages';
  */
 export const headingIdFor = (name) =>
   `bank-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`;
+
+/**
+ * How many machines a bank actually covers.
+ *
+ * This is the catalog's own promise made countable. The section exists so
+ * a reader can "find your instrument", and until now no row said which
+ * instruments it covered: the title names one or two ("Sequential Prophet
+ * 08 and Rev2") and the rest live inside description prose, where nobody
+ * scanning eleven rows will find them. Someone who owns a Mopho, a Tetra,
+ * an OsTIrus or a JE-8086 could not see that this site has patches for it.
+ *
+ * Coverage is also the honest basis for hierarchy. Eleven rows currently
+ * sit within 16% of one height, so a bank spanning five machines with two
+ * audio demos reads exactly like a MIDI zip. Weighting by coverage is not
+ * an invented importance — it is the number of readers a row can serve.
+ */
+const coverageOf = (bank) => (bank.instruments || []).length;
 
 /**
  * The catalog. One plate per instrument, each carrying its own field of
@@ -45,11 +63,32 @@ function PatchBanks({ banks, searchQuery }) {
       {banks.map((bank, index) => {
         const image = imageFor(bank.name);
         const headingId = headingIdFor(bank.name);
+        const coverage = coverageOf(bank);
+
+        /* Per-image exposure correction, the middle link of a three-slice
+           contract: the measurements live with the image data, the filter
+           lives in the shared surface, and this passes one between them.
+           Eight Wikimedia photographs by eight photographers ran 1.44:1 to
+           4.89:1 against the ground after a single uniform filter — a 3.4x
+           spread that no single filter value can close, because tuning
+           moves all eight together.
+
+           MUST be undefined and never null or '' when unmeasured. React
+           omits an undefined style value, so the shared rule falls back to
+           var(--photo-brightness, 1) and renders byte-identically to
+           before. An empty string instead emits `--photo-brightness: `,
+           which makes calc(0.86 * ) invalid, drops the whole filter
+           declaration, and ships the photo completely unfiltered. */
+        const photoBrightness = photoBrightnessFor(bank.name);
 
         return (
           <article
             key={bank.downloadLink}
             className={`plate ${index % 2 === 1 ? 'plate--raised' : ''}`}
+            /* Mass follows coverage. CSS reads this rather than a tier name
+               so the thresholds stay in one place and adding a bank cannot
+               land it in a bucket nobody chose. */
+            data-coverage={coverage}
             aria-labelledby={headingId}
           >
           <div className="plate__field">
@@ -65,7 +104,10 @@ function PatchBanks({ banks, searchQuery }) {
 
           <div className="shell plate__body entry entry--pictured">
             {image ? (
-              <figure className="entry__photo">
+              <figure
+                className="entry__photo"
+                style={{ '--photo-brightness': photoBrightness }}
+              >
                 <img
                   src={`/synths/${image.slug}-960.webp`}
                   srcSet={`/synths/${image.slug}-480.webp 480w, /synths/${image.slug}-960.webp 960w`}
@@ -97,6 +139,24 @@ function PatchBanks({ banks, searchQuery }) {
 
             <h3 id={headingId} className="entry__name">{bank.name}</h3>
             <p className="entry__desc">{bank.description}</p>
+
+            {/* The machines this bank loads onto, as data rather than prose.
+                A real list, because it is one — and labelled, so a screen
+                reader hears "fits 5 instruments" before the names instead of
+                five bare nouns after a paragraph. Entries with no
+                instruments (the MIDI bank) render nothing at all. */}
+            {coverage > 0 && (
+              <div className="entry__fits">
+                <span className="legend entry__fits-label" id={`${headingId}-fits`}>
+                  Fits {coverage} {coverage === 1 ? 'instrument' : 'instruments'}
+                </span>
+                <ul className="entry__instruments" aria-labelledby={`${headingId}-fits`}>
+                  {bank.instruments.map((instrument) => (
+                    <li key={instrument} className="entry__instrument">{instrument}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Not every entry is counted in patches — the MIDI bank has no
                 count, and a bare "patches" label under an empty readout is
