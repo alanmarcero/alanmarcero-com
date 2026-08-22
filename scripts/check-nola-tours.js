@@ -15,6 +15,14 @@ const html = fs.readFileSync(file, 'utf8');
 /* Comments are not markup a reader ever sees, and "CATEGORY 4: PACKAGES & COMBOS"
    is not a bare-ampersand bug. Strip them before the character-level checks. */
 const body = html.replace(/<!--[\s\S]*?-->/g, '');
+/* <style> and <script> bodies are not markup. A CSS comment explaining what
+   display:flex did to an inline <b> is prose about a tag, not a tag, and a
+   naive tag-balance walk reads it as an unclosed element. Blank the contents
+   but keep the wrapper tags so the balance check still sees them open/close. */
+const markup = body.replace(
+  /(<(style|script)\b[^>]*>)[\s\S]*?(<\/\2>)/gi,
+  (m, open, tag, close) => open + close
+);
 const problems = [];
 const notes = [];
 
@@ -112,16 +120,16 @@ note(`external links: ${ext.length}`);
 /* ---------- tag balance ---------- */
 const voids = new Set(['br','img','input','meta','link','hr','path','rect','circle','use','source','col','area','base','embed','track','wbr','polygon','line','ellipse','stop','feGaussianBlur']);
 const stack = [];
-for (const m of html.matchAll(/<(\/?)([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g)) {
+for (const m of markup.matchAll(/<(\/?)([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g)) {
   const [, slash, tag, attrs] = m;
   const t = tag.toLowerCase();
   if (voids.has(t) || attrs.trim().endsWith('/')) continue;
   if (t === '!doctype') continue;
-  if (!slash) stack.push({ t, at: html.slice(0, m.index).split('\n').length });
+  if (!slash) stack.push({ t, at: markup.slice(0, m.index).split('\n').length });
   else {
     const top = stack.pop();
     if (!top || top.t !== t) {
-      fail(`tag mismatch: </${t}> at line ${html.slice(0, m.index).split('\n').length} closes ${top ? `<${top.t}> from line ${top.at}` : 'nothing'}`);
+      fail(`tag mismatch: </${t}> at line ${markup.slice(0, m.index).split('\n').length} closes ${top ? `<${top.t}> from line ${top.at}` : 'nothing'}`);
       break;
     }
   }
