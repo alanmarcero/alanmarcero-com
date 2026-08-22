@@ -467,4 +467,3 @@ function CodexApp() {
 }
 
 export default CodexApp;
-export { matches };
