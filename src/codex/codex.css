@@ -1,0 +1,1129 @@
+/*
+ * /codex — a synthesis of the four existing alanmarcero.com systems.
+ *
+ * Opus 5 iOS supplies the broadside scale, rules, plates, and wave figures.
+ * Opus 5 Mac supplies the dusk ground, orrery, leadered register, and bench.
+ * Matrix supplies the data-derived envelope fields and full-width bands.
+ * The primary site supplies phosphor, live-signal motion, and the operator mark.
+ */
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #171334;
+}
+
+.codex-page {
+  --dusk: #171334;
+  --dusk-deep: #0e0b21;
+  --field: #221c46;
+  --field-lit: #2c2458;
+  --ink: #e8e6df;
+  --prose: #cfc7e2;
+  --quiet: #a7a1c4;
+  --rule: #4c4668;
+  --rule-strong: #8c85aa;
+  --rose: #dc93a9;
+  --rose-lit: #ffb0c3;
+  --rose-mark: #a3707f;
+  --haze: #372e61;
+  --phosphor: #4af2a4;
+  --phosphor-dim: #2c9a68;
+  --phosphor-glow: rgb(74 242 164 / 0.16);
+  --amber: #ffb627;
+  --lcd: var(--amber);
+  --paper: var(--dusk);
+  --paper-tint: var(--field);
+  --vermilion: var(--rose-lit);
+  --blue: var(--phosphor);
+  --ink-soft: var(--prose);
+  --ink-faint: var(--quiet);
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --text: 'Spectral', Georgia, serif;
+  --shell: 84rem;
+  --measure: 38rem;
+  --gutter: clamp(1.1rem, 4vw, 4.25rem);
+  --ease: cubic-bezier(0.22, 0.61, 0.24, 1);
+
+  min-height: 100vh;
+  overflow-x: clip;
+  background-color: var(--dusk);
+  background-image:
+    radial-gradient(110% 38% at 50% 103%, rgb(220 147 169 / 0.13), transparent 62%),
+    radial-gradient(120% 64% at 50% -8%, #2b1d4a 0%, #1d1740 35%, var(--dusk) 72%, var(--dusk-deep) 100%);
+  background-attachment: fixed;
+  color: var(--prose);
+  font-family: var(--text);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+.codex-page *,
+.codex-page *::before,
+.codex-page *::after {
+  box-sizing: border-box;
+}
+
+.codex-page h1,
+.codex-page h2,
+.codex-page h3,
+.codex-page p,
+.codex-page ul,
+.codex-page ol,
+.codex-page figure,
+.codex-page figcaption {
+  margin: 0;
+}
+
+.codex-page ul,
+.codex-page ol {
+  padding: 0;
+  list-style: none;
+}
+
+.codex-page img,
+.codex-page svg {
+  display: block;
+  max-width: 100%;
+}
+
+.codex-page a {
+  color: inherit;
+}
+
+.codex-page button,
+.codex-page input {
+  font: inherit;
+}
+
+.codex-page button {
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.codex-page ::selection {
+  background: var(--phosphor);
+  color: var(--dusk-deep);
+}
+
+.codex-page :where(a, button, input):focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 4px;
+  box-shadow: 0 0 24px var(--phosphor-glow);
+}
+
+.codex-shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.codex-label {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.codex-skip {
+  position: absolute;
+  left: var(--gutter);
+  top: -5rem;
+  z-index: 100;
+  padding: 0.7rem 1rem;
+  background: var(--phosphor);
+  color: var(--dusk-deep) !important;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top 180ms var(--ease);
+}
+
+.codex-skip:focus {
+  top: 1rem;
+}
+
+/* Masthead: the iOS broadside is set inside Matrix's live field. */
+
+.codex-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: min(62rem, 100svh);
+  overflow: hidden;
+}
+
+.codex-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  z-index: -1;
+  background: linear-gradient(transparent, rgb(14 11 33 / 0.84) 74%, var(--dusk-deep));
+  pointer-events: none;
+}
+
+.codex-hero__field {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  color: var(--rose-mark);
+  opacity: 0.46;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 90%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 90%);
+}
+
+.codex-hero__field .envelope-field {
+  width: 100%;
+  height: 100%;
+}
+
+.codex-hero__field .envelope-field__wipe {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: codex-field-wipe 1.1s var(--ease) both;
+}
+
+.codex-hero__field .envelope-field__beam {
+  stroke: var(--amber);
+  filter: drop-shadow(0 0 5px var(--amber)) !important;
+}
+
+.codex-hero__inner {
+  padding-top: 1rem;
+  padding-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+.codex-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem 2rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.codex-meta p:first-child {
+  color: var(--ink);
+}
+
+.codex-hero__title {
+  font-family: var(--serif);
+  font-size: clamp(4rem, 14.3vw, 12.2rem);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin-top: clamp(2.3rem, 5vw, 4rem) !important;
+  white-space: nowrap;
+  animation: codex-rise 700ms var(--ease) both;
+}
+
+.codex-hero__title em {
+  font-style: italic;
+  color: var(--phosphor);
+  text-shadow: 0 0 36px var(--phosphor-glow);
+}
+
+.codex-hero__deck {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: start;
+  margin-top: clamp(2.6rem, 6vw, 5rem);
+}
+
+.codex-hero__copy {
+  max-width: 42rem;
+}
+
+.codex-hero__lead {
+  max-width: var(--measure);
+  color: var(--ink);
+  font-size: clamp(1.08rem, 1rem + 0.45vw, 1.35rem);
+  line-height: 1.58;
+  text-wrap: pretty;
+}
+
+.codex-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1.25rem clamp(1.75rem, 4vw, 3.5rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.codex-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.codex-stat__value {
+  color: var(--amber);
+  font-family: var(--serif);
+  font-size: clamp(2.7rem, 5vw, 4.3rem);
+  line-height: 0.86;
+  letter-spacing: -0.025em;
+  text-shadow: 0 0 20px rgb(255 182 39 / 0.12);
+}
+
+.codex-hero__actions,
+.codex-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-width: 27rem;
+  margin-top: 2rem;
+}
+
+/* Opus 5 Mac's leader line remains the shared action/readout device. */
+
+.codex-page .line {
+  display: grid;
+  grid-template-columns: auto minmax(1.5rem, 1fr) auto;
+  align-items: baseline;
+  gap: 0 0.55rem;
+  width: 100%;
+  text-decoration: none;
+}
+
+.codex-page .line__leader {
+  align-self: end;
+  margin-bottom: 0.3em;
+  border-bottom: 1px dotted var(--rose-mark);
+  transition: border-color 160ms var(--ease);
+}
+
+.codex-page .line__value {
+  color: var(--rose);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.codex-page .act {
+  color: var(--ink);
+  font-weight: 600;
+  transition: color 160ms var(--ease);
+}
+
+.codex-page .act:hover,
+.codex-page .act:focus-visible {
+  color: var(--phosphor);
+}
+
+.codex-page .act:hover .line__leader,
+.codex-page .act:focus-visible .line__leader {
+  border-color: var(--phosphor);
+}
+
+.codex-page .act:hover .line__value,
+.codex-page .act:focus-visible .line__value {
+  color: var(--phosphor);
+}
+
+.codex-hero__instrument {
+  position: relative;
+  width: min(100%, 26rem);
+  justify-self: center;
+}
+
+.codex-hero__instrument .orrery {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.codex-hero__mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 29%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--dusk-deep);
+  box-shadow:
+    0 0 0 1px var(--phosphor-dim),
+    0 0 0 7px var(--dusk-deep),
+    0 0 30px var(--phosphor-glow);
+  overflow: hidden;
+}
+
+.codex-hero__mark .synthesist-mark {
+  width: 100%;
+  height: 100%;
+}
+
+.codex-hero__instrument figcaption {
+  margin-top: 1.3rem;
+  max-width: 25rem;
+  color: var(--quiet);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.codex-hero__instrument figcaption > * + * {
+  margin-top: 0.45rem;
+}
+
+.codex-quiet-action {
+  color: var(--rose);
+  font-family: var(--mono) !important;
+  font-size: 0.67rem !important;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  text-decoration: underline dotted var(--rose-mark);
+  text-underline-offset: 0.3em;
+}
+
+.codex-quiet-action:hover {
+  color: var(--phosphor);
+}
+
+/* The existing orrery drawing language. */
+
+.codex-page .orrery__limb,
+.codex-page .orrery__orbit {
+  fill: none;
+}
+
+.codex-page .orrery__limb,
+.codex-page .orrery__tick {
+  stroke: var(--rose-mark);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.codex-page .orrery__orbit {
+  stroke: var(--rose-mark);
+  stroke-width: 0.3;
+  transition: stroke 220ms var(--ease), stroke-width 220ms var(--ease);
+}
+
+.codex-page .orrery__tick--major {
+  stroke: var(--rose);
+  stroke-width: 1.4;
+}
+
+.codex-page .orrery__spoke {
+  stroke: var(--haze);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.codex-page .orrery__orbit.is-active {
+  stroke: var(--phosphor);
+  stroke-width: 0.62;
+}
+
+.codex-page .orrery__radius {
+  stroke: var(--phosphor);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.codex-page .orrery__body {
+  fill: var(--ink);
+  transition: fill 220ms var(--ease);
+}
+
+.codex-page .orrery__body.is-active {
+  fill: var(--phosphor);
+}
+
+.codex-page .orrery__body--unlisted {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.28;
+}
+
+.codex-page .orrery__body--unlisted.is-active {
+  stroke: var(--phosphor);
+}
+
+.codex-page .orrery__observer line {
+  stroke: var(--rose);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.codex-page .orrery__observer circle {
+  fill: var(--rose);
+}
+
+/* Search: the Mac brackets around the iOS writing line. */
+
+.codex-finder {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.codex-finder__field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  max-width: 44rem;
+  margin-top: 0.55rem;
+}
+
+.codex-finder__field::before,
+.codex-finder__field::after {
+  color: var(--rose);
+  font-family: var(--serif);
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.codex-finder__field::before { content: '['; }
+.codex-finder__field::after { content: ']'; }
+
+.codex-finder input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0 0.35rem;
+  border: 0;
+  border-bottom: 1px dotted var(--rose-mark);
+  border-radius: 0;
+  outline: none;
+  appearance: none;
+  background: none;
+  color: var(--ink);
+  caret-color: var(--phosphor);
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 4vw, 2.7rem);
+  line-height: 1.05;
+}
+
+.codex-finder input::placeholder {
+  color: var(--quiet);
+  opacity: 1;
+}
+
+.codex-finder input:focus {
+  border-bottom-color: var(--phosphor);
+  border-bottom-style: solid;
+}
+
+.codex-finder input:focus-visible {
+  box-shadow: 0 8px 18px -16px var(--phosphor);
+}
+
+.codex-finder__result {
+  min-height: 1.5em;
+  margin: 0.6rem 0 0 2rem !important;
+  color: var(--phosphor);
+}
+
+/* Shared section furniture from the broadside and patch sheet. */
+
+.codex-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--ink);
+}
+
+.codex-section-head h2 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 6vw, 5.2rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+
+.codex-section-note {
+  max-width: 35rem;
+  margin-top: 1rem !important;
+  color: var(--prose);
+}
+
+.codex-state {
+  max-width: var(--measure);
+  padding-block: 3rem;
+  color: var(--quiet);
+}
+
+/* Register: Matrix bands with the Mac bench and iOS plate typography. */
+
+.codex-register {
+  padding-bottom: clamp(4.5rem, 9vw, 8rem);
+}
+
+.codex-register__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
+  margin-top: clamp(2rem, 5vw, 4rem);
+}
+
+.codex-register__rows {
+  border-top: 1px solid var(--rule);
+}
+
+.codex-entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  gap: 1rem;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(2rem, 4vw, 3.25rem) clamp(0rem, 2vw, 1.25rem);
+  border-bottom: 1px solid var(--rule);
+  transition: background-color 220ms var(--ease);
+}
+
+.codex-entry:nth-child(even) {
+  background: rgb(44 36 88 / 0.34);
+}
+
+.codex-entry[data-current='true'] {
+  background: rgb(44 36 88 / 0.7);
+}
+
+.codex-entry__field {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  color: var(--rose-mark);
+  opacity: 0.16;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 42%, transparent 100%);
+}
+
+.codex-entry__field .envelope-field {
+  width: 100%;
+  height: 100%;
+}
+
+.codex-entry__index {
+  padding-top: 0.35rem;
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: color 180ms var(--ease), text-shadow 180ms var(--ease);
+}
+
+.codex-entry[data-current='true'] .codex-entry__index {
+  color: var(--phosphor);
+  text-shadow: 0 0 12px var(--phosphor-glow);
+}
+
+.codex-entry__body {
+  min-width: 0;
+}
+
+.codex-entry h3 {
+  display: grid;
+  grid-template-columns: auto minmax(1rem, 1fr) auto;
+  align-items: baseline;
+  gap: 0 0.65rem;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.codex-entry__leader {
+  align-self: end;
+  margin-bottom: 0.32em;
+  border-bottom: 1px dotted var(--rose-mark);
+}
+
+.codex-entry__value {
+  color: var(--rose);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.codex-entry__description {
+  max-width: 38rem;
+  margin-top: 0.8rem !important;
+  color: var(--prose);
+  line-height: 1.58;
+}
+
+.codex-entry__fits {
+  max-width: 40rem;
+  margin-top: 0.8rem !important;
+  color: var(--quiet);
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+
+.codex-entry__trace {
+  width: 100%;
+  height: 2.5rem;
+  margin-top: 0.85rem;
+  opacity: 0.72;
+}
+
+.codex-entry__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.6rem;
+  margin-top: 1.1rem;
+}
+
+.codex-action,
+.codex-page .action {
+  display: inline-block;
+  padding: 0.18rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--rose-mark);
+  background: none;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.69rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 160ms var(--ease), border-color 160ms var(--ease);
+}
+
+.codex-action:hover,
+.codex-action:focus-visible,
+.codex-page .action:hover,
+.codex-page .action:focus-visible {
+  border-color: var(--phosphor);
+  color: var(--phosphor);
+}
+
+.codex-page .player {
+  flex-basis: 100%;
+  width: min(100%, 42rem);
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rule-strong);
+}
+
+.codex-page .player__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.codex-page .trace {
+  display: block;
+  overflow: visible;
+}
+
+.codex-page .trace__axis {
+  stroke: var(--rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.codex-page .trace__line {
+  fill: none;
+  stroke: var(--phosphor);
+  stroke-width: 1.35;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 3px var(--phosphor-glow));
+}
+
+.codex-page .trace__fill {
+  fill: var(--rose);
+  fill-opacity: 0.16;
+  stroke: var(--rose);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.codex-register__bench {
+  display: none;
+}
+
+.codex-bank-figure__visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.codex-bank-figure__visual::before,
+.codex-bank-figure__visual::after {
+  content: '';
+  position: absolute;
+  inset: 4%;
+  border: 1px solid var(--rose-mark);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.codex-bank-figure__visual::after {
+  inset: 10%;
+  border-style: dotted;
+  opacity: 0.72;
+}
+
+.codex-bank-figure__visual > img,
+.codex-bank-figure__visual > .plan {
+  width: 84%;
+  height: 84%;
+  object-fit: cover;
+  filter: saturate(0.5) contrast(1.05) brightness(0.78);
+  -webkit-mask-image: radial-gradient(circle, #000 47%, transparent 68%);
+  mask-image: radial-gradient(circle, #000 47%, transparent 68%);
+  transition: filter 320ms var(--ease);
+}
+
+.codex-bank-figure:hover .codex-bank-figure__visual > img {
+  filter: none;
+}
+
+.codex-bank-figure__scope {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 14%;
+  padding: 0.3rem 0.5rem;
+  background: rgb(14 11 33 / 0.76);
+  border: 1px solid var(--rule);
+}
+
+.codex-bank-figure__scope .trace {
+  width: 100%;
+  height: 2.5rem;
+}
+
+.codex-bank-figure figcaption {
+  margin-top: 1.25rem;
+}
+
+.codex-bank-figure__name {
+  margin-top: 0.35rem !important;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  line-height: 1.1;
+}
+
+.codex-bank-figure__readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Existing FaceplatePlan ink roles. */
+
+.codex-page .plan { width: 100%; height: auto; }
+.codex-page .plan__chassis { fill: var(--field); stroke: var(--ink); stroke-width: 1.25; }
+.codex-page .plan__divider { stroke: var(--rule); stroke-width: 1; }
+.codex-page .plan__label { fill: var(--quiet); font-family: var(--mono); font-size: 7px; letter-spacing: 0.14em; }
+.codex-page .plan__knob circle { fill: var(--dusk); stroke: var(--ink); stroke-width: 1.1; }
+.codex-page .plan__knob line { stroke: var(--rose-lit); stroke-width: 1.4; stroke-linecap: round; }
+.codex-page .plan__slider line { stroke: var(--rule-strong); stroke-width: 1; }
+.codex-page .plan__slider rect,
+.codex-page .plan__switch { fill: var(--dusk); stroke: var(--ink); stroke-width: 1; }
+.codex-page .plan__switch--on { fill: var(--rose-lit); }
+.codex-page .plan__keybed rect { fill: var(--dusk); stroke: var(--ink); stroke-width: 1; }
+.codex-page .plan__keybed line { stroke: var(--rule); stroke-width: 0.75; }
+.codex-page .plan__black-key { fill: var(--rule); stroke: var(--ink); }
+
+/* Releases: the compact iOS tracklist on its own Matrix ground. */
+
+.codex-releases {
+  padding-block: clamp(4rem, 8vw, 7rem);
+  border-block: 1px solid var(--rule);
+  background:
+    linear-gradient(90deg, rgb(74 242 164 / 0.018), transparent 48%),
+    rgb(14 11 33 / 0.64);
+}
+
+.codex-tracks {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--rule);
+}
+
+.codex-track {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: center;
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.codex-track__index {
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.codex-track h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 400;
+  line-height: 1.12;
+}
+
+.codex-track__trace {
+  width: 100%;
+  height: 3.1rem;
+}
+
+.codex-track > .player {
+  grid-column: 1 / -1;
+}
+
+/* Colophon and image licence surface. */
+
+.codex-footer {
+  padding-block: clamp(4rem, 8vw, 7rem) 2rem;
+}
+
+.codex-footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.codex-footer__mark {
+  margin-top: 0.4rem !important;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 0.95;
+}
+
+.codex-footer__note {
+  max-width: 23rem;
+  margin-top: 1rem !important;
+  color: var(--quiet);
+}
+
+.codex-footer__meter {
+  display: block;
+  margin-top: 1.5rem;
+}
+
+.codex-credits {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem !important;
+}
+
+.codex-credits li {
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--rule);
+  color: var(--quiet);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.codex-credits span {
+  color: var(--ink);
+}
+
+.codex-credits a {
+  color: var(--rose-lit);
+  text-underline-offset: 0.2em;
+}
+
+.codex-footer__fine {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* Primary site's live console details. */
+
+.codex-page .synthesist-mark__leds circle {
+  animation: codex-mark-led 1.6s steps(1, end) infinite;
+}
+
+.codex-page .synthesist-mark__leds circle:nth-of-type(2) { animation-delay: 0.4s; }
+.codex-page .synthesist-mark__leds circle:nth-of-type(3) { animation-delay: 0.8s; }
+
+.codex-page .synthesist-mark__cable-pulse {
+  stroke-dasharray: 0.16 0.84;
+  animation: codex-signal-run 3.2s linear infinite;
+}
+
+.codex-page .synthesist-mark__scope {
+  --wave-shift: -20px;
+  animation: codex-wave-scroll 1.5s linear infinite;
+}
+
+@media (min-width: 54rem) {
+  .codex-track {
+    grid-template-columns: 3.2rem minmax(0, 1fr) minmax(9rem, 14rem) 7rem;
+    column-gap: clamp(1.2rem, 3vw, 2.75rem);
+  }
+
+  .codex-footer__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.5fr);
+  }
+}
+
+@media (min-width: 62rem) {
+  .codex-hero__deck {
+    grid-template-columns: minmax(0, 1.35fr) clamp(20rem, 31vw, 26rem);
+  }
+
+  .codex-register__layout {
+    grid-template-columns: minmax(0, 1fr) clamp(20rem, 30vw, 25rem);
+    align-items: start;
+  }
+
+  .codex-register__bench {
+    position: sticky;
+    top: clamp(1.5rem, 8vh, 5rem);
+    display: block;
+  }
+}
+
+@media (max-width: 44rem) {
+  .codex-hero {
+    min-height: 0;
+  }
+
+  .codex-meta p:last-child {
+    display: none;
+  }
+
+  .codex-hero__title {
+    white-space: normal;
+  }
+
+  .codex-hero__title em {
+    display: block;
+    margin-left: 0.32em;
+  }
+
+  .codex-entry {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .codex-entry h3 {
+    display: block;
+  }
+
+  .codex-entry__leader {
+    display: none;
+  }
+
+  .codex-entry__value {
+    display: block;
+    margin-top: 0.5rem;
+  }
+}
+
+@keyframes codex-field-wipe {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes codex-rise {
+  from { opacity: 0; transform: translateY(18px); }
+}
+
+@keyframes codex-signal-run {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes codex-wave-scroll {
+  to { transform: translateX(var(--wave-shift, 0)); }
+}
+
+@keyframes codex-mark-led {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.22; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes codex-orrery-turn {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes codex-orrery-draw {
+    from { stroke-dashoffset: var(--circumference); }
+  }
+
+  .codex-page .orrery__orbit {
+    stroke-dasharray: var(--circumference);
+    animation: codex-orrery-draw 1000ms var(--ease) backwards;
+    animation-delay: calc(var(--ring) * 70ms + 140ms);
+  }
+
+  .codex-page .orrery__turn {
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    animation: codex-orrery-turn var(--period) linear infinite;
+  }
+
+  .codex-page .orrery[data-paused='true'] .orrery__turn {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .codex-page *,
+  .codex-page *::before,
+  .codex-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .codex-page .synthesist-mark__cable-pulse {
+    display: none;
+  }
+}
