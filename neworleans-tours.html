@@ -182,6 +182,12 @@
     border-radius:6px;margin-bottom:.8rem;display:flex;align-items:flex-start;gap:.4rem;line-height:1.4}
   .tcard[hidden]{display:none}
   .nores{color:var(--muted);font-size:.9rem;padding:1rem .2rem}
+  /* A retracted figure stays visible on purpose — a correction without its
+     killed claim makes the next reader re-derive the killed claim. But a
+     preserved wrong number is indistinguishable from a live one to any
+     script scanning for prices, so it is tagged for exclusion:
+       every number in `s.retracted` is HISTORICAL and must not be audited. */
+  s.retracted{color:var(--faint);text-decoration:line-through;text-decoration-thickness:1px}
 </style>
 </head>
 <body>
@@ -239,7 +245,17 @@
         <span class="lg-v">✓ Verified = checked on the named page, on the named date</span>
         <span class="lg-m">◆ Mechanism = a durable discount, not an expiring code</span>
         <span class="lg-u">✗ Unverified = claim could not be confirmed at source</span>
+        <span style="font-size:.75rem;font-family:var(--mono);padding:.2rem .5rem;border-radius:5px;background:var(--paper);color:var(--faint)"><s>struck</s> = a retracted figure, kept on purpose — never a live price</span>
       </div>
+      <p style="font-size:.8rem">
+        <b>If you are auditing this page with a script:</b> corrections keep the old number visible, because a
+        correction without its killed claim makes the next reader re-derive the killed claim. That means a
+        preserved wrong price sits inside a live card. Every historical figure is wrapped in
+        <code style="font-family:var(--mono);font-size:.76rem">&lt;s class="retracted"&gt;</code> —
+        <b>exclude that selector before extracting prices</b>, or the first dollar figure you match on a
+        corrected card will be the retracted one. Two independent audits have already been fooled by this,
+        and both were the auditor's regex rather than the page.
+      </p>
     </div>
 
     <div class="shead"><span class="ic">⭐</span> Best current deals — French Quarter, Downtown &amp; Garden District</div>
@@ -468,7 +484,7 @@
           <div class="deal-tag">🏷️ Combos: + French Quarter walking tour <b>$57.98</b> (walk 40% off) · + Ghost Bus <b>$67.36</b> · + City &amp; Cemetery Bus <b>$68.99</b></div>
           <div class="vfy"><span class="vok">✓ Verified 2026-08-22</span> · operator's own published price list —
             <a href="https://www.cajunencounters.com/tours/tour-packages-and-discounts" target="_blank" rel="noopener">cajunencounters.com › tour-packages-and-discounts</a><br>
-            <b>Corrected on this date:</b> this card previously read $65–$70/person with codes SAVE10 / SWAMPGHOST. The operator lists the swamp tour at $39.99 and publishes no such codes. Durable instead: GovX military/government verification, 10–30% off; phone-booked multi-tour savings $8/$16/$24/$32 for 2/3/4/5 tours.</div>
+            <b>Corrected on this date:</b> this card previously read <s class="retracted">$65–$70</s>/person with codes <s class="retracted">SAVE10</s> / <s class="retracted">SWAMPGHOST</s>. The operator lists the swamp tour at $39.99 and publishes no such codes. Durable instead: GovX military/government verification, 10–30% off; phone-booked multi-tour savings $8/$16/$24/$32 for 2/3/4/5 tours.</div>
           <a href="https://www.cajunencounters.com/" target="_blank" rel="noopener" class="btn-book">Book Cajun Encounters</a>
         </div>
       </div>
@@ -677,7 +693,7 @@
           </div>
           <div class="deal-tag">🏷️ Use promo code <b>SECRET</b> for 10% off total booking</div>
           <div class="unver">✗ Code not verified at source (checked 2026-08-22). Unconfirmed on the operator's own pages. Confirm at booking before relying on it.<br>
-            <b>Total corrected 2026-08-22:</b> this read $273, which is 4 × $76 <i>with the unverified 10% already applied</i> — an unconfirmed discount silently compounded into the headline family total. Budget $304 and treat the code as upside; if <b>SECRET</b> works at checkout it would bring the low end to about $273.60.</div>
+            <b>Total corrected 2026-08-22:</b> this read <s class="retracted">$273</s>, which is 4 × $76 <i>with the unverified 10% already applied</i> — an unconfirmed discount silently compounded into the headline family total. Budget $304 and treat the code as upside; if <b>SECRET</b> works at checkout it would bring the low end to about $273.60.</div>
           <a href="https://tastebudtours.com/new-orleans-tours/" target="_blank" rel="noopener" class="btn-book">Book Tastebud Tours</a>
         </div>
       </div>
