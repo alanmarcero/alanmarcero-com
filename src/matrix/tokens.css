@@ -175,9 +175,26 @@
    * Slices: use .plate--tight / .plate--loose. Ask for another step
    * rather than writing a padding literal.
    */
-  --plate-pad-tight: var(--space-l);   /* a small entry earns less room */
-  --plate-pad: var(--space-2xl);       /* the default band              */
-  --plate-pad-loose: var(--space-3xl); /* a flagship earns more         */
+  --plate-pad-tight: var(--space-m);   /* a small entry earns less room */
+  --plate-pad: var(--space-xl);        /* the default band              */
+  --plate-pad-loose: var(--space-2xl); /* a flagship earns more         */
+
+  /* Recalibrated down one step 2026-08-22, after agatha-13 measured the
+   * first scale in place: it produced the hierarchy it was built for —
+   * row heights 353/414/496-544/544/574px, a 1.63x spread against 1.16x
+   * at baseline, so the catalogue genuinely stops reading as one field —
+   * but at +31% total page height (6070px -> 7957px).
+   *
+   * DIFFERENTIATION WAS THE GOAL, NOT SIZE. This scale keeps a 4.00x
+   * tight-to-loose ratio against the first cut's 4.33x — 8% less spread —
+   * for 38% less vertical padding. padding-block applies to both edges,
+   * so the saving is 16 / 48 / 80px per row at a 16px root.
+   *
+   * The reason it is tuned here rather than in the catalogue: agatha-13
+   * owns which rows get which step, this file owns what a step is worth.
+   * She reported the cost and left the call here instead of overriding it
+   * with a literal, which is the ownership split working.
+   */
 
   /* --- Measure ----------------------------------------------------- */
   --measure: 72rem;        /* outer content width                      */
