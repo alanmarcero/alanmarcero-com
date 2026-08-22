@@ -47,7 +47,17 @@
 
   /* --- Accents ----------------------------------------------------- */
   --lcd: #ffb627;          /* amber backlight — primary accent         */
-  --lcd-dim: #8a6316;      /* amber at rest                            */
+  --lcd-dim: #ae6618;      /* amber at rest. Lifted from #8a6316
+                            * 2026-08-22: its only structural use is
+                            * .entry__photo--field, the envelope drawn
+                            * where a photograph is missing, which
+                            * composited to 2.53:1 — fainter than
+                            * --legend-faint (2.78), the value this file
+                            * marks NON-TEXT ONLY. Now 3.00:1 at that
+                            * site's 0.85 opacity, matching the target
+                            * the photographs normalize to, so a
+                            * photo-less entry reads with the same
+                            * presence as a photographed one. NON-TEXT. */
   --nord: #e0322a;         /* power LED at rest — sparing, NEVER for text
                             * 3.58:1 on panel: fails AA for normal text.  */
   --nord-lit: #f4736a;     /* the LED lit — the ONLY red allowed on text

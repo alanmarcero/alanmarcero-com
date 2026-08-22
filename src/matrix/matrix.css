@@ -314,7 +314,16 @@ button.action {
   /* They were photographed in a dozen different rooms. Desaturating and
      dimming settles them onto the panel instead of letting them glow off
      it, without misrepresenting the instrument. */
-  filter: grayscale(0.42) contrast(1.08) brightness(0.86);
+  /* --photo-brightness is a per-image EXPOSURE CORRECTION to this
+     treatment, not a replacement for it (interface by agent-a85101c8, D5).
+     Eight Wikimedia photos by eight photographers measured a 3.40x
+     figure-ground spread against --panel; a uniform filter preserves that
+     spread and only scales it down, so no value of mine fixes it. The
+     scalar normalizes each image onto one target while grayscale, contrast
+     and the base brightness stay aesthetic decisions here.
+     Default of 1 renders byte-identically to before. */
+  filter: grayscale(0.42) contrast(1.08)
+          brightness(calc(0.86 * var(--photo-brightness, 1)));
   /* ONE gradient layer on purpose: compositing two needs `mask-composite`,
      whose -webkit- keywords differ from the standard ones, and getting
      that pair wrong masks the image out entirely rather than failing
@@ -328,7 +337,10 @@ button.action {
 }
 
 .plate:hover .entry__photo img {
-  filter: grayscale(0.2) contrast(1.04) brightness(0.92);
+  /* Hover normalizes for free off the same scalar — one property, both
+     rules, so they cannot drift apart. */
+  filter: grayscale(0.2) contrast(1.04)
+          brightness(calc(0.92 * var(--photo-brightness, 1)));
 }
 
 .entry--pictured .entry__name,
@@ -449,6 +461,13 @@ button.action {
 /* An entry with no photograph keeps the same column so the titles stay on
    one left edge down the whole catalogue; its own envelope field steps
    forward and does the portrait's job. */
+
+/* This field stands in for a missing photograph, so it is targeted at the
+   PHOTOGRAPHS' normalized 3.00:1 (D5), not at the hero field's 3.40 — a
+   photo-less entry should not shout louder than a photographed one.
+   Was 2.53:1, fainter than --legend-faint's 2.78 which this file's own
+   token comment marks NON-TEXT ONLY: the weakest field on the page was
+   the one substituting for content. Surfaced by agent-a85101c8. */
 
 .entry__photo--field {
   height: 11rem;
