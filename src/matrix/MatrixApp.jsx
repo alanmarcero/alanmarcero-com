@@ -19,7 +19,12 @@ const INSTRUMENT_COUNT = instrumentCount(patchBanks);
 
 function MatrixApp() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [musicCount, setMusicCount] = useState(0);
+
+  // null until the music section has actually settled. Distinguishing
+  // "not known yet" from "none" is load-bearing: this value reaches a
+  // live region in the hero, and 0 there is a false statement during a
+  // cold fetch rather than a small inaccuracy.
+  const [musicCount, setMusicCount] = useState(null);
 
   const visibleBanks = patchBanks.filter(
     (bank) => matchesQuery(searchQuery, bank.name, bank.description),

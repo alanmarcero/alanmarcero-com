@@ -2,14 +2,9 @@ import { useEffect } from 'react';
 import SpectrumBars from '../graphics/SpectrumBars';
 import YouTubeFacade from '../YouTubeFacade';
 import useMusic from '../hooks/useMusic';
+import { matchesQuery } from '../lib/catalog';
 
 const PENDING_ROWS = 4;
-
-const matches = (query, ...fields) => {
-  if (!query) return true;
-  const needle = query.toLowerCase();
-  return fields.some((field) => (field || '').toLowerCase().includes(needle));
-};
 
 /**
  * Releases and remixes.
@@ -27,12 +22,19 @@ function Music({ searchQuery, onVisibleCountChange }) {
   const { items, loading, error } = useMusic();
 
   const visible = items.filter(
-    (item) => matches(searchQuery, item.title, item.description),
+    (item) => matchesQuery(searchQuery, item.title, item.description),
   );
 
+  // `null` means "not known yet", NOT "none". While the fetch is in flight
+  // -- or after it fails -- there is no true count to report, and the hero
+  // publishes this number to a live region. Reporting 0 here made the page
+  // announce "11 banks, 0 releases" on every cold load, stating a false
+  // count as fact. See the contract in dispatch/in-progress/amc-r2-S3-music.md.
+  const settled = !loading && !error;
+
   useEffect(() => {
-    onVisibleCountChange(visible.length);
-  }, [visible.length, onVisibleCountChange]);
+    onVisibleCountChange(settled ? visible.length : null);
+  }, [settled, visible.length, onVisibleCountChange]);
 
   return (
     <section className="music" aria-labelledby="music-heading">
@@ -43,8 +45,9 @@ function Music({ searchQuery, onVisibleCountChange }) {
         </div>
         {!loading && !error && visible.length > 0 && (
           <p className="section-stat">
-            <span className="readout">{visible.length}</span> releases, made
-            with the same patches.
+            <span className="readout">{visible.length}</span>
+            {visible.length === 1 ? ' release' : ' releases'}, made with the
+            same patches.
           </p>
         )}
       </div>
