@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './codex.css';
 import { patchBanks } from '../data/patchBanks';
 import { YOUTUBE_CHANNEL_URL, GITHUB_URL } from '../config';
@@ -33,6 +33,11 @@ const matches = (query, ...fields) => {
 };
 
 const number = (index) => String(index + 1).padStart(2, '0');
+const isTypingTarget = (element) => element && (
+  element.tagName === 'INPUT'
+  || element.tagName === 'TEXTAREA'
+  || element.isContentEditable
+);
 
 function Hero({ releaseCount, activeBankIndex }) {
   const [paused, setPaused] = useState(false);
@@ -147,11 +152,27 @@ function Finder({ query, onQueryChange, bankCount, releaseCount }) {
       : `${releaseCount} ${releaseCount === 1 ? 'release' : 'releases'}`,
   ].filter(Boolean).join(' · ');
 
+  // Match the primary site's keyboard path into its catalogue search.
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (isTypingTarget(document.activeElement)) return;
+      event.preventDefault();
+      inputRef.current?.focus();
+    };
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, []);
+
   return (
     <div className="codex-finder codex-shell">
-      <label className="codex-label" htmlFor="codex-find">
-        Find an instrument or a track
-      </label>
+      <div className="codex-finder__label-row">
+        <label className="codex-label" htmlFor="codex-find">
+          Find an instrument or a track
+        </label>
+        <kbd className="codex-finder__shortcut" aria-hidden="true">/</kbd>
+      </div>
       <div className="codex-finder__field">
         <input
           id="codex-find"
@@ -413,7 +434,7 @@ function Colophon() {
         </div>
 
         <div className="codex-footer__fine codex-label">
-          <p>Set in Instrument Serif, Spectral and IBM Plex Mono</p>
+          <p>Set in Instrument Serif, Archivo and IBM Plex Mono</p>
           <p>Figures drawn from the data on this page</p>
           <p>&copy; {new Date().getFullYear()} Alan Marcero</p>
         </div>
