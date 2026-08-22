@@ -93,7 +93,10 @@ function Music({ searchQuery, onVisibleCountChange }) {
               {Array.from({ length: PENDING_WORKS }, (_, row) => (
                 <li key={row} className="work work--pending">
                   <div className="work__id">
-                    <p className="work__artists">Loading</p>
+                    <p className="work__index">
+                      <span className="work__num">{String(row + 1).padStart(2, '0')}</span>
+                      <span className="work__artists">Loading</span>
+                    </p>
                     <h3 className="work__title">Loading release</h3>
                   </div>
                 </li>
@@ -126,7 +129,7 @@ function Music({ searchQuery, onVisibleCountChange }) {
 
         {settled && takeCount > 0 && (
           <ul className="worklist">
-            {works.map((group) => (
+            {works.map((group, index) => (
               <li
                 key={group.key}
                 className={`work${group.versions.length > 1 ? ' work--multi' : ''}`}
@@ -134,9 +137,16 @@ function Music({ searchQuery, onVisibleCountChange }) {
                 <SpectrumBars seed={group.work} className="work__spectrum" />
 
                 <div className="work__id">
-                  {group.artists && (
-                    <p className="work__artists">{group.artists}</p>
-                  )}
+                  {/* The main site prefixes its sections "01 — SOUND DESIGN" in
+                      tracked mono. Borrowed here for works, because a numbered
+                      list says "this is a catalogue of six things" in a way six
+                      unnumbered headings do not. */}
+                  <p className="work__index">
+                    <span className="work__num">{String(index + 1).padStart(2, '0')}</span>
+                    {group.artists && (
+                      <span className="work__artists">{group.artists}</span>
+                    )}
+                  </p>
                   <h3 className="work__title">{group.work}</h3>
                 </div>
 
