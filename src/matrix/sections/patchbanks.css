@@ -2,9 +2,27 @@
  * Catalog plates — coverage, and the hierarchy that follows from it.
  *
  * Layered on matrix.css rather than editing it: the three shared CSS files
- * belong to one owner so no slice invents a parallel value, and this file
- * evaluates after matrix.css (MatrixApp imports it at line 4, PatchBanks at
- * line 7) so equal-specificity rules here win without !important.
+ * belong to one owner so no slice invents a parallel value.
+ *
+ * THE CASCADE CLAIM THIS HEADER USED TO MAKE WAS FALSE, and it said
+ * "checked rather than assumed", which made it worse. It claimed this file
+ * evaluates AFTER matrix.css because MatrixApp imports matrix.css at line 4
+ * and PatchBanks at line 7 — so equal-specificity rules here would win.
+ *
+ * Measured in the built bundle: the emitted order is patchbanks.css FIRST,
+ * matrix.css SECOND. Vite does not emit CSS in module-import order, so
+ * matrix.css wins every shared property at equal specificity. I had
+ * verified the import order in the module graph and written it down as
+ * having verified the cascade. Those are two different things, and the
+ * second is the one that decides what renders.
+ *
+ * Three of this file's declarations silently did not render because of it:
+ * the coverage label's colour and size, and the divider's --seam colour —
+ * including a contrast "fix" that never reached the page.
+ *
+ * SO: every rule here that shares a property with a matrix.css selector is
+ * scoped under .plate, which takes it to (0,2,0) and wins on specificity
+ * rather than on an emission order this file does not control.
  *
  * Every value below is an existing token. Nothing new is minted here; a
  * token this file needed and did not have would be a request to the owner
@@ -41,7 +59,7 @@
  * inert role for the sites that legitimately want something invisible.
  */
 
-.entry__fits {
+.plate .entry__fits {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -49,12 +67,33 @@
   margin-top: var(--space-s);
 }
 
-.entry__fits-label {
-  color: var(--lcd-dim);
+.plate .entry__fits-label {
+  /* --lcd, not --lcd-dim, and the mistake is worth leaving written down.
+   *
+   * I used --lcd-dim here because its comment reads "amber at rest" and a
+   * label felt like amber at rest. Measured against the grounds this label
+   * actually sits on — rows alternate --panel and --panel-2 — it was
+   * 3.63:1 and 3.18:1. Both FAIL AA for normal text, which needs 4.5.
+   *
+   * The token was never wrong; my reading of it was. Its owner lifted
+   * --lcd-dim from #8a6316 to #ae6618 specifically so a photo-less FIELD
+   * would clear the 3:1 non-text floor. It is a field value that clears a
+   * non-text floor, and "at rest" describes its brightness rather than its
+   * permitted use. This is the faint-token generator in the kickoff, firing
+   * on me: a token whose exemption from TEXT floors is the hiding place,
+   * and whose name invites exactly the misuse.
+   *
+   * --lcd is 9.21 / 8.08 on the two grounds and is contract-correct here:
+   * m1's split puts readouts, counts and values in --lcd, and "Fits 5
+   * instruments" is a count. Kept small and tracked so it reads as a legend
+   * and does not compete with the patch readout it sits above. */
+  color: var(--lcd);
+  font-size: var(--step--2);
+  letter-spacing: var(--legend-tracking);
   white-space: nowrap;
 }
 
-.entry__instruments {
+.plate .entry__instruments {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2xs) 0;
@@ -63,7 +102,7 @@
   list-style: none;
 }
 
-.entry__instrument {
+.plate .entry__instrument {
   font-family: var(--body-face);
   font-size: var(--step--1);
   color: var(--legend-dim);
@@ -71,7 +110,7 @@
   border-inline-start: 1px solid var(--seam);
 }
 
-.entry__instrument:first-child {
+.plate .entry__instrument:first-child {
   padding-inline-start: 0;
   border-inline-start: 0;
 }
