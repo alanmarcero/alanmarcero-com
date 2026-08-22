@@ -234,7 +234,10 @@ body {
 
 .action--quiet {
   color: var(--legend-dim);
-  background-image: linear-gradient(var(--legend-faint), var(--legend-faint));
+  /* --seam, not --legend-faint: this underline is the affordance that
+     marks a quiet action as interactive, so WCAG 1.4.11 asks 3:1 of it.
+     --legend-faint tops out at 2.78 and cannot get there. */
+  background-image: linear-gradient(var(--seam), var(--seam));
 }
 
 .action--quiet:hover,

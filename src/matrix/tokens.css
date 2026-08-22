@@ -42,7 +42,16 @@
    */
   --legend: #e8e2da;       /* primary text      12.6:1 panel / 11.0:1 panel-2 */
   --legend-dim: #9a928c;   /* secondary text     5.3:1 panel /  4.6:1 panel-2 */
-  --legend-faint: #6b6460; /* NON-TEXT ONLY — strokes, rules, disabled        */
+  --legend-faint: #6b6460; /* INERT ONLY — disabled, spent, deliberately
+                            * sub-threshold. NOT the strokes token: 2.78:1
+                            * on --panel is its CEILING at opacity 1.0, so
+                            * it cannot render a stroke that reads. I
+                            * reserved it "for strokes" on 2026-08-21 after
+                            * moving text off it, and never checked whether
+                            * it could do the job I gave it — I verified it
+                            * was wrong for text and not that it was right
+                            * for strokes. Use --seam for anything that must
+                            * be seen. (agent-df85d7d7 caught this.)       */
   --legend-well: #aea6a0;  /* text on inset wells (--panel-3)  5.0:1          */
 
   /* --- Accents ----------------------------------------------------- */
@@ -112,7 +121,13 @@
    * It exists because ground alternation cannot separate anything at
    * this luminance range (see --panel). NON-TEXT, no floor.
    */
-  --seam: #7a726c;         /* 3.42:1 on --panel / 3.00:1 on --panel-2  */
+  --seam: #7a726c;         /* 3.42:1 on --panel / 3.00:1 on --panel-2.
+                            * THE STROKE TOKEN, not only band boundaries —
+                            * any rule, edge or divider that must actually
+                            * read. Created for the plate seam and turned
+                            * out to be the >=3:1 stroke value this palette
+                            * had never had; --legend-faint had the name
+                            * and could not reach the number.             */
 
   /* --- Type -------------------------------------------------------- */
   --panel-face: 'Saira Condensed', 'Saira', system-ui, sans-serif;
