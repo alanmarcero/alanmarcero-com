@@ -106,10 +106,30 @@ body {
 .plate {
   position: relative;
   width: 100%;
-  padding-block: var(--space-2xl);
+  padding-block: var(--plate-pad);
   background: var(--panel);
   isolation: isolate;
   overflow: hidden;
+}
+
+/* The seam. Ground alternation is at its ceiling (1.140:1) and cannot
+   separate a stack of eleven bands; a machined catch-edge reaches 3:1 and
+   does it in one line. Adjacent-sibling so the first band in a run has no
+   orphan edge hanging above it. */
+
+.plate + .plate {
+  border-block-start: 1px solid var(--seam);
+}
+
+/* Weight. The catalog's problem is mass, not colour — these are the two
+   steps a slice can reach for instead of writing a padding literal. */
+
+.plate--tight {
+  padding-block: var(--plate-pad-tight);
+}
+
+.plate--loose {
+  padding-block: var(--plate-pad-loose);
 }
 
 .plate--raised {

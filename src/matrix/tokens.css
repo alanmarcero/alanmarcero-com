@@ -10,9 +10,24 @@
  */
 
 :root {
-  /* --- Panel ------------------------------------------------------- */
+  /* --- Panel -------------------------------------------------------
+   * DO NOT LIGHTEN --panel-2. It is at the ceiling, not merely subtle.
+   *
+   * The system's thesis is separation-by-ground-change, and the entire
+   * ground budget is 1.140:1 between --panel and --panel-2 (ΔL 0.0091).
+   * That is the MAXIMUM the text contract allows: one step lighter
+   * (#322e2f) puts --legend-dim at 4.38 and breaks its 4.63 floor.
+   * Darker is worse, not better — #191617 against --panel is 1.113,
+   * because near black the +0.05 in the WCAG ratio dominates and every
+   * ratio compresses toward 1.
+   *
+   * Headroom for band separation via ground: 0.000. Measured
+   * 2026-08-22. Separation is therefore carried by --seam, which
+   * reaches 3.00:1 on the harder ground — an order of magnitude more
+   * than every ground value combined can buy.
+   */
   --panel: #232021;        /* warm graphite enamel — the ground        */
-  --panel-2: #2e2a2b;      /* raised panel section                     */
+  --panel-2: #2e2a2b;      /* raised section — AT CEILING, see above   */
   --panel-3: #3a3536;      /* engraved separation, inset wells         */
 
   /* --- Legends -----------------------------------------------------
@@ -38,7 +53,27 @@
   --nord-lit: #f4736a;     /* the LED lit — the ONLY red allowed on text
                             * 5.8:1 panel / 5.1:1 panel-2. Use for error
                             * copy; --nord stays a light, not a word.     */
-  --wood: #8a5a3b;         /* walnut end cheek — large warm fields     */
+  --wood: #b98a5c;         /* walnut end cheek — large warm fields.
+                            * Lifted from #8a5a3b 2026-08-22: the
+                            * envelope field renders at opacity 0.42,
+                            * which composited the old value to an
+                            * effective 1.48:1 against --panel — the
+                            * reason the field graphic read as absent.
+                            * Now 2.03:1 composited. NON-TEXT token, so
+                            * no floor to break; the one value in this
+                            * palette with real headroom, spent
+                            * deliberately.                            */
+
+  /* --- Seam --------------------------------------------------------
+   * The engraved boundary between bands. A machined catch-edge is what
+   * a hardware panel actually has where two plates meet, so this is
+   * in-vocabulary — not a border smuggled back in past the
+   * no-containers rule.
+   *
+   * It exists because ground alternation cannot separate anything at
+   * this luminance range (see --panel). NON-TEXT, no floor.
+   */
+  --seam: #7a726c;         /* 3.42:1 on --panel / 3.00:1 on --panel-2  */
 
   /* --- Type -------------------------------------------------------- */
   --panel-face: 'Saira Condensed', 'Saira', system-ui, sans-serif;
@@ -71,6 +106,19 @@
   --space-xl: 2.5rem;
   --space-2xl: 4rem;
   --space-3xl: 6.5rem;
+
+  /* --- Plate weight ------------------------------------------------
+   * The catalog's measured problem is MASS, not colour: 11 rows within
+   * 16% of the same height, so a 128-patch flagship reads exactly like
+   * a MIDI zip. Density is the vocabulary for that, and it lives here
+   * rather than in a slice so nobody invents a parallel value.
+   *
+   * Slices: use .plate--tight / .plate--loose. Ask for another step
+   * rather than writing a padding literal.
+   */
+  --plate-pad-tight: var(--space-l);   /* a small entry earns less room */
+  --plate-pad: var(--space-2xl);       /* the default band              */
+  --plate-pad-loose: var(--space-3xl); /* a flagship earns more         */
 
   /* --- Measure ----------------------------------------------------- */
   --measure: 72rem;        /* outer content width                      */
