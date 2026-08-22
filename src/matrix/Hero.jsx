@@ -114,6 +114,7 @@ function Hero({
           cellHeight={6}
           gap={2}
           draw
+          beam
         />
       </div>
 
