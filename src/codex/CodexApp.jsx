@@ -100,6 +100,7 @@ function Hero({ releaseCount, activeBankIndex }) {
             <div className="codex-hero__actions">
               <Line
                 as="a"
+                className="codex-primary-action"
                 value="Channel"
                 href={YOUTUBE_CHANNEL_URL}
                 target="_blank"
@@ -434,7 +435,7 @@ function Colophon() {
         </div>
 
         <div className="codex-footer__fine codex-label">
-          <p>Set in Instrument Serif, Archivo and IBM Plex Mono</p>
+          <p>Set in Saira Condensed, Archivo and IBM Plex Mono</p>
           <p>Figures drawn from the data on this page</p>
           <p>&copy; {new Date().getFullYear()} Alan Marcero</p>
         </div>
@@ -447,7 +448,12 @@ function CodexApp() {
   const [query, setQuery] = useState('');
   const { musicItems, musicLoading, musicError } = useMusicItems();
 
-  const banks = patchBanks.filter((bank) => matches(query, bank.name, bank.description));
+  const banks = patchBanks.filter((bank) => matches(
+    query,
+    bank.name,
+    bank.description,
+    ...(bank.instruments || []),
+  ));
   const releases = musicItems.filter((item) => matches(query, item.title, item.description));
   const [rowRef, activeIndex] = useNearestRow(banks.length);
   const activeBank = banks[activeIndex] || banks[0];
