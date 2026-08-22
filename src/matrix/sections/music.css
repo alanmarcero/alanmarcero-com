@@ -169,7 +169,18 @@
 /* A take whose player is open needs the whole width — the facade replaces
  * itself in place, and a 16:9 frame does not belong in an end-aligned
  * column.
+ *
+ * The escape has to happen on the CONTAINER, not the take. `.takes` sits in
+ * an `auto` column, so a take that stretches still cannot exceed the column
+ * it is inside: the player resolved to 300px against its own
+ * `min(100%, 38rem)` and looked deliberate. Rendered measurement is the only
+ * thing that catches that — the markup and the rule both read correctly.
  */
+.takes:has(.player) {
+  grid-column: 1 / -1;
+  justify-items: stretch;
+}
+
 .take:has(.player) {
   grid-template-columns: minmax(0, 1fr);
   justify-items: stretch;
