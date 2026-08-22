@@ -228,3 +228,61 @@ describe('buildFieldPath', () => {
     expect(field({ count: 25, columns: 5 }).d).not.toMatch(/NaN/);
   });
 });
+
+describe('buildFieldPath grouping', () => {
+  const base = {
+    seed: 'grouping', count: 12, columns: 4, cellWidth: 8, cellHeight: 6, gap: 2,
+  };
+
+  it('returns no bands when no groups are given', () => {
+    expect(buildFieldPath(base).bands).toBeNull();
+    expect(buildFieldPath({ ...base, groups: [] }).bands).toBeNull();
+  });
+
+  /*
+   * The default must be byte-identical, not merely equivalent. Hero and every
+   * catalogue row render the ungrouped path, and a field that shifted by a
+   * rounding step would change 12 rendered surfaces silently.
+   */
+  it('leaves the single path untouched when grouping is off', () => {
+    const before = buildFieldPath(base).d;
+    const after = buildFieldPath({ ...base, groups: null }).d;
+    expect(after).toBe(before);
+  });
+
+  it('splits into one path per group, and the bands reconstruct the whole field', () => {
+    const field = buildFieldPath({ ...base, groups: [5, 4, 3] });
+    expect(field.bands).toHaveLength(3);
+    expect(field.bands.join('')).toBe(field.d);
+  });
+
+  it('gives each band exactly its group size in glyphs', () => {
+    const field = buildFieldPath({ ...base, groups: [5, 4, 3] });
+    const counts = field.bands.map((d) => (d.match(/M/g) || []).length);
+    expect(counts).toEqual([5, 4, 3]);
+  });
+
+  /*
+   * A caller whose data drifted gets a partial banding and a whole field.
+   * Losing glyphs would be worse than losing the banding: the field is the
+   * portrait of the collection, and a short group array must not silently
+   * shrink it.
+   */
+  it('keeps every glyph when the groups undercount', () => {
+    const field = buildFieldPath({ ...base, groups: [2, 2] });
+    expect(field.bands.join('')).toBe(field.d);
+    expect((field.d.match(/M/g) || []).length).toBe(12);
+  });
+
+  it('ignores non-positive and non-integer group sizes without throwing', () => {
+    const field = buildFieldPath({ ...base, groups: [4, 0, -3, 2.5, 4] });
+    expect(field.bands.join('')).toBe(field.d);
+    expect((field.bands[0].match(/M/g) || []).length).toBe(4);
+  });
+
+  it('is still deterministic for the same seed when grouped', () => {
+    const a = buildFieldPath({ ...base, groups: [6, 6] });
+    const b = buildFieldPath({ ...base, groups: [6, 6] });
+    expect(a.bands).toEqual(b.bands);
+  });
+});
