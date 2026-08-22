@@ -355,6 +355,23 @@
   --legend-tracking: 0.16em;
   --legend-tracking-wide: 0.28em;
 
+  /* Optical tracking. Not a taste scale — caps need LESS tracking as they
+   * grow and MORE as they get heavier, and mono needs the opposite of both
+   * depending on whether it is carrying numerals or small caps. Four files
+   * each worked this out alone and wrote a literal: -0.005em, 0.01em,
+   * 0.01em, 0.02em, -0.02em, 0.04em. Every one of those values is right;
+   * none of them was ever written down as a rule, so the seventh site would
+   * have invented a seventh value.
+   *
+   * Same contract as --plate-pad below: pick a step, or ask for one. Do not
+   * write a letter-spacing literal.
+   */
+  --track-hero: -0.005em;      /* --display-l caps, 700 — biggest, tightest */
+  --track-section: 0.02em;     /* --display-s caps, 700 — heavier caps, more */
+  --track-card: 0.01em;        /* --display-s / --step-3 caps, 600          */
+  --track-numeral: -0.02em;    /* tabular numerals — digits set loose already */
+  --track-mono-caps: 0.04em;   /* small mono caps — needs air at --step--2  */
+
   /* --- Space ------------------------------------------------------- */
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
