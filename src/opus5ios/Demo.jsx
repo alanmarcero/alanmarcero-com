@@ -7,37 +7,47 @@ import { useState } from 'react';
  *
  * The cue is set as an action like every other instruction on the sheet,
  * not as a thumbnail: a thumbnail is a filled rectangle, and there are no
- * filled rectangles here.
+ * filled rectangles here. Supplying a stop label keeps that cue in place so
+ * the player can be removed again; without one, the original one-way facade
+ * remains unchanged.
  */
-function Demo({ videoId, label, cue = 'Hear it', onOpen }) {
+function Demo({ videoId, label, cue = 'Hear it', onOpen, stopLabel }) {
   const [playing, setPlaying] = useState(false);
 
-  if (playing) {
-    return (
-      <div className="player">
-        <iframe
-          className="player__frame"
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-          title={label}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-    );
+  const player = (
+    <div className="player">
+      <iframe
+        className="player__frame"
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+        title={label}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
+  );
+
+  if (playing && !stopLabel) {
+    return player;
   }
 
+  const toggle = () => {
+    if (!playing) onOpen?.();
+    setPlaying((wasPlaying) => !wasPlaying);
+  };
+
   return (
-    <button
-      type="button"
-      className="action action--play action--quiet"
-      onClick={() => {
-        setPlaying(true);
-        onOpen?.();
-      }}
-      aria-label={label}
-    >
-      {cue}
-    </button>
+    <>
+      <button
+        type="button"
+        className="action action--play action--quiet"
+        onClick={toggle}
+        aria-label={playing ? stopLabel : label}
+        aria-expanded={stopLabel ? playing : undefined}
+      >
+        {playing ? 'Stop' : cue}
+      </button>
+      {playing && player}
+    </>
   );
 }
 
