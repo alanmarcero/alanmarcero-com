@@ -97,23 +97,20 @@
   text-shadow: var(--bloom-phosphor);
 }
 
-/* Restores the system's focus language on this one input, which an older
-   rule suppresses.
+/* The focus-language repair that used to live here is GONE, and its
+   absence is the point.
 
-   layout.css gives every focusable thing a phosphor outline plus bloom via
-   :where(a, button, input, [tabindex]):focus-visible. Because :where()
-   contributes ZERO specificity that selector scores (0,1,0), while
-   matrix.css's `.hero__search-input:focus { outline: none }` scores (0,2,0)
-   and wins — so the search input is the one focusable element on the page
-   that does not speak the new focus language. It is not unindicated: the
-   border-bottom still shifts to --lcd, which is a real visible indicator.
-   It is INCONSISTENT, which on a merge task is the defect.
+   v2 added .hero__search-input:focus-visible locally because
+   matrix.css set `outline: none` on this input at (0,2,0), beating the
+   global :where(...):focus-visible rule at (0,1,0) — so the page's one
+   text input was the only focusable element not speaking the focus
+   language the merge had just established. The comment carried a
+   withdrawal condition: when that declaration is removed upstream,
+   delete the local rule rather than leave a parallel one.
 
-   This is a local repair and the upstream fix is deleting `outline: none`
-   from matrix.css, which is not my file. WITHDRAWAL CONDITION: when that
-   line goes, delete this rule rather than leaving a parallel one. */
-.hero__search-input:focus-visible {
-  outline: 2px solid var(--phosphor);
-  outline-offset: 3px;
-  box-shadow: var(--bloom-phosphor);
-}
+   M1 v3 deleted it. So this is discharged: the global rule in
+   layout.css now reaches the input unobstructed and my copy would be a
+   duplicate of it. Second withdrawal condition of this slice to fire,
+   both within a loop or two of being written — which is the argument for
+   writing them at all. A condition nobody ever checks is a comment; one
+   that fires is a mechanism. */
