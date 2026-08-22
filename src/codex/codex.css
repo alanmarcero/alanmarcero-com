@@ -1059,12 +1059,41 @@ body {
 }
 
 .codex-track {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.7rem;
   align-items: center;
-  padding-block: 1.5rem;
+  padding: 1.5rem clamp(0.5rem, 1vw, 1rem);
   border-bottom: 1px solid var(--rule);
+  transition: background-color 220ms var(--ease), box-shadow 220ms var(--ease);
+}
+
+.codex-track::before {
+  content: '';
+  position: absolute;
+  inset: 22% auto 22% 0;
+  width: 1px;
+  background: var(--line-strong);
+  transform: scaleY(0.5);
+  transition:
+    background-color 220ms var(--ease),
+    box-shadow 220ms var(--ease),
+    transform 220ms var(--ease);
+}
+
+.codex-track:hover,
+.codex-track:focus-within {
+  background: linear-gradient(90deg, rgb(25 30 33 / 0.72), transparent 82%);
+  box-shadow: inset 0 1px var(--line-strong), inset 0 -1px var(--line-strong);
+}
+
+.codex-track:hover::before,
+.codex-track:focus-within::before {
+  width: 2px;
+  background: var(--phosphor);
+  box-shadow: 0 0 14px var(--phosphor-glow);
+  transform: scaleY(1);
 }
 
 .codex-track__index {
@@ -1072,6 +1101,13 @@ body {
   font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
+  transition: color 180ms var(--ease), text-shadow 180ms var(--ease);
+}
+
+.codex-track:hover .codex-track__index,
+.codex-track:focus-within .codex-track__index {
+  color: var(--phosphor);
+  text-shadow: 0 0 12px var(--phosphor-glow);
 }
 
 .codex-track h3 {
@@ -1085,6 +1121,17 @@ body {
 .codex-track__trace {
   width: 100%;
   height: 3.1rem;
+}
+
+.codex-track .trace__fill {
+  transition: fill 220ms var(--ease), stroke 220ms var(--ease), fill-opacity 220ms var(--ease);
+}
+
+.codex-track:hover .trace__fill,
+.codex-track:focus-within .trace__fill {
+  fill: var(--phosphor);
+  fill-opacity: 0.1;
+  stroke: var(--phosphor);
 }
 
 .codex-track > .player {
