@@ -5,6 +5,7 @@ import { YOUTUBE_CHANNEL_URL, GITHUB_URL } from '../config';
 import useMusicItems from '../hooks/useMusicItems';
 import useInViewport from '../hooks/useInViewport';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
+import useScrollProgress from '../hooks/useScrollProgress';
 import useNearestRow from '../opusmaxmac/hooks/useNearestRow';
 import EnvelopeField from '../matrix/graphics/EnvelopeField';
 import WaveTrace from '../opus5ios/graphics/WaveTrace.jsx';
@@ -174,7 +175,21 @@ function Finder({ query, onQueryChange, bankCount, releaseCount }) {
         <label className="codex-label" htmlFor="codex-find">
           Find an instrument or a track
         </label>
-        <kbd className="codex-finder__shortcut" aria-hidden="true">/</kbd>
+        {query ? (
+          <button
+            type="button"
+            className="codex-finder__clear"
+            aria-label="Clear search"
+            onClick={() => {
+              onQueryChange('');
+              inputRef.current?.focus();
+            }}
+          >
+            Clear <span aria-hidden="true">&times;</span>
+          </button>
+        ) : (
+          <kbd className="codex-finder__shortcut" aria-hidden="true">/</kbd>
+        )}
       </div>
       <div className="codex-finder__field">
         <input
@@ -449,6 +464,7 @@ function Colophon() {
 function CodexApp() {
   const [query, setQuery] = useState('');
   const { musicItems, musicLoading, musicError } = useMusicItems();
+  const scrollProgressRef = useScrollProgress();
 
   const banks = patchBanks.filter((bank) => matches(
     query,
@@ -466,6 +482,11 @@ function CodexApp() {
   return (
     <div className="codex-page">
       <a className="codex-skip" href="#codex-main">Skip to the catalogue</a>
+      <div
+        ref={scrollProgressRef}
+        className="codex-scroll-progress"
+        aria-hidden="true"
+      />
       <Hero
         releaseCount={musicLoading || musicError ? null : musicItems.length}
         activeBankIndex={activeBankIndex}
