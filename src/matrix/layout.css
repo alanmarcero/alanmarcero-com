@@ -55,7 +55,7 @@ body {
 .readout {
   font-family: var(--data-face);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--track-numeral);
   color: var(--lcd);
 }
 
@@ -164,7 +164,7 @@ body {
   font-family: var(--panel-face);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--track-section);
   font-size: var(--display-s);
   line-height: 0.95;
   color: var(--legend);

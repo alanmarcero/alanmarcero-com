@@ -44,7 +44,7 @@
   font-weight: 700;
   font-size: var(--display-l);
   line-height: 0.86;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--track-hero);
   text-transform: uppercase;
   color: var(--legend);
 }
@@ -163,7 +163,7 @@
   font-size: var(--display-s);
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--track-card);
   color: var(--legend);
 }
 
