@@ -4,6 +4,7 @@ import '../layout.css';
 import './arcade.css';
 import { getGameById, games } from '../../arcade/games/gameRegistry';
 import Marquee from './Marquee';
+import { spellCount } from './spellCount';
 
 // The game runtime and its stylesheet load only once a cabinet is chosen,
 // so the old arcade's palette never touches this layout.
@@ -68,8 +69,14 @@ function ArcadeShell() {
         <div className="shell arcade-hero__body">
           <Marquee />
           <p className="arcade-hero__lead prose">
-            Twelve arcade machines, each rebuilt from scratch in the browser —
-            no emulator, no ROM. Pick one and it starts immediately.
+            {/*
+              Derived, not typed. This read "Twelve" as a literal while the
+              thing it counts is a registry in a file this slice does not own,
+              and no test would have caught the day they disagreed.
+            */}
+            {spellCount(games.length, { capitalized: true })} arcade machines,
+            each rebuilt from scratch in the browser — no emulator, no ROM.
+            Pick one and it starts immediately.
           </p>
           <a className="action action--quiet arcade-hero__back" href="/matrix">
             Back to the patch banks
