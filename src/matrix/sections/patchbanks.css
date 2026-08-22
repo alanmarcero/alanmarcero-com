@@ -10,6 +10,13 @@
  * token this file needed and did not have would be a request to the owner
  * of tokens.css, not a literal dropped in locally.
  *
+ * The plate padding consumes --plate-pad{,-tight,-loose}, which the owner
+ * of tokens.css shipped as the mass vocabulary for exactly this and asked
+ * D1 to use rather than writing a padding literal. That division is the
+ * point: they own how much a step is worth, this file owns which rows get
+ * which step. If the scale reads too strong or too weak, the fix is one
+ * edit in their file rather than three in this one.
+ *
  * WHY MASS VARIES. Eleven rows measured 310–359px — every one within 16%
  * of every other — so nothing on the page distinguished a bank spanning
  * five machines with two audio demos from a MIDI zip. Weighting by coverage
@@ -81,7 +88,7 @@
 
 .plate[data-coverage='4'] .plate__body,
 .plate[data-coverage='5'] .plate__body {
-  padding-block: var(--space-2xl);
+  padding-block: var(--plate-pad-loose);
 }
 
 .plate[data-coverage='4'] .entry__photo,
@@ -92,7 +99,7 @@
 /* Mid coverage — 2 or 3 machines. */
 .plate[data-coverage='2'] .plate__body,
 .plate[data-coverage='3'] .plate__body {
-  padding-block: var(--space-xl);
+  padding-block: var(--plate-pad);
 }
 
 /* Single machine, and the entries that are not machines at all. A plugin
@@ -105,7 +112,7 @@
 
 .plate[data-coverage='0'] .plate__body,
 .plate[data-coverage='1'] .plate__body {
-  padding-block: var(--space-l);
+  padding-block: var(--plate-pad-tight);
 }
 
 .plate[data-coverage='0'] .entry__photo,
