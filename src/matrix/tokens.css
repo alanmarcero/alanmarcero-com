@@ -74,6 +74,35 @@
                             * palette with real headroom, spent
                             * deliberately.                            */
 
+  /* --- A CONTRAST NUMBER IS NOT A PROPERTY OF A MASKED SURFACE -----
+   * Four surfaces in this system are envelope/field graphics, and THREE
+   * of them are masked. A single ratio describes one POINT on those, not
+   * the element — and for a radial mask the bright core is a small
+   * fraction of what you see, because area scales as r squared.
+   *
+   * Measured 2026-08-22, fraction of each surface clearing the 2.78
+   * non-text floor:
+   *
+   *   .hero__field          peak 3.40  ->  50% of its HEIGHT
+   *                         (linear mask, #000 42% -> transparent 92%)
+   *   .entry__photo--field  peak 3.00  ->  34% of its AREA
+   *                         (radial closest-side, #000 55%)
+   *   .track__spectrum      --wood @0.32 (0.20 narrow), masked
+   *                         the faintest of the four
+   *   .plate__field         2.03, UNMASKED — the only honest single number
+   *
+   * I shipped the photo-fallback's 3.00 earlier today as though it
+   * described that element. It described its centre. Surfaced by
+   * agent-a85101c8, who made the same error on .hero__field and caught
+   * it: a peak read off one row, reported as the surface.
+   *
+   * So: raising a token buys nothing past the point where the mask has
+   * multiplied it toward zero. If a field must read as a graphic rather
+   * than a vignette, THE MASK IS THE BINDING CONSTRAINT, and unlike this
+   * palette the masks have real headroom. State which point a ratio is
+   * at, or state the area-weighted figure.
+   */
+
   /* --- Seam --------------------------------------------------------
    * The engraved boundary between bands. A machined catch-edge is what
    * a hardware panel actually has where two plates meet, so this is
