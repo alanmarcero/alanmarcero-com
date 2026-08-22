@@ -1,0 +1,124 @@
+/*
+ * Catalog plates — coverage, and the hierarchy that follows from it.
+ *
+ * Layered on matrix.css rather than editing it: the three shared CSS files
+ * belong to one owner so no slice invents a parallel value, and this file
+ * evaluates after matrix.css (MatrixApp imports it at line 4, PatchBanks at
+ * line 7) so equal-specificity rules here win without !important.
+ *
+ * Every value below is an existing token. Nothing new is minted here; a
+ * token this file needed and did not have would be a request to the owner
+ * of tokens.css, not a literal dropped in locally.
+ *
+ * WHY MASS VARIES. Eleven rows measured 310–359px — every one within 16%
+ * of every other — so nothing on the page distinguished a bank spanning
+ * five machines with two audio demos from a MIDI zip. Weighting by coverage
+ * is not invented importance: it is the number of readers a row can serve.
+ * A five-machine bank is legitimately five times the doorway.
+ */
+
+/* --- The machines a bank loads onto -------------------------------------
+ *
+ * Silkscreened, not chipped. Patch Sheet separates by ground change and
+ * engraving rather than by containers, so these are tracked legends with a
+ * hairline between them — no pills, no radius, no fill. --legend-faint is
+ * used here strictly as a rule colour, which is what its contract permits
+ * (2.78:1, non-text only); the names themselves take --legend-dim at 5.3:1.
+ */
+
+.entry__fits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-xs) var(--space-s);
+  margin-top: var(--space-s);
+}
+
+.entry__fits-label {
+  color: var(--lcd-dim);
+  white-space: nowrap;
+}
+
+.entry__instruments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry__instrument {
+  font-family: var(--body-face);
+  font-size: var(--step--1);
+  color: var(--legend-dim);
+  padding-inline: var(--space-s);
+  border-inline-start: 1px solid var(--legend-faint);
+}
+
+.entry__instrument:first-child {
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
+/* --- Mass follows coverage ---------------------------------------------
+ *
+ * Thresholds live here, in one place, reading the data-coverage the
+ * component sets — so adding a bank cannot silently land it in a bucket
+ * nobody chose, and changing where the line falls is one edit.
+ *
+ * The scale is deliberately narrow. The point is that the catalog stops
+ * reading as one uniform field, not that four banks shout; a reader
+ * scanning for an instrument should feel the difference without being
+ * told about it.
+ */
+
+/* Broad coverage — 4 or 5 machines. The widest doorways on the page. */
+.plate[data-coverage='4'] .entry__name,
+.plate[data-coverage='5'] .entry__name {
+  font-size: var(--step-3);
+}
+
+.plate[data-coverage='4'] .plate__body,
+.plate[data-coverage='5'] .plate__body {
+  padding-block: var(--space-2xl);
+}
+
+.plate[data-coverage='4'] .entry__photo,
+.plate[data-coverage='5'] .entry__photo {
+  max-width: 26rem;
+}
+
+/* Mid coverage — 2 or 3 machines. */
+.plate[data-coverage='2'] .plate__body,
+.plate[data-coverage='3'] .plate__body {
+  padding-block: var(--space-xl);
+}
+
+/* Single machine, and the entries that are not machines at all. A plugin
+ * or a MIDI archive is a narrower doorway and takes a quieter plate — this
+ * is where the page gets its rhythm back, by letting some rows be small. */
+.plate[data-coverage='0'] .entry__name,
+.plate[data-coverage='1'] .entry__name {
+  font-size: var(--step-2);
+}
+
+.plate[data-coverage='0'] .plate__body,
+.plate[data-coverage='1'] .plate__body {
+  padding-block: var(--space-l);
+}
+
+.plate[data-coverage='0'] .entry__photo,
+.plate[data-coverage='1'] .entry__photo {
+  max-width: 15rem;
+}
+
+/* Below the layout's single-column breakpoint the photo is full-width and
+ * the coverage caps above would fight it, so they stand down. Mass still
+ * varies through padding and type size, which is all that reads on a
+ * narrow screen anyway. */
+@media (max-width: 46rem) {
+  .plate[data-coverage] .entry__photo {
+    max-width: none;
+  }
+}
