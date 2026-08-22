@@ -115,13 +115,15 @@ function Hero({ releaseCount, activeBankIndex }) {
           </div>
 
           <figure className="codex-hero__instrument" ref={figureRef}>
-            <Orrery
-              banks={patchBanks}
-              activeIndex={activeBankIndex}
-              paused={paused || !inView}
-            />
-            <div className="codex-hero__mark">
-              <SynthesistMark size={112} />
+            <div className="codex-hero__dial">
+              <Orrery
+                banks={patchBanks}
+                activeIndex={activeBankIndex}
+                paused={paused || !inView}
+              />
+              <div className="codex-hero__mark">
+                <SynthesistMark size={112} />
+              </div>
             </div>
             <figcaption>
               <p className="codex-label">Eleven banks in orbit</p>
