@@ -15,6 +15,7 @@ import Orrery from '../opusmaxmac/graphics/Orrery';
 import Line from '../opusmaxmac/Line';
 import SynthesistMark from '../components/graphics/SynthesistMark';
 import SignalMeter from '../components/SignalMeter';
+import NoResults from '../components/NoResults';
 import {
   credits,
   imageFor,
@@ -500,6 +501,11 @@ function CodexApp() {
   const activeBankIndex = activeBank
     ? patchBanks.findIndex((bank) => bank.name === activeBank.name)
     : null;
+  const hasNoResults = Boolean(query)
+    && banks.length === 0
+    && releases.length === 0
+    && !musicLoading
+    && !musicError;
 
   return (
     <div className="codex-page">
@@ -523,19 +529,27 @@ function CodexApp() {
           bankCount={banks.length}
           releaseCount={musicLoading || musicError ? null : releases.length}
         />
-        <Register
-          banks={banks}
-          query={query}
-          rowRef={rowRef}
-          activeIndex={currentIndex}
-          onPreview={setPreviewIndex}
-        />
-        <Releases
-          items={releases}
-          loading={musicLoading}
-          error={musicError}
-          query={query}
-        />
+        {hasNoResults ? (
+          <div className="codex-empty codex-shell">
+            <NoResults query={query} />
+          </div>
+        ) : (
+          <>
+            <Register
+              banks={banks}
+              query={query}
+              rowRef={rowRef}
+              activeIndex={currentIndex}
+              onPreview={setPreviewIndex}
+            />
+            <Releases
+              items={releases}
+              loading={musicLoading}
+              error={musicError}
+              query={query}
+            />
+          </>
+        )}
       </main>
       <Colophon />
     </div>
