@@ -104,8 +104,16 @@
   .tcard{background:var(--card);border:1px solid var(--hair);border-radius:15px;padding:1.1rem 1.25rem;
     box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:space-between;position:relative}
   .tcard.highlight{border-color:var(--green);border-width:1.5px}
-  .tcard .badge-top{position:absolute;top:-10px;right:16px;background:var(--green);color:#fff;font-size:.68rem;
+  .tcard .badge-top{position:absolute;z-index:2;top:-10px;right:16px;background:var(--green);color:#fff;font-size:.68rem;
     font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .6rem;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  .tcard .tphoto{position:relative;display:block;height:168px;margin:-1.1rem -1.25rem .85rem;
+    border-radius:14px 14px 0 0;background:linear-gradient(135deg,var(--brass-soft),var(--green-soft));
+    background-size:cover;background-position:center;overflow:hidden}
+  .tcard .tphoto .tph-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;opacity:.45}
+  .tcard .tphoto.has-img .tph-emoji{display:none}
+  .tcard .tphoto::after{content:"";position:absolute;inset:auto 0 0 0;height:38%;
+    background:linear-gradient(180deg,transparent,rgba(10,14,8,.28))}
+  @media (max-width:520px){.tcard .tphoto{height:140px}}
   .tcard .tnum{display:inline-block;font-size:.7rem;font-family:var(--mono);font-weight:700;color:var(--brass);background:var(--brass-soft);padding:.1rem .4rem;border-radius:4px;margin-bottom:.3rem}
   .tcard .tname{font-family:var(--serif);font-size:1.22rem;font-weight:600;margin:0 0 .25rem;color:var(--ink);line-height:1.25}
   .tcard .tloc{font-size:.8rem;color:var(--brass);font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:.3rem}
@@ -255,7 +263,7 @@
         <span class="lg-v">✓ Verified = checked on the named page, on the named date</span>
         <span class="lg-m">◆ Mechanism = a durable discount, not an expiring code</span>
         <span class="lg-u">✗ Unverified = claim could not be confirmed at source</span>
-        <span style="font-size:.75rem;font-family:var(--mono);padding:.2rem .5rem;border-radius:5px;background:var(--paper);color:var(--faint)"><s>struck</s> = a retracted figure, kept on purpose — never a live price</span>
+        <span style="font-size:.75rem;font-family:var(--mono);padding:.2rem .5rem;border-radius:5px;background:var(--paper);color:var(--faint)"><s class="retracted">struck</s> = a retracted figure, kept on purpose — never a live price</span>
       </div>
       <p style="font-size:.8rem">
         <b>If you are auditing this page with a script:</b> corrections keep the old number visible, because a
@@ -291,6 +299,7 @@
       <div class="tcard highlight" data-tags="free fq gd under35 walking">
         <span class="badge-top">Cheapest way in</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/nola-tour-guy.jpg)" role="presentation"><span class="tph-emoji">🚶</span></span>
           <span class="tnum">Verified #1</span>
           <div class="tname">Nola Tour Guy — French Quarter &amp; St. Louis Cemetery</div>
           <div class="tloc">📍 Meets Washington Artillery Park, 768 Decatur St — in the French Quarter</div>
@@ -317,6 +326,7 @@
 
       <div class="tcard" data-tags="free fq gd under35 walking">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/free-tours-by-foot.jpg)" role="presentation"><span class="tph-emoji">🚶</span></span>
           <span class="tnum">Verified #2</span>
           <div class="tname">Free Tours by Foot — small-group walks</div>
           <div class="tloc">📍 French Quarter &amp; Garden District departures</div>
@@ -344,6 +354,7 @@
       <div class="tcard highlight" data-tags="gd under35 walking">
         <span class="badge-top">Biggest gap found</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/legendary-garden-district.jpg)" role="presentation"><span class="tph-emoji">🌳</span></span>
           <span class="tnum">Verified #3</span>
           <div class="tname">Garden District — book direct, not through Viator</div>
           <div class="tloc">📍 Garden District (Magazine St / Lafayette Cemetery area)</div>
@@ -368,6 +379,7 @@
 
       <div class="tcard" data-tags="fq under35 cemetery">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-do/st-louis-cemetery-no-1-tour.jpg)" role="presentation"><span class="tph-emoji">⚰️</span></span>
           <span class="tnum">Verified #4</span>
           <div class="tname">St. Louis Cemetery No. 1 — official tour</div>
           <div class="tloc">📍 425 Basin St — edge of the French Quarter, walkable</div>
@@ -397,6 +409,7 @@
       <div class="tcard highlight" data-tags="fq family cruise">
         <span class="badge-top">Aggregator wins</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-do/steamboat-natchez-jazz-cruise.jpg)" role="presentation"><span class="tph-emoji">🚢</span></span>
           <span class="tnum">Verified #5</span>
           <div class="tname">Steamboat Natchez — daytime jazz cruise</div>
           <div class="tloc">📍 Toulouse Street Wharf, 400 Toulouse St — French Quarter</div>
@@ -421,6 +434,7 @@
 
       <div class="tcard" data-tags="pass fq gd family">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/go-city-nola.jpg)" role="presentation"><span class="tph-emoji">🎟️</span></span>
           <span class="tnum">Verified #6</span>
           <div class="tname">Go City New Orleans — All-Inclusive Pass</div>
           <div class="tloc">📍 Covers French Quarter, Garden District &amp; downtown attractions</div>
@@ -443,6 +457,7 @@
 
       <div class="tcard" data-tags="fq pass food">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-do/new-orleans-school-of-cooking.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
           <span class="tnum">Verified #7</span>
           <div class="tname">New Orleans School of Cooking — demo class</div>
           <div class="tloc">📍 Early-1800s molasses warehouse, French Quarter</div>
@@ -475,6 +490,7 @@
       <div class="tcard highlight">
         <span class="badge-top">Top Eco Pick</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/cajun-encounters.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #1</span>
           <div class="tname">Cajun Encounters Swamp Tour</div>
           <div class="tloc">📍 Honey Island Swamp (Slidell, LA) • ~45 min drive</div>
@@ -502,6 +518,7 @@
       <!-- 2. Jean Lafitte -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #2</span>
           <div class="tname">Jean Lafitte Swamp Tour</div>
           <div class="tloc">📍 Jean Lafitte National Park (Marrero, LA) • ~25 min drive</div>
@@ -528,6 +545,7 @@
       <div class="tcard">
         <span class="badge-top" style="background:var(--brass);">Best Budget Deal</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/cajun-pride-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #3</span>
           <div class="tname">Cajun Pride Swamp Tours</div>
           <div class="tloc">📍 Manchac Swamp (Frenier, LA) • ~35 min drive</div>
@@ -553,6 +571,7 @@
       <!-- 4. Airboat Adventures -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #4</span>
           <div class="tname">Airboat Adventures</div>
           <div class="tloc">📍 Barataria Basin (Lafitte, LA) • ~35 min drive</div>
@@ -578,6 +597,7 @@
       <!-- 5. Dr Wagner Honey Island -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #5</span>
           <div class="tname">Dr. Wagner’s Honey Island Swamp Tour</div>
           <div class="tloc">📍 Pearl River / Slidell, LA • ~45 min drive</div>
@@ -603,6 +623,7 @@
       <!-- 6. Ultimate Swamp Adventures -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #6</span>
           <div class="tname">Ultimate Swamp Adventures</div>
           <div class="tloc">📍 Westwego, LA • ~25 min drive</div>
@@ -628,6 +649,7 @@
       <!-- 7. Gray Line Standalone -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #7</span>
           <div class="tname">Gray Line Standalone Swamp &amp; Bayou</div>
           <div class="tloc">📍 Departs 400 Toulouse St (French Quarter Waterfront)</div>
@@ -660,6 +682,7 @@
       <div class="tcard highlight">
         <span class="badge-top">#1 Rated Food Tour</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-do/doctor-gumbo-food-history-tour.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
           <span class="tnum">Tour #8</span>
           <div class="tname">Doctor Gumbo Food &amp; History Tour</div>
           <div class="tloc">📍 French Quarter</div>
@@ -685,6 +708,7 @@
       <!-- 9. Tastebud Tours -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #9</span>
           <div class="tname">Tastebud Tours - Flavor of New Orleans</div>
           <div class="tloc">📍 French Quarter</div>
@@ -711,6 +735,7 @@
       <!-- 10. Sidewalk Food Tours FQ -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #10</span>
           <div class="tname">Sidewalk Food Tours (French Quarter)</div>
           <div class="tloc">📍 French Quarter</div>
@@ -736,6 +761,7 @@
       <!-- 11. Devour Tours -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #11</span>
           <div class="tname">Devour Tours - French Quarter Culinary Walk</div>
           <div class="tloc">📍 French Quarter</div>
@@ -761,6 +787,7 @@
       <!-- 12. Destination Kitchen -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #12</span>
           <div class="tname">Destination Kitchen Food &amp; Culture Tour</div>
           <div class="tloc">📍 French Quarter</div>
@@ -786,6 +813,7 @@
       <!-- 13. New Orleans Secrets -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #13</span>
           <div class="tname">New Orleans Secrets - Hidden Culinary Tour</div>
           <div class="tloc">📍 French Quarter &amp; Marigny Edge</div>
@@ -818,6 +846,7 @@
       <div class="tcard highlight">
         <span class="badge-top">Best Garden District Pick</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/sidewalk-food-tours.jpg)" role="presentation"><span class="tph-emoji">🍴</span></span>
           <span class="tnum">Tour #14</span>
           <div class="tname">Sidewalk Food Tours - Lower Garden District</div>
           <div class="tloc">📍 Lower Garden District &amp; Magazine St</div>
@@ -843,6 +872,7 @@
       <!-- 15. Bon Moment -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #15</span>
           <div class="tname">Bon Moment Garden District Walk &amp; Food</div>
           <div class="tloc">📍 Garden District</div>
@@ -868,6 +898,7 @@
       <!-- 16. Confederacy of Cruisers -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Tour #16</span>
           <div class="tname">Confederacy of Cruisers Culinary Crawl</div>
           <div class="tloc">📍 Uptown &amp; Garden District</div>
@@ -894,6 +925,7 @@
       <div class="tcard">
         <span class="badge-top" style="background:var(--plum);">Pay-What-You-Wish</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/free-tours-by-foot.jpg)" role="presentation"><span class="tph-emoji">🚶</span></span>
           <span class="tnum">Tour #17</span>
           <div class="tname">Free Tours by Foot (Garden District &amp; Bites)</div>
           <div class="tloc">📍 Garden District</div>
@@ -926,6 +958,7 @@
       <div class="tcard highlight">
         <span class="badge-top">All-In-One Pass</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/go-city-nola.jpg)" role="presentation"><span class="tph-emoji">🎟️</span></span>
           <span class="tnum">Package #18</span>
           <div class="tname">Go City New Orleans All-Inclusive Pass</div>
           <div class="tloc">📍 City-Wide Multi-Attraction Digital Pass</div>
@@ -951,6 +984,7 @@
       <!-- 19. New Orleans School of Cooking -->
       <div class="tcard">
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/jean-lafitte-swamp.jpg)" role="presentation"><span class="tph-emoji">🐊</span></span>
           <span class="tnum">Package #19</span>
           <div class="tname">New Orleans School of Cooking Demo &amp; Meal</div>
           <div class="tloc">📍 624 Conti St (French Quarter)</div>
@@ -977,6 +1011,7 @@
       <div class="tcard">
         <span class="badge-top" style="background:var(--ac);">VIP Private Charter</span>
         <div>
+          <span class="tphoto has-img" style="background-image:url(/neworleans-tours/cajun-encounters.jpg)" role="presentation"><span class="tph-emoji">🚐</span></span>
           <span class="tnum">Package #20</span>
           <div class="tname">Private Chauffeured Swamp &amp; Dining Day for 4</div>
           <div class="tloc">📍 Custom Hotel Pickup → Swamp → Garden District</div>
