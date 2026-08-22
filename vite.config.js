@@ -20,6 +20,7 @@ export default defineConfig({
         opus5iosArcade: resolve(__dirname, 'opus5ios-arcade.html'),
         opusMaxMac: resolve(__dirname, 'opus-max-mac.html'),
         opusMaxMacArcade: resolve(__dirname, 'opus-max-mac-arcade.html'),
+        codex: resolve(__dirname, 'codex.html'),
       },
     },
   },
