@@ -96,7 +96,10 @@
   color: var(--lcd);
   font-family: var(--data-face);
   font-size: var(--step-0);
-  caret-color: var(--lcd);
+  /* The caret exists only while you are typing, so it is the system
+     tracking you rather than data at rest — phosphor by the contract.
+     8.34:1 on this --panel-3 well. */
+  caret-color: var(--phosphor);
 }
 
 .hero__search-input::placeholder {
@@ -107,15 +110,35 @@
   color: var(--legend-well);
 }
 
+/* outline:none deleted 2026-08-22. This rule (0,2,0) was beating
+   layout.css's :where(...):focus-visible (0,1,0), so the one input on the
+   page did not speak the focus language the merge just established —
+   reported by agent-df85d7d7 from m2-hero. Not a 2.4.7 failure, since the
+   border still moved, but on a MERGE task an inconsistent focus language
+   is the defect. The border is an interaction state and now wears the
+   interaction colour instead of the data colour: 8.34:1 on the well,
+   clearing 1.4.11's 3:1 for a component boundary. */
+
 .hero__search-input:focus {
-  outline: none;
-  border-bottom-color: var(--lcd);
+  border-bottom-color: var(--phosphor);
 }
+
+/* THE FIRST REAL INSTANCE OF WHAT PHOSPHOR MEANS. The contract defines it
+   as the system responding to you — liveness, the active take — and until
+   now that meaning had ZERO call sites: all three were focus rings or
+   static identity. agent-df85d7d7 measured that gap and found this
+   element, which exists only once you have typed, changes as you type,
+   and vanishes when you clear the box. Nothing on the page is more
+   literally a response. They handed it over rather than styling it from
+   hero.css, because assigning a token's meaning to a new element is the
+   contract's call.
+
+   11.18:1 on --panel, against --legend-dim's 5.28. */
 
 .hero__search-result {
   min-height: 1.5em;
   margin: var(--space-xs) 0 0;
-  color: var(--legend-dim);
+  color: var(--phosphor);
   font-size: var(--step--1);
 }
 
