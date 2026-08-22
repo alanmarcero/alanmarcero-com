@@ -75,46 +75,45 @@
 
 /* --- Merged from the main site: colour and light, not geometry --------- */
 
-/* The main site is a PHOSPHOR system — #4af2a4 with an rgba(74,242,164,.16)
-   bloom — and its strongest single gesture is the split-colour headline:
-   one name, two inks. It is pure type, so it arrives here without importing
-   any container geometry. That distinction is the whole scope of the merge:
-   the two systems separate by different means (phosphor by containers and
-   shadow rings, Patch Sheet by ground and engraving with a measured ceiling
-   behind it), and importing radius would REPLACE a separation mechanism
-   rather than add one.
+/* The split-colour headline is the main site's strongest single gesture:
+   one name, two inks. It is pure type, so it arrives without importing any
+   container geometry — which is the whole scope of the merge. The two
+   systems separate by different means (phosphor by containers and shadow
+   rings, Patch Sheet by ground and engraving with a measured ceiling behind
+   it), and importing radius would REPLACE a separation mechanism rather
+   than add one.
 
-   Measured on our own ground before use, not taken from the main site's
-   docs — which describe a cyan/violet CRT system this site does not have:
-     phosphor on --panel    11.18:1
-     phosphor on --panel-3   8.34:1   (AA floor 4.5)
-     --legend on --panel    12.56:1   (the ink half, for comparison)
-   Both halves of the headline therefore sit in the same legibility band as
-   existing primary text. The merge costs nothing here.
-
-   WITHDRAWAL CONDITION — read this before adding a second local copy.
-   --phosphor is defined in src/shared/theme.css, which MatrixApp does not
-   import, so the variable does not resolve in /matrix. This is a
-   SLICE-LOCAL declaration, not a token. If the shared-surface slice
-   promotes phosphor into tokens.css, DELETE this block and reference the
-   token — do not leave a parallel value. A slice-local override that
-   outlives its reason is the same object as a stale comment, except it
-   still executes. (Learned the hard way at f1efc26, where I pinned the
-   hero field to a local colour after its token owner had already fixed the
-   token, winning 0.02:1 and silently decoupling the largest field on the
-   site from the variable that exists to control it.) */
-.hero {
-  --hero-signal: #4af2a4;
-  --hero-bloom: rgba(74, 242, 164, 0.16);
+   WITHDRAWAL CONDITION DISCHARGED, v2. Last version declared --hero-signal
+   and --hero-bloom locally, because --phosphor lived only in the main
+   site's stylesheet which /matrix does not import — and the comment said:
+   if the shared-surface slice promotes phosphor to a token, DELETE this
+   block rather than leave a parallel value. It has (tokens.css:151 and
+   :168, with ratios documented and a stated meaning: "THE SIGNAL. The
+   system responding to you"). So the local declarations are gone and this
+   references the tokens. The condition fired one loop after it was written,
+   which is the only reason it was worth writing. */
+.hero__title-signal {
+  color: var(--phosphor);
+  text-shadow: var(--bloom-phosphor);
 }
 
-/* The bloom sits on identity because that is where the main site puts it.
-   Kept to the phosphor half only: the ink half is already the page's
-   highest-contrast element and a glow on it would read as a print defect
-   rather than as light. */
-.hero__title-signal {
-  color: var(--hero-signal);
-  text-shadow:
-    0 0 0.35em var(--hero-bloom),
-    0 0 1.1em var(--hero-bloom);
+/* Restores the system's focus language on this one input, which an older
+   rule suppresses.
+
+   layout.css gives every focusable thing a phosphor outline plus bloom via
+   :where(a, button, input, [tabindex]):focus-visible. Because :where()
+   contributes ZERO specificity that selector scores (0,1,0), while
+   matrix.css's `.hero__search-input:focus { outline: none }` scores (0,2,0)
+   and wins — so the search input is the one focusable element on the page
+   that does not speak the new focus language. It is not unindicated: the
+   border-bottom still shifts to --lcd, which is a real visible indicator.
+   It is INCONSISTENT, which on a merge task is the defect.
+
+   This is a local repair and the upstream fix is deleting `outline: none`
+   from matrix.css, which is not my file. WITHDRAWAL CONDITION: when that
+   line goes, delete this rule rather than leaving a parallel one. */
+.hero__search-input:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 3px;
+  box-shadow: var(--bloom-phosphor);
 }
