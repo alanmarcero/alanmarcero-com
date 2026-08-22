@@ -137,11 +137,29 @@
    * WHAT PHOSPHOR MEANS HERE, because a colour without a meaning becomes
    * decoration and eleven catalogue rows are eleven chances to dilute it:
    *
-   *   --lcd       DATA AT REST. Readouts, counts, values. Unchanged.
+   *   --lcd       THE PANEL'S OWN LIGHT. Readouts, counts, values, and
+   *               lit legends. Widened from "data at rest" 2026-08-22:
+   *               df85d7d7's audit found 6 of 13 --lcd uses are label or
+   *               affordance rather than data, and the honest resolution
+   *               is that the narrower definition was wrong rather than
+   *               that six sites are. A backlit panel lights its legends
+   *               as well as its readouts. Affordances AT REST stay here;
+   *               only the system RESPONDING is phosphor.
    *   --phosphor  THE SIGNAL. The system responding to you: focus,
-   *               liveness, the active take. Inherently singular at any
-   *               moment, so it is scarce by SEMANTICS rather than by
-   *               anyone remembering to be sparing.
+   *               liveness, the active take.
+   *
+   * SCARCE BY ENUMERATION, NOT BY SINGULARITY. v1 of this comment said
+   * phosphor is "inherently singular at any moment" and that was wrong —
+   * agent-df85d7d7 caught it against their own hero, which puts phosphor
+   * permanently on the identity, so focusing anything puts two phosphor
+   * things on screen. The source system is not singular either: it spends
+   * phosphor on identity AND the primary action AND focus, three
+   * concurrent roles, one of them permanent. What actually makes phosphor
+   * scarce is that its roles are STRUCTURAL and fixed in number — there
+   * is one identity, one primary action, one focus. Eleven catalogue rows
+   * cannot each claim one because no row IS any of those things. That
+   * holds without requiring anyone to be sparing, which is what I wanted
+   * from "singular" and did not get.
    *
    * That split is faithful to both sources rather than overriding
    * either: the main site spends phosphor on identity, the primary
@@ -187,10 +205,22 @@
    * HURTS every consumer with text on top, by the same act. Measured
    * across the --wood lift (#8a5a3b -> #b98a5c) at each live opacity:
    *
-   *   consumer                       field:ground    --legend-well ON it
-   *   .hero__field        @0.72       2.06 -> 3.40      3.27 -> 1.98
-   *   .plate__field       @0.42       1.48 -> 2.03      4.55 -> 3.32
-   *   .work__spectrum     @0.28       1.29 -> 1.58      5.24 -> 4.27
+   *   consumer                    ground    field:gnd   well ON it
+   *   .hero__field     @0.72      --panel   2.06->3.40  3.27->1.98
+   *   .plate__field    @0.42      --panel   1.48->2.03  4.55->3.32
+   *   .work__spectrum  @0.28    --panel-2   1.29->1.55  4.72->3.82
+   *
+   * EVERY ROW MUST NAME ITS OWN GROUND. The first version of this table
+   * computed all three on --panel, and .work__spectrum does not sit on
+   * --panel — `.music { background: var(--panel-2) }`, matrix.css:362.
+   * The rule this registry exists to state, failing on its own first
+   * entry. It reported that consumer's headroom above the 4.5 floor as
+   * 0.95 when it is 0.32: THREE TIMES the margin that exists, which is
+   * exactly the decision a future editor would use it for. Caught by
+   * agent-cd2997fc in one grep. And the row that was wrong was the one
+   * describing a file its author does not own — the same asymmetry that
+   * made the original bug invisible from both ends, reappearing in the
+   * artifact built to bridge it.
    *
    * Left column up, right column down, every row. So A FIELD TOKEN'S
    * SAFE RANGE IS NOT A PROPERTY OF THE TOKEN — it is a property of each
@@ -208,10 +238,27 @@
    *     .hero__field         matrix.css      @0.72
    *     .plate__field        layout.css      @0.42
    *   TEXT OVER IT     (raising hurts; re-measure text-on-field)
-   *     .work__spectrum      sections/music.css @0.14  — D3's, not mine
+   *     .work__spectrum   sections/music.css @0.14  --panel-2
+   *                       field 1.23 / legend-well 4.82  (margin 0.32)
+   *     .work__spectrum   sections/music.css @0.10  --panel-2, <=40rem,
+   *                       full width — field 1.16 / legend-well 5.08.
+   *                       The narrow case runs under EVERYTHING rather
+   *                       than one column, so it carries the most text.
+   *                       Both rows are D3's file, not mine.
    *
    * If you add a --wood consumer, add a line. If you put text over a
    * field, say so here, because nobody editing this token can see it.
+   */
+
+  /* --- THIS IS A TABLE OF TOKENS, NOT OF MARKS ----------------------
+   * Every ratio here is token-on-ground at full opacity. MARKS RENDER AT
+   * OPACITIES, so any claim comparing two marks has to be recomputed at
+   * the opacities they actually render at.
+   *
+   * agent-a85101c8 nearly published a beam-to-field ratio of 1.75x from
+   * the bare token values; recomputed at what renders — beam at 1.00,
+   * field at 0.72 under a mask — it is 2.70x. A table of values silently
+   * invites a comparison of values, and it is the wrong comparison.
    */
 
   /* --- Seam --------------------------------------------------------
