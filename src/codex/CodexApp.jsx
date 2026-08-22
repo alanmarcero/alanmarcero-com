@@ -253,7 +253,7 @@ function BankFigure({ bank }) {
   );
 }
 
-function Register({ banks, query, rowRef, activeIndex }) {
+function Register({ banks, query, rowRef, activeIndex, onPreview }) {
   const currentBank = banks[activeIndex] || banks[0];
 
   return (
@@ -287,6 +287,14 @@ function Register({ banks, query, rowRef, activeIndex }) {
                     data-row={index}
                     data-current={index === activeIndex ? 'true' : 'false'}
                     ref={rowRef(index)}
+                    onMouseEnter={() => onPreview(index)}
+                    onMouseLeave={(event) => {
+                      if (!event.currentTarget.contains(document.activeElement)) onPreview(null);
+                    }}
+                    onFocusCapture={() => onPreview(index)}
+                    onBlurCapture={(event) => {
+                      if (!event.currentTarget.contains(event.relatedTarget)) onPreview(null);
+                    }}
                   >
                     <div className="codex-entry__field" aria-hidden="true">
                       <EnvelopeField
@@ -351,7 +359,7 @@ function Register({ banks, query, rowRef, activeIndex }) {
 
             {currentBank && (
               <aside className="codex-register__bench">
-                <BankFigure bank={currentBank} />
+                <BankFigure key={currentBank.name} bank={currentBank} />
               </aside>
             )}
           </div>
@@ -463,6 +471,7 @@ function Colophon() {
 
 function CodexApp() {
   const [query, setQuery] = useState('');
+  const [previewIndex, setPreviewIndex] = useState(null);
   const { musicItems, musicLoading, musicError } = useMusicItems();
   const scrollProgressRef = useScrollProgress();
 
@@ -474,7 +483,8 @@ function CodexApp() {
   ));
   const releases = musicItems.filter((item) => matches(query, item.title, item.description));
   const [rowRef, activeIndex] = useNearestRow(banks.length);
-  const activeBank = banks[activeIndex] || banks[0];
+  const currentIndex = previewIndex ?? activeIndex;
+  const activeBank = banks[currentIndex] || banks[0];
   const activeBankIndex = activeBank
     ? patchBanks.findIndex((bank) => bank.name === activeBank.name)
     : null;
@@ -494,7 +504,10 @@ function CodexApp() {
       <main id="codex-main">
         <Finder
           query={query}
-          onQueryChange={setQuery}
+          onQueryChange={(nextQuery) => {
+            setPreviewIndex(null);
+            setQuery(nextQuery);
+          }}
           bankCount={banks.length}
           releaseCount={musicLoading || musicError ? null : releases.length}
         />
@@ -502,7 +515,8 @@ function CodexApp() {
           banks={banks}
           query={query}
           rowRef={rowRef}
-          activeIndex={activeIndex}
+          activeIndex={currentIndex}
+          onPreview={setPreviewIndex}
         />
         <Releases
           items={releases}

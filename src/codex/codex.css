@@ -948,6 +948,10 @@ body {
   display: none;
 }
 
+.codex-register__bench .codex-bank-figure {
+  animation: codex-bench-lock 320ms var(--ease) both;
+}
+
 .codex-bank-figure__visual {
   position: relative;
   width: 100%;
@@ -1323,6 +1327,10 @@ body {
 
 @keyframes codex-calibrate {
   from { opacity: 0; transform: translateY(14px) rotate(-2deg) scale(0.96); }
+}
+
+@keyframes codex-bench-lock {
+  from { opacity: 0.42; transform: translateY(6px) scale(0.985); }
 }
 
 @keyframes codex-signal-run {
