@@ -28,9 +28,17 @@
  *
  * Silkscreened, not chipped. Patch Sheet separates by ground change and
  * engraving rather than by containers, so these are tracked legends with a
- * hairline between them — no pills, no radius, no fill. --legend-faint is
- * used here strictly as a rule colour, which is what its contract permits
- * (2.78:1, non-text only); the names themselves take --legend-dim at 5.3:1.
+ * hairline between them — no pills, no radius, no fill. The names take
+ * --legend-dim at 5.3:1.
+ *
+ * The divider uses --seam, not --legend-faint. I reached for the faint
+ * token because its contract reads "non-text only — strokes, rules", and
+ * that is what this is. But the owner of tokens.css then measured that it
+ * CANNOT REACH 3:1 on --panel at any opacity — 2.78 is its ceiling — so the
+ * token named for strokes could not render a stroke that meets the non-text
+ * floor. --seam is 3.42:1 and is now documented as the stroke token. Asked
+ * for it rather than lifting the faint one, which would have broken its
+ * inert role for the sites that legitimately want something invisible.
  */
 
 .entry__fits {
@@ -60,7 +68,7 @@
   font-size: var(--step--1);
   color: var(--legend-dim);
   padding-inline: var(--space-s);
-  border-inline-start: 1px solid var(--legend-faint);
+  border-inline-start: 1px solid var(--seam);
 }
 
 .entry__instrument:first-child {
@@ -80,12 +88,26 @@
  * told about it.
  */
 
-/* Broad coverage — 4 or 5 machines. The widest doorways on the page. */
-.plate[data-coverage='4'] .entry__name,
-.plate[data-coverage='5'] .entry__name {
-  font-size: var(--step-3);
-}
-
+/* Broad coverage — 4 or 5 machines. The widest doorways on the page.
+ *
+ * NO font-size here, deliberately, and the reason is a mistake worth
+ * leaving written down. This block used to set --step-3 on the flagship
+ * titles to make them louder. --step-3 is 1.728rem and reads large beside
+ * --step-0; it is BELOW --display-s's floor of 1.75rem, and .entry__name
+ * is on the display scale. So the rule shrank the flagships from 48px to
+ * 28px while the untouched middle tier stayed at full size, and the
+ * hierarchy came out INVERTED — measured: coverage 4 and 5 rendering
+ * shorter than coverage 3.
+ *
+ * I compared within the wrong scale. Two scales exist for different jobs
+ * and their numbers are not comparable: --step-* is body copy, --display-*
+ * is where the page gets loud. Mass here is carried by padding and photo
+ * width, which are monotonic and verified.
+ *
+ * If type should carry weight too, the display scale has no step between
+ * --display-s (48px at 1200px) and --display-m (82px) — a 71% jump. That
+ * is a token request to the owner of tokens.css, not a clamp invented
+ * locally. */
 .plate[data-coverage='4'] .plate__body,
 .plate[data-coverage='5'] .plate__body {
   padding-block: var(--plate-pad-loose);
@@ -104,12 +126,11 @@
 
 /* Single machine, and the entries that are not machines at all. A plugin
  * or a MIDI archive is a narrower doorway and takes a quieter plate — this
- * is where the page gets its rhythm back, by letting some rows be small. */
-.plate[data-coverage='0'] .entry__name,
-.plate[data-coverage='1'] .entry__name {
-  font-size: var(--step-2);
-}
-
+ * is where the page gets its rhythm back, by letting some rows be small.
+ *
+ * Same reason as above for setting no font-size: --step-2 is 1.44rem,
+ * further below the display scale still, and quieting a title by dropping
+ * it off its own scale is not a smaller version of it. */
 .plate[data-coverage='0'] .plate__body,
 .plate[data-coverage='1'] .plate__body {
   padding-block: var(--plate-pad-tight);
