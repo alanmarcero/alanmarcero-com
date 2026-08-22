@@ -150,3 +150,51 @@
     max-width: none;
   }
 }
+
+
+/* --- The live row ------------------------------------------------------
+ *
+ * m1's contract: --lcd is DATA AT REST (readouts, counts, values) and
+ * --phosphor is THE SIGNAL — the system responding to you: focus,
+ * liveness, the active take — "inherently singular at any moment, so it
+ * is scarce by SEMANTICS rather than by anyone remembering to be
+ * sparing."
+ *
+ * Eleven rows is eleven chances to spend the signal colour on a
+ * non-signal, so what in a catalog row is the system RESPONDING rather
+ * than the system DISPLAYING?
+ *
+ * Not the patch count — data at rest, correctly --lcd already. Not the
+ * coverage legend — also data at rest. NOT the download link and NOT the
+ * demo buttons: an unpressed button responds to nothing, and eleven idle
+ * links in phosphor would repeat exactly the mistake the music slice
+ * identified and avoided on its nine idle play buttons. Spending the
+ * signal on eleven non-signals leaves the one row that IS live with
+ * nothing to say so with.
+ *
+ * The answer is the row whose demo is actually playing. One plays at a
+ * time, so this is scarce by construction rather than by restraint — and
+ * it makes this section and the music section agree on what phosphor
+ * MEANS instead of each inventing a local answer.
+ *
+ * Why the NAME carries it: the contract sanctions phosphor for identity
+ * ("the main site spends phosphor on identity, the primary action and
+ * focus") and for liveness, and this is both — it is the row you are
+ * hearing. And the bloom lands on text that is lit rather than on a box,
+ * which is the rule that keeps the no-containers thesis intact: light is
+ * not a container.
+ *
+ * YouTubeFacade replaces its button with `<div class="player">` in
+ * place, so `:has(.player)` identifies the live row without touching that
+ * component, which belongs to another slice.
+ *
+ * NOT UNIT-TESTED, AND SAYING SO: jsdom implements neither :has() nor
+ * stylesheet computation, so this is browser-verified only. A suite that
+ * covers everything except this and stays silent about it reads as full
+ * coverage.
+ */
+
+.plate:has(.player) .entry__name {
+  color: var(--phosphor);
+  text-shadow: var(--bloom-phosphor);
+}
