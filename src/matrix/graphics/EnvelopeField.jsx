@@ -1,5 +1,6 @@
 import { useMemo, useId } from 'react';
 import { buildFieldPath, columnsForAspect } from './envelope';
+import { buildLissajous, packetDash } from './lissajous';
 
 /**
  * A field of ADSR envelope glyphs rendered as a single <path>.
@@ -24,6 +25,8 @@ function EnvelopeField({
   draw = false,
   title = null,
   groups = null,
+  beam = false,
+  beamSeconds = 4.2,
 }) {
   const resolvedColumns = useMemo(
     () => (aspect
@@ -68,6 +71,26 @@ function EnvelopeField({
       return Math.round(strokeWidth * scaled * 100) / 100;
     });
   }, [field.bands, groups, strokeWidth]);
+
+  /*
+   * The beam: one bright packet riding one continuous curve.
+   *
+   * Three measurements put it here rather than on the field itself, and they
+   * are in lissajous.js at length. The short version: the main site's glow
+   * sits on ONE mark, this field has ~1089, and light composites where ink
+   * does not — a 6px blur on a 1.25px stroke would cover ~66% of the hero.
+   * And a dash pattern restarts at every subpath (measured: three subpaths
+   * gave three dashes, 234/234/234 ink), so a packet riding a 1,148-subpath
+   * field renders as 1,148 packets. The carrier has to be a single subpath.
+   *
+   * So this is ONE extra path with ONE drop-shadow, at any field size.
+   */
+  const carrier = useMemo(
+    () => (beam
+      ? buildLissajous({ seed, width: field.width, height: field.height })
+      : null),
+    [beam, seed, field.width, field.height],
+  );
 
   const clipId = useId();
   const labelId = `${clipId}-label`;
@@ -120,6 +143,37 @@ function EnvelopeField({
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
         />
+      )}
+      {carrier && (
+        <>
+          {/*
+            The animation rides in the SVG's own <style> rather than in a
+            stylesheet, because the stylesheets belong to another slice and
+            this way the reduced-motion query travels with the component that
+            needs it. SMIL would not honour that query at all.
+          */}
+          <style>{`
+            @keyframes envelope-field-beam { to { stroke-dashoffset: -1; } }
+            .envelope-field__beam {
+              animation: envelope-field-beam ${beamSeconds}s linear infinite;
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .envelope-field__beam { animation: none; }
+            }
+          `}</style>
+          <path
+            className="envelope-field__beam"
+            d={carrier.d}
+            pathLength={packetDash().pathLength}
+            strokeDasharray={packetDash().dashArray}
+            fill="none"
+            stroke="var(--lcd)"
+            strokeWidth={strokeWidth * 1.6}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            style={{ filter: 'drop-shadow(0 0 4px var(--lcd))' }}
+          />
+        </>
       )}
     </svg>
   );
