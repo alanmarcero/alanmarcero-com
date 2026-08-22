@@ -87,7 +87,11 @@
   width: 100%;
   padding: var(--space-s) var(--space-m);
   border: 0;
-  border-bottom: 2px solid var(--legend-faint);
+  /* A form field's edge is how you find the field, so WCAG 1.4.11 asks 3:1
+     of it. --legend-faint gave 2.78:1. --legend-dim is 5.28:1 and draws a
+     useful distinction the page did not have: interactive boundaries sit
+     one tier brighter than decorative rules. */
+  border-bottom: 2px solid var(--legend-dim);
   background: var(--panel-3);
   color: var(--lcd);
   font-family: var(--data-face);
@@ -96,7 +100,11 @@
 }
 
 .hero__search-input::placeholder {
-  color: var(--legend-faint);
+  /* The input sits in a --panel-3 well, the lightest ground on the page,
+     which is exactly where a dim colour has the least room. --legend-faint
+     read 2.08:1 here; --legend-dim only reaches 3.94:1. A placeholder is
+     text and needs 4.5:1, so the well gets its own token. */
+  color: var(--legend-well);
 }
 
 .hero__search-input:focus {
@@ -447,9 +455,18 @@ button.action {
 }
 
 /* --- Photo credits ---------------------------------------------------
- * CC BY / BY-SA permission is conditional on this being visible. Folded
- * by default because it is legal text, not reading matter — but present,
- * findable, and complete.
+ * CC BY / BY-SA permission is conditional on this being visible.
+ *
+ * This comment used to say "folded by default"; Footer.jsx ships
+ * <details open> and always has. The markup is the one I kept — reducing
+ * the visibility of attribution that a licence requires is not a change
+ * to make while tidying a comment. If it should fold, that is a decision
+ * for whoever owns the licence risk, not a side effect of a CSS pass.
+ *
+ * Sizing is part of the obligation too. This list rendered at --step--2
+ * (~11px) in --legend-faint: 2.44:1 on the footer's ground. Attribution
+ * that cannot be read is arguably attribution not given, so it is now a
+ * step larger and on the secondary text tier.
  */
 
 .credits {
@@ -470,8 +487,8 @@ button.action {
   margin: var(--space-m) 0 0;
   padding: 0;
   list-style: none;
-  font-size: var(--step--2);
-  color: var(--legend-faint);
+  font-size: var(--step--1);
+  color: var(--legend-dim);
   line-height: 1.7;
 }
 
