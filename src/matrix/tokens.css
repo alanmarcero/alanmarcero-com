@@ -117,6 +117,71 @@
    * at, or state the area-weighted figure.
    */
 
+  /* --- Phosphor: imported from the main site 2026-08-22 ------------
+   * The merge the user asked for, and the two systems turn out to speak
+   * the same language. theme.css calls #4af2a4 "scope-green: primary
+   * signal" and #ffb454 "VU amber: secondary signal"; this file calls
+   * #ffb627 "amber backlight". Both are hardware-instrument palettes —
+   * phosphor is a scope, LCD is a backlight, and each is a way an
+   * instrument emits light. Nothing alien is being grafted on.
+   *
+   * MEASURED against our three grounds (all reproduced independently
+   * from theme.css, not taken from the brief):
+   *
+   *   --phosphor       11.18 / 9.80 / 8.34   panel / -2 / -3
+   *   --phosphor-dim    4.56 / 4.00 / 3.40
+   *
+   * Phosphor is the safest text colour in EITHER system on our grounds —
+   * more headroom than most of what Patch Sheet ships.
+   *
+   * WHAT PHOSPHOR MEANS HERE, because a colour without a meaning becomes
+   * decoration and eleven catalogue rows are eleven chances to dilute it:
+   *
+   *   --lcd       DATA AT REST. Readouts, counts, values. Unchanged.
+   *   --phosphor  THE SIGNAL. The system responding to you: focus,
+   *               liveness, the active take. Inherently singular at any
+   *               moment, so it is scarce by SEMANTICS rather than by
+   *               anyone remembering to be sparing.
+   *
+   * That split is faithful to both sources rather than overriding
+   * either: the main site spends phosphor on identity, the primary
+   * action and focus — all "the system engaging you" — and amber on
+   * secondary data.
+   */
+  --phosphor: #4af2a4;     /* the signal        11.18 / 9.80 / 8.34     */
+  --phosphor-dim: #2c9a68; /* GROUND-RESTRICTED: text-safe on --panel
+                            * only (4.56). FAILS AA on --panel-2 (4.00)
+                            * and --panel-3 (3.40). First token in this
+                            * file whose floor depends on which ground it
+                            * sits on — check the ground, not just the
+                            * token.                                    */
+
+  /* --- Bloom: the main site's light, which we had no word for --------
+   * Patch Sheet has NO shadow vocabulary at all, so this is an addition
+   * rather than a swap — `0 0 24px rgba(74,242,164,.16)` is how the
+   * other system makes something look lit.
+   *
+   * THE RULE THAT KEEPS THE NO-CONTAINERS THESIS INTACT: a bloom goes on
+   * something that EMITS light — a focus ring, a live readout — and never
+   * on a box. Light is not a container. Import the glow, not the module.
+   */
+  --bloom-phosphor: 0 0 24px rgba(74, 242, 164, 0.16);
+  --bloom-lcd: 0 0 20px rgba(255, 182, 39, 0.14);
+
+  /* --- NOT imported, and the reason is worth keeping ----------------
+   * --ink-faint  #5c686d  2.81 / 2.47 / 2.10
+   * --line-strong #2f383d  1.35 / 1.18 / 1.01
+   *
+   * The other system has --legend-faint's exact defect, arrived at
+   * independently: a token named for seams and strokes that cannot
+   * render a compliant one. Two palettes, two authors, same trap. Use
+   * --seam (3.42 / 3.00) for anything that must be seen.
+   *
+   * And half the merge was already done before anyone asked: their
+   * --amber #ffb454 against our --lcd #ffb627 is 1.0054:1 — the same
+   * colour to any eye, luminance delta 0.0032. Neither author knew.
+   */
+
   /* --- Seam --------------------------------------------------------
    * The engraved boundary between bands. A machined catch-edge is what
    * a hardware panel actually has where two plates meet, so this is
