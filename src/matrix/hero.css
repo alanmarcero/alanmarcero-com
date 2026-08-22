@@ -1,0 +1,16 @@
+/* Offscreen but readable. The search announcement has to reach a screen
+   reader without duplicating the visible readout on the page, so it lives
+   here rather than being hidden with `display: none` (which would remove it
+   from the accessibility tree and silence the live region entirely). */
+.hero__search-announce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
