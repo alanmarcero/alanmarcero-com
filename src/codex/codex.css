@@ -1182,11 +1182,21 @@ body {
   }
 }
 
-@media (min-width: 62rem) {
+@media (min-width: 48rem) {
   .codex-hero__deck {
     grid-template-columns: minmax(0, 1.35fr) clamp(20rem, 31vw, 26rem);
   }
+}
 
+@media (min-width: 48rem) and (max-width: 61.999rem) {
+  .codex-stats {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 1fr));
+    gap: 1rem 0.65rem;
+  }
+}
+
+@media (min-width: 62rem) {
   .codex-register__layout {
     grid-template-columns: minmax(0, 1fr) clamp(20rem, 30vw, 25rem);
     align-items: start;
