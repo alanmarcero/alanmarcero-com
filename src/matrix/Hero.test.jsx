@@ -50,6 +50,27 @@ describe('visibleResults', () => {
     expect(visibleResults({ patches: 11, music: null })).toBe('11 banks');
     expect(visibleResults({ patches: 11, music: 2 })).toBe('11 banks, 2 releases');
   });
+
+  // Both prior cases used plural-safe numbers, so neither could expose a
+  // missing singular. A plural-safe number in a pluralization test is a
+  // test that cannot fail. These are the values that can.
+  it('agrees in number for a single result', () => {
+    expect(visibleResults({ patches: 1, music: 1 })).toBe('1 bank, 1 release');
+    expect(visibleResults({ patches: 11, music: 1 })).toBe('11 banks, 1 release');
+    expect(visibleResults({ patches: 1, music: 2 })).toBe('1 bank, 2 releases');
+    expect(visibleResults({ patches: 1, music: null })).toBe('1 bank');
+  });
+
+  it('says the same numbers as the spoken text', () => {
+    // The two renderers drifted once; this asserts they cannot again.
+    for (const [patches, music] of [[1, 1], [1, 2], [11, 1], [2, 0]]) {
+      const seen = visibleResults({ patches, music });
+      const spoken = describeResults({ patches, music }, 'x');
+      for (const noun of ['bank', 'banks', 'release', 'releases']) {
+        expect(spoken.includes(` ${noun}`)).toBe(seen.includes(` ${noun}`));
+      }
+    }
+  });
 });
 
 describe('Hero live region', () => {
