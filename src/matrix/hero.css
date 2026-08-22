@@ -14,3 +14,65 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* --- The thesis, at the weight it earns ----------------------------- */
+
+/* "1,148 patches across 24 instruments" is the strongest sentence on this
+   page. It was --display-s (3rem ceiling) in a baseline row beside its own
+   label, which reads as a spec line under the lead rather than as a claim.
+   It now stacks: figure, then noun beneath it.
+
+   Deliberately one step below the --display-l title at every viewport
+   width (2.5 vs 3.25rem narrow, 5.5 vs 9rem wide) — the hero should have
+   one loudest element and it is the name, not the number. */
+.hero__count {
+  display: block;
+  margin-top: var(--space-2xl);
+}
+
+.hero__count-value {
+  display: block;
+  font-size: var(--display-m);
+  line-height: 0.9;
+}
+
+/* Composes .legend for face, weight, case and tracking; only the things
+   that differ are set here. */
+.hero__count-label {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: var(--step-0);
+}
+
+/* The sentence that says what the field behind the text is. Its existence
+   is what makes the graphic decorative rather than load-bearing: with the
+   claim in text, an aria-hidden picture withholds nothing. */
+.hero__field-note {
+  margin: var(--space-s) 0 0;
+  max-width: 26rem;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--legend-dim);
+}
+
+/* --- The field ------------------------------------------------------ */
+
+/* 2.06:1 -> 3.42:1 against --panel.
+
+   This is NOT a compliance fix, and the distinction matters: the field is
+   aria-hidden and its claim now lives in .hero__field-note, so WCAG 1.4.11
+   non-text contrast does not apply to it at all. It is a legibility fix.
+   At 2.06:1 the graphic communicated nothing — 1,148 envelopes rendered as
+   an even wash — and that is a design failure whether or not a guideline
+   happens to name it.
+
+   Measured, not chosen by eye: --wood #8a5a3b at the previous 0.72 gives
+   2.06:1 and cannot reach 3:1 even at opacity 1 (2.77:1). Neither can
+   --legend-faint (2.78:1 at full opacity), which is the token layout.css
+   nominally reserves "for strokes" — so a stroke field drawn in the stroke
+   token is unreadable by construction on this ground. --legend-dim at 0.72
+   lands at 3.42:1: legible, and still far below the title's 12.56:1. */
+.hero__field {
+  color: var(--legend-dim);
+  opacity: 0.72;
+}
