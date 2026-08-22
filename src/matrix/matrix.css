@@ -473,8 +473,13 @@ button.action {
   height: 11rem;
   color: var(--lcd-dim);
   opacity: 0.85;
-  -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 50%, transparent 100%);
-  mask-image: radial-gradient(closest-side at 50% 50%, #000 50%, transparent 100%);
+  /* Plateau matched to the PHOTOGRAPH's 55% (see .entry__photo img above),
+     not left at 50%. This field stands in for a photograph, so it should
+     match on both axes — colour AND falloff — or the stand-in vignettes
+     harder than the thing it replaces. Area clearing the 2.78 non-text
+     floor: 28% -> 34%. */
+  -webkit-mask-image: radial-gradient(closest-side at 50% 50%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(closest-side at 50% 50%, #000 55%, transparent 100%);
 }
 
 /* --- Photo credits ---------------------------------------------------
