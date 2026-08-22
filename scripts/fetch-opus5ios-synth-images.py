@@ -58,16 +58,8 @@ DATA_FILE = os.path.join(ROOT, 'src', 'opus5ios', 'data', 'synthImages.js')
 # close and graphic: a panel, a logo, a bank of knobs. At the size this
 # layout gives them, a whole keyboard shot reads as a grey smudge.
 #
-# Three catalogue entries are deliberately absent:
-#   Roland SH-01A    — no freely-licensed photograph exists (re-checked
-#                      Commons and Openverse, 2026-08-02: Commons has no
-#                      SH-01A file at all and Openverse returns zero
-#                      commercial-use results)
-#   Waves CODEX      — a plugin; there is no hardware to photograph
-#   Audio Demo MIDIs — not an instrument
-# They fall back to a drawn faceplate plan in the catalogue. Do not
-# substitute a lookalike: an SH-101 photo would misrepresent the product
-# the bank is actually for.
+# Audio Demo MIDIs is deliberately absent because it is not an instrument.
+# It falls back to a drawn faceplate plan in the catalogue.
 PICKS = [
     (
         'prophet-08',
@@ -128,6 +120,53 @@ PICKS = [
         'A Roland Boutique JP-08 desktop module, its Jupiter-8 panel in '
         'miniature',
     ),
+]
+
+# Licensed Commons images requested specifically for the combined Codex
+# design. Keeping them in a separate map means a Codex image can supersede a
+# base pick without silently changing the source /opus5ios design.
+CODEX_COMMONS_PICKS = [
+    (
+        'virus-ti-snow-codex',
+        'Access Virus TI and TI2, OsTIrus, Adam Szabo Viper',
+        'File:Virus TI Snow.JPG',
+        'An Access Virus TI Snow desktop synthesizer angled across a wooden '
+        'surface, its blue display illuminated',
+    ),
+]
+
+# Manufacturer product imagery requested specifically for the Codex design.
+# Each image links back to its relevant product page; the Waves Graphic
+# Library explicitly requires that linkback. These remain Codex-only so the
+# source /opus5ios design is not altered.
+CODEX_PICKS = [
+    {
+        'slug': 'waves-codex',
+        'bank': 'Waves CODEX',
+        'download': 'https://media.wavescdn.com/images/products/plugins/max/codex.png',
+        'alt': 'The Waves Codex wavetable synthesizer interface, with twin '
+               'oscillator displays and its modulation controls',
+        'author': 'Waves Audio Ltd.',
+        'licence': 'Waves Graphic Library',
+        'licenceUrl': 'https://www.waves.com/downloads/graphic-library',
+        'source': 'https://www.waves.com/plugins/codex',
+        'sourceName': 'Waves.com',
+        'linkImage': True,
+    },
+    {
+        'slug': 'roland-sh-01a-codex',
+        'bank': 'Roland SH-01A',
+        'download': 'https://static.roland.com/assets/images/products/gallery/'
+                    'sh-01a_k25m_left_1_gal.jpg',
+        'alt': 'A grey Roland SH-01A synthesizer mounted in its K-25m '
+               'keyboard dock, seen from a low angle',
+        'author': 'Roland Corporation',
+        'licence': 'Manufacturer product image',
+        'licenceUrl': 'https://www.roland.com/us/support/product_images/',
+        'source': 'https://www.roland.com/us/products/sh-01a/',
+        'sourceName': 'Roland.com',
+        'linkImage': True,
+    },
 ]
 
 # Licences that permit commercial use and modification. Anything else must
@@ -207,7 +246,7 @@ def convert(source_bytes, slug):
     return written
 
 
-def write_data_module(rows):
+def write_data_module(rows, codex_rows):
     header = '''/*
  * Instrument photographs for /opus5ios.
  *
@@ -217,9 +256,9 @@ def write_data_module(rows):
  *
  * These are a different set of frames from the ones the earlier pages use:
  * closer, more graphic, chosen for a wide plate rather than a small
- * portrait. Every image is licensed for reuse and modification. The site is
- * public and carries the owner's name, so manufacturer press shots and
- * general image-search results are not usable.
+ * portrait. Commons images are licensed for reuse and modification; the
+ * Codex-only manufacturer images are attributed and link directly back to
+ * their product pages. General image-search results are not used.
  *
  * CC BY and CC BY-SA REQUIRE visible attribution — the colophon credits
  * block is that licence condition being met, not a courtesy. Removing it
@@ -229,22 +268,30 @@ def write_data_module(rows):
  * one file, not two, because the generator refuses to upscale; the page
  * builds its srcset from this list rather than assuming both sizes.
  *
- * Three catalogue entries have no photograph on purpose; see the PICKS
- * comment in the generator for which and why. They are drawn instead.
- */
-
-export const synthImages = {'''
+ * One catalogue entry has no image on purpose; see the PICKS comment in the
+ * generator for which and why. It is drawn instead.
+ */'''
 
     lines = [header]
-    for row in rows:
-        lines.append(f'  {json.dumps(row["bank"])}: {{')
-        for key in ('slug', 'alt', 'author', 'licence', 'licenceUrl', 'source'):
-            lines.append(f'    {key}: {json.dumps(row[key])},')
-        lines.append(f'    widths: {json.dumps(row["widths"])},')
-        lines.append(f'    width: {row["width"]},')
-        lines.append(f'    height: {row["height"]},')
-        lines.append('  },')
-    lines.append('};\n')
+    def append_image_map(name, image_rows):
+        lines.append(f'export const {name} = {{')
+        for row in image_rows:
+            lines.append(f'  {json.dumps(row["bank"])}: {{')
+            for key in ('slug', 'alt', 'author', 'licence', 'licenceUrl', 'source'):
+                lines.append(f'    {key}: {json.dumps(row[key])},')
+            if row.get('sourceName'):
+                lines.append(f'    sourceName: {json.dumps(row["sourceName"])},')
+            if row.get('linkImage'):
+                lines.append('    linkImage: true,')
+            lines.append(f'    widths: {json.dumps(row["widths"])},')
+            lines.append(f'    width: {row["width"]},')
+            lines.append(f'    height: {row["height"]},')
+            lines.append('  },')
+        lines.append('};\n')
+
+    append_image_map('synthImages', rows)
+    lines.append('/** Product images used only by the combined /codex design. */')
+    append_image_map('codexImages', codex_rows)
     lines.append('''export const imageFor = (bankName) => synthImages[bankName] || null;
 
 /** Every credited image, for the attribution surface. */
@@ -272,7 +319,11 @@ def main():
     args = parser.parse_args()
 
     if args.check:
-        declared = {slug for slug, _, _, _ in PICKS}
+        declared = (
+            {slug for slug, _, _, _ in PICKS}
+            | {slug for slug, _, _, _ in CODEX_COMMONS_PICKS}
+            | {pick['slug'] for pick in CODEX_PICKS}
+        )
         on_disk = {f.rsplit('-', 1)[0] for f in os.listdir(IMAGE_DIR)}
         missing = sorted(declared - on_disk)
         orphans = sorted(on_disk - declared)
@@ -284,8 +335,9 @@ def main():
 
     os.makedirs(IMAGE_DIR, exist_ok=True)
     rows = []
+    codex_rows = []
 
-    for slug, bank, title, alt in PICKS:
+    def fetch_commons_row(slug, bank, title, alt):
         meta = commons_metadata(title)
 
         if not ALLOWED.match(meta['licence'] or ''):
@@ -298,20 +350,42 @@ def main():
         written = convert(fetch(meta['download']), slug)
         widest_width, (pixel_width, pixel_height) = written[-1]
 
-        rows.append({
+        row = {
             'slug': slug, 'bank': bank, 'alt': alt,
             'widths': [width for width, _ in written],
             'width': pixel_width, 'height': pixel_height,
             **{k: meta[k] for k in ('author', 'licence', 'licenceUrl', 'source')},
-        })
+        }
 
         path = os.path.join(IMAGE_DIR, f'{slug}-{widest_width}.webp')
         size_kb = os.path.getsize(path) // 1024
         print(f'  {slug:14} {meta["licence"]:16} {size_kb:4} kB  {meta["author"][:34]}')
         time.sleep(REQUEST_PAUSE_SECONDS)
+        return row
 
-    write_data_module(rows)
-    print(f'\n{len(rows)} instruments -> {os.path.relpath(DATA_FILE, ROOT)}')
+    for pick in PICKS:
+        rows.append(fetch_commons_row(*pick))
+
+    for pick in CODEX_COMMONS_PICKS:
+        codex_rows.append(fetch_commons_row(*pick))
+
+    for pick in CODEX_PICKS:
+        written = convert(fetch(pick['download']), pick['slug'])
+        widest_width, (pixel_width, pixel_height) = written[-1]
+        codex_rows.append({
+            **pick,
+            'widths': [width for width, _ in written],
+            'width': pixel_width,
+            'height': pixel_height,
+        })
+
+        path = os.path.join(IMAGE_DIR, f'{pick["slug"]}-{widest_width}.webp')
+        size_kb = os.path.getsize(path) // 1024
+        print(f'  {pick["slug"]:14} {pick["licence"]:16} {size_kb:4} kB  {pick["author"][:34]}')
+
+    write_data_module(rows, codex_rows)
+    total = len(rows) + len(codex_rows)
+    print(f'\n{total} instruments -> {os.path.relpath(DATA_FILE, ROOT)}')
     return 0
 
 
