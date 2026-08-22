@@ -707,6 +707,53 @@ body {
   color: var(--phosphor);
 }
 
+/* The primary site's no-signal state, re-scored as a Codex readout. */
+
+.codex-empty {
+  padding-bottom: clamp(4.5rem, 9vw, 8rem);
+}
+
+.codex-page .no-results {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.42fr) minmax(0, 0.58fr);
+  align-items: center;
+  gap: 1rem clamp(2rem, 6vw, 5rem);
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(0rem, 2vw, 1.25rem);
+  border-block: 1px solid var(--rule);
+  background: linear-gradient(90deg, rgb(25 30 33 / 0.54), transparent 78%);
+}
+
+.codex-page .no-results__scope {
+  grid-row: 1 / span 2;
+  width: 100%;
+  height: clamp(3rem, 6vw, 4.5rem);
+  color: var(--phosphor-dim);
+  filter: drop-shadow(0 0 10px var(--phosphor-glow));
+}
+
+.codex-page .no-results__message {
+  align-self: end;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.codex-page .no-results__query {
+  color: var(--amber);
+  overflow-wrap: anywhere;
+}
+
+.codex-page .no-results__hint {
+  align-self: start;
+  color: var(--quiet);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* Shared section furniture from the broadside and patch sheet. */
 
 .codex-section-head {
@@ -1349,6 +1396,16 @@ body {
 
   .codex-finder input {
     font-size: clamp(1.55rem, 7vw, 2rem);
+  }
+
+  .codex-page .no-results {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .codex-page .no-results__scope {
+    grid-row: auto;
+    width: min(13rem, 72%);
   }
 
   .codex-section-head h2 {
