@@ -75,7 +75,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── usePrefersReducedMotion.js      # Custom hook: prefers-reduced-motion
 │   │   ├── usePrefersReducedMotion.test.js # usePrefersReducedMotion tests
 │   │   ├── useScrollProgress.js      # Custom hook: writes scroll-progress transform via ref + rAF (no re-render)
-│   │   ├── useScrollProgress.test.js # useScrollProgress tests
+│   │   └── useScrollProgress.test.js # useScrollProgress tests
 │   ├── utils/
 │   │   ├── clipboard.js           # copyToClipboard: async Clipboard API with a legacy execCommand fallback
 │   │   ├── clipboard.test.js      # clipboard tests
@@ -102,104 +102,50 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── App.test.jsx              # App integration tests
 │   ├── App.css                   # Main page stylesheet (imports shared/theme.css): hero, cards, animations, responsive
 │   ├── main.jsx                  # React entry point (main page)
-│   ├── shared/
-│   │   └── theme.css             # Shared theme tokens, CRT base styles, resets, .btn-primary, reduced-motion
-│   └── arcade/
-│       ├── main.jsx              # React entry point (arcade page)
-│       ├── ArcadeApp.jsx         # Root: game picker vs active game state
-│       ├── ArcadeApp.css         # Arcade-specific styles (imports shared/theme.css): cabinet cards, game canvas, touch controls
-│       ├── components/
-│       │   ├── ArcadeHeader.jsx  # Back-to-home link + "ARCADE" gradient title
-│       │   ├── GamePicker.jsx    # Flex layout of CabinetCards
-│       │   ├── CabinetCard.jsx   # Mini arcade cabinet styled button (screen, marquee, joystick, INSERT COIN)
-│       │   ├── GameCanvas.jsx    # Full-screen game wrapper: canvas, CRT overlay, HUD, game-over, TouchControls
-│       │   └── TouchControls.jsx # Mobile d-pad + action buttons (pointer: coarse only)
-│       └── games/
-│           ├── gameRegistry.js   # Game metadata + factory functions for all 12 games
-│           ├── useGameLoop.js    # Shared requestAnimationFrame hook with delta-time clamping
-│           ├── palette.js        # Shared CRT palette constants (CYAN, VIOLET, ORANGE, BG, WHITE, MUTED)
-│           ├── gameHud.js        # emitHud(game, overrides) — the one definition of the HUD payload
-│           ├── controlGlyphs.js  # Turn a game's key map into de-duplicated display glyphs for the cabinet hint
-│           ├── space-invaders/
-│           │   ├── SpaceInvaders.js      # Canvas game: player ship, alien grid, shields, bullets
-│           │   └── SpaceInvaders.test.js
-│           ├── asteroids/
-│           │   ├── Asteroids.js          # Canvas game: vector-style ship, asteroid polygons, wrap-around
-│           │   └── Asteroids.test.js
-│           ├── tetris/
-│           │   ├── Tetris.js             # Canvas game: 10x20 grid, 7 tetrominoes, ghost piece, line-clear
-│           │   └── Tetris.test.js
-│           ├── pac-man/                  # Faithful 1980 arcade rebuild — see the design spec
-│           │   ├── maze.js               # The real 28x31 grid (240 dots + 4 energizers), tile queries, tunnel wrap
-│           │   ├── levels.js             # Arcade tables: speeds, waves, fright, Elroy, house counters, fruit
-│           │   ├── ghostAI.js            # Targeting + the one-tile greedy decision rule (keeps the Pinky/Inky overflow bug)
-│           │   ├── PacMan.js             # Game class: state machine, cornering movement, collisions, scoring
-│           │   ├── PacManRenderer.js     # All drawing, in authentic arcade colours; wallSegments() builds the maze outline
-│           │   ├── maze.test.js
-│           │   ├── levels.test.js
-│           │   ├── ghostAI.test.js
-│           │   ├── PacManRenderer.test.js
-│           │   └── PacMan.test.js
-│           ├── breakout/
-│           │   ├── Breakout.js           # Canvas game: paddle, ball, 6x10 brick grid, angle deflection
-│           │   └── Breakout.test.js
-│           ├── frogger/
-│           │   ├── Frogger.js            # Canvas game: grid movement, road/river lanes, logs, 5 goals
-│           │   └── Frogger.test.js
-│           ├── snake/
-│           │   ├── Snake.js              # Canvas game: grid movement, food, speed increase, wall/self collision
-│           │   └── Snake.test.js
-│           ├── pong/
-│           │   ├── Pong.js               # Canvas game: player vs AI, paddle angle, serve timer
-│           │   └── Pong.test.js
-│           ├── rhythm/
-│           │   ├── RhythmCatcher.js      # Canvas game: 4 lanes, falling notes, timing, combo system
-│           │   └── RhythmCatcher.test.js
-│           ├── centipede/
-│           │   ├── Centipede.js          # Canvas game: mushroom field, centipede chain, spider, splitting
-│           │   └── Centipede.test.js
-│           ├── bird-name-generator/
-│           │   ├── BirdNameGenerator.js  # Canvas toy: press SPACE to discover funny real-bird-style names + pixel bird mascot
-│           │   └── BirdNameGenerator.test.js
-│           └── life-pulse/
-│               ├── LifePulse.js          # Canvas shmup: pulse mechanic, 17 powerups, combo/graze/chain scoring, waves + bosses
-│               ├── LifePulseRenderer.js  # Pure draw functions + HUD for LifePulse (kept out of the game-logic file)
-│               └── LifePulse.test.js
-│   └── tmobile/                  # /tmobile — TMUS price + insider-selling chart (separate Vite entry)
-│       ├── main.jsx              # React entry point (tmobile page)
-│       ├── TMobileApp.jsx        # Root: filter state, stat tiles, chart, table, source notes
-│       ├── TMobileApp.css        # Page styles (imports shared/theme.css); declares the 3 chart colour roles
-│       ├── chartGeometry.js      # Pure SVG geometry: scales, domains, ticks, line/area paths, marker placement
-│       ├── chartGeometry.test.js
-│       ├── insiderFilters.js     # Pure selection + formatting; chart/tiles/table all read it so the numbers agree
-│       ├── insiderFilters.test.js
-│       ├── TMobileApp.test.jsx
-│       ├── components/
-│       │   ├── PriceChart.jsx    # Inline-SVG chart: trace, sale markers, crosshair + tooltip, keyboard readout
-│       │   ├── FilterRow.jsx     # One filter row scoping everything below it
-│       │   ├── ChartLegend.jsx   # Legend mirroring each mark (line / diamond / circle)
-│       │   ├── StatTiles.jsx     # Headline figures for the current filter
-│       │   └── SellTable.jsx     # The chart's accessible twin
-│       └── data/
-│           ├── tmusInsiderSales.js      # GENERATED: 262 weekly closes + per-week sales, Sievert vs everyone else
-│           └── tmusInsiderSales.test.js # Data-integrity tests (Monday anchoring, attribution, DT exclusion)
-├── public/
+│   └── shared/
+│       └── theme.css             # Shared theme tokens, CRT base styles, resets, .btn-primary, reduced-motion
+├── pages/                        # Independent subsites (each with its own HTML entry, source, data & assets)
+│   ├── arcade/                   # /arcade — 12 canvas retro arcade games
+│   │   ├── index.html            # Arcade page HTML entry
+│   │   └── src/                  # ArcadeApp, game picker, HUD, touch controls, 12 game engines
+│   ├── neworleans/               # /neworleans & /neworleans-tours — Family itinerary & tour packages
+│   │   ├── index.html            # Main itinerary HTML entry
+│   │   ├── tours.html            # Tour packages HTML entry
+│   │   └── assets/               # Subsite photographs (eat, sip, do, hotels, jazz, kids, near, tattoo)
+│   ├── flights/                  # /flights — Boston nonstop fare board
+│   │   ├── index.html            # Flights board HTML entry
+│   │   └── scripts/              # sweep-flights.py generator script
+│   ├── tmobile/                  # /tmobile — TMUS price + insider-selling chart
+│   │   ├── index.html            # TMUS page HTML entry
+│   │   └── src/                  # TMobileApp, chart geometry, insider filters, data
+│   ├── matrix/                   # /matrix & /matrix-arcade — Matrix theme redesign & arcade
+│   │   ├── index.html            # Matrix main HTML entry
+│   │   ├── arcade.html           # Matrix arcade HTML entry
+│   │   └── src/                  # MatrixApp, arcade shell, envelope/spectrum graphics
+│   ├── opus5ios/                 # /opus5ios & /opus5ios-arcade — Printed-sheet technical redesign
+│   │   ├── index.html            # Opus5ios main HTML entry
+│   │   ├── arcade.html           # Opus5ios arcade HTML entry
+│   │   ├── src/                  # CatalogueApp, arcade sheet, drawn figures, synth images data
+│   │   ├── assets/               # Derivative instrument photographs (synths/)
+│   │   └── scripts/              # fetch-opus5ios-synth-images.py generator
+│   └── opus-max-mac/             # /opus-max-mac & /opus-max-mac-arcade — Dusk ephemeris redesign
+│       ├── index.html            # Opus Max Mac main HTML entry
+│       ├── arcade.html           # Opus Max Mac arcade HTML entry
+│       ├── src/                  # AlmanacApp, arcade machines, orrery, plate drawings, data
+│       ├── assets/               # Derivative instrument photographs (plates/)
+│       └── scripts/              # fetch-opus-max-mac-photographs.py generator
+├── public/                       # Global/root static assets
 │   ├── banks/                    # Downloadable patch zip files
-│   ├── about-me.webp             # Hero profile image (circular, cyan border glow)
-│   └── hero-bg.webp              # Background image (outrun landscape, used in .hero-backdrop)
+│   ├── eras/                     # Era switcher images & gifs
+│   ├── synths/                   # Homepage synth photographs
+│   ├── favicon.svg
+│   ├── hero-bg.webp              # Background image (outrun landscape, used in .hero-backdrop)
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   └── 404.html
 ├── index.html                    # Main page HTML entry with Google Fonts, meta description, canonical URL
-├── arcade.html                   # Arcade page HTML entry (separate Vite entry point)
-├── tmobile.html                  # TMUS page HTML entry (separate Vite entry point)
-├── opus5ios.html                 # /opus5ios entry — the printed-sheet redesign (see its own section)
-├── opus5ios-arcade.html          # /opus5ios-arcade entry
-├── opus-max-mac.html             # /opus-max-mac entry — the dusk ephemeris (see its own section)
-├── opus-max-mac-arcade.html      # /opus-max-mac-arcade entry
-├── flights.html                  # /flights entry — the Boston nonstop fare board (see its own section)
 ├── scripts/
-│   ├── fetch-synth-images.py                # GENERATOR: the earlier pages' instrument photographs
-│   ├── fetch-opus5ios-synth-images.py       # GENERATOR: /opus5ios's own set (different frames)
-│   ├── fetch-opus-max-mac-photographs.py    # GENERATOR: /opus-max-mac's set (square-cropped for a circular plate)
-│   └── sweep-flights.py                     # GENERATOR: re-checks /flights' favourites and rewrites flights.html
+│   └── fetch-synth-images.py     # GENERATOR: homepage synth photographs
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests

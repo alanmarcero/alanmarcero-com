@@ -42,22 +42,53 @@ jobs:
 
             // Canonicalize: 301 any /foo.html to the clean /foo.
             if (uri.length > 5 && uri.slice(-5) === '.html') {
+              var cleanLocation = uri.slice(0, -5);
+              if (cleanLocation.indexOf('/pages/') === 0) {
+                cleanLocation = cleanLocation.slice(6);
+              }
+              if (cleanLocation.length >= 6 && cleanLocation.slice(-6) === '/index') {
+                cleanLocation = cleanLocation.slice(0, -6);
+              }
+              if (cleanLocation === '') cleanLocation = '/';
               return {
                 statusCode: 301,
                 statusDescription: 'Moved Permanently',
                 headers: {
-                  location: { value: uri.slice(0, -5) },
+                  location: { value: cleanLocation },
                   'cache-control': { value: 'public, max-age=3600' }
                 }
               };
             }
 
-            // Extension-less path -> transparently rewrite to .html at origin.
+            // Extension-less path -> transparently rewrite to pages/ at origin.
             // Static assets all carry an extension (.js/.css/.webp/.zip/...)
             // and pass through untouched.
             if (uri.indexOf('.') === -1) {
               var stripped = uri.replace(/\/$/, '');
-              request.uri = stripped + '.html';
+
+              if (stripped === '/neworleans-tours' || stripped === '/neworleans/tours') {
+                request.uri = '/pages/neworleans/tours.html';
+                return request;
+              }
+              if (stripped === '/matrix-arcade' || stripped === '/matrix/arcade') {
+                request.uri = '/pages/matrix/arcade.html';
+                return request;
+              }
+              if (stripped === '/opus5ios-arcade' || stripped === '/opus5ios/arcade') {
+                request.uri = '/pages/opus5ios/arcade.html';
+                return request;
+              }
+              if (stripped === '/opus-max-mac-arcade' || stripped === '/opus-max-mac/arcade') {
+                request.uri = '/pages/opus-max-mac/arcade.html';
+                return request;
+              }
+
+              var pathPart = stripped.indexOf('/') === 0 ? stripped.slice(1) : stripped;
+              if (pathPart.indexOf('/') === -1) {
+                request.uri = '/pages/' + pathPart + '/index.html';
+              } else {
+                request.uri = '/pages/' + pathPart + '.html';
+              }
               return request;
             }
 
