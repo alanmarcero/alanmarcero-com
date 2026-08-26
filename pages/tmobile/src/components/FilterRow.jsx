@@ -1,24 +1,48 @@
 import { SELLER_FILTERS } from '../insiderFilters';
+import { MEASURES } from '../monthlySeries';
 
 /**
- * One filter row above everything it scopes — the chart, the tiles and the
- * table all re-render against the same selection.
+ * One control row above everything it scopes. The seller filter narrows both
+ * charts, the tiles and both tables; the measure switch picks which of the
+ * three scales the monthly chart plots — they are never two y-axes on one plot.
  */
-function FilterRow({ value, onChange }) {
+function FilterRow({ filter, onFilter, measure, onMeasure }) {
   return (
-    <div className="tm-filters" role="group" aria-label="Whose sales to show">
-      {SELLER_FILTERS.map((filter) => (
-        <button
-          key={filter.id}
-          type="button"
-          className={`tm-filter${value === filter.id ? ' tm-filter--on' : ''}`}
-          aria-pressed={value === filter.id}
-          title={filter.hint}
-          onClick={() => onChange(filter.id)}
-        >
-          {filter.label}
-        </button>
-      ))}
+    <div className="tm-controls">
+      <div className="tm-controls__group" role="group" aria-labelledby="tm-who-label">
+        <p className="tm-controls__label" id="tm-who-label">Whose sales</p>
+        <div className="tm-filters">
+          {SELLER_FILTERS.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={`tm-filter${filter === option.id ? ' tm-filter--on' : ''}`}
+              aria-pressed={filter === option.id}
+              title={option.hint}
+              onClick={() => onFilter(option.id)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="tm-controls__group" role="group" aria-labelledby="tm-measure-label">
+        <p className="tm-controls__label" id="tm-measure-label">Monthly chart measures</p>
+        <div className="tm-filters">
+          {MEASURES.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={`tm-filter${measure === option.id ? ' tm-filter--on' : ''}`}
+              aria-pressed={measure === option.id}
+              onClick={() => onMeasure(option.id)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
