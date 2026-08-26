@@ -1,5 +1,5 @@
 import {
-  SELLER_FILTERS, DEFAULT_FILTER, visibleSeries, selectedWeeks, summarize,
+  SELLER_FILTERS, DEFAULT_FILTER, filterById, visibleSeries, selectedWeeks, summarize,
   sellerTotals, formatUSD, formatShares, formatExactUSD, formatWeek, formatPrice,
 } from './insiderFilters';
 
@@ -29,6 +29,21 @@ describe('SELLER_FILTERS', () => {
 
   it('defaults to showing everyone', () => {
     expect(DEFAULT_FILTER).toBe('all');
+  });
+
+  it('carries a phrase for a month the selection did not sell in', () => {
+    SELLER_FILTERS.forEach((f) => expect(f.quiet).toMatch(/\S/));
+    expect(filterById('sievert').quiet).toMatch(/Mike Sievert/);
+  });
+});
+
+describe('filterById', () => {
+  it('finds a filter by id', () => {
+    expect(filterById('others').label).toBe('Everyone else');
+  });
+
+  it('falls back to showing everyone for an unknown id', () => {
+    expect(filterById('nonsense')).toBe(SELLER_FILTERS[0]);
   });
 });
 
