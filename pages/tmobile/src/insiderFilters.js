@@ -5,10 +5,32 @@
    ========================================================================== */
 
 export const SELLER_FILTERS = [
-  { id: 'all', label: 'All insiders', hint: 'Mike Sievert and everyone else' },
-  { id: 'sievert', label: 'Mike Sievert only', hint: 'The CEO’s own sales' },
-  { id: 'others', label: 'Everyone else', hint: 'Every insider except the CEO' },
+  {
+    id: 'all',
+    label: 'All insiders',
+    hint: 'Mike Sievert and everyone else',
+    // how a month with no column is described, so the caption stays true of
+    // whichever selection is on screen rather than of the whole feed
+    quiet: 'Nobody sold in',
+  },
+  {
+    id: 'sievert',
+    label: 'Mike Sievert only',
+    hint: 'The CEO’s own sales',
+    quiet: 'Mike Sievert did not sell in',
+  },
+  {
+    id: 'others',
+    label: 'Everyone else',
+    hint: 'Every insider except the CEO',
+    quiet: 'The other insiders did not sell in',
+  },
 ];
+
+/** The filter a selection is on, or the default one for an unknown id. */
+export function filterById(id) {
+  return SELLER_FILTERS.find((f) => f.id === id) || SELLER_FILTERS[0];
+}
 
 export const DEFAULT_FILTER = 'all';
 

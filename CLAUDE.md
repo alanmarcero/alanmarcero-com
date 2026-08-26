@@ -115,9 +115,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── flights/                  # /flights — Boston nonstop fare board
 │   │   ├── index.html            # Flights board HTML entry
 │   │   └── scripts/              # sweep-flights.py generator script
-│   ├── tmobile/                  # /tmobile — TMUS price + insider-selling chart
+│   ├── tmobile/                  # /tmobile — TMUS price + insider-selling charts
 │   │   ├── index.html            # TMUS page HTML entry
-│   │   └── src/                  # TMobileApp, chart geometry, insider filters, data
+│   │   ├── src/                  # TMobileApp, chart geometry, insider filters, data
+│   │   └── scripts/              # fetch-nasdaq-insider-sales.py generator
 │   ├── matrix/                   # /matrix & /matrix-arcade — Matrix theme redesign & arcade
 │   │   ├── index.html            # Matrix main HTML entry
 │   │   ├── arcade.html           # Matrix arcade HTML entry
@@ -156,7 +157,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,262 tests across 83 suites**
+**Total: 1,482 tests across 97 suites**
 
 ## Key Files
 
@@ -322,7 +323,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,262 tests, 83 suites)
+npm test                       # Jest (1,482 tests, 97 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -432,11 +433,13 @@ uses the site palette so the arcade index stays consistent.):
 `/arcade`, so adding it was a pure-git change (no AWS calls). Separate Vite entry
 point; zero impact on the main-page bundle.
 
-Five years of T-Mobile US weekly closes with a marker on every week a company
-insider sold their own stock, filterable to Mike Sievert alone or to everyone
-else.
+**Two charts of the same subject.** Five years of T-Mobile US weekly closes with a
+marker on every week a company insider sold their own stock, then the last two
+years again as **monthly columns**. One control row scopes both: the seller filter
+(Mike Sievert / everyone else / both) narrows every chart, tile and table, and a
+measure switch picks which of three scales the monthly chart plots.
 
-**Data is baked in, not fetched** (`src/tmobile/data/tmusInsiderSales.js`), which
+**Data is baked in, not fetched** (`pages/tmobile/src/data/`), which
 keeps the page instant and matches the site's no-database posture. How it was
 built, in case it needs regenerating:
 
@@ -455,6 +458,33 @@ built, in case it needs regenerating:
   dispositions, not sales, and are excluded — as are grants (A), option exercises
   (M) and non-open-market dispositions.
 
+**The monthly columns come from Nasdaq**, not EDGAR
+(`tmusMonthlySales.js`, regenerate with
+`pages/tmobile/scripts/fetch-nasdaq-insider-sales.py`). Read that script's
+docstring before touching it — three traps live there, and each produces a chart
+that looks right:
+
+- **The feed caps at 250 rows and the cap is silent.** `totalRecords` reports 250
+  no matter what you ask for, and `offset=250` returns an empty row list with the
+  same `totalRecords`, so a paging loop looks like it reached the end of the data
+  when it reached the end of the window. Every trade type shares the 250, so the
+  ~40% of rows that are grants and withholdings eat into the sale history. Two
+  years is all this feed can honestly chart, which is why the five-year series
+  next to it stays on EDGAR.
+- **A disposition is not a sale.** Only `Sell` and `Automatic Sell` are kept;
+  `Disposition (Non Open Market)` is overwhelmingly code-F tax withholding.
+- **Deutsche Telekom is most of the feed** — 97 of the 155 sale rows and 6.4M of
+  the 8.0M shares. Excluded, same call the five-year chart makes. 58 sales by 13
+  people remain.
+
+Names are display-only: the feed sets them `LAST FIRST MIDDLE` in caps, which no
+algorithm reliably unpicks ("SIEVERT G MICHAEL" is G. Michael Sievert), so the 13
+are spelled out in a map and the spellings **match the five-year series** so one
+person can be followed across both charts. `tmusMonthlySales.test.js` asserts the
+two sources agree over the overlapping window — share for share, seller for
+seller, and dollars to within rounding — because the page says in print that they
+do.
+
 **Chart construction** follows the `dataviz` skill: one y-axis (never dual),
 2px trace, ≥8px markers each with a 2px surface ring, solid hairline grid, one
 selective direct label parked in the right gutter (where it cannot collide with
@@ -466,6 +496,28 @@ carries the same distinction a second time so neither series leans on hue alone.
 The price trace keeps the site's phosphor. `PriceChart` swaps to a narrower,
 taller viewBox with larger user-unit type below 640px (via `useMediaQuery`), so
 the axes stay legible in a phone-width column.
+
+**The monthly chart is a stacked column chart** — magnitude across discrete time
+buckets — with the CEO's segment at the bottom and everyone else's above, the two
+separated by a 2px gap in the well colour rather than a stroke, and only the top
+segment carrying the 4px rounded data-end. Its geometry lives in
+`monthlyGeometry.js` and its selection and formatting in `monthlySeries.js`, both
+pure and both tested apart from any rendering.
+
+- **A month with no sale keeps its slot.** The axis spans the feed's own
+  coverage, not just the months that contain a sale, or a quiet run at either end
+  would read as missing data.
+- **Three measures, three views, never two y-axes.** Dollars, shares and filings
+  are different scales, so the switch swaps what the one axis plots. Dollars is
+  the default and the most skewed: Feb 2026 is 42% of the window, so a non-zero
+  column is floored at a 3px hairline (`MIN_BAR`) and the caption says so.
+- **The caption is derived, never written down.** Peak month, its share, the
+  quiet-month count and the "mostly <person>" attribution all come from the
+  current selection — and that attribution only appears when one seller is over
+  half the month, and never on the filings measure, where the roll-up counts per
+  month rather than per person.
+- `niceStep` includes 4 in its 1/2/2.5/4/5/10 ladder so a $150.1M peak lands on a
+  $160M axis instead of being padded out to $200M.
 
 ## Opus5ios sheet (`/opus5ios`, `/opus5ios-arcade`)
 

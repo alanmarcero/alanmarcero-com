@@ -88,8 +88,23 @@
 }
 
 /* --------------------------------------------------------------------------
-   FILTER ROW — one row, above everything it scopes
+   CONTROL ROW — one row, above everything it scopes
    -------------------------------------------------------------------------- */
+.tm-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+}
+
+.tm-controls__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: var(--space-2);
+}
+
 .tm-filters {
   display: flex;
   flex-wrap: wrap;
@@ -255,6 +270,43 @@
   background: var(--tm-others);
 }
 
+/* the bar legend mirrors its mark: a column, capped the way the chart caps it */
+.tm-legend__mark--bar {
+  width: 9px;
+  height: 14px;
+  border-radius: 3px 3px 1px 1px;
+}
+
+.tm-legend__mark--bar-sievert {
+  background: var(--tm-sievert);
+}
+
+.tm-legend__mark--bar-others {
+  background: var(--tm-others);
+}
+
+/* -- monthly columns ---------------------------------------------------- */
+/* No stroke anywhere: touching segments are separated by a gap in the well
+   colour, which the geometry carves out of the lower segment. */
+.tm-bars__seg--sievert {
+  fill: var(--tm-sievert);
+}
+
+.tm-bars__seg--others {
+  fill: var(--tm-others);
+}
+
+/* the band being read — a hit target wider than the column it holds */
+.tm-bars__band {
+  fill: var(--ink-faint);
+  opacity: 0.08;
+}
+
+/* the year sits under the month name, so a two-year axis reads as time */
+.tm-chart__tick--year {
+  letter-spacing: 0.1em;
+}
+
 /* -- the scope well ----------------------------------------------------- */
 .tm-chart {
   position: relative;
@@ -392,9 +444,29 @@
 .tm-tip__key--sievert { background: var(--tm-sievert); }
 .tm-tip__key--others { background: var(--tm-others); }
 
+/* the month total, set off from the segments it sums */
+.tm-tip__row--total {
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--line);
+}
+
+.tm-tip__who {
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  margin-top: var(--space-1);
+}
+
 .tm-tip__none {
   font-size: var(--text-xs);
   color: var(--ink-faint);
+}
+
+.tm-panel__note {
+  max-width: 68ch;
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
 }
 
 .tm-hint {
@@ -498,6 +570,12 @@
   background: var(--tm-others);
 }
 
+.tm-table__seller {
+  display: inline-block;
+  margin-right: var(--space-3);
+  white-space: nowrap;
+}
+
 .tm-table__people {
   white-space: normal;
   min-width: 220px;
@@ -550,6 +628,14 @@
 
   .tm-hint {
     text-align: left;
+  }
+
+  .tm-controls {
+    gap: var(--space-3);
+  }
+
+  .tm-controls__group {
+    width: 100%;
   }
 }
 
