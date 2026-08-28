@@ -117,6 +117,10 @@
   .tcard .tnum{display:inline-block;font-size:.7rem;font-family:var(--mono);font-weight:700;color:var(--brass);background:var(--brass-soft);padding:.1rem .4rem;border-radius:4px;margin-bottom:.3rem}
   .tcard .tname{font-family:var(--serif);font-size:1.22rem;font-weight:600;margin:0 0 .25rem;color:var(--ink);line-height:1.25}
   .tcard .tloc{font-size:.8rem;color:var(--brass);font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:.3rem}
+  .tcard .trating{font-size:.8rem;font-weight:700;color:var(--green);margin:-.3rem 0 .5rem}
+  .tcard .trating a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor}
+  .tcard .trating .norate{color:var(--faint);font-weight:600}
+  .tcard .trating.warn{color:var(--sun)}
   .tcard .tdesc{font-size:.88rem;color:var(--muted);margin-bottom:.8rem;flex-grow:1;line-height:1.45}
   
   .tmeta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.75rem 0;border-top:1px dashed var(--hair);border-bottom:1px dashed var(--hair);margin-bottom:.8rem}
@@ -247,6 +251,11 @@
         one pass in August 2026 and carry only a blanket footer claim — treat those as undated.
       </p>
       <p>
+        <b>Every operator on this page now carries its Yelp rating and review count</b>, checked <b>Aug 2026</b>, linked to the listing it came from.
+        One falls below the 4★ bar the rest of the site holds to, and says so on its own card: the Steamboat Natchez, at 3.7.
+        Three carry no usable rating — Devour Tours and Confederacy of Cruisers have no New Orleans Yelp listing, and Bon Moment has a single review — and each says that too, rather than showing nothing.
+      </p>
+      <p>
         <b>These dates are day-granular, and that is a deliberate limit rather than an omission.</b>
         A stamp reading <code style="font-family:var(--mono);font-size:.78rem">2026-08-22</code> means
         someone opened the seller's page that day. It does <b>not</b> mean the price held all day —
@@ -334,6 +343,7 @@
           <span class="tnum">Verified #2</span>
           <div class="tname">Free Tours by Foot — small-group walks</div>
           <div class="tloc">📍 French Quarter &amp; Garden District departures</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/tours-by-foot-new-orleans" target="_blank" rel="noopener">⭐ 4.9 (878 reviews) on Yelp</a></div>
           <div class="tdesc">Runs a French Quarter walking tour, a Garden District walking tour and a French Quarter ghost tour, plus cemetery, voodoo and food walks. Small groups of 12–14 rather than the 30-plus crowds the free-tour model usually produces.</div>
         </div>
         <div>
@@ -383,10 +393,11 @@
 
       <div class="tcard" data-tags="fq under35 cemetery">
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/st-louis-cemetery-no-1-tour.jpg)" role="presentation"><span class="tph-emoji">⚰️</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/st-louis-cemetery-no-1-tour.jpg)" role="presentation"><span class="tph-emoji">⚰️</span></span>
           <span class="tnum">Verified #4</span>
           <div class="tname">St. Louis Cemetery No. 1 — official tour</div>
           <div class="tloc">📍 425 Basin St — edge of the French Quarter, walkable</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/st-louis-cemetery-no-1-official-tour-new-orleans" target="_blank" rel="noopener">⭐ 4.8 (437 reviews) on Yelp</a></div>
           <div class="tdesc">The city's oldest cemetery and Marie Laveau's tomb. Worth knowing before you shop: there is no cheaper way in, because there is no unaccompanied way in.</div>
         </div>
         <div>
@@ -413,10 +424,11 @@
       <div class="tcard highlight" data-tags="fq family cruise">
         <span class="badge-top">Aggregator wins</span>
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/steamboat-natchez-jazz-cruise.jpg)" role="presentation"><span class="tph-emoji">🚢</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/steamboat-natchez-jazz-cruise.jpg)" role="presentation"><span class="tph-emoji">🚢</span></span>
           <span class="tnum">Verified #5</span>
           <div class="tname">Steamboat Natchez — daytime jazz cruise</div>
           <div class="tloc">📍 Toulouse Street Wharf, 400 Toulouse St — French Quarter</div>
+          <div class="trating warn"><a href="https://www.yelp.com/biz/steamboat-natchez-new-orleans" target="_blank" rel="noopener">⭐ 3.7 (1.1k reviews) on Yelp</a> — below this page’s 4★ bar; the <a href="https://www.yelp.com/biz/paddlewheeler-creole-queen-new-orleans" target="_blank" rel="noopener">Creole Queen</a> is the same cruise at ⭐ 4.3 (969)</div>
           <div class="tdesc">Live jazz on the Mississippi aboard the last authentic steam-powered sternwheeler on the river. Departs from the Quarter itself, so no transport to arrange.</div>
         </div>
         <div>
@@ -461,10 +473,11 @@
 
       <div class="tcard" data-tags="fq pass food">
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/new-orleans-school-of-cooking.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/new-orleans-school-of-cooking.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
           <span class="tnum">Verified #7</span>
           <div class="tname">New Orleans School of Cooking — demo class</div>
           <div class="tloc">📍 Early-1800s molasses warehouse, French Quarter</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/new-orleans-school-of-cooking-new-orleans" target="_blank" rel="noopener">⭐ 4.7 (702 reviews) on Yelp</a></div>
           <div class="tdesc">Gumbo, jambalaya and pralines cooked in front of you with the history attached, then you eat what was made. Indoors and seated — the reliable option for an afternoon that turns into a thunderstorm.</div>
         </div>
         <div>
@@ -695,6 +708,7 @@
           <span class="tnum">Runner-up</span>
           <div class="tname">Ultimate Swamp Adventures — $212, and the shortest drive of any operator</div>
           <div class="tloc">📍 450 Laroussini St, Westwego — 15 minutes from downtown</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/ultimate-swamp-adventures-westwego-2" target="_blank" rel="noopener">⭐ 4.6 (595 reviews) on Yelp</a></div>
           <div class="tdesc">
             Fifteen minutes out, against 25 to Marrero and 45 to Slidell — which matters if the
             7-year-old does not travel well. Covered pontoon with shade. The 8:45–9:45 AM pickup puts
@@ -1182,6 +1196,7 @@
           <span class="tnum">Tour #2</span>
           <div class="tname">Jean Lafitte Swamp Tour</div>
           <div class="tloc">📍 Jean Lafitte National Park (Marrero, LA) • ~25 min drive</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/jean-lafitte-swamp-tour-marrero-2" target="_blank" rel="noopener">⭐ 4.6 (584 reviews) on Yelp</a></div>
           <div class="tdesc">The closest swamp tour to downtown New Orleans. Glides along Barataria Reserve's moss-draped cypress trees and bayous. Quick drive time means less time in transit.</div>
         </div>
         <div>
@@ -1216,6 +1231,7 @@
           <span class="tnum">Tour #3</span>
           <div class="tname">Cajun Pride Swamp Tours</div>
           <div class="tloc">📍 Manchac Swamp (Frenier, LA) • ~35 min drive</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/cajun-pride-swamp-tours-la-place-2" target="_blank" rel="noopener">⭐ 4.6 (742 reviews) on Yelp</a></div>
           <div class="tdesc">Private wildlife refuge swamp. Animals are accustomed to the quiet pontoon boats, offering close-up encounters with alligators, turtles, and native birds.</div>
         </div>
         <div>
@@ -1248,6 +1264,7 @@
           <span class="tnum">Tour #4</span>
           <div class="tname">Airboat Adventures</div>
           <div class="tloc">📍 Barataria Basin (Lafitte, LA) • ~35 min drive</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/airboat-adventures-lafitte" target="_blank" rel="noopener">⭐ 4.3 (867 reviews) on Yelp</a></div>
           <div class="tdesc">High-speed airboat thrill ride through shallow marshlands traditional boats can't reach. Includes optional round-trip hotel pickup shuttle.</div>
         </div>
         <div>
@@ -1280,6 +1297,7 @@
           <span class="tnum">Tour #5</span>
           <div class="tname">Dr. Wagner’s Honey Island Swamp Tour</div>
           <div class="tloc">📍 Pearl River / Slidell, LA • ~45 min drive</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/honey-island-swamp-tours-slidell-6" target="_blank" rel="noopener">⭐ 4.7 (451 reviews) on Yelp</a></div>
           <div class="tdesc">Small, customized 10–12 passenger boats navigated deep into the remote backwaters of the Pearl River Wildlife Management Area.</div>
         </div>
         <div>
@@ -1306,6 +1324,7 @@
           <span class="tnum">Tour #6</span>
           <div class="tname">Ultimate Swamp Adventures</div>
           <div class="tloc">📍 Westwego, LA • ~25 min drive</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/ultimate-swamp-adventures-westwego-2" target="_blank" rel="noopener">⭐ 4.6 (595 reviews) on Yelp</a></div>
           <div class="tdesc">Convenient West Bank tour offering pontoon and small airboat excursions through historic cypress swamps. Partnered with Go City Pass.</div>
         </div>
         <div>
@@ -1332,6 +1351,7 @@
           <span class="tnum">Tour #7</span>
           <div class="tname">Gray Line Standalone Swamp &amp; Bayou</div>
           <div class="tloc">📍 Departs 400 Toulouse St (French Quarter Waterfront)</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/gray-line-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.2 (454 reviews) on Yelp</a></div>
           <div class="tdesc">Gray Line's direct "Swamp &amp; Bayou Tour" (without plantation). Motorcoach transfer from French Quarter to swamp boat launch.</div>
         </div>
         <div>
@@ -1368,7 +1388,7 @@
       <div class="tcard highlight">
         <span class="badge-top">#1 Rated Food Tour</span>
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/doctor-gumbo-food-history-tour.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/doctor-gumbo-food-history-tour.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
           <span class="tnum">Tour #8</span>
           <div class="tname">Doctor Gumbo Food &amp; History Tour</div>
           <div class="tloc">📍 French Quarter</div>
@@ -1394,10 +1414,11 @@
       <!-- 9. Tastebud Tours -->
       <div class="tcard">
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/tastebud-tours-food-tour.jpg)" role="presentation"><span class="tph-emoji">🥪</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/tastebud-tours-food-tour.jpg)" role="presentation"><span class="tph-emoji">🥪</span></span>
           <span class="tnum">Tour #9</span>
           <div class="tname">Tastebud Tours - Flavor of New Orleans</div>
           <div class="tloc">📍 French Quarter</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/tastebud-food-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.7 (87 reviews) on Yelp</a></div>
           <div class="tdesc">Classic culinary stroll featuring historic establishments like Central Grocery (muffuletta originators), Tujague's, and the historic French Market.</div>
         </div>
         <div>
@@ -1427,6 +1448,7 @@
           <span class="tnum">Tour #10</span>
           <div class="tname">Sidewalk Food Tours (French Quarter)</div>
           <div class="tloc">📍 French Quarter</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/sidewalk-food-tours-of-new-orleans-new-orleans" target="_blank" rel="noopener">⭐ 4.7 (26 reviews) on Yelp</a></div>
           <div class="tdesc">Customizable small-group or private walking food tour. Features off-the-beaten-path culinary gems, po'boys, fried green tomatoes, gumbo, and artisan pralines.</div>
         </div>
         <div>
@@ -1449,10 +1471,11 @@
       <!-- 11. Devour Tours -->
       <div class="tcard">
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/devour-new-orleans-food-tour.jpg)" role="presentation"><span class="tph-emoji">🍴</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/devour-new-orleans-food-tour.jpg)" role="presentation"><span class="tph-emoji">🍴</span></span>
           <span class="tnum">Tour #11</span>
           <div class="tname">Devour Tours - French Quarter Culinary Walk</div>
           <div class="tloc">📍 French Quarter</div>
+          <div class="trating"><span class="norate">No New Orleans Yelp listing, so the rating could not be checked</span></div>
           <div class="tdesc">Immersive culinary and storytelling tour operated by City Experiences. Focuses on the complex history of French, Spanish, African, and Sicilian food heritage.</div>
         </div>
         <div>
@@ -1475,10 +1498,11 @@
       <!-- 12. Destination Kitchen -->
       <div class="tcard">
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/destination-kitchen-food-tour.jpg)" role="presentation"><span class="tph-emoji">🍛</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/destination-kitchen-food-tour.jpg)" role="presentation"><span class="tph-emoji">🍛</span></span>
           <span class="tnum">Tour #12</span>
           <div class="tname">Destination Kitchen Food &amp; Culture Tour</div>
           <div class="tloc">📍 French Quarter</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/destination-kitchen-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.8 (201 reviews) on Yelp</a></div>
           <div class="tdesc">Chef-designed culinary journey focusing on historic restaurants, secret courtyards, authentic gumbo bowls, jambalaya, and fresh hot beignets.</div>
         </div>
         <div>
@@ -1505,6 +1529,7 @@
           <span class="tnum">Tour #13</span>
           <div class="tname">New Orleans Secrets - Hidden Culinary Tour</div>
           <div class="tloc">📍 French Quarter &amp; Marigny Edge</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/new-orleans-secrets-tours-new-orleans-2" target="_blank" rel="noopener">⭐ 4.9 (304 reviews) on Yelp</a></div>
           <div class="tdesc">Intimate progressive dinner tour visiting non-touristy culinary gems, beginning with craft cocktails followed by multi-course seated tastings.</div>
         </div>
         <div>
@@ -1564,6 +1589,7 @@
           <span class="tnum">Tour #15</span>
           <div class="tname">Bon Moment Garden District Walk &amp; Food</div>
           <div class="tloc">📍 Garden District</div>
+          <div class="trating"><span class="norate">⭐ 5.0 on Yelp, but from a single review — too thin to count</span></div>
           <div class="tdesc">Boutique semi-private walking tour combining Lafayette Cemetery #1 lore, celebrity homes, and delicious stops along Magazine Street.</div>
         </div>
         <div>
@@ -1590,6 +1616,7 @@
           <span class="tnum">Tour #16</span>
           <div class="tname">Confederacy of Cruisers Culinary Crawl</div>
           <div class="tloc">📍 Uptown &amp; Garden District</div>
+          <div class="trating"><span class="norate">No New Orleans Yelp listing found, so the rating could not be checked</span></div>
           <div class="tdesc">Guided neighborhood culinary excursion exploring local butcher shops, neighborhood dives, po'boy counters, and classic sweets away from tourist zones.</div>
         </div>
         <div>
@@ -1617,6 +1644,7 @@
           <span class="tnum">Tour #17</span>
           <div class="tname">Free Tours by Foot (Garden District &amp; Bites)</div>
           <div class="tloc">📍 Garden District</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/tours-by-foot-new-orleans" target="_blank" rel="noopener">⭐ 4.9 (878 reviews) on Yelp</a></div>
           <div class="tdesc">Name-your-own-price walking tour. Expert guide leads the architecture and history route with stops at iconic eateries where you buy only what you want to taste.</div>
         </div>
         <div>
@@ -1672,10 +1700,11 @@
       <!-- 19. New Orleans School of Cooking -->
       <div class="tcard">
         <div>
-          <span class="tphoto has-img" style="background-image:url(/neworleans-do/new-orleans-school-of-cooking.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
+          <span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/new-orleans-school-of-cooking.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
           <span class="tnum">Package #19</span>
           <div class="tname">New Orleans School of Cooking Demo &amp; Meal</div>
           <div class="tloc">📍 624 Conti St (French Quarter)</div>
+          <div class="trating"><a href="https://www.yelp.com/biz/new-orleans-school-of-cooking-new-orleans" target="_blank" rel="noopener">⭐ 4.7 (702 reviews) on Yelp</a></div>
           <div class="tdesc">Seated 2.5-hour cooking demonstration in an air-conditioned kitchen. Master Cajun chef prepares and serves generous portions of gumbo, jambalaya, pralines, and bread pudding with local beer/tea.</div>
         </div>
         <div>
