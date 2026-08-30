@@ -243,10 +243,38 @@
               color var(--dur-fast) var(--ease-panel);
 }
 
+/* THE AXIS HERE IS PRIMARY-VS-SECONDARY, NOT HOVER-VS-FOCUS. I came to this
+   rule intending to split it — give :focus-visible phosphor and leave :hover
+   on amber — because the contract enumerates phosphor as "focus, liveness,
+   the active take" and hover is not in that list. Reading the merge source
+   killed that: src/App.css:702 is `.footer-links a:hover { color:
+   var(--phosphor) }`. The same element, the other system, phosphor on HOVER.
+
+   And it never splits the two modalities — .module__led, .module__badge and
+   .yt-facade each group :hover with :focus-within/:focus-visible and pay
+   them identically (App.css:463, 497, 560, 581). Splitting would have made a
+   mouse user and a keyboard user see two colours for one state, which is a
+   worse inconsistency than the one I set out to fix.
+
+   What the source actually separates is RANK: --phosphor for the primary
+   action (.btn:hover, footer links, LEDs), --amber for the secondary
+   (.btn--ghost:hover, .search-clear:hover). Our tree had that axis collapsed
+   — the footer's primary navigation and the credits block's quiet links were
+   all amber, so the page drew no distinction where the source draws its
+   main one. Footer links are primary and move to phosphor; .credits__summary
+   and .credits__link are the quiet tier inside a <details> and correctly
+   stay on --lcd, which is where --btn--ghost's amber lands.
+
+   Measured on --panel-2, the footer's ground, recomputed rather than read
+   off the table: phosphor 9.80:1 vs the amber it replaces at 8.08:1. Better
+   as text, and the 2px border clears 1.4.11's 3:1 for a component boundary
+   with room to spare. No bloom — the source gives its footer links colour
+   only, and reserves the glow for buttons and LEDs. */
+
 .footer__link:hover,
 .footer__link:focus-visible {
-  color: var(--lcd);
-  border-bottom-color: var(--lcd);
+  color: var(--phosphor);
+  border-bottom-color: var(--phosphor);
 }
 
 .footer__note {
