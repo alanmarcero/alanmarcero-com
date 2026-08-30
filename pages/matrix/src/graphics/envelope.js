@@ -140,6 +140,28 @@ export function buildFieldPath({
  * Counts that do not sum to the field's glyph count are honoured as far as
  * they go rather than rejected: a caller whose data drifted gets a partial
  * banding and a whole field, not an exception in a render path.
+ *
+ * THE TWO DRIFT DIRECTIONS ARE NOT SYMMETRIC, and only one of them is safe.
+ *
+ * Undercounting is harmless — the leftover segments become a trailing band,
+ * so the field keeps every glyph AND every boundary the caller asked for.
+ *
+ * Overcounting silently destroys band boundaries. The cursor walks past the
+ * end, every later slice comes back short or empty, and empty slices are
+ * skipped — so `groups` of [8,8,8] over a 12-glyph field yields TWO bands,
+ * and [6,6,6,6] also yields two. Trailing instruments do not merge visibly;
+ * they cease to exist as bands. Nothing throws and nothing looks wrong,
+ * because every glyph is still drawn.
+ *
+ * `bands.join('') === d` HOLDS IN BOTH CASES, so the obvious integrity
+ * assertion cannot tell them apart. If you are checking a caller's groups,
+ * check `bands.length` against `groups.filter(n => n > 0).length`; the
+ * reconstruction test will pass either way.
+ *
+ * The live caller derives its groups from `patchBandSizes` in
+ * `lib/catalog.js`, which is defined as `totalPatches`' own summand so the
+ * two cannot drift. That is the guard; this leniency is the fallback for
+ * anyone who does not use it.
  */
 function bandsFrom(segments, groups) {
   if (!Array.isArray(groups) || groups.length === 0) return null;
