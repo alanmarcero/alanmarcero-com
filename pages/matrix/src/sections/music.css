@@ -202,7 +202,13 @@
   margin: 0;
   font-family: var(--panel-face);
   font-size: var(--step-3);
-  font-weight: 600;
+  /* --weight-panel, not --weight-display, and the size does not decide it.
+   * m1's register splits on ROLE: --weight-display is for the two elements
+   * that NAME a region of the page (.hero__title, .section-title). A work
+   * title is an entry WITHIN a region, so it takes the panel face's working
+   * weight — the same call m1 made for .hero__count-value, which sits at
+   * display size and is still a readout. */
+  font-weight: var(--weight-panel);
   line-height: 1.1;
   /* Was a raw 0.01em. m1's tracking scale named it: caps need LESS tracking
    * as they grow and MORE as they get heavier, so a --step-3 title at 600
