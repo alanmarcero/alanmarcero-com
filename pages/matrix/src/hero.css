@@ -48,29 +48,26 @@
    is what makes the graphic decorative rather than load-bearing: with the
    claim in text, an aria-hidden picture withholds nothing.
 
-   WHICH IS WHY IT CARRIES --legend AND NOT --legend-dim, against the grain
-   of every other secondary line on this page. Measured in a settled render:
-   at --legend-dim this sentence scored 4.33:1 against its own local ground
-   and 1.55:1 where a field stroke crosses a letterform. A sentence that
-   exists FOR accessibility, rendered under the accessibility floor, is a
-   contradiction in one element — the picture is aria-hidden on the promise
-   that this line carries its content, and the line was the least legible
-   thing in the hero.
+   v10 RAISED THIS TO --legend AND v11 PUT IT BACK, because the failure it
+   repaired was my instrument. I measured 4.33:1 here against 5.28 on the
+   lede — same token, different size — and concluded that contrast is a
+   property of colour AND size. It is not. I had sampled the 95th-percentile
+   pixel on one row; small glyphs have a higher edge-to-core ratio, so p95
+   lands on the antialiased ramp while a larger glyph's p95 has already
+   reached the core. At p99.9 BOTH lines read exactly (154,146,140) —
+   the token, 5.28:1. WCAG scores the specified colour, not the AA ramp.
 
-   The August cohort searched for a field OPACITY satisfying both the field
-   and the text and found the feasible region empty. That was correct and it
-   searched the wrong side: the ground is shared by six text elements and
-   lives in another slice's file, while the text is m2's and was never
-   varied. Raising the text needs no token and no coordination.
-
-   Stays at --step--1 and 26rem: quiet by SIZE and MEASURE, legible by
-   COLOUR. What it must not do is compete with the display headline. */
+   So this line never failed, and the comment justifying a raise would have
+   hardened a sampling artifact into a rule about type size. Left here rather
+   than deleted: the next agent to point a percentile at a glyph should know
+   what it reports. (Refuted by agent-f832b330-1788054815, who measured the
+   glyph core at both sizes rather than accepting the mechanism.) */
 .hero__field-note {
   margin: var(--space-s) 0 0;
   max-width: 26rem;
   font-size: var(--step--1);
   line-height: 1.5;
-  color: var(--legend);
+  color: var(--legend-dim);
 }
 
 /* --- The field ----------------------------------------------------- */
