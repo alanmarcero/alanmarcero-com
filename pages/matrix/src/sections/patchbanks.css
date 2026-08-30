@@ -184,7 +184,14 @@
  *
  * Guarded: PatchBanks.test.jsx asserts no `.entry__photo` cap here exceeds
  * the track width it reads out of matrix.css, so re-introducing an
- * unreachable one fails instead of reading as intent. */
+ * unreachable one fails instead of reading as intent.
+ *
+ * RESOLVED — m1 granted the token (c030525). The track is now settable, so
+ * the broad tier widens the TRACK instead of capping inside it. */
+.plate[data-coverage='4'] .entry--pictured,
+.plate[data-coverage='5'] .entry--pictured {
+  --photo-track: 22rem;
+}
 
 /* Mid coverage — 2 or 3 machines. */
 .plate[data-coverage='2'] .plate__body,
@@ -204,9 +211,30 @@
   padding-block: var(--plate-pad-tight);
 }
 
-.plate[data-coverage='0'] .entry__photo,
-.plate[data-coverage='1'] .entry__photo {
-  max-width: 15rem;
+/* The quiet tier sets the TRACK, not a cap inside it — and the 48px this
+ * recovers is the reason, measured rather than assumed:
+ *
+ *   cap 15rem in the default track   photo 240   track 288   text 840   48px dead
+ *   --photo-track: 15rem             photo 240   track 240   text 888    0px dead
+ *
+ * Identical photo, and the layout stops reserving 48px it never draws in.
+ * A max-width shrinks the picture; the track is what shrinks the COLUMN,
+ * and a quieter row should give its space back to the prose rather than
+ * hold it empty. That is what "letting some rows be small" was after.
+ *
+ * The full scale is now monotonic on this axis for the first time —
+ * 240 / 288 / 352 across quiet, mid and broad — where before it was
+ * 240 / 288 / 288 because the broad tier's cap could never bind.
+ *
+ * Why 22rem and not the 26rem the broad tier originally declared: this
+ * section states its own intent as "the scale is deliberately narrow …
+ * not that four banks shout." 26rem is 416px, a 44% jump over the mid
+ * tier; 22rem is 352px, 22%. The original number contradicted the clause
+ * two paragraphs above it, and nobody could see that while it was
+ * unreachable. Text column stays generous at 776px. */
+.plate[data-coverage='0'] .entry--pictured,
+.plate[data-coverage='1'] .entry--pictured {
+  --photo-track: 15rem;
 }
 
 /* Below the layout's single-column breakpoint the photo is full-width and
