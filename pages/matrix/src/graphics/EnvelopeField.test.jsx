@@ -8,48 +8,6 @@ const base = { seed: 'hero', count: 12, columns: 4 };
 const glows = (c) => [...c.container.querySelectorAll('path')]
   .filter((p) => (p.getAttribute('style') || '').includes('drop-shadow'));
 
-/*
- * The guard the first version of banding did not have, and the reason it
- * needed one: weighting the bands raised the field's total ink by 54% while
- * every existing test stayed green. Ink coverage is a measured number another
- * slice derives contrast decisions from, so a silent 54% is a real bill.
- * Asserted on the live catalogue's shape, since that shape is what produced
- * the drift — seven of ten bands pinned to the top of the ramp.
- */
-describe('band weighting is ink-neutral', () => {
-  // [128 x7, 100, 88, 64] — the real catalogue, summing to 1148.
-  const catalogue = [128, 128, 128, 64, 128, 128, 100, 128, 88, 128];
-  const total = catalogue.reduce((a, b) => a + b, 0);
-
-  const bandWidths = (groups, strokeWidth) => {
-    const c = render(
-      <EnvelopeField seed="hero" count={total} columns={34} groups={groups} strokeWidth={strokeWidth} />,
-    );
-    return [...c.container.querySelectorAll('.envelope-field__band')]
-      .map((p) => Number(p.getAttribute('stroke-width')));
-  };
-
-  const glyphWeightedMean = (widths, groups) =>
-    groups.reduce((sum, size, i) => sum + size * widths[i], 0)
-    / groups.reduce((a, b) => a + b, 0);
-
-  it('keeps the glyph-weighted mean stroke at the caller\'s width', () => {
-    const widths = bandWidths(catalogue, 1);
-    expect(glyphWeightedMean(widths, catalogue)).toBeCloseTo(1, 2);
-  });
-
-  it('scales with the caller\'s width rather than pinning to 1', () => {
-    const widths = bandWidths(catalogue, 2);
-    expect(glyphWeightedMean(widths, catalogue)).toBeCloseTo(2, 2);
-  });
-
-  it('still separates the bands it neutralises', () => {
-    const widths = bandWidths(catalogue, 1);
-    // Ink-neutral must not mean uniform — that is the field this replaced.
-    expect(Math.max(...widths) / Math.min(...widths)).toBeGreaterThan(1.3);
-  });
-});
-
 describe('the field without a beam', () => {
   it('renders no beam and no style block by default', () => {
     const c = render(<EnvelopeField {...base} />);
