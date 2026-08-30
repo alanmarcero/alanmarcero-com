@@ -85,9 +85,35 @@
  * reached for from here, which is the same call the 26rem cap got: the
  * binding constraint is not in this file.
  *
- * Scope, stated honestly: stroke coverage is 1.72–2.94% of the field's area,
- * so this is a small fraction of glyph pixels rather than the whole list.
- * It is still a real failure where it lands, and WCAG does not average.
+ * SCOPE — I understated this and the render corrected me. I first wrote that
+ * stroke coverage is 1.72–2.94% of the field's area, "a small fraction of
+ * glyph pixels." That figure is a whole-field average and it is the wrong
+ * denominator. Rendered the built page and diffed it against the same page
+ * with `.plate__field { display: none }`, which isolates the field exactly:
+ *
+ *   region of plate 1 (coverage 5)        % of pixels that are field
+ *   under the description text                 14.10
+ *   under the instrument list                  12.63
+ *   right margin, no text over it               4.10
+ *   photo column (field hidden behind photo)   41.43
+ *
+ * THE FIELD IS ~3.4x DENSER WHERE THE TEXT IS THAN IN THE EMPTY MARGIN, and
+ * densest of all behind the photograph, where none of it is visible. So it
+ * spends most of its ink where nobody can see it and concentrates the rest
+ * exactly where it costs legibility.
+ *
+ * That is the SAME PATHOLOGY the owner of tokens.css found in the hero —
+ * "the mask is strongest exactly where the text is and fades where there is
+ * none" — arriving here through stroke distribution rather than a mask, and
+ * it is why the fix is geometry. Shaping the field away from the text column
+ * is not a compromise between legibility and the graphic; the graphic is
+ * already densest where it cannot be seen.
+ *
+ * A first attempt at this measurement counted warm pixels and was wrong:
+ * `--lcd` on the "FITS n INSTRUMENTS" label is warmer than the field's
+ * strokes, so the label read as field. The two-render diff has no such
+ * ambiguity. Recorded because the contaminated version supported the same
+ * conclusion for the wrong reason.
  *
  * The divider uses --seam, not --legend-faint. I reached for the faint
  * token because its contract reads "non-text only — strokes, rules", and
