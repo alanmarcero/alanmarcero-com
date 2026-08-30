@@ -152,10 +152,39 @@
   padding-block: var(--plate-pad-loose);
 }
 
-.plate[data-coverage='4'] .entry__photo,
-.plate[data-coverage='5'] .entry__photo {
-  max-width: 26rem;
-}
+/* NO photo cap for the broad tier, and the removal is the finding.
+ *
+ * This block declared `max-width: 26rem`. It never did anything at any
+ * viewport, so the photo axis of "mass follows coverage" has been carrying
+ * three declared tiers and two rendered outcomes since it was written.
+ * Measured in a browser rather than reasoned about — body at 1200px:
+ *
+ *   coverage 0-1   declared 15rem / 240px  ->  240   binds
+ *   coverage 2-3   no rule                 ->  288   takes the track
+ *   coverage 4-5   declared 26rem / 416px  ->  288   UNREACHABLE
+ *
+ * `.entry--pictured` (matrix.css) sizes the photo track `minmax(0, 18rem)`
+ * = 288px and `.entry__photo img` is `width: 100%`. A max-width ABOVE the
+ * track it sits in can never bind, so 4-5 rendered identically to 2-3 —
+ * the widest banks getting no more photo than the middle ones. That is the
+ * inversion this section already documents itself producing once with
+ * font-size, arriving a second time on a different axis.
+ *
+ * At 400px, with the breakpoint below active: 400 / 400 / 400. Both caps
+ * stand down there by design. So there is no width at which it did
+ * anything.
+ *
+ * NOT REPLACED WITH A LARGER NUMBER, deliberately. The binding constraint
+ * is the TRACK, and the track belongs to matrix.css. Widening the broad
+ * tier needs `.entry--pictured`'s first column to become settable per
+ * bucket; filed with that file's owner carrying this measurement, since a
+ * token request needs a consumer and this is one. Until it lands, this
+ * tier declares nothing honestly rather than declaring something
+ * unreachable.
+ *
+ * Guarded: PatchBanks.test.jsx asserts no `.entry__photo` cap here exceeds
+ * the track width it reads out of matrix.css, so re-introducing an
+ * unreachable one fails instead of reading as intent. */
 
 /* Mid coverage — 2 or 3 machines. */
 .plate[data-coverage='2'] .plate__body,
