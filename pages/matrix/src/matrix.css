@@ -55,13 +55,35 @@
   font-size: var(--step-1);
 }
 
-.hero__count {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  margin: var(--space-xl) 0 0;
-}
+/* A WHOLE FLEX LAYOUT DELETED HERE, AND IT HAD NEVER APPLIED — the same
+   defect as .hero__count-value below, found by looking for more of it
+   rather than by waiting for the next report.
+
+   This rule was `display: flex; align-items: baseline; flex-wrap: wrap;
+   gap: var(--space-s); margin: var(--space-xl) 0 0`. hero.css:28 declares
+   the same single class at the same specificity with `display: block` and
+   is emitted later (bundle offsets 805 vs 5981, neither inside @media), so
+   the container is a BLOCK. align-items, flex-wrap and gap apply to flex
+   and grid containers only, which makes all three inert the moment the
+   display is lost; hero.css overrides margin-top, and the shorthand's
+   remaining sides were setting 0, which is already the initial value.
+   Every declaration in the rule was doing nothing.
+
+   The count reads as a stacked block — hero.css sets both .hero__count-value
+   and .hero__count-label to `display: block` — not as the baseline-aligned
+   row this rule described. Anyone reading matrix.css alone would have
+   believed the opposite, which is what makes a losing declaration worse
+   than an absent one.
+
+   HERO LAYOUT BELONGS TO hero.css. matrix.css keeps only what hero.css does
+   not contest: .hero__count-label's colour, and .hero__count-value's weight.
+
+   FOUND BY A CHEAP SWEEP WORTH RE-RUNNING: parse each sheet's selectors and
+   report any declared in more than one sheet, then diff their property sets.
+   Three selectors collide in this tree and all three are .hero__count* —
+   one was already known, this one was not, and .hero__count-label is clean. */
+
+/* .hero__count — layout owned by hero.css:28. Do not re-declare it here. */
 
 /* TWO DECLARATIONS DELETED HERE, AND THEY HAD NEVER APPLIED. This rule
    carried `font-size: var(--display-s)` and `line-height: 1`; hero.css:33
