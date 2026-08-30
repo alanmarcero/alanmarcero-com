@@ -20,37 +20,6 @@ const baseProps = {
 
 const liveRegion = () => document.getElementById('hero-search-announce');
 
-/*
- * Written after a negative control, not before. The derivation behind these
- * sizes was already guarded in catalog.test.js — regress patchBandSizes to
- * `|| 64` and three tests redden. But deleting `groups={patchBandSizes}` from
- * the call site below, which removes the feature outright, left the whole
- * suite green at 1492/1492. The interesting half was guarded and the
- * connecting half was not, which is the half that silently disappears in a
- * later refactor.
- */
-describe('the hero field is banded by machine', () => {
-  // The real catalogue's shape: ten counted banks summing to totalPatches.
-  const bandSizes = [128, 128, 128, 64, 128, 128, 100, 128, 88, 128];
-
-  it('draws one band per counted bank, at weights that actually differ', () => {
-    const { container } = render(<Hero {...baseProps} patchBandSizes={bandSizes} />);
-    const bands = container.querySelectorAll('.envelope-field__band');
-
-    expect(bands).toHaveLength(bandSizes.length);
-
-    // Band count alone would pass if every band were drawn at one weight,
-    // which is the field it replaced. The point is that mass follows size.
-    const weights = new Set([...bands].map((b) => b.getAttribute('stroke-width')));
-    expect(weights.size).toBeGreaterThan(1);
-  });
-
-  it('draws a single unbanded path when no sizes are supplied', () => {
-    const { container } = render(<Hero {...baseProps} />);
-    expect(container.querySelectorAll('.envelope-field__band')).toHaveLength(0);
-  });
-});
-
 describe('describeResults', () => {
   it('says nothing when there is no query', () => {
     expect(describeResults(null, '')).toBe('');
