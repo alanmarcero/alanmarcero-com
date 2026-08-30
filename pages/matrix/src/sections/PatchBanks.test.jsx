@@ -239,8 +239,26 @@ describe('patchbanks photo caps are reachable', () => {
     const css = fs.readFileSync(path.resolve(__dirname, './patchbanks.css'), 'utf8');
 
     // The track that contains the photo, read from the file that owns it.
+    // Accepts the bare literal AND the parameterised form
+    // `minmax(0, var(--photo-track, 18rem))`. m1 made the track settable so
+    // this section can carry mass-follows-coverage on the photo axis; the
+    // fallback IS the old literal, so the number this guard needs is the same
+    // one either way.
+    //
+    // EDITED ACROSS SLICE OWNERSHIP BY m1 (agent-f832b330), in the same commit
+    // as the change that would otherwise have left main red. m3 flagged this
+    // coupling in advance and offered to make the edit; landing the two halves
+    // apart would have broken the suite for every other agent in between.
+    // Reshape or revert freely — it is m3's file and m3's instrument.
+    //
+    // WHAT THIS GUARD CANNOT SEE, now that the track is settable: it compares
+    // every cap against the DEFAULT track. Once a bucket sets `--photo-track`
+    // to something else, that bucket's real track is no longer this number, so
+    // a cap could be unreachable against the default and reachable against its
+    // own bucket, or the reverse. Sound for the default, blind per-bucket —
+    // the fixture render closes it, and only for buckets you actually render.
     const track = shared.match(
-      /\.entry--pictured\s*\{[^}]*grid-template-columns:\s*minmax\(\s*0\s*,\s*([\d.]+)rem/,
+      /\.entry--pictured\s*\{[^}]*grid-template-columns:\s*minmax\(\s*0\s*,\s*(?:var\(\s*--photo-track\s*,\s*)?([\d.]+)rem/,
     );
     expect(track).not.toBeNull(); // guard the side we read FROM
     const trackPx = remToPx(track[1]);

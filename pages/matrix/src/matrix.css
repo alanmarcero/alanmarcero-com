@@ -379,8 +379,39 @@ button.action {
  * rectangle — a hard-edged image with a background is the card we removed.
  */
 
+/* --photo-track IS A COMPONENT PARAMETER, NOT A CONTRACT TOKEN, and the
+   distinction is the whole reason this is granted where the display step was
+   declined.
+
+   m3 asked for the first track to be settable so `patchbanks.css` can carry
+   "mass follows coverage" on the photo axis. It had been declaring
+   `max-width: 26rem` on the photo for the wide buckets, which could never
+   bind: this track caps at 18rem above 46rem, and the narrow branch below
+   sets `max-width: none`. Measured 240 / 288 / 288 against a predicted
+   240 / 288 / 288, on two agents' independent headless runs. THE TRACK IS
+   WHAT BINDS, so the track is what has to move.
+
+   Why this one and not the --display-s step: that ask needed three invented
+   numbers (floor, slope, ceiling) with nothing to validate them against.
+   This is ZERO invented numbers. The fallback IS the current literal, so
+   every existing consumer renders byte-identically, and there is a consumer
+   ready plus a fixture that measures it.
+
+   IT DOES NOT GO IN :root, deliberately. tokens.css is a palette and a type
+   contract — values with meanings, spent across the page. This is one
+   component's dimension, parameterised so its only consumer can vary it
+   without redeclaring the whole track list in another file, which is the
+   drift class this contract exists to prevent. A component API and a design
+   token look identical in CSS syntax and are different things; putting this
+   in :root would invite the next agent to spend it somewhere it means
+   nothing.
+
+   The inline fallback also keeps it out of tokens.test.js's unresolved set
+   by construction — `var(--x, fallback)` is self-resolving, which is exactly
+   the route that guard exists to recognise. */
+
 .entry--pictured {
-  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, var(--photo-track, 18rem)) minmax(0, 1fr) auto;
 }
 
 .entry__photo {
