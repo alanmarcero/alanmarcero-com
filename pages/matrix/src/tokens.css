@@ -269,11 +269,63 @@
    *       the harm. agent-df85d7d7 found it by RENDERING the page, which
    *       nobody had done across 35 commits and five slices, each green.
    *
-   *       Where a stroke lands under text, old --wood -> new:
-   *         hero  --legend      6.09 -> 3.70   (3.0 large floor: ok)
-   *         hero  --legend-dim  2.56 -> 1.55   (4.5 floor: FAILS BOTH)
-   *         hero  --lcd         4.47 -> 2.71   (4.5: marginal -> no)
-   *         plate --legend-dim  3.56 -> 2.60   (4.5 floor: FAILS BOTH)
+   *       Where a stroke lands under text, OLD --wood -> NEW --wood (both
+   *       columns composited; this is not bare-ground -> composited, which
+   *       is how one reader parsed it before a cross-check corrected them —
+   *       so the column headers are now explicit rather than implied):
+   *
+   *         row                            old -> new      verdict    OWNER
+   *         hero  --legend                6.09 -> 3.70    3.0 large: ok   m2
+   *         hero  --legend-dim            2.56 -> 1.55    4.5: FAILS BOTH m2
+   *         hero  --lcd                   4.47 -> 2.71    4.5: -> no      m2
+   *         plate --legend-dim            3.56 -> 2.60    4.5: FAILS BOTH m1
+   *
+   *       EVERY ROW NAMES ITS OWNER NOW, AND THAT COLUMN IS THE POINT. The
+   *       three hero rows got a long analysis below and were handed to their
+   *       owner explicitly. The plate row — measured, marked FAILS BOTH, in
+   *       the same table — was never mentioned again, and stayed unrouted
+   *       until agent-26918ade went looking and found it. Meanwhile their
+   *       own file was asserting the names take --legend-dim "at 5.3:1",
+   *       true on bare ground and false wherever the field draws. TWO FILES,
+   *       ONE CONSUMER, CONTRADICTORY CLAIMS, NEITHER AUTHOR WRONG IN THEIR
+   *       OWN FRAME: I measured a consumer I do not own and had no channel
+   *       to its owner; they asserted a figure without knowing the composite
+   *       had been measured elsewhere.
+   *
+   *       A FILE IS NOT AN INBOX. A measurement about someone else's element
+   *       is finished when it REACHES them, not when it is written down.
+   *       Name the owner in the row, or emit it as an event. This is the
+   *       second instance tonight of the same generator — a token request
+   *       addressed to this file's owner sat in patchbanks.css and arrived
+   *       only because a peer hand-carried it.
+   *
+   *       PLATE ROW DISPOSITION — it is m1's (.plate__field lives in
+   *       layout.css) and it is NOT yet fixed. agent-26918ade reproduced
+   *       2.60 independently before extending it (and validated their method
+   *       against the --legend-well row first, because "my arithmetic agrees
+   *       with my arithmetic" is not a reproduction), then swept the same
+   *       feasible region the hero analysis below sweeps, with the same
+   *       result: EMPTY. Field 0.42 -> 0.10 still reads 3.98 on --panel-2
+   *       while the field collapses to 1.16:1 against its ground — invisible
+   *       before it is legible; brighter text tops out at --legend 4.76/4.39,
+   *       still short on the raised ground, and the threshold ~#cbcbcb is
+   *       brighter than --legend and against this section's silkscreened
+   *       vocabulary. So it is GEOMETRY, not value — the third time that
+   *       verdict has landed here.
+   *
+   *       And .plate__field has NO MASK AT ALL (layout.css:139, inset: 0),
+   *       where .hero__field at least has one pointing the wrong way. The
+   *       repair shape is cd2997fc's: move the field out from under the
+   *       text into the padding bands rather than trading opacity against
+   *       legibility. NEXT UNIT, and named here so it is routed even if I
+   *       do not reach it: it must be RENDERED to be believed, because a
+   *       mask change is exactly the class this file has twice been wrong
+   *       about from static reasoning.
+   *
+   *       SCOPE, stated as its finder stated it: stroke coverage is
+   *       1.72-2.94% of field area, so this is a small fraction of glyph
+   *       pixels rather than the whole line. Real where it lands; WCAG does
+   *       not average.
    *
    *       READ THE FIRST COLUMN. --legend-dim over the hero field failed
    *       at 2.56 BEFORE my lift. I worsened a pre-existing failure, I did
