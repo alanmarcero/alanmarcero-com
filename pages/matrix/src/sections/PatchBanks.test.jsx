@@ -231,45 +231,94 @@ describe('patchbanks mass scale', () => {
  * distinction matters — a test that can only fail on data you do not have
  * yet is a different instrument wearing the same name.)
  */
-describe('patchbanks photo caps are reachable', () => {
+describe('patchbanks photo mass scale', () => {
   const remToPx = (v) => parseFloat(v) * 16;
+  const read = (rel) => fs.readFileSync(path.resolve(__dirname, rel), 'utf8');
 
-  it('declares no .entry__photo max-width wider than its grid track', () => {
-    const shared = fs.readFileSync(path.resolve(__dirname, '../matrix.css'), 'utf8');
-    const css = fs.readFileSync(path.resolve(__dirname, './patchbanks.css'), 'utf8');
-
-    // The track that contains the photo, read from the file that owns it.
-    // Accepts the bare literal AND the parameterised form
-    // `minmax(0, var(--photo-track, 18rem))`. m1 made the track settable so
-    // this section can carry mass-follows-coverage on the photo axis; the
-    // fallback IS the old literal, so the number this guard needs is the same
-    // one either way.
-    //
-    // EDITED ACROSS SLICE OWNERSHIP BY m1 (agent-f832b330), in the same commit
-    // as the change that would otherwise have left main red. m3 flagged this
-    // coupling in advance and offered to make the edit; landing the two halves
-    // apart would have broken the suite for every other agent in between.
-    // Reshape or revert freely — it is m3's file and m3's instrument.
-    //
-    // WHAT THIS GUARD CANNOT SEE, now that the track is settable: it compares
-    // every cap against the DEFAULT track. Once a bucket sets `--photo-track`
-    // to something else, that bucket's real track is no longer this number, so
-    // a cap could be unreachable against the default and reachable against its
-    // own bucket, or the reverse. Sound for the default, blind per-bucket —
-    // the fixture render closes it, and only for buckets you actually render.
-    const track = shared.match(
+  /* The DEFAULT track, read out of the file that owns it rather than restated.
+   * Accepts the bare literal and the parameterised form
+   * `minmax(0, var(--photo-track, 18rem))` — the fallback IS the old literal,
+   * so the number is the same either way. (The regex was widened across slice
+   * ownership by m1, agent-f832b330, in the commit that parameterised the
+   * track; landing the halves apart would have left main red for three other
+   * agents. Declared there, kept here.) */
+  const defaultTrackPx = () => {
+    const m = read('../matrix.css').match(
       /\.entry--pictured\s*\{[^}]*grid-template-columns:\s*minmax\(\s*0\s*,\s*(?:var\(\s*--photo-track\s*,\s*)?([\d.]+)rem/,
     );
-    expect(track).not.toBeNull(); // guard the side we read FROM
-    const trackPx = remToPx(track[1]);
+    expect(m).not.toBeNull(); // guard the side we read FROM
+    return remToPx(m[1]);
+  };
 
-    // Every photo cap declared in this section, outside the narrow-screen
-    // branch where both caps deliberately stand down.
-    const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@media[^{]*\{[\s\S]*?\}\s*\}/g, '');
-    const caps = [...declarations.matchAll(/\.entry__photo\s*(?:,[^{]*)?\{[^}]*max-width:\s*([\d.]+)rem/g)]
-      .map((m) => remToPx(m[1]));
+  /* Per-bucket track overrides declared in this section, outside the
+   * narrow-screen branch where the grid collapses to one column. */
+  const bucketTracks = () => {
+    const declarations = read('./patchbanks.css')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/@media[^{]*\{[\s\S]*?\}\s*\}/g, '');
+    const out = new Map();
+    for (const m of declarations.matchAll(/((?:\.plate\[data-coverage='(\d+)'\][^,{]*,?\s*)+)\{([^}]*)\}/g)) {
+      if (!/--photo-track/.test(m[3])) continue;
+      const px = remToPx(m[3].match(/--photo-track\s*:\s*([\d.]+)rem/)[1]);
+      for (const b of m[1].matchAll(/data-coverage='(\d+)'/g)) out.set(Number(b[1]), px);
+    }
+    return out;
+  };
 
-    expect(caps.length).toBeGreaterThan(0); // a silent zero would pass vacuously
-    expect(caps.filter((px) => px > trackPx)).toEqual([]);
+  /* This is the section's thesis — "mass follows coverage" — on the photo
+   * axis, and until 2026-08-30 it was false there. The broad tier declared
+   * `max-width: 26rem` inside an 18rem track, so it could never bind and
+   * rendered identically to the mid tier: 240 / 288 / 288, three declared
+   * tiers and two outcomes. Measured, not reasoned.
+   *
+   * It is now carried by the TRACK rather than a cap inside it, which also
+   * recovered 48px the quiet tier was reserving and never drawing in
+   * (240px photo held a 288px column). Measured 240 / 288 / 352.
+   *
+   * A GUARD, not a regression detector armed for later: it fails on today's
+   * tree the moment the scale stops increasing. */
+  it('gives broader coverage a wider photo track than narrower coverage', () => {
+    const dflt = defaultTrackPx();
+    const tracks = bucketTracks();
+    expect(tracks.size).toBeGreaterThan(0); // a silent zero would pass vacuously
+
+    const effective = (coverage) => tracks.get(coverage) ?? dflt;
+    const quiet = effective(1);
+    const mid = effective(2);
+    const broad = effective(5);
+
+    expect(quiet).toBeLessThan(mid);
+    expect(mid).toBeLessThan(broad);
+  });
+
+  /* The reachability half, kept because the failure it caught is a class and
+   * not an incident: a cap ABOVE the track containing it is valid CSS, reads
+   * as intent, and does nothing.
+   *
+   * Now compared per bucket rather than against the default, which closes the
+   * blind spot m1 recorded when the track became settable — a cap can be
+   * unreachable against the default and reachable against its own bucket.
+   * Zero caps is the current and correct state, so this asserts over an empty
+   * set deliberately; the `tracks.size` guard above is what proves the file
+   * was parsed at all, so an empty result here means "no caps" rather than
+   * "read nothing". */
+  it('declares no .entry__photo max-width wider than its own bucket track', () => {
+    const dflt = defaultTrackPx();
+    const tracks = bucketTracks();
+    const declarations = read('./patchbanks.css')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/@media[^{]*\{[\s\S]*?\}\s*\}/g, '');
+
+    const unreachable = [];
+    for (const m of declarations.matchAll(
+      /((?:\.plate\[data-coverage='(\d+)'\][^,{]*\.entry__photo\s*,?\s*)+)\{([^}]*max-width:\s*([\d.]+)rem[^}]*)\}/g,
+    )) {
+      const capPx = remToPx(m[4]);
+      for (const b of m[1].matchAll(/data-coverage='(\d+)'/g)) {
+        const cov = Number(b[1]);
+        if (capPx > (tracks.get(cov) ?? dflt)) unreachable.push({ cov, capPx });
+      }
+    }
+    expect(unreachable).toEqual([]);
   });
 });
