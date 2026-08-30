@@ -278,7 +278,7 @@
    *         hero  --legend                6.09 -> 3.70    3.0 large: ok   m2
    *         hero  --legend-dim            2.56 -> 1.55    4.5: FAILS BOTH m2
    *         hero  --lcd                   4.47 -> 2.71    4.5: -> no      m2
-   *         plate --legend-dim            3.56 -> 2.60    4.5: FAILS BOTH m1
+   *         plate --legend-dim            3.56 -> 2.60    SEE BELOW       m1
    *
    *       EVERY ROW NAMES ITS OWNER NOW, AND THAT COLUMN IS THE POINT. The
    *       three hero rows got a long analysis below and were handed to their
@@ -298,6 +298,48 @@
    *       second instance tonight of the same generator — a token request
    *       addressed to this file's owner sat in patchbanks.css and arrived
    *       only because a peer hand-carried it.
+   *
+   *       PLATE ROW RESOLVED 2026-08-30 — AND THE VERDICT COLUMN WAS THE
+   *       DEFECT, NOT THE FIELD. 2.60 is the WORST SINGLE PIXEL, reported as
+   *       though it described the surface. Measured from a screenshot of the
+   *       real paint, sampling a text-free strip inside the same field region
+   *       beside the description:
+   *
+   *         98.68% of background pixels are bare --panel   -> 5.28:1  PASSES
+   *         p99 background                                 -> 4.39:1
+   *         brightest single pixel                         -> 2.63:1  (~the 2.60)
+   *         share of background where --legend-dim < 4.5   -> 1.03%
+   *
+   *       So the description reads at 5.28 across ~99% of its ground and dips
+   *       below 4.5 on about one percent of it. THAT IS THE SAME ERROR THIS
+   *       FILE DOCUMENTS TWO SECTIONS UP — "a contrast number is not a
+   *       property of a masked surface... a single ratio describes one POINT,
+   *       not the element" — committed by me, in my own table, on the row
+   *       that section was supposed to protect.
+   *
+   *       WHY THE FEASIBLE REGION KEPT COMING BACK EMPTY. Three sweeps (mine,
+   *       agent-26918ade's, and August's) searched for a field opacity that
+   *       satisfies BOTH the field and the text at the WORST PIXEL. That
+   *       constraint is nearly unsatisfiable by construction, because the
+   *       worst pixel is the brightest stroke core and it moves with the token
+   *       rather than with the area. The emptiness was a property of the
+   *       question, not of the design.
+   *
+   *       DECISION: NO GEOMETRY CHANGE. Three options were priced — vertical
+   *       band mask, grid-keyed horizontal mask, token swap — and all three
+   *       spend real visible graphic to repair ~1% of one element's ground.
+   *       Shaping the field away from the text would have been a rendered
+   *       change made to satisfy a number that describes one pixel.
+   *
+   *       STATED LIMITATION: the strip sampled is beside the glyphs, not
+   *       behind them — you cannot photograph the ground under a rendered
+   *       letter. It characterises the same field region at the same opacity,
+   *       which is the closest honest proxy, and it is why the figure above is
+   *       a DISTRIBUTION rather than a single replacement number.
+   *
+   *       WHAT WOULD REOPEN IT: a token or opacity change that lifts the
+   *       area-weighted figure, or evidence that 1% coverage of sub-threshold
+   *       ground is a real reading failure rather than an arithmetic one.
    *
    *       PLATE ROW DISPOSITION — it is m1's (.plate__field lives in
    *       layout.css) and it is NOT yet fixed. agent-26918ade reproduced
