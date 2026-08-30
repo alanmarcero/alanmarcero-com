@@ -47,7 +47,47 @@
  * Silkscreened, not chipped. Patch Sheet separates by ground change and
  * engraving rather than by containers, so these are tracked legends with a
  * hairline between them — no pills, no radius, no fill. The names take
- * --legend-dim at 5.3:1.
+ * --legend-dim, which is 5.28:1 on --panel — TRUE ON THE BARE GROUND AND
+ * FALSE WHERE THE FIELD DRAWS. This comment asserted the bare figure flat
+ * until 2026-08-30, while tokens.css:276 had already recorded the composited
+ * one: `plate --legend-dim 3.56 -> 2.60 (4.5 floor: FAILS BOTH)`.
+ *
+ * `.plate__field` is `inset: 0`, `--wood` at opacity 0.42, `z-index: -1`,
+ * and `.plate__body` is relative inside it — so every glyph in this list has
+ * the field behind it, and where a stroke lands under one the ratio is:
+ *
+ *   ground            bare    over a stroke
+ *   --panel           5.28    2.60   FAILS AA and the 3.0 large floor
+ *   --panel-2         4.63    2.39   FAILS both        (.plate--raised)
+ *
+ * Reproduced independently here (compositing 0.42 --wood over each ground,
+ * then WCAG); the 2.60 matches tokens.css exactly, and the method was checked
+ * against that file's own --legend-well row, which it also reproduces (3.32).
+ *
+ * NOT FIXED HERE, AND THE REASON IS THAT IT CANNOT BE. The owner of
+ * tokens.css analysed the HERO row of that table and found an empty feasible
+ * region — a geometry question, not a value. The PLATE row is in the same
+ * table, was never analysed, and is this section's element. It is the same
+ * shape:
+ *
+ *   lowering the field's opacity   0.42 -> 0.10 reaches only 3.98 on
+ *                                  --panel-2, and collapses the field to
+ *                                  1.16:1 against its ground — invisible
+ *                                  before it is legible. No value works.
+ *   brightening this text          --legend-well 3.32/3.05, --legend
+ *                                  4.76/4.39 — still short on --panel-2.
+ *                                  The lightest neutral clearing AA on both
+ *                                  is ~#cbcbcb, brighter than --legend and
+ *                                  flatly against "silkscreened, not chipped".
+ *
+ * So the fix is geometry — shaping the field away from the text — and
+ * `.plate__field` lives in layout.css. Filed with that owner rather than
+ * reached for from here, which is the same call the 26rem cap got: the
+ * binding constraint is not in this file.
+ *
+ * Scope, stated honestly: stroke coverage is 1.72–2.94% of the field's area,
+ * so this is a small fraction of glyph pixels rather than the whole list.
+ * It is still a real failure where it lands, and WCAG does not average.
  *
  * The divider uses --seam, not --legend-faint. I reached for the faint
  * token because its contract reads "non-text only — strokes, rules", and
