@@ -317,9 +317,10 @@
    * normalising these opacities "for consistency":
    *
    *   consumer          coverage  the ink is        alpha  generator
-   *   .hero__field         6.22%   0.76-1.04 strokes 0.72   EnvelopeField
-   *   .plate__field        6.22%   1px strokes       0.42   EnvelopeField
+   *   .hero__field         5.60%   0.76-1.04 strokes 0.72   EnvelopeField
+   *   .plate__field   1.72-2.94%   1px strokes       0.42   EnvelopeField
    *   .work__spectrum     27.80%   filled rects      0.45   SpectrumBars
+   *                       (^ not re-measured; inherited from the original)
    *
    * STROKE COLUMN CORRECTED 2026-08-30, AND ONLY THAT COLUMN. It read
    * "1.25px strokes" for both fields. There is no 1.25 at runtime: rendered
@@ -332,14 +333,53 @@
    * who declined to call it wrong without a render — correctly, since a
    * false alarm against this file's contrast reasoning is expensive.
    *
-   * THE COVERAGE COLUMN IS NOT RECOMPUTED AND MUST NOT BE READ AS
-   * RE-CONFIRMED. 6.22% was measured; the stroke label beside it was not.
-   * Correcting the label does not re-derive the number, and I have no
-   * render of ink area to replace it with. This is the same failure this
-   * file names one section down — a measured table laundering an unmeasured
-   * cell — sitting in the table that first taught it, which is why the two
-   * cells are now marked separately instead of the row reading as one
-   * verified unit.
+   * COVERAGE COLUMN NOW MEASURED TOO, and the shared 6.22% did not survive.
+   * Rasterised from the live page: each field's SVG cloned with opacity,
+   * mask and filter forced off (mark area is what this column means; alpha
+   * is the next column), drawn to a canvas at its rendered size, and
+   * integrated by ALPHA WEIGHT rather than counted over a threshold — a
+   * naive count of alpha>8 reports the hero at 11.06% because it scores
+   * every antialiased fringe pixel as solid ink. Alpha-weighted 5.60%;
+   * threshold-128 5.32% agrees with it, which is the cross-check.
+   *
+   *   .hero__field   5.60%   (1200x864)
+   *   .plate__field  1.72% .. 2.94% across the ELEVEN banks, mean ~2.2%
+   *
+   * WHERE 6.22% CAME FROM, since the number was real: `lissajous.js:13`
+   * says "the hero field is 889,200px2 carrying ~1089 glyphs at 6.22% ink",
+   * and 1200x741 = 889,200. It was always an ELEMENT-AREA measure OF THE
+   * HERO, at a shorter hero than today's. My 5.60% at 1200x864 is the same
+   * quantity on a taller box and is consistent with it. THE ERROR WAS NEVER
+   * THE NUMBER. It was the plate row inheriting the hero's number.
+   *
+   * SO "BOTH SHARE ONE COVERAGE" IS FALSE, and the paragraph below that
+   * asserted it is struck. The generator is PARAMETERISED, and the two call
+   * sites parameterise it differently: hero draws count=1148 at cellWidth 8
+   * into aspect 1.6; a plate draws one bank's count at cellWidth 9 into
+   * aspect 4.2. Different glyph counts at different densities in different
+   * boxes cannot produce one coverage, and the plates do not even agree with
+   * each other — 1.7x spread across eleven banks, because count varies.
+   *
+   * I RECORDED THE REFUTATION MYSELF ONE REVISION EARLIER AND DID NOT SEE
+   * IT. v11 added "the call-site props that move ink are groups, count,
+   * cellWidth, aspect" directly above a paragraph claiming coverage is
+   * independent of the call site. Both sentences were mine, four lines
+   * apart, and the contradiction sat there until the measurement forced it.
+   * A file can hold its own counterexample and still read as coherent.
+   *
+   * THE WARNING THIS TABLE EXISTS FOR GETS STRONGER, NOT WEAKER. It was
+   * written to stop someone normalising the opacities "for consistency".
+   * The corrected numbers say the two fields differ in coverage AND alpha —
+   * so equalising the alphas would not equalise the ink, it would take a
+   * 2.5x ink difference and hide the compensation that was making it look
+   * deliberate.
+   *
+   * WHAT THIS INSTRUMENT COULD STILL BE WRONG ABOUT: it rasterises a
+   * SERIALISED CLONE through an <img>, and `vector-effect: non-scaling-
+   * stroke` is defined against the viewport transform, which an image decode
+   * need not reproduce exactly. Both fields are measured the same way, so
+   * the RATIO is far more trustworthy than the absolutes. Treat 5.60 and
+   * 2.2 as good to about a tenth, and 2.5x as the finding.
    *
    * THE HERO'S BANDS VARY, AND THAT IS NEW. a4e4431 gave the hero a
    * `groups` prop, so the same generator now emits per-band widths there and
@@ -351,17 +391,34 @@
    * / `aspect` (how many glyphs and how big). If you add or change one of
    * those, this table is what goes stale, and nothing else will say so.
    *
-   * COVERAGE IS A PROPERTY OF THE GENERATOR, NOT THE CALL SITE. Both
-   * field consumers draw from EnvelopeField, so they share one coverage
+   * [STRUCK 2026-08-30, refuted by the measurement above. Retained rather
+   * than deleted because it is the claim the rest of this section was built
+   * on, and a reader meeting only the correction cannot tell what it
+   * replaced: "COVERAGE IS A PROPERTY OF THE GENERATOR, NOT THE CALL SITE.
+   * Both field consumers draw from EnvelopeField, so they share one coverage
    * and differ only in alpha — which is exactly why this belongs at the
-   * token and cannot be derived from any single rule's CSS.
+   * token and cannot be derived from any single rule's CSS."
    *
-   * A 4.5x difference in ink at the SAME alpha. Opacity scales a mark's
-   * contribution; coverage decides how much mark there is to scale. Two
-   * consumers at 0.45 are not at the same strength and nothing in the
-   * opacity value says so — which is what would let someone normalise
-   * these "for consistency" and be confidently wrong, while the table
-   * looked MORE consistent afterwards.
+   * What survives is the CONCLUSION, on a better premise: this still belongs
+   * at the token and still cannot be derived from any single rule's CSS —
+   * not because coverage is shared, but because it is a joint property of
+   * the generator AND four call-site props, which no one rule can see.]
+   *
+   * A 5.0x difference in ink at the SAME alpha (was written as 4.5x off the
+   * shared 6.22%; on the measured 5.60% it is 27.80 / 5.60). Opacity scales
+   * a mark's contribution; coverage decides how much mark there is to
+   * scale. Two consumers at 0.45 are not at the same strength and nothing
+   * in the opacity value says so — which is what would let someone
+   * normalise these "for consistency" and be confidently wrong, while the
+   * table looked MORE consistent afterwards.
+   *
+   * THIS RATIO IS A DERIVED NUMBER AND IT WENT STALE THE INSTANT ITS INPUT
+   * MOVED — silently, four sections below the cell that changed, still
+   * reading as a measurement. Worth carrying as its own lesson: correcting
+   * a measured value obliges you to re-derive everything computed FROM it,
+   * and nothing in a comment block links a consequence back to its input.
+   * The 27.80% is itself still un-re-measured, so this ratio has one
+   * verified side and one inherited side.
    *
    * Attribution corrected 2026-08-22. I first recorded the 6.22% as the
    * "lissajous trace" because the figure is cited in lissajous.js — where
