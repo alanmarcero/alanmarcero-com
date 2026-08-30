@@ -7,9 +7,15 @@ import Footer from './Footer';
 import PatchBanks from './sections/PatchBanks';
 import Music from './sections/Music';
 import { patchBanks } from '../../../src/data/patchBanks';
-import { totalPatches, instrumentCount, matchesQuery } from './lib/catalog';
+import { totalPatches, patchBandSizes, instrumentCount, matchesQuery } from './lib/catalog';
 
 const TOTAL_PATCHES = totalPatches(patchBanks);
+
+// Where one machine's patches end and the next begin, for the hero field.
+// Derived from the same summand as TOTAL_PATCHES on purpose — see
+// patchBandSizes. Static because the hero draws the whole catalog, not the
+// search results: the field is the thesis, not a readout.
+const PATCH_BAND_SIZES = patchBandSizes(patchBanks);
 
 // Instruments, not banks. Ten banks cover twenty-four machines, so counting
 // banks here understated the catalog by more than half in the hero's headline
@@ -40,6 +46,7 @@ function MatrixApp() {
 
       <Hero
         totalPatches={TOTAL_PATCHES}
+        patchBandSizes={PATCH_BAND_SIZES}
         instrumentCount={INSTRUMENT_COUNT}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
