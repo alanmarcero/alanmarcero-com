@@ -88,64 +88,125 @@ describe('PatchBanks readouts', () => {
 });
 
 /**
- * --- The custom-property contract -------------------------------------
+ * --- The phosphor scarcity rule ---------------------------------------
  *
- * This closes HALF of the gap the stylesheet names on itself. `patchbanks.css`
- * says of the live-row rule: "NOT UNIT-TESTED, AND SAYING SO: jsdom implements
- * neither :has() nor stylesheet computation, so this is browser-verified only."
- * That is still true of the SELECTOR and this file does not pretend otherwise —
- * `:has(.player)` matching the playing row remains browser-verified.
+ * This file briefly carried a general custom-property-resolution test. It has
+ * been REMOVED rather than kept, because `../tokens.test.js` now covers the
+ * same contract across all six sheets on `matrix.html` and all four on
+ * `arcade.html`, and the general version is strictly better than the one I
+ * wrote: a property has THREE legitimate resolution routes and my scan saw
+ * one. `var(--photo-brightness, 1)` self-resolves through its fallback, and
+ * `--bulb` is injected per element from `Marquee.jsx`. Mine was correct only
+ * because `patchbanks.css` happens to contain neither — which is exactly the
+ * kind of accident that stops being true later. Two tests asserting one
+ * contract means the weaker one eventually disagrees and someone has to
+ * work out which was right. (Generalised by m1 at b26dcaa, with the negative
+ * control mine lacked: rename a token out of `tokens.css`, watch it go red.)
  *
- * But the other failure mode is static and was never covered: an undefined
- * custom property does not error. `color: var(--phosphor)` with no
- * `--phosphor` defined silently inherits, and `text-shadow: var(--bloom-phosphor)`
- * silently drops the bloom. m1 named this exact hazard when landing the
- * tracking scale — "an undefined var would have silently reverted letter-spacing
- * to `normal`, so 'the token exists' is the load-bearing half."
+ * What stays here is the part that is about THIS SLICE's design and belongs
+ * nowhere else: phosphor is the signal colour and it is scarce by SEMANTICS.
+ * Eleven catalogue rows is eleven chances to spend it on a non-signal, and
+ * the rule only means anything while it is spent exactly once.
  *
- * It is live rather than theoretical here. Until 2026-08-30 `GROUNDRULES` told
- * every slice that `--phosphor` "does not resolve anywhere" and to define it
- * slice-locally; it now resolves from `tokens.css`. A slice deleting its local
- * block, or `tokens.css` dropping a name during a refactor, breaks this section
- * with no error anywhere — the page just renders the wrong colour.
- *
- * So: assert every property this stylesheet CONSUMES is DEFINED in a sheet the
- * component tree actually loads. Reading the files as text is the point — it
- * needs no CSS engine, so it runs in the suite that already exists.
+ * Still browser-verified only, and saying so: jsdom implements neither
+ * `:has()` nor stylesheet computation, so this asserts the RULE EXISTS and is
+ * unique — not that it matches the playing row at runtime.
  */
-describe('patchbanks.css custom-property contract', () => {
-  const fs = require('fs');
-  const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-  // Sheets MatrixApp imports (tokens, layout, matrix) plus this section's own.
-  const LOADED = ['../tokens.css', '../layout.css', '../matrix.css', './patchbanks.css'];
-
-  const read = (rel) => fs.readFileSync(path.resolve(__dirname, rel), 'utf8');
-
-  it('defines every custom property patchbanks.css references', () => {
-    const consumed = new Set(
-      [...read('./patchbanks.css').matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)].map((m) => m[1]),
-    );
-    const defined = new Set(
-      LOADED.flatMap((rel) => [...read(rel).matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:/gm)].map((m) => m[1])),
-    );
-
-    // Guard the side we read FROM: an empty regex haul would make the
-    // set-difference below pass vacuously and report a clean contract.
-    expect(consumed.size).toBeGreaterThan(0);
-    expect(defined.size).toBeGreaterThan(0);
-
-    const unresolved = [...consumed].filter((name) => !defined.has(name)).sort();
-    expect(unresolved).toEqual([]);
-  });
-
-  it('still spends --phosphor exactly once, on the live row', () => {
-    const css = read('./patchbanks.css');
-    // Comments explain the scarcity rule at length; only declarations count.
+describe('patchbanks.css phosphor scarcity', () => {
+  it('spends --phosphor exactly once, on the live row', () => {
+    const css = fs.readFileSync(path.resolve(__dirname, './patchbanks.css'), 'utf8');
+    // The comments explain the scarcity rule at length; only declarations count.
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
-    const phosphorUses = [...declarations.matchAll(/var\(\s*--phosphor\b/g)];
 
+    // Guard the side we read FROM: an empty haul would make the count below
+    // pass at zero and report a rule that is simply absent.
+    expect(declarations.trim().length).toBeGreaterThan(0);
+
+    const phosphorUses = [...declarations.matchAll(/var\(\s*--phosphor\b/g)];
     expect(phosphorUses).toHaveLength(1);
     expect(declarations).toMatch(/\.plate:has\(\.player\)\s+\.entry__name\s*\{/);
+  });
+});
+
+/**
+ * --- The mass scale is total over what the component can emit ----------
+ *
+ * `patchbanks.css` enumerates data-coverage 0..5. `coverageOf` is unbounded
+ * (`bank.instruments.length`), so before the clamp a sixth instrument on the
+ * widest bank matched NO bucket, fell through to `.plate__body`'s default
+ * padding, and rendered TIGHTER than a bank with three — the inverted
+ * hierarchy that CSS block already documents itself getting wrong once.
+ *
+ * Latent, not live: counts are [5 2 4 1 1 4 2 4 1 1], max 5, scale top 5.
+ * One instrument away, and adding one is the most ordinary edit this data
+ * takes. The CSS promises adding a BANK cannot land in an unchosen bucket;
+ * it is adding an INSTRUMENT that falls off.
+ *
+ * This asserts the two halves cannot drift apart: every value the component
+ * can emit has a rule. It reads the buckets out of the stylesheet rather
+ * than restating them, so widening the CSS without raising the clamp fails
+ * here instead of shipping.
+ *
+ * WHICH OF THESE TWO ACTUALLY DISCRIMINATES TODAY, because the answer is
+ * not the one the names suggest. Negative controls, run 2026-08-30:
+ *
+ *   un-clamp data-coverage        -> only the CLAMP test goes red
+ *   add a '6' bucket, keep clamp  -> only the CLAMP test goes red
+ *   spend --phosphor twice        -> only the SCARCITY test goes red
+ *
+ * The totality test — the one that reads like the guard on this bug —
+ * stays GREEN with the clamp removed. It has to: the shipped data maxes at
+ * 5, so un-clamping emits nothing out of range *yet*. It is a regression
+ * detector armed for the day the data grows, not evidence the clamp works.
+ * The clamp test is the only one carrying that weight now, and it earns it
+ * by constructing a bank the data does not contain.
+ *
+ * Saying so because a suite reporting 10/10 invites the reading that ten
+ * things were checked. Under this bug, nine of them pass.
+ */
+describe('patchbanks mass scale', () => {
+  const cssBuckets = () => {
+    const css = fs.readFileSync(path.resolve(__dirname, './patchbanks.css'), 'utf8');
+    const found = new Set(
+      [...css.matchAll(/\[data-coverage='(\d+)'\]/g)].map((m) => Number(m[1])),
+    );
+    // Guard the side we read FROM: zero buckets would make every containment
+    // check below pass vacuously against an empty set.
+    expect(found.size).toBeGreaterThan(0);
+    return found;
+  };
+
+  it('gives every emitted data-coverage value a rule in the stylesheet', () => {
+    renderCatalogue();
+    const buckets = cssBuckets();
+    const emitted = [...document.querySelectorAll('[data-coverage]')].map((el) =>
+      Number(el.getAttribute('data-coverage')),
+    );
+
+    expect(emitted.length).toBe(patchBanks.length);
+    expect(emitted.filter((v) => !buckets.has(v))).toEqual([]);
+  });
+
+  it('clamps a bank that runs off the top of the scale, and still reports the true count', () => {
+    const buckets = cssBuckets();
+    const top = Math.max(...buckets);
+    const overflowing = {
+      ...patchBanks[0],
+      name: 'Overflow Test Bank',
+      downloadLink: 'https://example.invalid/overflow.zip',
+      instruments: Array.from({ length: top + 4 }, (_, i) => `Machine ${i + 1}`),
+    };
+
+    render(<PatchBanks banks={[overflowing]} searchQuery="" />);
+    const plate = document.querySelector('[data-coverage]');
+
+    // The bucket is clamped so a rule always matches...
+    expect(Number(plate.getAttribute('data-coverage'))).toBe(top);
+    expect(buckets.has(Number(plate.getAttribute('data-coverage')))).toBe(true);
+    // ...while the readout still tells the truth about the bank.
+    expect(screen.getByText(`Fits ${top + 4} instruments`)).toBeTruthy();
   });
 });
