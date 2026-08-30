@@ -268,6 +268,24 @@ describe('buildFieldPath grouping', () => {
    * portrait of the collection, and a short group array must not silently
    * shrink it.
    */
+  // The asymmetry the reconstruction assertion below cannot see. Overcounting
+  // walks the cursor past the last segment; later slices come back empty and
+  // are skipped, so bands SILENTLY DISAPPEAR while the field still draws in
+  // full. Pinned here because `bands.join('') === d` passes in both drift
+  // directions and is therefore not a guard against this one.
+  it('loses trailing bands when the groups overcount, without losing a glyph', () => {
+    const three = buildFieldPath({ ...base, groups: [8, 8, 8] });
+    expect(three.bands).toHaveLength(2);
+    expect(three.bands.map((d) => (d.match(/M/g) || []).length)).toEqual([8, 4]);
+
+    const four = buildFieldPath({ ...base, groups: [6, 6, 6, 6] });
+    expect(four.bands).toHaveLength(2);
+
+    // Both fields are whole. This is what makes the loss invisible.
+    expect(three.bands.join('')).toBe(three.d);
+    expect(four.bands.join('')).toBe(four.d);
+  });
+
   it('keeps every glyph when the groups undercount', () => {
     const field = buildFieldPath({ ...base, groups: [2, 2] });
     expect(field.bands.join('')).toBe(field.d);
