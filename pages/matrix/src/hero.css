@@ -46,13 +46,31 @@
 
 /* The sentence that says what the field behind the text is. Its existence
    is what makes the graphic decorative rather than load-bearing: with the
-   claim in text, an aria-hidden picture withholds nothing. */
+   claim in text, an aria-hidden picture withholds nothing.
+
+   WHICH IS WHY IT CARRIES --legend AND NOT --legend-dim, against the grain
+   of every other secondary line on this page. Measured in a settled render:
+   at --legend-dim this sentence scored 4.33:1 against its own local ground
+   and 1.55:1 where a field stroke crosses a letterform. A sentence that
+   exists FOR accessibility, rendered under the accessibility floor, is a
+   contradiction in one element — the picture is aria-hidden on the promise
+   that this line carries its content, and the line was the least legible
+   thing in the hero.
+
+   The August cohort searched for a field OPACITY satisfying both the field
+   and the text and found the feasible region empty. That was correct and it
+   searched the wrong side: the ground is shared by six text elements and
+   lives in another slice's file, while the text is m2's and was never
+   varied. Raising the text needs no token and no coordination.
+
+   Stays at --step--1 and 26rem: quiet by SIZE and MEASURE, legible by
+   COLOUR. What it must not do is compete with the display headline. */
 .hero__field-note {
   margin: var(--space-s) 0 0;
   max-width: 26rem;
   font-size: var(--step--1);
   line-height: 1.5;
-  color: var(--legend-dim);
+  color: var(--legend);
 }
 
 /* --- The field ----------------------------------------------------- */
