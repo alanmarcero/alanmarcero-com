@@ -85,44 +85,54 @@
  * reached for from here, which is the same call the 26rem cap got: the
  * binding constraint is not in this file.
  *
- * SCOPE — I understated this and the render corrected me. I first wrote that
- * stroke coverage is 1.72–2.94% of the field's area, "a small fraction of
- * glyph pixels." That figure is a whole-field average and it is the wrong
- * denominator. Rendered the built page and diffed it against the same page
- * with `.plate__field { display: none }`, which isolates the field exactly:
+ * SCOPE, after two wrong measurements of my own — READ THE RETRACTION.
  *
- *   region of plate 1 (coverage 5)        % of pixels that are field
- *   under the description text                 14.10
- *   under the instrument list                  12.63
- *   right margin, no text over it               4.10
- *   photo column (field hidden behind photo)   41.43
+ * I first scoped this as "1.72–2.94% of the field's area, a small fraction of
+ * glyph pixels." That is a whole-field average answering a local question, and
+ * an average over an artifact is not a conservative estimate of an uneven
+ * defect: it estimates a different quantity, biased small, because the clean
+ * regions dilute it. That criticism still stands.
  *
- * THE FIELD IS ~3.4x DENSER WHERE THE TEXT IS THAN IN THE EMPTY MARGIN, and
- * densest of all behind the photograph, where none of it is visible. So it
- * spends most of its ink where nobody can see it and concentrates the rest
- * exactly where it costs legibility.
+ * I then replaced it with a two-render diff reporting 14.10% under the
+ * description, 12.63% under the instrument list, 4.10% in the margin and
+ * 41.43% behind the photo, and concluded the field was ~3.4x denser under
+ * text and densest where it cannot be seen. **THAT IS RETRACTED. It was
+ * wrong, and it was wrong in the direction that made my proposed fix free.**
  *
- * That is the SAME PATHOLOGY the owner of tokens.css found in the hero —
- * "the mask is strongest exactly where the text is and fades where there is
- * none" — arriving here through stroke distribution rather than a mask, and
- * it is why the fix is geometry. Shaping the field away from the text column
- * is not a compromise between legibility and the graphic; the graphic is
- * already densest where it cannot be seen.
+ * The regions were eyeballed off a screenshot displayed at 1067x2000 whose
+ * original is 1280x2400. Every box was therefore off by a factor of 1.2 —
+ * the "photo column" box began 87px above the photo, in bare plate padding
+ * where nothing covers the field, which is what produced the 41%.
  *
- * A first attempt at this measurement counted warm pixels and was wrong:
- * `--lcd` on the "FITS n INSTRUMENTS" label is warmer than the field's
- * strokes, so the label read as field. The two-render diff has no such
- * ambiguity. Recorded because the contaminated version supported the same
- * conclusion for the wrong reason.
+ * Re-measured with boxes read from the live DOM instead of guessed:
  *
- * The divider uses --seam, not --legend-faint. I reached for the faint
- * token because its contract reads "non-text only — strokes, rules", and
- * that is what this is. But the owner of tokens.css then measured that it
- * CANNOT REACH 3:1 on --panel at any opacity — 2.78 is its ceiling — so the
- * token named for strokes could not render a stroke that meets the non-text
- * floor. --seam is 3.42:1 and is now documented as the stroke token. Asked
- * for it rather than lifting the faint one, which would have broken its
- * inert role for the sites that legitimately want something invisible.
+ *   region (coverage-5 plate)     % of pixels that are field
+ *   photo element                      2.29
+ *   description text                   4.35
+ *   fits / instrument row              3.71
+ *   right margin, no text              3.24
+ *   whole plate                        3.07
+ *
+ * So the field is roughly UNIFORM. Text-to-margin is 1.34x, not 3.44x, and
+ * the photo region is the LEAST dense rather than the most. Independently
+ * measured by agent-f832b330 with a different method — rasterising the field
+ * SVG alone — which gave 1.56x and the same ordering. Two instruments agree;
+ * my diff-with-guessed-boxes was the outlier.
+ *
+ * WHAT THIS COSTS THE ARGUMENT ABOVE, stated plainly: the contrast failure is
+ * unchanged, because 2.60:1 is arithmetic on colours and never depended on
+ * distribution. But "the graphic is already densest where it cannot be seen,
+ * so shaping it away from the text is free" is DEAD. The field is spread
+ * evenly; moving it off the text removes ink a viewer can see. The fix is a
+ * genuine trade between legibility and the graphic, and whoever owns
+ * `.plate__field` should price it as one.
+ *
+ * A third wrong measurement, kept because it is the instructive one: my very
+ * first attempt classified field pixels by warmth, and `--lcd` on the "FITS n
+ * INSTRUMENTS" label is warmer than the strokes, so the label counted as
+ * field. It reached the same conclusion as the eyeballed diff. Two broken
+ * instruments agreeing is not corroboration, and agreement was the only
+ * signal either of them produced.
  */
 
 .plate .entry__fits {
