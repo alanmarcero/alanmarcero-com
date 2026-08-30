@@ -214,6 +214,22 @@
    * to hero.css on source order and has never rendered; corrected at b26dcaa.
    * So role beats size even when size points the other way. */
   font-weight: var(--weight-panel);
+  /* 1.1 is an UNFORCED judgement, measured and kept deliberately. The rule
+   * this tree does obey is narrower than it looks: LEADING BELOW 1.0 IS A
+   * SINGLE-LINE-ONLY LICENCE — every sub-1.0 element (.hero__title 0.86,
+   * .hero__count-value 0.90, .section-title 0.95) renders on exactly one
+   * line at both 375px and 1200px, and every element that produces a second
+   * line (.entry__name, .credits__list) sits at >= 1.0. Zero counterexamples.
+   * ABOVE 1.0 the rule says nothing, and this value is in that region:
+   * .entry__name wraps to two lines at 1.0 while this title, which does not
+   * wrap at all, sits looser at 1.1 — so "wrapping needs air" is NOT what is
+   * happening here and must not be written down as if it were.
+   * What 1.1 buys, measured: single-take rows are 2.76px taller (100.61 vs
+   * 97.85); multi-take rows do not move, because their height comes from the
+   * spectrum and takes. Total list delta 8.27px over six rows.
+   * Kept rather than normalised to 1.0 because changing rendered output to
+   * make a token scale tidy is the same error as tokenising a value nobody
+   * can justify — in the other direction. */
   line-height: 1.1;
   /* Was a raw 0.01em. m1's tracking scale named it: caps need LESS tracking
    * as they grow and MORE as they get heavier, so a --step-3 title at 600
@@ -222,6 +238,18 @@
    * have invented a seventh, right and incompatible. */
   letter-spacing: var(--track-card);
   color: var(--legend);
+  /* A GUARD, not a live treatment — recorded so its presence is not read as
+   * evidence that wrapping was ever a problem here. This is the only
+   * text-wrap: balance in the repository and it currently never fires:
+   * useMusic.js parses `work` out of "Artist - Work (Version)", so the six
+   * live titles are one to two words and stay single-line down to 375px.
+   * The data condition, stated because the justification is about TODAY'S
+   * corpus and not about the property: a 51-character probe title also held
+   * one line at 1200px, so it takes a genuinely long release name to fire.
+   * Re-check when the catalogue grows rather than assuming this still holds.
+   * Meanwhile .section-title (48px) and .hero__title (127px) DO wrap and
+   * compute text-wrap: wrap — the one place the property exists is the one
+   * place it cannot help, which is m1's call, not m4's. */
   text-wrap: balance;
 }
 
