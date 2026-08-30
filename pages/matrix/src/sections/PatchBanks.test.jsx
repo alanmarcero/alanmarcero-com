@@ -210,3 +210,48 @@ describe('patchbanks mass scale', () => {
     expect(screen.getByText(`Fits ${top + 4} instruments`)).toBeTruthy();
   });
 });
+
+/**
+ * --- No photo cap above the track that contains it ---------------------
+ *
+ * A declaration can be correct in isolation and unreachable in
+ * composition. `.plate[data-coverage='4'] .entry__photo { max-width: 26rem }`
+ * was valid CSS, read as deliberate, and did nothing at any viewport: the
+ * photo sits in `.entry--pictured`'s first track, `minmax(0, 18rem)`, so a
+ * 26rem ceiling is above a 18rem cap and never binds. Measured 240/288/288
+ * at 1200px and 400/400/400 at 400px.
+ *
+ * No linter catches this and neither does a custom-property test — every
+ * name resolved, the value parsed, the rule was simply unreachable. The
+ * fourth instance of this shape found in one session across four slices,
+ * and all four were found by *evaluating* rather than reading.
+ *
+ * This is a GUARD, not a regression detector armed for later: it fails on
+ * today's tree the moment a cap above the track is added back. (The
+ * distinction matters — a test that can only fail on data you do not have
+ * yet is a different instrument wearing the same name.)
+ */
+describe('patchbanks photo caps are reachable', () => {
+  const remToPx = (v) => parseFloat(v) * 16;
+
+  it('declares no .entry__photo max-width wider than its grid track', () => {
+    const shared = fs.readFileSync(path.resolve(__dirname, '../matrix.css'), 'utf8');
+    const css = fs.readFileSync(path.resolve(__dirname, './patchbanks.css'), 'utf8');
+
+    // The track that contains the photo, read from the file that owns it.
+    const track = shared.match(
+      /\.entry--pictured\s*\{[^}]*grid-template-columns:\s*minmax\(\s*0\s*,\s*([\d.]+)rem/,
+    );
+    expect(track).not.toBeNull(); // guard the side we read FROM
+    const trackPx = remToPx(track[1]);
+
+    // Every photo cap declared in this section, outside the narrow-screen
+    // branch where both caps deliberately stand down.
+    const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@media[^{]*\{[\s\S]*?\}\s*\}/g, '');
+    const caps = [...declarations.matchAll(/\.entry__photo\s*(?:,[^{]*)?\{[^}]*max-width:\s*([\d.]+)rem/g)]
+      .map((m) => remToPx(m[1]));
+
+    expect(caps.length).toBeGreaterThan(0); // a silent zero would pass vacuously
+    expect(caps.filter((px) => px > trackPx)).toEqual([]);
+  });
+});
