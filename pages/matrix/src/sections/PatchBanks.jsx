@@ -28,6 +28,34 @@ export const headingIdFor = (name) =>
  */
 const coverageOf = (bank) => (bank.instruments || []).length;
 
+/* The top step of the mass scale in patchbanks.css. That scale enumerates
+   0..5 and nothing above, so the raw count must not be handed to CSS: a
+   sixth instrument on the widest bank matches NO bucket, falls through to
+   .plate__body's default padding, and renders TIGHTER than a bank with
+   three. That is the inverted hierarchy the same CSS block already
+   documents itself getting wrong once — arriving a second time by a
+   different route.
+
+   Measured 2026-08-30, per-bank instrument counts: [5 2 4 1 1 4 2 4 1 1].
+   Max is 5 and the scale tops out at 5, so the cliff is ONE instrument
+   away, and adding one is the most ordinary edit this data ever takes.
+
+   The CSS says thresholds live in one place "so adding a BANK cannot
+   silently land it in a bucket nobody chose." True, and it protects the
+   wrong axis: adding a bank is safe at any count, adding an INSTRUMENT to
+   the largest bank is what falls off the scale.
+
+   Clamping here rather than widening the CSS is deliberate. data-coverage
+   is a BUCKET SELECTOR, not a readout — the honest number is rendered as
+   text ("Fits 5 instruments") from `coverage`, which stays unclamped. The
+   attribute should be total over the scale by construction rather than
+   asking a future editor to remember a sixth rule.
+
+   To add a sixth step: raise this AND add the bucket. The test in
+   PatchBanks.test.jsx fails if the two ever disagree. */
+const COVERAGE_SCALE_TOP = 5;
+const coverageBucketOf = (bank) => Math.min(coverageOf(bank), COVERAGE_SCALE_TOP);
+
 /**
  * The catalog. One plate per instrument, each carrying its own field of
  * envelopes — one glyph per patch in that bank, generated from the bank's
@@ -87,8 +115,10 @@ function PatchBanks({ banks, searchQuery }) {
             className={`plate ${index % 2 === 1 ? 'plate--raised' : ''}`}
             /* Mass follows coverage. CSS reads this rather than a tier name
                so the thresholds stay in one place and adding a bank cannot
-               land it in a bucket nobody chose. */
-            data-coverage={coverage}
+               land it in a bucket nobody chose. Clamped to the scale's top
+               step — see COVERAGE_SCALE_TOP; the unclamped `coverage` is
+               what the "Fits N instruments" readout below reports. */
+            data-coverage={coverageBucketOf(bank)}
             aria-labelledby={headingId}
           >
           <div className="plate__field">
