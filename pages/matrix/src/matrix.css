@@ -63,10 +63,26 @@
   margin: var(--space-xl) 0 0;
 }
 
+/* TWO DECLARATIONS DELETED HERE, AND THEY HAD NEVER APPLIED. This rule
+   carried `font-size: var(--display-s)` and `line-height: 1`; hero.css:33
+   declares the same single class at the same specificity (0,1,0) with
+   --display-m and 0.9, and hero.css is emitted last, so source order gave
+   it both. Verified in the bundle rather than argued from the source:
+   dist/assets/matrix-*.css has this rule at offset 913 and hero.css's at
+   6077, both top-level with no @media around either.
+
+   A losing declaration is worse than an absent one — it reads as the
+   authoritative rule, and I cited --display-s as fact in the tokens.css
+   weight comment on the strength of reading it here. m4 found it while
+   deriving the line-height clustering and had already carried my wrong
+   premise into music.css's comment.
+
+   font-weight is uncontested — hero.css does not set it — so the token
+   stays. SIZE AND LEADING FOR THIS ELEMENT BELONG TO hero.css; do not
+   re-add them here. */
+
 .hero__count-value {
-  font-size: var(--display-s);
   font-weight: var(--weight-panel);
-  line-height: 1;
 }
 
 .hero__count-label {
