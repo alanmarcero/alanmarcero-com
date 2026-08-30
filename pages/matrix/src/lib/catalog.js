@@ -17,6 +17,25 @@
 export const totalPatches = (banks) =>
   banks.reduce((sum, bank) => sum + (bank.count || 0), 0);
 
+/**
+ * Patch counts per bank, in catalog order, for the hero field's banding.
+ *
+ * This is deliberately `totalPatches`' own summand rather than a second
+ * expression that happens to agree today. `EnvelopeField` draws the hero at
+ * `count={totalPatches(banks)}` and bands it by these sizes, so the two must
+ * come from one rule or the banding silently walks off the end of the field.
+ *
+ * The tempting derivation is `bank.count || 64`, copied from `PatchBanks`,
+ * where 64 is a sensible placeholder for a plate that must draw *something*.
+ * Used here it oversums against a total that counted those banks as zero,
+ * and `bandsFrom` honours a drifted count "as far as it goes" — so the tail
+ * banks lose their bands, the field still renders whole, and every test
+ * passes. Countless is 0 here and 64 there because the two answer different
+ * questions; only this one feeds the total.
+ */
+export const patchBandSizes = (banks) =>
+  banks.map((bank) => bank.count || 0).filter((n) => n > 0);
+
 /** Banks that ship patches. Not the same thing as instruments — see below. */
 export const patchBankCount = (banks) =>
   banks.filter((bank) => bank.count).length;

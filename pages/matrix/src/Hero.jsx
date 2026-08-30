@@ -77,6 +77,7 @@ export const describeResults = (resultsCount, query) => {
  */
 function Hero({
   totalPatches,
+  patchBandSizes = null,
   instrumentCount,
   searchQuery,
   onSearchChange,
@@ -113,6 +114,7 @@ function Hero({
           cellWidth={8}
           cellHeight={6}
           gap={2}
+          groups={patchBandSizes}
           draw
           beam
         />

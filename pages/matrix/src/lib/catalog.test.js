@@ -1,5 +1,6 @@
 import {
   totalPatches,
+  patchBandSizes,
   patchBankCount,
   instrumentCount,
   matchesQuery,
@@ -13,6 +14,24 @@ describe('totalPatches', () => {
 
   it('is 0 for an empty catalog', () => {
     expect(totalPatches([])).toBe(0);
+  });
+});
+
+describe('patchBandSizes', () => {
+  it('drops countless banks rather than substituting a placeholder', () => {
+    expect(patchBandSizes([{ count: 128 }, {}, { count: 64 }])).toEqual([128, 64]);
+  });
+
+  // The invariant the hero's banding depends on. If these ever diverge,
+  // bandsFrom walks past the last segment and the tail banks lose their
+  // bands with the field still rendering whole and this suite still green.
+  it('sums to exactly totalPatches for the real catalog', () => {
+    const sum = patchBandSizes(patchBanks).reduce((a, b) => a + b, 0);
+    expect(sum).toBe(totalPatches(patchBanks));
+  });
+
+  it('is empty for a catalog with no counted banks', () => {
+    expect(patchBandSizes([{}, {}])).toEqual([]);
   });
 });
 
