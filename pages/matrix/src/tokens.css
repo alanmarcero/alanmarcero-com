@@ -447,6 +447,46 @@
   --track-numeral: -0.02em;    /* tabular numerals — digits set loose already */
   --track-mono-caps: 0.04em;   /* small mono caps — needs air at --step--2  */
 
+  /* Weight. THIS IS NOT THE SAME JOB AS THE TRACKING SCALE ABOVE, and the
+   * difference is worth stating because the two look alike from a count.
+   * Tracking was six literals with six DISTINCT values — six independent
+   * optical derivations, every one correct, and naming them took a judgment
+   * per site. Weight is thirteen literals with TWO distinct values: a binary
+   * the tree had already agreed on by convention and never written down.
+   * Ratio of distinct-values to literals, 0.15 against tracking's 1.00 —
+   * which is the number that says this is a rename and that was a design.
+   * (m4 built the instrument that measured it and ranked this first;
+   * font-weight had been invisible to the previous audit because the
+   * property was missing from its property list, so it produced no row at
+   * all and the sweep read clean.)
+   *
+   * YOU CANNOT DERIVE THE REGISTER FROM font-size, and the exception is the
+   * reason this needs a comment rather than a lookup table:
+   *
+   *   --weight-display  .hero__title (--display-l), .section-title
+   *                     (--display-s). The two elements that NAME a region
+   *                     of the page.
+   *   --weight-panel    everything else on the panel face — .legend,
+   *                     .action, .entry__name, .entry__count, .footer__link.
+   *
+   *   THE EXCEPTION: .hero__count-value sits at --display-s, the same size
+   *   as .section-title, and takes --weight-panel because it is a READOUT,
+   *   not a title. Size does not decide this; role does. Anyone
+   *   "normalising" that site to match its neighbours by size would be
+   *   wrong, and would have no way to know it from the CSS alone.
+   *
+   * Same contract as --plate-pad and the tracking scale: pick a step, or ask
+   * for one. Do not write a font-weight literal.
+   *
+   * NOT CONVERTED: src/arcade/*.css holds four more literals (700 x2,
+   * 600 x2). That is the arcade page, not this contract's cascade — arcade
+   * .html loads its own bundle — and it belongs to no slice. Left raw
+   * deliberately rather than reached into, so this note is the record that
+   * they were seen and skipped rather than missed.
+   */
+  --weight-display: 700;       /* display-scale titles                      */
+  --weight-panel: 600;         /* the panel face's working weight           */
+
   /* --- Space ------------------------------------------------------- */
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;

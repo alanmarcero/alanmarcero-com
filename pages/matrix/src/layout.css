@@ -34,7 +34,7 @@ body {
 
 .legend {
   font-family: var(--panel-face);
-  font-weight: 600;
+  font-weight: var(--weight-panel);
   text-transform: uppercase;
   letter-spacing: var(--legend-tracking);
   color: var(--legend-dim);
@@ -162,7 +162,7 @@ body {
 .section-title {
   margin: 0;
   font-family: var(--panel-face);
-  font-weight: 700;
+  font-weight: var(--weight-display);
   text-transform: uppercase;
   letter-spacing: var(--track-section);
   font-size: var(--display-s);
@@ -212,7 +212,7 @@ body {
   display: inline-block;
   padding-block: var(--space-2xs);
   font-family: var(--panel-face);
-  font-weight: 600;
+  font-weight: var(--weight-panel);
   font-size: var(--step--1);
   text-transform: uppercase;
   letter-spacing: var(--legend-tracking);
