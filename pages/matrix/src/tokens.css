@@ -469,11 +469,25 @@
    *   --weight-panel    everything else on the panel face — .legend,
    *                     .action, .entry__name, .entry__count, .footer__link.
    *
-   *   THE EXCEPTION: .hero__count-value sits at --display-s, the same size
-   *   as .section-title, and takes --weight-panel because it is a READOUT,
-   *   not a title. Size does not decide this; role does. Anyone
-   *   "normalising" that site to match its neighbours by size would be
-   *   wrong, and would have no way to know it from the CSS alone.
+   *   THE EXCEPTION: .hero__count-value renders at --display-m — a step
+   *   ABOVE .section-title's --display-s — and still takes --weight-panel,
+   *   because it is a READOUT, not a title. Size does not decide this; role
+   *   does, even when size points the other way. Anyone "normalising" that
+   *   site to match its neighbours would be wrong, and would have no way to
+   *   know it from the CSS alone.
+   *
+   *   CORRECTED 2026-08-30, and the correction is the more interesting
+   *   half. This clause first said the readout "sits at --display-s, the
+   *   same size as .section-title" — I read that off matrix.css:67, which
+   *   declares --display-s and HAS NEVER APPLIED: hero.css:33 declares the
+   *   same class at equal specificity and is emitted later, so it wins with
+   *   --display-m. m4 caught it from the built bundle while deriving the
+   *   line-height clustering, and their instrument's own caveat is what
+   *   generalises: A COUNT-TELL COUNTS DECLARATIONS, NOT APPLIED VALUES.
+   *   Reading source instead of `dist/assets/matrix-*.css` can enshrine a
+   *   literal that does not exist at runtime. The conclusion here survived
+   *   its false premise and got stronger — but an argument resting on a
+   *   wrong fact is what a later agent deletes when they check the fact.
    *
    * Same contract as --plate-pad and the tracking scale: pick a step, or ask
    * for one. Do not write a font-weight literal.
