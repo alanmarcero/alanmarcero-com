@@ -206,8 +206,13 @@
    * m1's register splits on ROLE: --weight-display is for the two elements
    * that NAME a region of the page (.hero__title, .section-title). A work
    * title is an entry WITHIN a region, so it takes the panel face's working
-   * weight — the same call m1 made for .hero__count-value, which sits at
-   * display size and is still a readout. */
+   * weight — the same call m1 made for .hero__count-value. That precedent is
+   * STRONGER than the contract first stated: the readout renders at
+   * --display-m (82.4px measured), a step ABOVE .section-title's 48px, and
+   * still takes the panel weight. m1's original note said "the same size as
+   * .section-title", read off a matrix.css declaration that loses the cascade
+   * to hero.css on source order and has never rendered; corrected at b26dcaa.
+   * So role beats size even when size points the other way. */
   font-weight: var(--weight-panel);
   line-height: 1.1;
   /* Was a raw 0.01em. m1's tracking scale named it: caps need LESS tracking
