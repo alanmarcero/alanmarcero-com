@@ -299,6 +299,40 @@
    *       addressed to this file's owner sat in patchbanks.css and arrived
    *       only because a peer hand-carried it.
    *
+   *       HERO ROWS RE-AUDITED THE SAME WAY, AND THE RESULT DOES NOT
+   *       GENERALISE FROM THE PLATE. Same instrument, same screenshot,
+   *       text-free column band inside the hero at the y-bands the text
+   *       occupies (x 860-1160, right of the 46rem prose measure):
+   *
+   *         band          bare --panel   --legend-dim <4.5   <3.0
+   *         lead  y400-460    89.07%          9.06%          4.68%
+   *         title y300-380    89.83%          8.60%          5.05%
+   *         lower y600-660    66.81%          7.62%          0.44%
+   *
+   *         --legend   0.00-1.40% <4.5, 0.00% <3.0  (large text, 3.0 floor: fine)
+   *         --lcd      0.06-3.95% <4.5, 0.00-0.68% <3.0
+   *
+   *       THE PLATE WAS 1.03%. THE HERO IS ~9%, WITH ~5% BELOW EVEN THE
+   *       LARGE-TEXT FLOOR. Nearly one pixel in ten of .hero__lead's ground
+   *       is under 4.5. The hero field runs at opacity 0.72 against the
+   *       plate's 0.42, and its ground is 89% bare panel against the plate's
+   *       98.7% — so the same worst-pixel correction that DISSOLVED the plate
+   *       concern CONFIRMS the hero one.
+   *
+   *       This is the trap in the correction itself: having found that one
+   *       row's verdict was a sampling artifact, the cheap move is to assume
+   *       the neighbouring rows are too. They are not. A worst-pixel figure
+   *       is WRONG AS A VERDICT in both cases and the underlying defect is
+   *       real in only one. Re-measure per row; the recorded 1.55 for
+   *       --legend-dim matches this instrument's brightest-pixel reading of
+   *       1.56-1.76, which confirms the ROWS are worst-pixel figures without
+   *       telling you anything about whether the element is fine.
+   *
+   *       STILL m2's CALL, unchanged: the rule is in this file, the hero is
+   *       theirs. What is new is that they now have an area-weighted number
+   *       to price against instead of a single ratio, and it says the
+   *       problem is real.
+   *
    *       PLATE ROW RESOLVED 2026-08-30 — AND THE VERDICT COLUMN WAS THE
    *       DEFECT, NOT THE FIELD. 2.60 is the WORST SINGLE PIXEL, reported as
    *       though it described the surface. Measured from a screenshot of the
