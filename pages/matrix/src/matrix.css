@@ -24,7 +24,58 @@
   z-index: 0;
   color: var(--wood);
   opacity: 0.72;
-  mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 92%);
+  /* RESHAPED 2026-08-30. The old mask was `#000 0%, #000 42%, transparent
+     92%`: full strength across 0-42% and gone by 92%. The text occupies
+     27%-77% of this field, so that put FULL STRENGTH under the eyebrow (27%)
+     and the title (31%), began fading only after the text had started, and
+     reached zero below all of it. Strongest where things sit on it, weakest
+     where nothing does — backwards.
+
+     This is a REDISTRIBUTION, not a reduction: suppressed through the band
+     everything sits on, restored in the empty band beneath it, and still
+     clearing at the base, which the old mask did deliberately and which is
+     doing compositional work against the section below.
+
+     MEASURED, both shots from one build, strips above and below each line
+     clipped to that line's OWN x-extent (a far-right proxy column is
+     contaminated by the headline's own glyphs, which cost two agents an
+     afternoon and two wrong diagnoses of one 2x discrepancy):
+
+       band       mean deviation from panel    --legend-dim below 4.5
+       eyebrow          7.44 -> 3.64              5.35% -> 4.29%
+       lead             6.98 -> 2.07              5.72% -> 2.84%
+       count           11.58 -> 4.84             11.64% -> 6.85%
+       note             5.26 -> 4.28              7.47% -> 6.23%
+       base             0.00 -> 0.14              0.00% -> 0.00%
+
+     RESIDUAL, RECORDED AS RESIDUAL RATHER THAN AS SOLVED: count and note
+     remain near 6-7%. That is NOT the mask's to fix. Measured unmasked, the
+     count band carries 11.58 against the lead's 6.98 — 1.7x more ink before
+     any mask applies — and ONE MULTIPLIER ACROSS A PLATEAU PRESERVES THE
+     RATIO IT IS GIVEN. A uniform suppression cannot equalise a non-uniform
+     field at any plateau that still leaves a graphic.
+
+     Open, and m5's rather than m1's: the beam is one extra Lissajous path
+     crossing that region diagonally, which would add local ink exactly where
+     the field is fading. If that is the cause, the residual is a
+     beam-placement question and this mask is done.
+
+     RETRACTED HERE BECAUSE IT WAS BRIEFLY LOAD-BEARING: the damage was
+     reported as ordering monotonically with mask depth. It does not —
+     eyebrow 7.44, lead 6.98, count 11.58, note 5.26. That ordering came from
+     contaminated windows. The mask was still shaped backwards, on the
+     mechanism rather than on the ordering. (Landed at m2's request;
+     their acceptance gate was transcribed from a variant that destroyed the
+     base fade, so it asked for a target unreachable while keeping it.) */
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 18%,
+    rgba(0, 0, 0, 0.28) 30%,
+    rgba(0, 0, 0, 0.28) 72%,
+    rgba(0, 0, 0, 0.5) 82%,
+    transparent 95%
+  );
 }
 
 .hero__body {
