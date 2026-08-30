@@ -317,9 +317,39 @@
    * normalising these opacities "for consistency":
    *
    *   consumer          coverage  the ink is        alpha  generator
-   *   .hero__field         6.22%   1.25px strokes    0.72   EnvelopeField
-   *   .plate__field        6.22%   1.25px strokes    0.42   EnvelopeField
+   *   .hero__field         6.22%   0.76-1.04 strokes 0.72   EnvelopeField
+   *   .plate__field        6.22%   1px strokes       0.42   EnvelopeField
    *   .work__spectrum     27.80%   filled rects      0.45   SpectrumBars
+   *
+   * STROKE COLUMN CORRECTED 2026-08-30, AND ONLY THAT COLUMN. It read
+   * "1.25px strokes" for both fields. There is no 1.25 at runtime: rendered
+   * from the built bundle over a local server, the DOM carries stroke-width
+   * 1 on the plate bands, 0.76 / 0.87 / 0.92 / 1.04x7 on the hero's ten, and
+   * a single 1.6 which is the BEAM (a different element, --lcd, its own
+   * drop-shadow) and not field ink. EnvelopeField's default is
+   * `strokeWidth = 1`, no call site overrides it, and no CSS sets
+   * stroke-width anywhere under pages/matrix/. Flagged by agent-01de9ea9,
+   * who declined to call it wrong without a render — correctly, since a
+   * false alarm against this file's contrast reasoning is expensive.
+   *
+   * THE COVERAGE COLUMN IS NOT RECOMPUTED AND MUST NOT BE READ AS
+   * RE-CONFIRMED. 6.22% was measured; the stroke label beside it was not.
+   * Correcting the label does not re-derive the number, and I have no
+   * render of ink area to replace it with. This is the same failure this
+   * file names one section down — a measured table laundering an unmeasured
+   * cell — sitting in the table that first taught it, which is why the two
+   * cells are now marked separately instead of the row reading as one
+   * verified unit.
+   *
+   * THE HERO'S BANDS VARY, AND THAT IS NEW. a4e4431 gave the hero a
+   * `groups` prop, so the same generator now emits per-band widths there and
+   * a uniform width on the plate. Coverage remains a property of the
+   * GENERATOR, but only because the ramp is normalised to a glyph-weighted
+   * mean of 1.001 — an unnormalised ramp raised hero ink 54% while every
+   * test stayed green, caught and fixed at m5 v10. So: THE CALL-SITE PROPS
+   * THAT MOVE INK ARE `groups` (per-band weights) AND `count` / `cellWidth`
+   * / `aspect` (how many glyphs and how big). If you add or change one of
+   * those, this table is what goes stale, and nothing else will say so.
    *
    * COVERAGE IS A PROPERTY OF THE GENERATOR, NOT THE CALL SITE. Both
    * field consumers draw from EnvelopeField, so they share one coverage
