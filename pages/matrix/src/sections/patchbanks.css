@@ -85,52 +85,60 @@
  * reached for from here, which is the same call the 26rem cap got: the
  * binding constraint is not in this file.
  *
- * SCOPE — MEASURED THREE WAYS, RETRACTED THREE TIMES. Read this before
- * quoting any density number for this field, including mine.
+ * SCOPE — four measurements, two retractions, and one of the retractions
+ * was itself wrong. Final state, with the reasoning kept so the next reader
+ * does not repeat any of it.
  *
- * The contrast failure above is SOUND and independent of everything below:
- * 2.60:1 is arithmetic on two colours and a compositing fraction. It never
- * depended on where the strokes fall.
+ * The contrast failure above is SOUND throughout and never depended on any
+ * of this: 2.60:1 is arithmetic on two colours and a compositing fraction.
  *
- * What I could not measure is the DISTRIBUTION, and the record of failing is
- * more useful than the numbers would have been:
+ * Distribution, settled:
  *
- *   1. Classified field pixels by warmth. `--lcd` on the "FITS n INSTRUMENTS"
- *      label is warmer than the strokes, so the label counted as field.
- *   2. Two-render diff (page, versus page with `.plate__field` suppressed)
- *      using regions eyeballed off a screenshot displayed at 1067x2000 whose
- *      original was 1280x2400. Every box displaced by 1.2x. Reported 41%
- *      behind an opaque photograph, which is geometrically impossible.
- *   3. Same diff with regions read from the live DOM. Reported 2.29 / 4.35 /
- *      3.71 / 3.24 across photo / desc / fits / margin — close enough to a
- *      peer's independent figures to look corroborated.
+ *   region (coverage-5 plate)     % of pixels the field contributes
+ *   photo element                      2.29
+ *   description text                   4.35
+ *   fits / instrument row              3.71
+ *   right margin, no text              3.24
+ *   whole plate                        3.07
  *
- * THEN I RAN THE CONTROL I HAD NEVER RUN: diff two renders of the SAME page
- * with nothing changed. Two identical renders differ by 51% of pixels in the
- * photo region and 26% under the description, at the same threshold that
- * reported the numbers in (3). Sweeping the threshold does not rescue it —
- * the signal reaches zero while the noise is still 15%. THERE IS NO
- * OPERATING POINT. The instrument cannot distinguish a suppressed layer from
- * run-to-run variation, so (3) is void as well, and its agreement with the
- * peer's numbers was luck rather than corroboration.
+ * Method: three renders with the field present, three with
+ * `.plate__field { display: none }`, WITHIN-GROUP AGREEMENT VERIFIED FIRST
+ * (0.00% across all six same-state pairs), then three independent
+ * cross-group pairs — which returned the figures above identically, three
+ * times each. The page is deterministic; the run is valid; the numbers are
+ * reproducible.
  *
- * (Why two identical renders differ at all: the photo box's mean RGB is
- * identical across renders, so the content is the same and the variation is
- * sub-pixel resampling. Why the noise exceeds the signal is NOT explained
- * here, because I do not know, and a plausible story would be the fourth
- * wrong thing in this comment.)
+ * THE HISTORY, because each error had a different cause:
+ *   1. Warmth classifier: the amber `--lcd` label is warmer than the strokes
+ *      and counted as field. Wrong.
+ *   2. Diff with regions eyeballed off a screenshot displayed at 1067x2000
+ *      whose original was 1280x2400 — every box displaced 1.2x, reporting
+ *      41% behind an opaque photograph. Wrong, and rightly retracted.
+ *   3. Diff with DOM-derived regions: the table above. RIGHT.
+ *   4. A "noise floor" control that appeared to show 51% variation between
+ *      identical renders, on the strength of which I retracted (3). THE
+ *      CONTROL WAS THE BROKEN THING: separate browser launches are bimodal —
+ *      most are pixel-identical, an occasional one differs page-wide at low
+ *      amplitude (not a translation, not missing content, means unchanged).
+ *      My control had caught one outlier and I read a single pair as a floor.
  *
- * WHAT STANDS, from a peer who measured structure instead of ink:
- * `.plate__field` is `z-index: -1` and every `.entry__photo` lies entirely
- * within it, carrying an opaque `<img>` at `object-fit: cover` — so the
- * field is fully occluded across the photo rectangle and any density figure
- * there must be zero. That is a fact about the DOM, not a pixel count.
+ * SO A SAME-STATE CONTROL MUST BE RUN PER RUN AND AT N>2. One pair cannot
+ * tell "the instrument is noisy" from "this capture was an outlier", and
+ * those have opposite remedies — abandon the method, or discard the frame.
  *
- * SO: the field's distribution is UNMEASURED by me. Two peers put it near
- * uniform (1.34x-1.56x text-to-margin by their methods). Treat the geometry
- * fix as a genuine TRADE — moving strokes off the text removes ink a viewer
- * can see — and not as the free win I claimed when I thought the graphic was
- * densest where nobody could see it.
+ * THE METHOD'S OWN FLOOR, calibrated against ground truth: a peer established
+ * structurally that `.plate__field` is `z-index: -1` with every
+ * `.entry__photo` inside it carrying an opaque `<img>`, so the field's true
+ * contribution over the photo is EXACTLY ZERO. The method reports 2.29%
+ * there. That 2.29% is the instrument's systematic residual — edges and
+ * antialiasing — not ink. Treat absolute figures as carrying a floor of that
+ * order, and prefer ratios between regions.
+ *
+ * WHAT IT MEANS FOR THE FIX: text-to-margin is 4.35 / 3.24 = 1.34x. A peer
+ * measuring independently by rasterising the field alone got 1.56x. Both say
+ * NEAR UNIFORM. My original claim — that the field is ~3.4x denser under text
+ * and densest where it cannot be seen, so shaping it away would be free — is
+ * dead and stays dead. The geometry fix is a genuine trade.
  */
 
 .plate .entry__fits {
