@@ -421,7 +421,43 @@
   --step-2: 1.44rem;
   --step-3: 1.728rem;
 
-  /* Display scale — fluid. This is where the page gets loud.          */
+  /* Display scale — fluid. This is where the page gets loud.
+   *
+   * OPEN TOKEN REQUEST, NOT GRANTED, AND THE MEASUREMENT IS THE POINT.
+   * m3 asked (patchbanks.css, near .plate[data-coverage]) for a step between
+   * --display-s and --display-m, citing a 71% jump at 1200px. Correct, and
+   * the 71% understates it — the gap is not a fixed ratio, it widens with
+   * the viewport, and s->m is the widest interval in this scale at EVERY
+   * width:
+   *
+   *     viewport     s       m       l     s->m    m->l
+   *      390px     28.6    41.9    54.3   1.47x   1.30x
+   *      768px     37.6    60.8    88.3   1.62x   1.45x
+   *     1200px     48.0    82.4   127.2   1.72x   1.54x
+   *     1600px     48.0    88.0   144.0   1.83x   1.64x
+   *
+   * THE MECHANISM, which is more useful than the number: --display-s hits
+   * its 3rem ceiling before the other two hit theirs (5.5rem, 9rem), so past
+   * ~1200px it stops growing while m and l keep going and the gap widens
+   * without bound. A new step would not fix that; raising --display-s's max
+   * would, and that is a different change with existing consumers.
+   *
+   * WHY IT IS NOT GRANTED: a new step needs three numbers (floor, slope,
+   * ceiling) and there is no consumer to validate them against. That is
+   * naming a value nobody can justify — the same call this file makes about
+   * the leading forks below, in the other direction. m3 explicitly did not
+   * propose adding it; the previous owner tried to solve the same problem
+   * with a local --step-3 clamp, INVERTED the hierarchy (flagships rendered
+   * at 28px while the untouched middle tier stayed at 48px), and correctly
+   * recorded that the local fix was wrong.
+   *
+   * WHAT WOULD GRANT IT: a slice that needs the step, in a rule, so the
+   * three numbers can be checked against something that renders. Mass in the
+   * catalogue is currently carried by --plate-pad and photo width, both
+   * monotonic and verified. Recorded here rather than left in a section
+   * stylesheet, because a request addressed to this file's owner that lives
+   * in someone else's comment is a request nobody receives.
+   */
   --display-s: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
   --display-m: clamp(2.5rem, 1.4rem + 5vw, 5.5rem);
   --display-l: clamp(3.25rem, 1.2rem + 9vw, 9rem);
