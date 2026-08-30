@@ -501,6 +501,63 @@
   --weight-display: 700;       /* display-scale titles                      */
   --weight-panel: 600;         /* the panel face's working weight           */
 
+  /* --- LEADING: MEASURED, DELIBERATELY NOT TOKENISED ------------------
+   * There is no --leading-* scale, and this comment is here so the next
+   * agent does not spend the measurement again to reach the same answer.
+   *
+   * Computed at a 1200px viewport from a live render (m4, agent-3579f46e).
+   * Not from source, and not from the bundle: their emitted-CSS regex
+   * mis-parsed `([^{}]+)\{([^}]*)\}` across @media blocks, reported
+   * .entry__count at --step-2 when it is --step-3, and dropped
+   * .section-title and body from the output entirely. THREE INSTRUMENTS
+   * DEEP AND THE THIRD STILL LIED; getComputedStyle is the floor.
+   *
+   *   selector             px      leading   caps
+   *   .hero__title        127.2    0.86      yes
+   *   .hero__count-value   82.4    0.90      no
+   *   .section-title       48      0.95      yes
+   *   .entry__name         48      1.00      yes
+   *   .entry__count        27.65   1.00      no
+   *   .work__title         27.65   1.10      no
+   *   body                 16      1.55      no
+   *   .hero__field-note    13.33   1.50      no
+   *   .credits__list       13.33   1.70      no
+   *
+   * (The px column reproduces independently: every clamp() evaluated at
+   * 1200px gives exactly these values, so the sizes are confirmed by a
+   * second route even though the leading is not.)
+   *
+   * THE RAMP IS REAL — 127->0.86, 82->0.90, 48->0.95, 28->1.00, monotonic
+   * in pixels and the same optical logic as the tracking scale: bigger type
+   * needs proportionally less leading. AND IT IS STILL NOT A SCALE, because
+   * one rule does not serve every consumer. It forks twice:
+   *
+   *   at 48px    .section-title 0.95  vs  .entry__name 1.00 (both caps)
+   *   at 27.65px .entry__count  1.00  vs  .work__title  1.10
+   *
+   * m4 tested the obvious discriminator — can the element wrap — and it
+   * points the wrong way two times in three: at 27.65 the wrapping title is
+   * LOOSER than the single-line numeral, at 13.33 the multi-line list is
+   * LOOSER than the short note, but at 48 the wrapping element is TIGHTER.
+   * Nothing in either file explains the 0.05 at 48px.
+   *
+   * SO THE FORKS ARE EITHER UNRECORDED JUDGEMENTS OR DRIFT, AND NOBODY CAN
+   * TELL WHICH FROM OUTSIDE. Tokenising anyway forces a choice between the
+   * two members of each pair: if the difference is a real judgement the
+   * token erases its reason, and if it is drift the token blesses it. A
+   * literal you can point at beats a named value you cannot justify — which
+   * is the inverse of the call the tracking scale made, and the difference
+   * is that r4.4's six values were each independently derivable and these
+   * two pairs are not.
+   *
+   * WHAT WOULD UNBLOCK IT: an owner's answer on either pair. .section-title
+   * and .entry__name are m1's; .work__title is m4's. Resolve a fork and the
+   * ramp on that end becomes nameable. Until then the display ramp is a
+   * documented rule, not a token family, and chrome at 1 stays a role
+   * decision while prose (1.5/1.55/1.7) stays alone — three roles at three
+   * sizes, not three steps of one scale.
+   */
+
   /* --- Space ------------------------------------------------------- */
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
