@@ -145,6 +145,24 @@
   .ride .r-note{color:var(--faint);font-size:.76rem}
   .ride tr.r-best .r-co,.ride tr.r-best .r-amt{color:var(--green)}
   @media (max-width:520px){.ride .r-veh{display:block}}
+  /* filter bars (#etBar, #aoBar): pill chips, filled when on, outlined when off */
+  .ht-bar{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:.7rem .8rem;margin:.9rem 0 .2rem}
+  .ht-frow{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .ht-frow:last-of-type{margin-bottom:0}
+  .ht-flabel{flex:0 0 auto;min-width:5.2rem;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .ht-chips{display:flex;flex-wrap:wrap;gap:.34rem}
+  .ht-chip{font:inherit;font-size:.8rem;font-weight:600;line-height:1.2;cursor:pointer;
+    padding:.32rem .7rem;border-radius:999px;
+    color:var(--muted);background:transparent;border:1px solid var(--faint);
+    transition:background-color .12s ease,border-color .12s ease,color .12s ease}
+  .ht-chip:hover{color:var(--ink);border-color:var(--green)}
+  .ht-chip[aria-pressed="true"]{color:var(--paper);background:var(--green);border-color:var(--green);font-weight:700}
+  .ht-chip[aria-pressed="true"]:hover{filter:brightness(1.08)}
+  .ht-chip:focus-visible,.ht-reset:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+  .ht-reset{font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;color:var(--muted);
+    background:transparent;border:1px dashed var(--faint);border-radius:999px;padding:.28rem .68rem}
+  .ht-reset:hover{color:var(--ink);border-color:var(--green);border-style:solid}
+  .ht-count{font-size:.76rem;color:var(--faint);font-variant-numeric:tabular-nums}
   .homebase{font-size:.86rem;color:var(--muted);background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--green);border-radius:9px;padding:.5rem .7rem;margin:.9rem 0 .2rem}
   .homebase b{color:var(--ink)}
   .shead{font-family:var(--serif);font-size:1.5rem;font-weight:600;margin:2.1rem 0 .2rem;display:flex;align-items:center;gap:.55rem}
@@ -1813,7 +1831,7 @@
   @media (max-width:720px){
     .jump{padding-top:.4rem;padding-bottom:.4rem;gap:.35rem}
     .jump a{min-height:40px;display:inline-flex;align-items:center;padding:.4rem .72rem;font-size:.82rem}
-    .ht-chip{min-height:40px;padding:.5rem .72rem;font-size:.82rem}
+    .ht-chip{min-height:40px;padding:.5rem .78rem;font-size:.82rem}
     .ht-sort{min-height:40px;padding:.4rem .55rem;font-size:.82rem}
     .ht-reset{min-height:40px;padding:.4rem .7rem;font-size:.82rem}
     .ht-map{padding:.5rem 0;display:inline-block;min-height:38px}
