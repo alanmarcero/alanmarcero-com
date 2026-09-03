@@ -133,6 +133,18 @@
   .playbook li{margin:.3rem 0;font-size:.89rem;color:var(--muted)}
   .playbook li b{color:var(--ink);font-weight:640}
 
+  .ride{margin:.9rem 0 .2rem;background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--brass);border-radius:9px;padding:.6rem .7rem}
+  .ride-h{font-size:.86rem;font-weight:700;color:var(--ink);margin-bottom:.1rem}
+  .ride-sub{font-size:.78rem;color:var(--faint);margin-bottom:.45rem}
+  .ride table{width:100%;border-collapse:collapse;font-size:.82rem}
+  .ride td{padding:.26rem .3rem;border-top:1px solid var(--hair);vertical-align:top}
+  .ride tr:first-child td{border-top:0}
+  .ride .r-co{color:var(--ink);font-weight:640;white-space:nowrap}
+  .ride .r-veh{color:var(--muted)}
+  .ride .r-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);white-space:nowrap}
+  .ride .r-note{color:var(--faint);font-size:.76rem}
+  .ride tr.r-best .r-co,.ride tr.r-best .r-amt{color:var(--green)}
+  @media (max-width:520px){.ride .r-veh{display:block}}
   .homebase{font-size:.86rem;color:var(--muted);background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--green);border-radius:9px;padding:.5rem .7rem;margin:.9rem 0 .2rem}
   .homebase b{color:var(--ink)}
   .shead{font-family:var(--serif);font-size:1.5rem;font-weight:600;margin:2.1rem 0 .2rem;display:flex;align-items:center;gap:.55rem}
@@ -274,6 +286,17 @@
   .et-card[hidden],.et-group[hidden]{display:none}
 </style>
   <p class="homebase" data-homebase="Dauphine Orleans Hotel" data-address="415 Dauphine St, New Orleans, LA 70112" data-lat="29.957334" data-lng="-90.068402">🏨 <b>Home base: Dauphine Orleans Hotel</b>, 415 Dauphine St, French Quarter. Every 📍 figure on this page is the straight-line distance from here.</p>
+  <div class="ride">
+    <div class="ride-h">🚘 Weymouth → Logan, Thu Sep 10</div>
+    <div class="ride-sub">10:00 AM flight · pick-up ~7:15 AM · 18.4 mi · 4 people, so a sedan (3 pax) will not do it. Live quotes pulled 3 Sep 2026.</div>
+    <table>
+      <tr class="r-best"><td class="r-co">Premier Logan <span class="r-veh">SUV, 6 pax</span></td><td class="r-amt">$124.39</td><td class="r-note">$120.18 + 15% grat = $138.21, less 10% with code <b>PLT10</b>. Cheapest black car. <a href="https://book.mylimobiz.com/v4/premierlogan" target="_blank" rel="noopener" style="color:var(--green);font-weight:650">Book</a></td></tr>
+      <tr><td class="r-co">Premier Logan <span class="r-veh">Sedan, 3 pax</span></td><td class="r-amt">$99.99</td><td class="r-note">$96.61 + grat, less PLT10 — the exact fare paid Jul 2025. Only if three travel.</td></tr>
+      <tr><td class="r-co">Boston Taxi Cab <span class="r-veh">minivan, 7 pax</span></td><td class="r-amt">$188.81</td><td class="r-note">$168.58 + 12% service fee. Its advertised “$70–90” is not the quoted fare.</td></tr>
+      <tr><td class="r-co">Boston Car Services <span class="r-veh">sedan, 2 pax</span></td><td class="r-amt">$187.32</td><td class="r-note">Cheapest class they offer; a Suburban is over $223.</td></tr>
+      <tr><td class="r-co">Braintree Logan Express <span class="r-veh">bus</span></td><td class="r-amt">$9 pp</td><td class="r-note">Not a black car. Every 30 min from 4 AM, ~10 min from Weymouth, parking extra.</td></tr>
+    </table>
+  </div>
   <span id="eat" aria-hidden="true"></span>
   <div class="ht-bar" id="etBar">
     <div class="ht-frow"><span class="ht-flabel">Price</span><div class="ht-chips" id="etPrice"><button class="ht-chip" data-price="1">$</button><button class="ht-chip" data-price="2">$$</button><button class="ht-chip" data-price="3">$$$+</button></div></div>
