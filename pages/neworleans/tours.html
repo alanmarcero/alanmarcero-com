@@ -100,7 +100,7 @@
   .sintro{color:var(--muted);font-size:.92rem;margin:.1rem 0 1rem}
 
   /* cards grid */
-  .tour-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.1rem;margin-top:.8rem}
+  .tour-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.1rem;margin-top:.8rem;align-items:start}
   .tcard{background:var(--card);border:1px solid var(--hair);border-radius:15px;padding:1.1rem 1.25rem;
     box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:space-between;position:relative}
   .tcard.highlight{border-color:var(--green);border-width:1.5px}
@@ -187,6 +187,19 @@
   .mech b,.unver b{font-weight:800}
   .unver{background:var(--kid-soft);color:var(--kid);font-size:.78rem;font-weight:600;padding:.4rem .6rem;
     border-radius:6px;margin-bottom:.8rem;display:block;line-height:1.45}
+  .stops{border-top:1px dashed var(--hair);padding-top:.6rem;margin-bottom:.8rem}
+  .stops-h{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin-bottom:.35rem}
+  .stop{padding:.38rem 0;border-bottom:1px solid var(--hair)}
+  .stop:last-child{border-bottom:0}
+  .stop-top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+  .stop-nm{font-size:.84rem;font-weight:650;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--hair-strong)}
+  .stop-nm:hover{border-bottom-color:var(--green)}
+  .stop-r{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--green);white-space:nowrap}
+  .stop-r.low{color:var(--sun)}
+  .stop-w{font-size:.78rem;color:var(--muted);line-height:1.4;margin-top:.1rem}
+  .stop-w .addr{font-family:var(--mono);font-size:.72rem;color:var(--faint)}
+  .no-stops{font-size:.8rem;color:var(--muted);line-height:1.45}
+  .no-stops b{color:var(--ink)}
   .tcard[hidden]{display:none}
   .nores{color:var(--muted);font-size:.9rem;padding:1rem .2rem}
   /* A retracted figure stays visible on purpose — a correction without its
@@ -219,57 +232,87 @@
     <a href="/neworleans" class="back-nav">← Back to Main Family Itinerary</a>
     <p class="lede">
         The gator tour is booked. Four food tours left, priced for
-        <b>3 adults and a 7-year-old</b>.
+        <b>3 adults and a 7-year-old</b> — one tour per operator, and where they run
+        several it is the Magazine St walk that made the page.
       </p>
 
     <div class="shead" id="food"><span class="ic">🍽️</span> 1. Food tours</div>
-    <p class="sintro">Priced for <b>3 adults and a 7-year-old</b>, 28 Aug 2026, <b>cheapest first</b>. <b>One has a child rate</b> (Magazine St, $39); on the other three he pays adult from age 6.</p>
+    <p class="sintro">Priced for <b>3 adults and a 7-year-old</b>, <b>cheapest first</b>. Where an operator runs several, this page takes the <b>Magazine St</b> tour, then the <b>Garden District</b>, then the <b>French Quarter</b> — and no cocktail tours. Each card says which tour it is and where it walks. Stops are the operator's own published list; <b>two of the four decline to name theirs</b>, and the card says so rather than guessing.</p>
     <div class="tour-grid">
+
       <div class="tcard">
         <div><span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/destination-kitchen-food-tour.jpg)" role="presentation"><span class="tph-emoji">🍛</span></span>
-          <div class="tname">Destination Kitchen</div>
-          <div class="tloc">📍 French Quarter</div><div class="trating"><a href="https://www.yelp.com/biz/destination-kitchen-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.8 (201)</a></div>
-          <div class="tdesc">Small groups, three times daily. Cheapest sit-down walk.</div>
+          <div class="tname">Destination Kitchen — French Quarter</div>
+          <div class="tloc">📍 French Quarter · meeting point sent with the voucher</div><div class="trating"><a href="https://www.yelp.com/biz/destination-kitchen-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.8 (201)</a></div>
+          <div class="tdesc">Their only food tour that is not a cocktail crawl. Small groups at 9:30, 11:30 and 2:00; TripAdvisor ranked it #1 food tour in New Orleans.</div>
         </div>
         <div>
-          <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Stops</span><span class="val">5–7</span></div></div><div class="price-box"><div class="per-person"><b>$76 – $83</b> / person</div><div class="group-total"><span class="gt-lbl">Four</span><span class="gt-val">$304 – $332</span></div></div>
-          <a href="https://destination-kitchen.com/" target="_blank" rel="noopener" class="btn-book">Book</a>
+          <div class="stops">
+            <div class="stops-h">Five to seven tastings · venues not named</div>
+            <div class="no-stops"><b>The operator publishes the menu, not the addresses.</b> Gumbo or jambalaya, alligator bites, the muffuletta USA Today wrote up, hand-pulled pralines, a char-grilled oyster and a Creole confection — plus tastings in the <b>French Market</b>. The meeting point comes with the voucher, and they warn stops may swap without notice.</div>
+          </div>
+          <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Tastings</span><span class="val">5–7</span></div></div><div class="price-box"><div class="per-person"><b>$76 – $83</b> / person</div><div class="group-total"><span class="gt-lbl">Four</span><span class="gt-val">$304 – $332</span></div></div>
+          <a href="https://destination-kitchen.com/all-tours/new-orleans-food-walking-tour-of-the-french-quarter/" target="_blank" rel="noopener" class="btn-book">Book</a>
         </div>
       </div>
-      <div class="tcard">
-        <div><span class="tphoto has-img" style="background-image:url(/neworleans-tours/sidewalk-food-tours.jpg)" role="presentation"><span class="tph-emoji">🍴</span></span>
-          <div class="tname">Sidewalk Food Tours</div>
-          <div class="tloc">📍 French Quarter</div><div class="trating"><a href="https://www.yelp.com/biz/sidewalk-food-tours-of-new-orleans-new-orleans?osq=Food+Tours" target="_blank" rel="noopener">⭐ 4.7 (26)</a></div>
-          <div class="tdesc">Po'boys, fried green tomatoes, pralines.</div>
-        </div>
-        <div>
-          <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Private</span><span class="val">$109</span></div></div><div class="price-box"><div class="per-person"><b>from $79</b> / person</div><div class="group-total"><span class="gt-lbl">Four</span><span class="gt-val">$316</span></div></div>
-          <div class="mech">◆ <b>Only 26 Yelp reviews</b>, against 156 and 304 on the two below. A 4.7 on 26 is a thinner promise than a 4.9 on 304.</div>
-          <a href="https://sidewalkfoodtours.com/new-orleans/" target="_blank" rel="noopener" class="btn-book">Book</a>
-        </div>
-      </div>
+
       <div class="tcard">
         <div><span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/doctor-gumbo-food-history-tour.jpg)" role="presentation"><span class="tph-emoji">🍲</span></span>
-          <div class="tname">Doctor Gumbo</div>
-          <div class="tloc">📍 French Quarter</div><div class="trating"><a href="https://www.yelp.com/biz/doctor-gumbo-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.9 (156)</a></div>
-          <div class="tdesc">Gumbo, muffuletta, pralines, beignets. Vegetarian option.</div>
+          <div class="tname">Doctor Gumbo — French Quarter</div>
+          <div class="tloc">📍 French Quarter · meets at 3rd Block Depot, 316 Chartres St</div><div class="trating"><a href="https://www.yelp.com/biz/doctor-gumbo-tours-new-orleans" target="_blank" rel="noopener">⭐ 4.9 (156)</a></div>
+          <div class="tdesc">The Food History Tour — their cocktail and combo tours are skipped here. USA Today put it in the country's top ten. Vegetarian option on request; no gluten-free or vegan.</div>
         </div>
         <div>
+          <div class="stops">
+            <div class="stops-h">Up to five stops · one named, four by type</div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/3rd-block-depot-kitchen-bar-new-orleans-2" target="_blank" rel="noopener">3rd Block Depot</a><span class="stop-r low">⭐ 3.7 · 90</span></div><div class="stop-w"><span class="addr">316 Chartres St</span> · Where the tour meets. Yelp orders the beignets and the bananas foster French toast; the room itself is a brunch-and-cocktails counter.</div></div>
+            <div class="no-stops" style="padding-top:.4rem"><b>The other four are described, not named:</b> two Creole restaurants, a sandwich shop, a praline and candy store, and a hot sauce bar. What lands on the table is gumbo, boudin, po'boys, muffuletta and pralines.</div>
+          </div>
           <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Stops</span><span class="val">5</span></div></div><div class="price-box"><div class="per-person"><b>$85</b> / person</div><div class="group-total"><span class="gt-lbl">Four</span><span class="gt-val">$340</span></div></div>
           <a href="https://doctorgumbo.com/tours/food-history-tour-in-new-orleans/" target="_blank" rel="noopener" class="btn-book">Book</a>
         </div>
       </div>
+
+      <div class="tcard">
+        <div><span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/sidewalk-lower-garden-food-tour.jpg)" role="presentation"><span class="tph-emoji">🌮</span></span>
+          <div class="tname">Sidewalk — Lower Garden District</div>
+          <div class="tloc">📍 Lower Garden District · the foot of Magazine St</div><div class="trating"><a href="https://www.yelp.com/biz/sidewalk-food-tours-of-new-orleans-new-orleans?osq=Food+Tours" target="_blank" rel="noopener">⭐ 4.7 (26)</a></div>
+          <div class="tdesc">They also run a French Quarter walk; this is the Magazine St one, so it is the one taken here. Fridays and Saturdays, 11–2. The only tour on this page that names where it goes.</div>
+        </div>
+        <div>
+          <div class="stops">
+            <div class="stops-h">Five of these six · best-rated first</div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/turkey-and-the-wolf-new-orleans" target="_blank" rel="noopener">Turkey and the Wolf</a><span class="stop-r">⭐ 4.4 · 1,121</span></div><div class="stop-w"><span class="addr">739 Jackson Ave</span> · Bon Appétit's 2017 Best New Restaurant in America, and the highest-reviewed room on this list. Sandwiches played for laughs and taken seriously.</div></div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/steins-market-and-deli-new-orleans" target="_blank" rel="noopener">Stein's Market and Deli</a><span class="stop-r">⭐ 4.4 · 823</span></div><div class="stop-w"><span class="addr">2207 Magazine St</span> · Jewish-Italian deli. Yelp's dish list runs Rachel, Reuben, Fernando, roast beef — in that order.</div></div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/piety-and-desire-chocolate-new-orleans" target="_blank" rel="noopener">Piety and Desire Chocolate</a><span class="stop-r">⭐ 4.8 · 48</span></div><div class="stop-w"><span class="addr">2032 Magazine St</span> · The city's only bean-to-bar chocolate maker. Best-rated stop here, on the fewest reviews.</div></div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/juans-flying-burrito-new-orleans-2" target="_blank" rel="noopener">Juan's Flying Burrito</a><span class="stop-r">⭐ 4.0 · 927</span></div><div class="stop-w"><span class="addr">2018 Magazine St</span> · Self-described Creole taqueria. The Flying Burrito and the blackened fish tacos are what Yelp photographs.</div></div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/coco-korea-bbq-new-orleans-2" target="_blank" rel="noopener">Coco Korea BBQ</a><span class="stop-r">⭐ 4.0 · 496</span></div><div class="stop-w"><span class="addr">2240 Magazine St</span> · Korean barbecue with grills and vent hoods in the tables, ordered volcano-style to share.</div></div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/elizabeth-street-cafe-new-orleans-2" target="_blank" rel="noopener">Elizabeth Street Cafe</a><span class="stop-r">⭐ 4.0 · 73</span></div><div class="stop-w"><span class="addr">1507 Magazine St</span> · French-Vietnamese cafe and bakery beside the Hotel Saint Vincent — banh mi, spring rolls, a patio.</div></div>
+          </div>
+          <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Runs</span><span class="val">Fri &amp; Sat, 11–2</span></div></div><div class="price-box"><div class="per-person"><b>$99</b> adult · <b>$79</b> child</div><div class="group-total"><span class="gt-lbl">Four</span><span class="gt-val">$376</span></div></div>
+          <div class="deal-tag" style="background:var(--green-soft);color:var(--green)">🧒 Child rate, ages 4–17 · under 4 free</div>
+          <div class="mech">◆ <b>This was priced wrong here before: $79 is the child fare, not the adult one.</b> Four seats are $376, not $316, which moves this tour from second-cheapest to third. Re-checked on the operator's own page, 4 Sept 2026.</div>
+          <div class="mech">◆ <b>4.7 on only 26 Yelp reviews</b>, against 156 and 304 on the tours either side of it. The stops themselves carry 3,500 reviews between them, which is the firmer number.</div>
+          <a href="https://sidewalkfoodtours.com/new-orleans/lower-garden-district-food-tour/" target="_blank" rel="noopener" class="btn-book">Book</a>
+        </div>
+      </div>
+
       <div class="tcard">
         <div><span class="tphoto has-img" style="background-image:url(/pages/neworleans/assets/do/new-orleans-secrets-magazine-street.jpg)" role="presentation"><span class="tph-emoji">🥘</span></span>
           <div class="tname">New Orleans Secrets — Magazine St</div>
-          <div class="tloc">📍 Starts at Mahony's, 3454 Magazine St</div>
+          <div class="tloc">📍 Magazine St · meets outside Mahony's, 3454 Magazine St</div>
           <div class="trating"><a href="https://www.yelp.com/biz/new-orleans-secrets-tours-new-orleans-2" target="_blank" rel="noopener">⭐ 4.9 (304)</a></div>
-          <div class="tdesc">Five stops, seven dishes. Not suitable under 6; he is 7.</div>
+          <div class="tdesc">The Magazine Street Foodie Tour, picked over their French Quarter and Uptown walks. Five stops, seven dishes minimum, nine guests maximum, one beer or soda included. Half a mile. Not suitable under 6; he is 7.</div>
         </div>
         <div>
-          <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Stops</span><span class="val">5</span></div></div>
+          <div class="stops">
+            <div class="stops-h">Five stops · deliberately unpublished</div>
+            <div class="no-stops"><b>They will not say where they go.</b> In their own words: <i>&ldquo;because we love anticipation (and because the tour may change on a given day), we do not release where we go or what we eat.&rdquo;</i> The menu runs to beef, pork, seafood and vegetables, in full portions rather than tastes. Only the meeting point is public:</div>
+          <div class="stop"><div class="stop-top"><a class="stop-nm" href="https://www.yelp.com/biz/mahonys-po-boys-and-seafood-new-orleans-4" target="_blank" rel="noopener">Mahony's Po-Boys & Seafood</a><span class="stop-r low">⭐ 3.7 · 836</span></div><div class="stop-w"><span class="addr">3454 Magazine St</span> · The meeting point, not necessarily a stop — you gather outside it and look for the blue polo shirt.</div></div>
+          </div>
+          <div class="tmeta"><div class="mitem"><span class="lbl">Time</span><span class="val">3 h</span></div><div class="mitem"><span class="lbl">Group</span><span class="val">Max 9</span></div></div>
           <div class="price-box"><div class="per-person"><b>$129</b> adult · <b>$39</b> child</div><div class="group-total"><span class="gt-lbl">Four</span><span class="gt-val">$426</span></div></div>
-          <div class="deal-tag" style="background:var(--green-soft);color:var(--green)">🧒 The only child rate on this page</div>
+          <div class="deal-tag" style="background:var(--green-soft);color:var(--green)">🧒 Child rate, under 12 · phone only</div>
           <div class="mech">◆ <b>$39 for under-12s sharing portions</b> — phone 504-517-5397, it is not bookable online. Still the dearest option here even so: $426 against Doctor Gumbo's $340.</div>
           <a href="https://nosecretstours.com/product/magazine-street-foodie-tour" target="_blank" rel="noopener" class="btn-book">Book</a>
         </div>
@@ -278,14 +321,15 @@
 
     <div class="shead"><span class="ic">💡</span> 2. Before you book</div>
     <ul class="tips-list">
-      <li><b>🏷️ Groupon never wins here.</b> Destination Kitchen is $82–89 there against $76–83 direct, Sidewalk’s Lower Garden walk is $89 against $79, Doctor Gumbo is $85 either way, and New Orleans Secrets has no listing. Book with the operator.</li>
-      <li><b>🧒 Only Magazine St has a child rate.</b> $39 for under-12s sharing portions, by phone on 504-517-5397 — it is not bookable online. On the other two he pays adult from age 6.</li>
-      <li><b>📉 Read the review counts, not just the stars.</b> Tastebud (87) came off this page for being thin. Sidewalk stays by request on 26 — a real 4.7, but a small sample next to Doctor Gumbo’s 156 and New Orleans Secrets’ 304.</li>
+      <li><b>🏷️ Groupon still loses on three of the four.</b> Destination Kitchen is $82–89 there against $76–83 direct, Doctor Gumbo is $85 either way, and New Orleans Secrets has no listing at all. <b>Sidewalk is the open question:</b> Groupon’s $89 was compared against a $79 direct price that turns out to be the child fare, and the adult fare is $99 — so that one is worth re-pricing before you book.</li>
+      <li><b>🧒 Two of the four have a child rate, not one.</b> Sidewalk charges $79 for ages 4–17 and nothing under 4; New Orleans Secrets does $39 for under-12s sharing portions, by phone on 504-517-5397, not online. On Destination Kitchen and Doctor Gumbo he pays a full adult fare.</li>
+      <li><b>📉 Read the review counts, not just the stars.</b> Tastebud (87) came off this page for being thin, and Sidewalk stays by request on 26. Where an operator names its stops you can check the rooms instead of the tour: Sidewalk’s six carry about 3,500 Yelp reviews between them.</li>
+      <li><b>🗺️ Two operators will not tell you where they go.</b> Destination Kitchen publishes a menu and sends the meeting point with the voucher; New Orleans Secrets says outright that it keeps the stops back. Both also reserve the right to swap a stop on the day, so treat every list here as the plan, not the promise.</li>
     </ul>
     </div>
 
   <footer>
-      <b>Checked 28 Aug 2026</b> against each operator's own page. Ratings are Yelp. Confirm before you pay.
+      <b>Fares, stop lists and tour choices re-checked 4 Sept 2026</b> against each operator's own page; the Groupon comparisons are from the 28 Aug check. Stop ratings are Yelp, 4 Sept. Confirm before you pay.
     </footer>
 </div>
 
