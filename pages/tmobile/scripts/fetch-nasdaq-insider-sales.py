@@ -6,7 +6,7 @@ Pulls T-Mobile US insider activity from the same feed that backs
 nasdaq.com/market-activity/stocks/tmus/insider-activity, keeps only the sale
 rows, drops DEUTSCHE TELEKOM AG, and rolls what is left up by calendar month.
 
-Three things about this feed that will bite whoever runs it next:
+Four things about this feed that will bite whoever runs it next:
 
 1.  THE FEED IS CAPPED AT 250 ROWS, AND THE CAP IS SILENT. `totalRecords`
     does not move with what you ask for (it has read 250 and 251 while the
@@ -25,7 +25,13 @@ Three things about this feed that will bite whoever runs it next:
     — SEC code F — and counting it inflates the total with money nobody chose
     to take off the table. Only the two Sell types are kept.
 
-3.  DEUTSCHE TELEKOM IS MOST OF THE FEED. The majority owner files 97 of the
+3.  ONE MORE TRADE IS HELD OUT, BY NAME. OUTLIER_TRADES carries a single block
+    trade that the five-year generator also holds out; the two must agree,
+    because a test asserts the two series match over the window they share.
+    Both scripts fail loudly rather than quietly keeping it if the feed stops
+    covering that date.
+
+4.  DEUTSCHE TELEKOM IS MOST OF THE FEED. The majority owner files 97 of the
     155 sale rows and 6.4M of the 8.0M shares. Leaving it in flattens every
     executive's trade into the axis, which is why it is excluded — the same
     call the five-year chart on this page makes.
@@ -57,6 +63,12 @@ HEADERS = {
 SALE_TYPES = ('Sell', 'Automatic Sell')
 EXCLUDED = 'DEUTSCHE TELEKOM AG'
 CEO = 'SIEVERT G MICHAEL'
+
+# Held out of every figure and named at the foot of the page — the SAME single
+# trade the five-year generator holds out, keyed the same way, or the two
+# charts on the page would stop agreeing over the window they share. See
+# fetch-edgar-form4-prices.py for why this one trade is out.
+OUTLIER_TRADES = (('2026-02-12', 'CLAURE RAUL MARCELO'),)
 
 # Display only. The feed sets names LAST FIRST MIDDLE in caps, which no
 # algorithm can reliably unpick ("SIEVERT G MICHAEL" is G. Michael Sievert),
@@ -114,6 +126,10 @@ def month_range(first, last):
 
 def is_sale(row):
     return row.get('transactionType') in SALE_TYPES
+
+
+def is_outlier(row):
+    return (to_iso(row['lastDate']), row['insider']) in OUTLIER_TRADES
 
 
 def parse_sale(row):
@@ -230,8 +246,14 @@ def main():
 
     sale_rows = [r for r in rows if is_sale(r)]
     dropped = [r for r in sale_rows if r['insider'] == EXCLUDED]
+    outlier_rows = [r for r in sale_rows
+                    if r['insider'] != EXCLUDED and is_outlier(r)]
+    if len(outlier_rows) != len(OUTLIER_TRADES):
+        sys.exit(f'Expected {len(OUTLIER_TRADES)} outlier trades to hold out, '
+                 f'found {len(outlier_rows)} — the feed no longer covers that '
+                 f'date, or the five-year generator has moved on without this one.')
     kept = sorted((parse_sale(r) for r in sale_rows
-                   if r['insider'] != EXCLUDED),
+                   if r['insider'] != EXCLUDED and not is_outlier(r)),
                   key=lambda s: (s['date'], s['name']))
 
     # The axis spans the feed's OWN coverage, not just the months that happen
@@ -255,6 +277,11 @@ def main():
         'excludedFiler': EXCLUDED,
         'excludedRows': len(dropped),
         'excludedShares': int(round(sum(to_number(r['sharesTraded']) for r in dropped))),
+        'outliers': [
+            {k: v for k, v in parse_sale(r).items()
+             if k in ('date', 'name', 'shares', 'price', 'value')}
+            for r in sorted(outlier_rows, key=lambda r: to_iso(r['lastDate']))
+        ],
         'txnCount': len(kept),
         'sellerCount': len({s['name'] for s in kept}),
         'feedFirst': covered[0],

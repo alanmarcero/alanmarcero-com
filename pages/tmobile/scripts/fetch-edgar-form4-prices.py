@@ -44,7 +44,9 @@ Five things that will bite whoever runs this next:
     than at last Friday. The final point is therefore a week to date.
 
 Deutsche Telekom AG, the majority owner, is excluded: 30M+ shares in block
-trades that would flatten every executive's trade into the axis.
+trades that would flatten every executive's trade into the axis. So is one
+named trade — see OUTLIER_TRADES — for the same reason at a smaller scale. Both
+exclusions are recorded in the generated metadata and printed on the page.
 
 Run:  python3 pages/tmobile/scripts/fetch-edgar-form4-prices.py
       python3 pages/tmobile/scripts/fetch-edgar-form4-prices.py --dry-run
@@ -85,6 +87,19 @@ YAHOO_HEADERS = {
 SALE_CODE = 'S'
 EXCLUDED = 'DEUTSCHE TELEKOM AG'
 CEO = 'Mike Sievert'
+
+# ONE TRANSACTION, HELD OUT OF EVERY FIGURE ON THE PAGE and named at the foot
+# of it. Raul Marcelo Claure's 550,000-share block on 2026-02-12 is $119.7M in
+# a single indirect open-market trade — on its own it is most of the dollars in
+# the trailing year, and it is the same kind of trade Deutsche Telekom is
+# excluded for: a holder unwinding a position, not an executive taking a
+# payday. Left in, it sets the axis on every chart and the cadence the page is
+# actually about disappears underneath it.
+#
+# Keyed by (date, filer) so it can only ever remove the one trade it names, and
+# the generator FAILS if that trade stops arriving — a silent no-op here would
+# quietly put the outlier back.
+OUTLIER_TRADES = (('2026-02-12', 'CLAURE RAUL MARCELO'),)
 
 # Display only. EDGAR files a name LAST FIRST MIDDLE, which no algorithm
 # reliably unpicks ("Sievert G. Michael" is G. Michael Sievert), so everyone
@@ -127,6 +142,10 @@ def display_name(raw):
 
 def is_excluded(raw):
     return raw.upper().strip() == EXCLUDED
+
+
+def is_outlier(sale):
+    return (sale['date'], sale['filer']) in OUTLIER_TRADES
 
 
 def raw_document(primary):
@@ -406,7 +425,12 @@ def main():
     # Monday; only sales that land on a plotted week can carry a marker.
     parsed = [s for batch in batches for s in batch if s['week'] in closes_by_week]
     dropped = [s for s in parsed if s['excluded']]
-    sales = sorted((s for s in parsed if not s['excluded']),
+    outliers = sorted((s for s in parsed if not s['excluded'] and is_outlier(s)),
+                      key=lambda s: s['date'])
+    if len(outliers) != len(OUTLIER_TRADES):
+        sys.exit(f'Expected {len(OUTLIER_TRADES)} outlier trades to hold out, '
+                 f'found {len(outliers)} — check OUTLIER_TRADES against the filings.')
+    sales = sorted((s for s in parsed if not s['excluded'] and not is_outlier(s)),
                    key=lambda s: (s['date'], s['name']))
     if not sales:
         sys.exit('No code-S sales parsed — the Form 4 shape changed.')
@@ -427,6 +451,15 @@ def main():
         'excludedFilers': [EXCLUDED],
         'excludedTxns': len(dropped),
         'excludedShares': int(round(sum(s['shares'] for s in dropped))),
+        # the held-out block trades, so the page can name them from the data
+        # rather than from prose that can go stale
+        'outliers': [
+            {
+                'date': s['date'], 'name': s['name'], 'shares': s['shares'],
+                'price': s['price'], 'value': int(round(s['value'])),
+            }
+            for s in outliers
+        ],
         'saleTxnCount': len(sales),
         'sellerCount': len({s['name'] for s in sales}),
         'firstSale': sales[0]['date'],
@@ -442,7 +475,8 @@ def main():
         return
     OUT.write_text(module, encoding='utf-8')
     print(f'{OUT}: {len(prices)} weeks, {len(sales)} sales by '
-          f'{meta["sellerCount"]} people, last on {meta["lastSale"]}')
+          f'{meta["sellerCount"]} people, last on {meta["lastSale"]} '
+          f'({len(outliers)} block trade held out, {len(dropped)} {EXCLUDED} rows)')
 
 
 if __name__ == '__main__':
