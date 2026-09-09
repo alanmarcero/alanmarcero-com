@@ -217,6 +217,17 @@ describe('TMobileApp', () => {
     });
   });
 
+  it('names the block trade it holds out, with its real figures', () => {
+    render(<TMobileApp />);
+    const [outlier] = TMUS_META.outliers;
+    expect(screen.getByText(/Held out of every chart, tile and table above/i))
+      .toBeInTheDocument();
+    expect(screen.getByText(new RegExp(outlier.shares.toLocaleString('en-US'))))
+      .toBeInTheDocument();
+    // the seller is named elsewhere too — their other trades are still counted
+    expect(screen.getAllByText(new RegExp(outlier.name)).length).toBeGreaterThan(0);
+  });
+
   it('links back to the console', () => {
     render(<TMobileApp />);
     expect(screen.getByRole('link', { name: /back to console/i }))

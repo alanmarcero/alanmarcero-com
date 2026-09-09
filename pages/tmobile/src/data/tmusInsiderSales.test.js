@@ -16,6 +16,15 @@ describe('TMUS_META', () => {
     expect(TMUS_META.excludedFilers).toEqual(['DEUTSCHE TELEKOM AG']);
   });
 
+  it('holds out the named block trade, and says exactly what it was', () => {
+    expect(TMUS_META.outliers).toHaveLength(1);
+    const [outlier] = TMUS_META.outliers;
+    expect(outlier).toMatchObject({
+      date: '2026-02-12', name: 'Raul Marcelo Claure', shares: 550000,
+    });
+    expect(outlier.value).toBe(Math.round(outlier.shares * outlier.price));
+  });
+
   it('covers a five-year window', () => {
     const start = new Date(TMUS_META.windowStart);
     const end = new Date(TMUS_META.windowEnd);
@@ -192,6 +201,21 @@ describe('SALE_DAYS', () => {
         expect(sum(days, (d) => d.txns)).toBe(week.txns);
       });
     });
+  });
+
+  it('carries no trace of the held-out block trade', () => {
+    const [outlier] = TMUS_META.outliers;
+    expect(SALE_DAYS.some((d) => d.date === outlier.date
+      && d.people.some((p) => p.name === outlier.name))).toBe(false);
+    // that week held nothing else, so the marker goes with it
+    const week = allSellWeeks.find((w) => w.week === '2026-02-09');
+    expect(week?.people.some((p) => p.name === outlier.name)).toBeFalsy();
+  });
+
+  it("keeps that seller\u2019s other trades, which are not the outlier", () => {
+    const [outlier] = TMUS_META.outliers;
+    const theirs = SALE_DAYS.filter((d) => d.people.some((p) => p.name === outlier.name));
+    expect(theirs.length).toBeGreaterThan(5);
   });
 
   it('lands every day on a week the price series actually plots', () => {

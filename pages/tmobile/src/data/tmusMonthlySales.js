@@ -15,7 +15,7 @@
    Regenerate with pages/tmobile/scripts/fetch-nasdaq-insider-sales.py
    ======================================================================= */
 
-export const NASDAQ_META = {"symbol": "TMUS", "source": "Nasdaq insider activity", "sourceUrl": "https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity", "fetched": "2026-09-09", "feedRecords": 250, "feedReported": 251, "feedCapped": true, "saleRows": 153, "excludedFiler": "DEUTSCHE TELEKOM AG", "excludedRows": 97, "excludedShares": 6417309, "txnCount": 56, "sellerCount": 13, "feedFirst": "2024-09-10", "feedLast": "2026-09-01", "firstSale": "2024-09-10", "lastSale": "2026-05-21", "monthCount": 25, "quietMonths": 11};
+export const NASDAQ_META = {"symbol": "TMUS", "source": "Nasdaq insider activity", "sourceUrl": "https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity", "fetched": "2026-09-09", "feedRecords": 250, "feedReported": 251, "feedCapped": true, "saleRows": 153, "excludedFiler": "DEUTSCHE TELEKOM AG", "excludedRows": 97, "excludedShares": 6417309, "outliers": [{"date": "2026-02-12", "name": "Raul Marcelo Claure", "shares": 550000, "price": 217.57, "value": 119663500}], "txnCount": 55, "sellerCount": 13, "feedFirst": "2024-09-10", "feedLast": "2026-09-01", "firstSale": "2024-09-10", "lastSale": "2026-05-21", "monthCount": 25, "quietMonths": 11};
 
 /** One record per calendar month in the window, months with no sale included. */
 export const MONTHLY_SALES = [
@@ -36,7 +36,7 @@ export const MONTHLY_SALES = [
   {"month": "2025-11", "sievert": {"shares": 45000, "value": 9702450, "txns": 2, "people": [{"name": "Mike Sievert", "shares": 45000, "value": 9702450}]}, "others": {"shares": 2500, "value": 539775, "txns": 1, "people": [{"name": "Michael J. Katz", "shares": 2500, "value": 539775}]}},
   {"month": "2025-12", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 1457, "value": 306436, "txns": 1, "people": [{"name": "Letitia A Long", "shares": 1457, "value": 306436}]}},
   {"month": "2026-01", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 0, "value": 0, "txns": 0, "people": []}},
-  {"month": "2026-02", "sievert": {"shares": 95000, "value": 20498189, "txns": 3, "people": [{"name": "Mike Sievert", "shares": 95000, "value": 20498189}]}, "others": {"shares": 595843, "value": 129621970, "txns": 5, "people": [{"name": "Raul Marcelo Claure", "shares": 550000, "value": 119663500}, {"name": "Peter Osvaldik", "shares": 27000, "value": 5801220}, {"name": "Mark Wolfe Nelson", "shares": 18843, "value": 4157250}]}},
+  {"month": "2026-02", "sievert": {"shares": 95000, "value": 20498189, "txns": 3, "people": [{"name": "Mike Sievert", "shares": 95000, "value": 20498189}]}, "others": {"shares": 45843, "value": 9958470, "txns": 4, "people": [{"name": "Peter Osvaldik", "shares": 27000, "value": 5801220}, {"name": "Mark Wolfe Nelson", "shares": 18843, "value": 4157250}]}},
   {"month": "2026-03", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 4291, "value": 945890, "txns": 2, "people": [{"name": "Srikant M. Datar", "shares": 4291, "value": 945890}]}},
   {"month": "2026-04", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 0, "value": 0, "txns": 0, "people": []}},
   {"month": "2026-05", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 9799, "value": 1890860, "txns": 2, "people": [{"name": "Michael J. Katz", "shares": 5000, "value": 979050}, {"name": "Jon Freier", "shares": 4799, "value": 911810}]}},
@@ -92,7 +92,6 @@ export const SALE_TXNS = [
   {"date": "2025-11-17", "name": "Mike Sievert", "filer": "SIEVERT G MICHAEL", "relation": "Director", "kind": "plan", "own": "direct", "shares": 22500, "price": 216.97, "value": 4881825},
   {"date": "2025-11-18", "name": "Mike Sievert", "filer": "SIEVERT G MICHAEL", "relation": "Director", "kind": "plan", "own": "direct", "shares": 22500, "price": 214.25, "value": 4820625},
   {"date": "2025-12-05", "name": "Letitia A Long", "filer": "LONG LETITIA A", "relation": "Director", "kind": "market", "own": "direct", "shares": 1457, "price": 210.32, "value": 306436},
-  {"date": "2026-02-12", "name": "Raul Marcelo Claure", "filer": "CLAURE RAUL MARCELO", "relation": "Director", "kind": "market", "own": "indirect", "shares": 550000, "price": 217.57, "value": 119663500},
   {"date": "2026-02-17", "name": "Mark Wolfe Nelson", "filer": "NELSON MARK WOLFE", "relation": "Officer", "kind": "plan", "own": "direct", "shares": 10240, "price": 220.8, "value": 2260992},
   {"date": "2026-02-18", "name": "Mark Wolfe Nelson", "filer": "NELSON MARK WOLFE", "relation": "Officer", "kind": "plan", "own": "direct", "shares": 6274, "price": 219.69, "value": 1378335},
   {"date": "2026-02-18", "name": "Peter Osvaldik", "filer": "OSVALDIK PETER", "relation": "Officer", "kind": "market", "own": "direct", "shares": 27000, "price": 214.86, "value": 5801220},
