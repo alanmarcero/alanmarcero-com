@@ -284,6 +284,21 @@ function TMobileApp() {
               sale filings. Leaving the majority owner in would flatten every
               executive&rsquo;s trade into the axis.
             </li>
+            {TMUS_META.outliers.map((trade) => (
+              <li key={trade.date}>
+                <strong>Held out of every chart, tile and table above:</strong>{' '}
+                {trade.name}&rsquo;s block of{' '}
+                {trade.shares.toLocaleString('en-US')} shares on{' '}
+                {formatWeek(trade.date)} &mdash; {formatUSD(trade.value)} at $
+                {trade.price.toFixed(2)}, in one trade. That is a holder unwinding a
+                position rather than an executive taking a payday, and at that size
+                it sets the axis on every chart and buries the thing this page is
+                about. It is the only individual trade left out; the rest of{' '}
+                {trade.name.split(' ').slice(-1)}&rsquo;s sales are counted, and
+                adding this one back would put{' '}
+                {formatUSD(trade.value)} into the totals above.
+              </li>
+            ))}
             <li>
               A dot on the weekly chart sits at the week&rsquo;s closing price, not at
               the exact price of the trade. Both tables carry the real numbers.

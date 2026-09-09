@@ -14,7 +14,7 @@
    pages/tmobile/scripts/fetch-edgar-form4-prices.py
    ========================================================================== */
 
-export const TMUS_META = {"symbol": "TMUS", "priceSource": "Yahoo Finance (weekly close)", "insiderSource": "SEC Form 4 filings (the source Nasdaq mirrors)", "windowStart": "2021-09-06", "windowEnd": "2026-09-07", "excludedFilers": ["DEUTSCHE TELEKOM AG"], "excludedTxns": 753, "excludedShares": 30279407, "saleTxnCount": 146, "sellerCount": 16, "firstSale": "2021-11-10", "lastSale": "2026-05-21", "saleDayCount": 123, "filingsRead": 356, "fetched": "2026-09-09"};
+export const TMUS_META = {"symbol": "TMUS", "priceSource": "Yahoo Finance (weekly close)", "insiderSource": "SEC Form 4 filings (the source Nasdaq mirrors)", "windowStart": "2021-09-06", "windowEnd": "2026-09-07", "excludedFilers": ["DEUTSCHE TELEKOM AG"], "excludedTxns": 753, "excludedShares": 30279407, "outliers": [{"date": "2026-02-12", "name": "Raul Marcelo Claure", "shares": 550000, "price": 217.57, "value": 119663500}], "saleTxnCount": 145, "sellerCount": 16, "firstSale": "2021-11-10", "lastSale": "2026-05-21", "saleDayCount": 122, "filingsRead": 356, "fetched": "2026-09-09"};
 
 /** Weekly closing price: one point per week. */
 export const TMUS_WEEKLY = [
@@ -279,7 +279,7 @@ export const TMUS_WEEKLY = [
   {"week": "2026-08-17", "close": 183.04},
   {"week": "2026-08-24", "close": 181.37},
   {"week": "2026-08-31", "close": 181.52},
-  {"week": "2026-09-07", "close": 177.69},
+  {"week": "2026-09-07", "close": 177.91},
 ];
 
 /** Weeks with a sale by the CEO's own sales. */
@@ -361,7 +361,6 @@ export const OTHER_SELL_WEEKS = [
   {"week": "2025-08-11", "close": 254.63, "shares": 2500, "value": 627800, "txns": 1, "people": [{"name": "Michael J. Katz", "shares": 2500, "value": 627800}]},
   {"week": "2025-11-17", "close": 209.48, "shares": 2500, "value": 539775, "txns": 1, "people": [{"name": "Michael J. Katz", "shares": 2500, "value": 539775}]},
   {"week": "2025-12-01", "close": 209.63, "shares": 1457, "value": 306436, "txns": 1, "people": [{"name": "Letitia A Long", "shares": 1457, "value": 306436}]},
-  {"week": "2026-02-09", "close": 219.5, "shares": 550000, "value": 119663500, "txns": 1, "people": [{"name": "Raul Marcelo Claure", "shares": 550000, "value": 119663500}]},
   {"week": "2026-02-16", "close": 215.46, "shares": 43514, "value": 9440547, "txns": 3, "people": [{"name": "Peter Osvaldik", "shares": 27000, "value": 5801220}, {"name": "Mark Wolfe Nelson", "shares": 16514, "value": 3639327}]},
   {"week": "2026-02-23", "close": 217.09, "shares": 2329, "value": 517968, "txns": 1, "people": [{"name": "Mark Wolfe Nelson", "shares": 2329, "value": 517968}]},
   {"week": "2026-03-02", "close": 221.57, "shares": 3291, "value": 727640, "txns": 1, "people": [{"name": "Srikant M. Datar", "shares": 3291, "value": 727640}]},
@@ -484,7 +483,6 @@ export const SALE_DAYS = [
   {"date": "2025-11-17", "week": "2025-11-17", "group": "sievert", "shares": 22500, "value": 4881825, "txns": 1, "people": [{"name": "Mike Sievert", "shares": 22500, "value": 4881825}]},
   {"date": "2025-11-18", "week": "2025-11-17", "group": "sievert", "shares": 22500, "value": 4820625, "txns": 1, "people": [{"name": "Mike Sievert", "shares": 22500, "value": 4820625}]},
   {"date": "2025-12-05", "week": "2025-12-01", "group": "others", "shares": 1457, "value": 306436, "txns": 1, "people": [{"name": "Letitia A Long", "shares": 1457, "value": 306436}]},
-  {"date": "2026-02-12", "week": "2026-02-09", "group": "others", "shares": 550000, "value": 119663500, "txns": 1, "people": [{"name": "Raul Marcelo Claure", "shares": 550000, "value": 119663500}]},
   {"date": "2026-02-17", "week": "2026-02-16", "group": "others", "shares": 10240, "value": 2260992, "txns": 1, "people": [{"name": "Mark Wolfe Nelson", "shares": 10240, "value": 2260992}]},
   {"date": "2026-02-18", "week": "2026-02-16", "group": "others", "shares": 33274, "value": 7179555, "txns": 2, "people": [{"name": "Peter Osvaldik", "shares": 27000, "value": 5801220}, {"name": "Mark Wolfe Nelson", "shares": 6274, "value": 1378335}]},
   {"date": "2026-02-19", "week": "2026-02-16", "group": "sievert", "shares": 80000, "value": 17195200, "txns": 1, "people": [{"name": "Mike Sievert", "shares": 80000, "value": 17195200}]},

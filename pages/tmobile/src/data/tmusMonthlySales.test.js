@@ -23,8 +23,24 @@ describe('NASDAQ_META', () => {
   it('excludes Deutsche Telekom and says how much that removed', () => {
     expect(NASDAQ_META.excludedFiler).toBe('DEUTSCHE TELEKOM AG');
     expect(NASDAQ_META.excludedRows).toBeGreaterThan(NASDAQ_META.txnCount);
-    expect(NASDAQ_META.excludedRows + NASDAQ_META.txnCount)
+  });
+
+  it('accounts for every sale row the feed sent: kept, majority owner, outlier', () => {
+    expect(NASDAQ_META.excludedRows + NASDAQ_META.outliers.length + NASDAQ_META.txnCount)
       .toBe(NASDAQ_META.saleRows);
+  });
+
+  it('holds out the named block trade, and only that one', () => {
+    expect(NASDAQ_META.outliers).toHaveLength(1);
+    const [outlier] = NASDAQ_META.outliers;
+    expect(outlier).toMatchObject({ date: '2026-02-12', name: 'Raul Marcelo Claure' });
+    expect(outlier.value).toBe(Math.round(outlier.shares * outlier.price));
+    expect(SALE_TXNS.some((t) => t.date === outlier.date && t.name === outlier.name))
+      .toBe(false);
+  });
+
+  it('leaves the rest of that seller\u2019s trades in', () => {
+    expect(SALE_TXNS.some((t) => t.name === 'Raul Marcelo Claure')).toBe(true);
   });
 
   it('counts what actually survived', () => {

@@ -157,7 +157,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,553 tests across 100 suites**
+**Total: 1,560 tests across 100 suites**
 
 ## Key Files
 
@@ -470,8 +470,21 @@ looks right.
   `xslF345X06/…`, EDGAR's own rendering; strip that prefix for the machine copy.
 - **Excluded: Deutsche Telekom AG**, everywhere on the page. The majority owner
   files 753 of the 899 five-year sale lines and 30.3M shares; leaving it in would
-  swamp every executive trade on the chart. 16 individual insiders and 146 sale
+  swamp every executive trade on the chart. 16 individual insiders and 145 sale
   transactions remain.
+- **One individual trade is held out too, by name** — `OUTLIER_TRADES` in BOTH
+  generators, keyed on `(date, filer)` so it can only ever remove the trade it
+  names: Raul Marcelo Claure's 550,000-share block on 2026-02-12, $119.7M in a
+  single indirect open-market trade. Same reasoning as Deutsche Telekom at a
+  smaller scale — a holder unwinding a position, and big enough on its own to set
+  the axis on every chart. Removing it dropped the monthly axis from $160M to
+  $60M and moved the peak month off Feb 2026. **The two generators must hold out
+  the same trades** or the cross-source test fails, and each **exits non-zero if
+  a named trade stops arriving**, so the hold-out can never silently become a
+  no-op. The page prints the trade and its figures from
+  `TMUS_META.outliers` at the foot of the source notes — never as prose, which
+  would go stale. Claure's other sales (including ~$549M over three days in June
+  2024) are still counted.
 - **Code F is not a sale.** Shares withheld to cover taxes on a vest are
   dispositions, not sales, and are excluded — as are grants (A), option exercises
   (M) and non-open-market dispositions.
@@ -494,8 +507,10 @@ that looks right:
 - **A disposition is not a sale.** Only `Sell` and `Automatic Sell` are kept;
   `Disposition (Non Open Market)` is overwhelmingly code-F tax withholding.
 - **Deutsche Telekom is most of the feed** — 97 of the 153 sale rows and 6.4M of
-  the shares. Excluded, same call the five-year chart makes. 56 sales by 13
-  people remain.
+  the shares. Excluded, same call the five-year chart makes. With the one
+  held-out block trade also gone, 55 sales by 13 people remain, and
+  `excludedRows + outliers + txnCount === saleRows` is asserted so no row can go
+  missing unaccounted for.
 
 Names are display-only: the feed sets them `LAST FIRST MIDDLE` in caps, which no
 algorithm reliably unpicks ("SIEVERT G MICHAEL" is G. Michael Sievert), so the 13
@@ -539,9 +554,10 @@ arithmetic and `gapGeometry.js` the geometry, both pure, both tested (53 tests).
   data is static, so a live clock would inflate the quiet stretch by however long
   it had been since the last deploy.
 - **Dollars and filings sit side by side in the tiles**, because a single block
-  trade can hold a year's dollars up while the cadence collapses — which is
-  exactly what Raul Marcelo Claure's Feb 2026 block does here. The caption says
-  so out loud whenever one day is ≥40% of the trailing year (`biggestDay`).
+  trade can hold a year's dollars up while the cadence collapses. The caption
+  names the day whenever one is ≥40% of the trailing year (`biggestDay`), and
+  says nothing when none is — which is the state after the Feb 2026 block came
+  out.
 - The trace is **VU amber**; it needs no separation from the two sale hues
   because it never appears in the same plot as them.
 
