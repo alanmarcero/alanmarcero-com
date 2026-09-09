@@ -247,7 +247,7 @@
   .jump a:hover,.jump a:focus-visible{color:var(--ink);background:var(--card);border-color:var(--hair-strong)}
   </style>
   <nav class="jump" aria-label="Jump to a section">
-    <span class="jump-sep">Quarter</span><a href="#eat">🍽️ Eat &amp; drink</a><a href="#do">🎷 Do &amp; see</a><a href="#jazzkids">🎺 Jazz kids</a><a href="#kids">🎠 Kids</a><a href="#near">📍 Near you</a><span class="jump-sep">Outside</span><a href="#out-marigny">🎺 Frenchmen</a><a href="#out-garden">🌳 Garden District</a><a href="#out-citypark">🎠 City Park</a><a href="#out-cbd">🏢 CBD</a><a href="#book">📋 Book</a>
+    <span class="jump-sep">Quarter</span><a href="#stay">🏨 Hotel</a><a href="#eat">🍽️ Eat &amp; drink</a><a href="#do">🎷 Do &amp; see</a><a href="#jazzkids">🎺 Jazz kids</a><a href="#kids">🎠 Kids</a><a href="#near">📍 Near you</a><span class="jump-sep">Outside</span><a href="#out-marigny">🎺 Frenchmen</a><a href="#out-garden">🌳 Garden District</a><a href="#out-citypark">🎠 City Park</a><a href="#out-cbd">🏢 CBD</a><a href="#book">📋 Book</a>
   </nav>
   <style id="part-styles">
   .part{margin:2.6rem 0 .2rem;padding:1rem 1.15rem 1.05rem;border-radius:16px;
@@ -303,7 +303,72 @@
   .et-map:hover{text-decoration:underline}
   .et-card[hidden],.et-group[hidden]{display:none}
 </style>
-  <p class="homebase" data-homebase="Hotel Le Marais" data-address="717 Conti St, New Orleans, LA 70130" data-lat="29.956155" data-lng="-90.067172">🏨 <b>Home base: Hotel Le Marais</b>, 717 Conti St, French Quarter. Every 📍 figure on this page is the straight-line distance from here.</p>
+  <p class="homebase" data-homebase="Hotel Le Marais" data-address="717 Conti St, New Orleans, LA 70130" data-lat="29.956155" data-lng="-90.067172">🏨 <b>Home base: Hotel Le Marais.</b> Every 📍 figure on this page is the straight-line distance from its front door; walking times assume an easy pace.</p>
+<style id="stay-styles">
+  .stay{margin:.9rem 0 .2rem;background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--green);border-radius:9px;padding:.7rem .85rem}
+  .stay-top{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+  .stay-name{font-family:var(--serif);font-size:1.18rem;font-weight:600;color:var(--ink)}
+  .stay-addr{font-size:.78rem;color:var(--faint);font-weight:600}
+  .stay-addr a{color:var(--ac);text-decoration:none}
+  .stay-addr a:hover{text-decoration:underline}
+  .stay-map{margin-left:auto;font-size:.74rem;font-weight:600;color:var(--ac);text-decoration:none;white-space:nowrap}
+  .stay-map:hover{text-decoration:underline}
+  .stay-note{font-size:.82rem;color:var(--muted);line-height:1.45;margin:.4rem 0 0}
+  .stay-note b{color:var(--ink)}
+  .stay-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem .9rem;margin-top:.7rem}
+  .stay-col h4{font-family:var(--sans);font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--green);margin:0 0 .28rem}
+  .stay-col.warn h4{color:var(--brass)}
+  .stay-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.24rem}
+  .stay-list li{font-size:.79rem;color:var(--muted);line-height:1.4;display:flex;gap:.4rem;align-items:baseline}
+  .stay-list li b{color:var(--ink);font-weight:670}
+  .stay-ic{flex:none;width:1.05em;text-align:center}
+  .stay-src{font-size:.71rem;color:var(--faint);margin:.65rem 0 0;line-height:1.4}
+  @media (max-width:720px){.stay-cols{grid-template-columns:1fr 1fr}}
+  @media (max-width:520px){.stay-cols{grid-template-columns:1fr}.stay-map{margin-left:0}}
+</style>
+  <section class="stay" id="stay">
+    <div class="stay-top">
+      <span class="stay-name">🏨 Hotel Le Marais</span>
+      <span class="stay-addr">717 Conti St, French Quarter · 66 rooms · <a href="tel:+15045252300">(504) 525-2300</a></span>
+      <a class="stay-map" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Le%20Marais%2C%20717%20Conti%20St%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Open in Maps ↗</a>
+    </div>
+    <p class="stay-note">Moved here from the <b>Dauphine Orleans</b> — two blocks up Conti — while their chiller is replaced. <b>Room &amp; tax stay on the original booking;</b> the card you hand Le Marais is for incidentals only.</p>
+    <div class="stay-cols">
+      <div class="stay-col">
+        <h4>Comes with the stay</h4>
+        <ul class="stay-list">
+          <li><span class="stay-ic">🏊</span><span><b>Heated saltwater pool</b> in the courtyard — 7 AM–11 PM, 4 ft deep all over</span></li>
+          <li><span class="stay-ic">🍸</span><span><b>VIVE!</b> cocktail bar downstairs, opening onto the courtyard — Tue–Sat, 3–11 PM</span></li>
+          <li><span class="stay-ic">🏋️</span><span>Fitness center</span></li>
+          <li><span class="stay-ic">📶</span><span>Free high-speed Wi-Fi</span></li>
+          <li><span class="stay-ic">☕</span><span>Complimentary coffee</span></li>
+          <li><span class="stay-ic">🛎️</span><span>24-hour front desk, concierge &amp; bag storage — useful on day one and on the way out</span></li>
+          <li><span class="stay-ic">💼</span><span>Business center, meeting rooms, 10-person boardroom</span></li>
+        </ul>
+      </div>
+      <div class="stay-col">
+        <h4>In the room</h4>
+        <ul class="stay-list">
+          <li><span class="stay-ic">❄️</span><span><b>Air conditioning</b> — the whole reason for the move</span></li>
+          <li><span class="stay-ic">🛏️</span><span>Pillow-top bed; two doubles or a king</span></li>
+          <li><span class="stay-ic">📺</span><span>42&Prime; flat-screen with on-demand films</span></li>
+          <li><span class="stay-ic">🧖</span><span>Waffle cotton bathrobes, deluxe bath products, granite counters</span></li>
+          <li><span class="stay-ic">🧰</span><span>Coffee maker, safe, iron, hair dryer, desk &amp; ergonomic chair</span></li>
+          <li><span class="stay-ic">🚪</span><span>Superior rooms look onto the courtyard or the Quarter; <b>Premium adds a balcony</b></span></li>
+        </ul>
+      </div>
+      <div class="stay-col warn">
+        <h4>Extra, or worth asking</h4>
+        <ul class="stay-list">
+          <li><span class="stay-ic">🚗</span><span><b>Valet only, $50 per night</b> per car plus tax. No self-parking — and we are not renting a car, so this should be nothing</span></li>
+          <li><span class="stay-ic">🍳</span><span><b>Breakfast is unconfirmed.</b> Booking sites advertise a complimentary buffet; the hotel's own amenities, rooms and FAQ pages never mention one. Ask at check-in</span></li>
+          <li><span class="stay-ic">🚭</span><span>Non-smoking throughout; no pets (ADA service animals excepted)</span></li>
+          <li><span class="stay-ic">🎷</span><span>No live music on site — <b>Preservation Hall</b> is a 4-minute walk, and May Baily's is back at the old hotel</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="stay-src">Amenities, pool hours and the valet rate are taken from the hotel's own site and FAQ, checked 9 Sep 2026. Anything it does not state is flagged above rather than guessed.</p>
+  </section>
   <div class="ride">
     <div class="ride-h">🚘 Weymouth → Logan, Thu Sep 10</div>
     <div class="ride-sub">10:00 AM flight · pick-up ~7:15 AM · 18.4 mi · 4 people, so a sedan (3 pax) will not do it. Live quotes pulled 3 Sep 2026.</div>
