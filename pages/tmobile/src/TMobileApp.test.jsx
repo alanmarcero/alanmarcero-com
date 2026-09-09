@@ -4,7 +4,7 @@
 import { render, screen, within, fireEvent } from '@testing-library/react';
 import TMobileApp from './TMobileApp';
 import {
-  SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS, TMUS_WEEKLY,
+  SALE_DAYS, SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS, TMUS_META, TMUS_WEEKLY,
 } from './data/tmusInsiderSales';
 import { MONTHLY_SALES, NASDAQ_META } from './data/tmusMonthlySales';
 
@@ -164,6 +164,57 @@ describe('TMobileApp', () => {
     expect(screen.getByText(/hands back 250 transactions and no more/i))
       .toBeInTheDocument();
     expect(screen.getByText(/Disposition \(Non Open Market\)/i)).toBeInTheDocument();
+  });
+
+  describe('the quiet-stretch panel', () => {
+    const asOf = TMUS_META.fetched;
+    const daysSince = (from) => Math.round(
+      (Date.parse(`${asOf}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000,
+    );
+    const lastFor = (group) => SALE_DAYS
+      .filter((d) => (group ? d.group === group : true))
+      .map((d) => d.date).sort().pop();
+
+    it('draws the sawtooth and names what it plots', () => {
+      render(<TMobileApp />);
+      expect(screen.getByRole('heading', { level: 2, name: /days since the previous insider sale/i }))
+        .toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /days since the previous insider sale/i }))
+        .toBeInTheDocument();
+    });
+
+    it('leads with the days since anybody last sold', () => {
+      render(<TMobileApp />);
+      const tile = screen.getByText(/days since the last sale/i).closest('.tm-tile');
+      expect(within(tile).getByText(String(daysSince(lastFor())))).toBeInTheDocument();
+      expect(within(tile).getByText(new RegExp(TMUS_META.lastSale.slice(0, 4))))
+        .toBeInTheDocument();
+    });
+
+    it('re-reads the quiet for whoever is selected', () => {
+      render(<TMobileApp />);
+      fireEvent.click(screen.getByRole('button', { name: /mike sievert only/i }));
+
+      const tile = screen.getByText(/days since the last sale/i).closest('.tm-tile');
+      expect(within(tile).getByText(String(daysSince(lastFor('sievert')))))
+        .toBeInTheDocument();
+      expect(within(tile).getByText(/Mike Sievert/)).toBeInTheDocument();
+    });
+
+    it('measures the open stretch against the longest one that ended', () => {
+      render(<TMobileApp />);
+      expect(screen.getByText(/longest quiet before this/i)).toBeInTheDocument();
+      expect(screen.getByText(
+        /previous longest of \d+ days and a typical \d+ days between spells of selling/,
+      )).toBeInTheDocument();
+    });
+
+    it('puts the filing count beside the dollars, so one block trade cannot carry the claim', () => {
+      render(<TMobileApp />);
+      expect(screen.getByText(/sale filings, last 1 year/i)).toBeInTheDocument();
+      expect(screen.getByText(/sold, last 6 months/i)).toBeInTheDocument();
+      expect(screen.getByText(/across \d+ filings, (down|up) \d+%/)).toBeInTheDocument();
+    });
   });
 
   it('links back to the console', () => {

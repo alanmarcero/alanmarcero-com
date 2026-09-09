@@ -16,6 +16,10 @@
   --tm-price: var(--phosphor);
   --tm-sievert: #d95926;
   --tm-others: #9085e9;
+  /* The quiet-stretch trace is the only mark in its own plot, so it needs no
+     separation from the two sale hues — it never appears beside them. VU
+     amber, 11.4:1 on the well. */
+  --tm-quiet: var(--amber);
   --tm-well: var(--panel-inset);
 
   min-height: 100vh;
@@ -175,7 +179,7 @@
   margin-top: var(--space-1);
 }
 
-/* the one hero figure on the page */
+/* the figure a tile row leads with */
 .tm-tile--hero {
   grid-column: span 2;
   box-shadow: var(--shadow-module-raised);
@@ -189,6 +193,10 @@
   letter-spacing: -0.02em;
   color: var(--phosphor);
   margin-top: var(--space-1);
+}
+
+.tm-tile--quiet .tm-tile__hero {
+  color: var(--tm-quiet);
 }
 
 .tm-tile__sub {
@@ -356,6 +364,30 @@
   stroke-linecap: round;
 }
 
+.tm-chart__line--quiet {
+  stroke: var(--tm-quiet);
+  stroke-opacity: 0.55;
+}
+
+/* the run that has not ended yet, drawn at full strength over the rest */
+.tm-chart__line--open {
+  stroke: var(--tm-quiet);
+  stroke-width: 2.5;
+}
+
+/* a reference value, not a series: a dashed hairline with its own label */
+.tm-chart__rule {
+  stroke: var(--ink-faint);
+  stroke-width: 1;
+  stroke-dasharray: 5 5;
+}
+
+.tm-chart__rulelabel {
+  fill: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--tm-tick-size, 13px);
+}
+
 /* every marker carries a 2px ring in the well colour, so dots stay legible
    where they cross the trace or each other */
 .tm-chart__dot {
@@ -369,6 +401,10 @@
 
 .tm-chart__dot--others {
   fill: var(--tm-others);
+}
+
+.tm-chart__dot--quiet {
+  fill: var(--tm-quiet);
 }
 
 .tm-chart__cursor line {
@@ -388,6 +424,10 @@
   font-size: var(--tm-endlabel-size, 14px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+}
+
+.tm-chart__endlabel--quiet {
+  fill: var(--tm-quiet);
 }
 
 /* -- tooltip: values lead, labels follow -------------------------------- */
@@ -443,6 +483,7 @@
 .tm-tip__key--price { background: var(--tm-price); }
 .tm-tip__key--sievert { background: var(--tm-sievert); }
 .tm-tip__key--others { background: var(--tm-others); }
+.tm-tip__key--quiet { background: var(--tm-quiet); }
 
 /* the month total, set off from the segments it sums */
 .tm-tip__row--total {
