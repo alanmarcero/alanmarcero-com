@@ -50,7 +50,7 @@ function PriceChart({ prices, sievertWeeks, otherWeeks, showSievert, showOthers 
       domain,
       weekIndex,
       ticks: priceTicks(domain, view.priceStep),
-      years: yearTicks(prices.map((p) => p.week)),
+      years: yearTicks(prices.map((p) => p.week), { minWeeks: compact ? 26 : 0 }),
       line: linePoints(prices, domain, box),
       area: areaPath(prices, domain, box),
       sievert: sellMarkers(sievertWeeks, weekIndex, prices, domain, box),
