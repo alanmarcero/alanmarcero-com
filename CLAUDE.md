@@ -117,8 +117,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   └── scripts/              # sweep-flights.py generator script
 │   ├── tmobile/                  # /tmobile — TMUS price + insider-selling charts
 │   │   ├── index.html            # TMUS page HTML entry
-│   │   ├── src/                  # TMobileApp, chart geometry, insider filters, data
-│   │   └── scripts/              # fetch-nasdaq-insider-sales.py generator
+│   │   ├── src/                  # TMobileApp, chart + gap geometry, filters, sell pressure, data
+│   │   └── scripts/              # fetch-edgar-form4-prices.py + fetch-nasdaq-insider-sales.py
 │   ├── matrix/                   # /matrix & /matrix-arcade — Matrix theme redesign & arcade
 │   │   ├── index.html            # Matrix main HTML entry
 │   │   ├── arcade.html           # Matrix arcade HTML entry
@@ -157,7 +157,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,482 tests across 97 suites**
+**Total: 1,553 tests across 100 suites**
 
 ## Key Files
 
@@ -433,27 +433,45 @@ uses the site palette so the arcade index stays consistent.):
 `/arcade`, so adding it was a pure-git change (no AWS calls). Separate Vite entry
 point; zero impact on the main-page bundle.
 
-**Two charts of the same subject.** Five years of T-Mobile US weekly closes with a
-marker on every week a company insider sold their own stock, then the last two
-years again as **monthly columns**. One control row scopes both: the seller filter
-(Mike Sievert / everyone else / both) narrows every chart, tile and table, and a
-measure switch picks which of three scales the monthly chart plots.
+**Three charts of the same subject.** Five years of T-Mobile US weekly closes with
+a marker on every week a company insider sold their own stock, then **how long
+they have gone without selling**, then the last two years again as **monthly
+columns**. One control row scopes all three: the seller filter (Mike Sievert /
+everyone else / both) narrows every chart, tile and table, and a measure switch
+picks which of three scales the monthly chart plots.
 
 **Data is baked in, not fetched** (`pages/tmobile/src/data/`), which
-keeps the page instant and matches the site's no-database posture. How it was
-built, in case it needs regenerating:
+keeps the page instant and matches the site's no-database posture. **Refresh both
+halves by running the two generators** —
+`pages/tmobile/scripts/fetch-edgar-form4-prices.py` (five-year series) and
+`pages/tmobile/scripts/fetch-nasdaq-insider-sales.py` (monthly columns) — then
+`npx jest pages/tmobile`, which is what catches a reshaped feed. Read both
+docstrings first; between them they hold six traps that each produce a page that
+looks right.
 
 - **Prices** — Yahoo Finance chart API, `interval=1wk&range=5y`. 262 weekly
-  closes, each anchored to its Monday.
+  closes, each anchored to its Monday. Yahoo appends the **week in progress** as
+  its own bar sharing a Monday with the completed one, so bars are folded onto
+  their Monday and the later close wins: the series always ends at the latest
+  price, and its last point is a week to date.
 - **Sales** — every TMUS Form 4 from SEC EDGAR (`data.sec.gov/submissions/
   CIK0001283699.json` → the raw ownership XML per accession), parsed for
   transaction code **`S`** only. Nasdaq's own insider-activity API caps out at
-  256 records (~2 years), so it cannot cover a 5-year window; EDGAR is the source
-  Nasdaq mirrors. Verified by cross-checking all 16 overlapping Sievert sale
-  dates against the Nasdaq API — exact match on every one.
-- **Excluded: Deutsche Telekom AG.** The majority owner accounts for 755 of the
-  905 sale lines and 30.5M shares; leaving it in would swamp every executive
-  trade on the chart. 17 individual insiders and 150 sale transactions remain.
+  250 records (~2 years), so it cannot cover a 5-year window; EDGAR is the source
+  Nasdaq mirrors, and `tmusMonthlySales.test.js` asserts the two agree where they
+  overlap.
+- **EDGAR wants an email in the `User-Agent`.** A descriptive string without an
+  `@` address gets a blanket 403 on every Archives path, including ones a browser
+  loads fine. It rate-limits hard as well, answering 403/429/503 and sometimes
+  resetting the connection: three workers, a short pause each, and a backoff on
+  all four is what gets 350-odd filings without a refusal. Do not advertise gzip
+  either — urllib will not decompress it.
+- **The raw XML is not the `primaryDocument`.** The submissions index points at
+  `xslF345X06/…`, EDGAR's own rendering; strip that prefix for the machine copy.
+- **Excluded: Deutsche Telekom AG**, everywhere on the page. The majority owner
+  files 753 of the 899 five-year sale lines and 30.3M shares; leaving it in would
+  swamp every executive trade on the chart. 16 individual insiders and 146 sale
+  transactions remain.
 - **Code F is not a sale.** Shares withheld to cover taxes on a vest are
   dispositions, not sales, and are excluded — as are grants (A), option exercises
   (M) and non-open-market dispositions.
@@ -464,17 +482,19 @@ built, in case it needs regenerating:
 docstring before touching it — three traps live there, and each produces a chart
 that looks right:
 
-- **The feed caps at 250 rows and the cap is silent.** `totalRecords` reports 250
-  no matter what you ask for, and `offset=250` returns an empty row list with the
-  same `totalRecords`, so a paging loop looks like it reached the end of the data
-  when it reached the end of the window. Every trade type shares the 250, so the
+- **The feed caps at 250 rows and the cap is silent.** `totalRecords` does not
+  move with what you ask for (it has read 250 and 251 while the body held exactly
+  250 rows), and `offset=250` returns an empty row list with that same count, so
+  a paging loop looks like it reached the end of the data when it reached the end
+  of the window. The generated metadata records the rows that ARRIVED, not the
+  total the feed claims. Every trade type shares the 250, so the
   ~40% of rows that are grants and withholdings eat into the sale history. Two
   years is all this feed can honestly chart, which is why the five-year series
   next to it stays on EDGAR.
 - **A disposition is not a sale.** Only `Sell` and `Automatic Sell` are kept;
   `Disposition (Non Open Market)` is overwhelmingly code-F tax withholding.
-- **Deutsche Telekom is most of the feed** — 97 of the 155 sale rows and 6.4M of
-  the 8.0M shares. Excluded, same call the five-year chart makes. 58 sales by 13
+- **Deutsche Telekom is most of the feed** — 97 of the 153 sale rows and 6.4M of
+  the shares. Excluded, same call the five-year chart makes. 56 sales by 13
   people remain.
 
 Names are display-only: the feed sets them `LAST FIRST MIDDLE` in caps, which no
@@ -496,6 +516,34 @@ carries the same distinction a second time so neither series leans on hue alone.
 The price trace keeps the site's phosphor. `PriceChart` swaps to a narrower,
 taller viewBox with larger user-unit type below 640px (via `useMediaQuery`), so
 the axes stay legible in a phone-width column.
+
+**The quiet-stretch chart is the answer to "has insider selling dried up?"** —
+`QuietChart`, plotting days since the previous sale at every week, so each tooth
+falls to the floor on a sale and climbs while nobody sells and a wide tooth IS a
+quiet stretch. It shares the price chart's x axis week for week (same
+`weekIndex`, same margins), so the two can be read against each other. One
+series, so no legend: the title names it, the record it is up against is a
+**dashed rule with its own label** rather than a second trace, and the open run
+is redrawn over the trace at full strength. `sellPressure.js` holds the
+arithmetic and `gapGeometry.js` the geometry, both pure, both tested (53 tests).
+
+- **Gaps are measured between trade dates, never between Mondays**, or a Friday
+  sale and the Monday sale after it would read as a three-day pause. The chart's
+  final point is read at the fetch date rather than at its own Monday, so the
+  tooth on screen is the same number the tile quotes.
+- **A pause shorter than a week is inside a spell of selling, not between two**
+  (`SPELL_BREAK`). Insiders file over consecutive days for what is one decision,
+  so an unfiltered median reports the CEO — who sells one quarter in four — as
+  selling every four days. With the filter he reads 90 days, which is his plan.
+- **Everything is counted to `TMUS_META.fetched`, never to `new Date()`.** The
+  data is static, so a live clock would inflate the quiet stretch by however long
+  it had been since the last deploy.
+- **Dollars and filings sit side by side in the tiles**, because a single block
+  trade can hold a year's dollars up while the cadence collapses — which is
+  exactly what Raul Marcelo Claure's Feb 2026 block does here. The caption says
+  so out loud whenever one day is ≥40% of the trailing year (`biggestDay`).
+- The trace is **VU amber**; it needs no separation from the two sale hues
+  because it never appears in the same plot as them.
 
 **The monthly chart is a stacked column chart** — magnitude across discrete time
 buckets — with the CEO's segment at the bottom and everyone else's above, the two

@@ -1,9 +1,10 @@
 import {
-  TMUS_META, TMUS_WEEKLY, SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS,
+  TMUS_META, TMUS_WEEKLY, SALE_DAYS, SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS,
 } from './tmusInsiderSales';
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const allSellWeeks = [...SIEVERT_SELL_WEEKS, ...OTHER_SELL_WEEKS];
+const sum = (list, pick) => list.reduce((total, item) => total + pick(item), 0);
 
 describe('TMUS_META', () => {
   it('names both sources', () => {
@@ -133,6 +134,76 @@ describe('sell weeks', () => {
       const impliedPrice = w.value / w.shares;
       expect(impliedPrice).toBeGreaterThan(w.close * 0.7);
       expect(impliedPrice).toBeLessThan(w.close * 1.4);
+    });
+  });
+});
+
+/**
+ * The per-day rows are what every timing figure reads. They have to be the
+ * same sales as the weekly rollup the chart plots, cut a different way — if
+ * the two ever drifted, the page would quote a gap between sales that never
+ * happened.
+ */
+describe('SALE_DAYS', () => {
+  it('is chronological, with one row per day per group', () => {
+    const keys = SALE_DAYS.map((d) => `${d.date}/${d.group}`);
+    expect(new Set(keys).size).toBe(keys.length);
+    const dates = SALE_DAYS.map((d) => d.date);
+    expect([...dates].sort()).toEqual(dates);
+  });
+
+  it('counts what the metadata says it counts', () => {
+    expect(SALE_DAYS.length).toBe(TMUS_META.saleDayCount);
+    expect(sum(SALE_DAYS, (d) => d.txns)).toBe(TMUS_META.saleTxnCount);
+  });
+
+  it('opens and closes on the sale dates the metadata advertises', () => {
+    expect(SALE_DAYS[0].date).toBe(TMUS_META.firstSale);
+    expect(SALE_DAYS[SALE_DAYS.length - 1].date).toBe(TMUS_META.lastSale);
+  });
+
+  it('files every day under the Monday of its own week', () => {
+    SALE_DAYS.forEach((day) => {
+      expect(day.date).toMatch(ISO_DATE);
+      const monday = new Date(`${day.week}T00:00:00Z`);
+      expect(monday.getUTCDay()).toBe(1);
+      const offset = (Date.parse(`${day.date}T00:00:00Z`) - monday.getTime()) / 86400000;
+      expect(offset).toBeGreaterThanOrEqual(0);
+      expect(offset).toBeLessThan(7);
+    });
+  });
+
+  it('splits the two groups the same way the weekly series does', () => {
+    SALE_DAYS.forEach((day) => {
+      expect(['sievert', 'others']).toContain(day.group);
+      day.people.forEach((person) => {
+        expect(person.name === 'Mike Sievert').toBe(day.group === 'sievert');
+      });
+    });
+  });
+
+  it('adds back up to the weekly rollup, group by group and week by week', () => {
+    const groups = { sievert: SIEVERT_SELL_WEEKS, others: OTHER_SELL_WEEKS };
+    Object.entries(groups).forEach(([group, weeks]) => {
+      weeks.forEach((week) => {
+        const days = SALE_DAYS.filter((d) => d.group === group && d.week === week.week);
+        expect(sum(days, (d) => d.shares)).toBe(week.shares);
+        expect(sum(days, (d) => d.value)).toBe(week.value);
+        expect(sum(days, (d) => d.txns)).toBe(week.txns);
+      });
+    });
+  });
+
+  it('lands every day on a week the price series actually plots', () => {
+    const priced = new Set(TMUS_WEEKLY.map((p) => p.week));
+    SALE_DAYS.forEach((day) => expect(priced.has(day.week)).toBe(true));
+  });
+
+  it("credits every share to that day's named people", () => {
+    SALE_DAYS.forEach((day) => {
+      expect(day.people.length).toBeGreaterThan(0);
+      expect(sum(day.people, (p) => p.shares)).toBe(day.shares);
+      expect(day.value).toBeGreaterThan(0);
     });
   });
 });

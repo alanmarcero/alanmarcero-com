@@ -9,10 +9,12 @@ rows, drops DEUTSCHE TELEKOM AG, and rolls what is left up by calendar month.
 Three things about this feed that will bite whoever runs it next:
 
 1.  THE FEED IS CAPPED AT 250 ROWS, AND THE CAP IS SILENT. `totalRecords`
-    reports 250 no matter what you ask for, and `offset=250` returns an empty
-    row list with the same `totalRecords: "250"` — so a paging loop looks like
-    it reached the end of the data when it actually reached the end of the
-    window. Every trade type shares the 250, so the ~40% of rows that are
+    does not move with what you ask for (it has read 250 and 251 while the
+    body held exactly 250 rows), and `offset=250` returns an empty row list
+    with that same count — so a paging loop looks like it reached the end of
+    the data when it actually reached the end of the window. The metadata
+    below therefore records the rows that ARRIVED, not the total the feed
+    claims. Every trade type shares the 250, so the ~40% of rows that are
     grants and tax withholdings eat into the history the sales can cover. Two
     years is all this page can honestly chart; the five-year series next to it
     comes from EDGAR, which has no such cap.
@@ -246,7 +248,8 @@ def main():
         'source': 'Nasdaq insider activity',
         'sourceUrl': PAGE,
         'fetched': date.today().isoformat(),
-        'feedRecords': int(total),
+        'feedRecords': len(rows),
+        'feedReported': int(total),
         'feedCapped': len(rows) >= 250,
         'saleRows': len(sale_rows),
         'excludedFiler': EXCLUDED,

@@ -143,23 +143,47 @@ describe('MONTHLY_SALES', () => {
  * the page makes in its source notes is asserted here rather than trusted.
  */
 describe('against the Form 4 series', () => {
+  /**
+   * The two sources are bucketed differently — one by Monday-anchored week,
+   * one by trade date — and the Nasdaq window opens and closes mid-week. So
+   * the comparison runs over whole weeks that sit ENTIRELY inside the Nasdaq
+   * window; a partial week at either end would drop a Form 4 sale the feed
+   * never covered and read as a disagreement.
+   */
+  const addDays = (iso, days) => new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86400000)
+    .toISOString().slice(0, 10);
+
   const secWeeks = [...SIEVERT_SELL_WEEKS, ...OTHER_SELL_WEEKS].filter(
-    (week) => week.week >= NASDAQ_META.feedFirst && week.week <= NASDAQ_META.feedLast,
+    (week) => week.week >= NASDAQ_META.feedFirst
+      && addDays(week.week, 6) <= NASDAQ_META.feedLast,
   );
+  const covered = new Set(secWeeks.map((w) => w.week));
+  const mondayOf = (iso) => addDays(iso, -((new Date(`${iso}T00:00:00Z`).getUTCDay() + 6) % 7));
+  const nasdaqTxns = SALE_TXNS.filter((t) => covered.has(mondayOf(t.date)));
+
+  it('compares a window with something in it', () => {
+    expect(secWeeks.length).toBeGreaterThan(5);
+    expect(nasdaqTxns.length).toBeGreaterThan(20);
+  });
 
   it('agrees share for share over the overlapping window', () => {
-    expect(sum(secWeeks, (w) => w.shares)).toBe(sum(SALE_TXNS, (t) => t.shares));
+    expect(sum(secWeeks, (w) => w.shares)).toBe(sum(nasdaqTxns, (t) => t.shares));
   });
 
   it('agrees on the dollar total to within rounding', () => {
     const sec = sum(secWeeks, (w) => w.value);
-    const nasdaq = sum(SALE_TXNS, (t) => t.value);
+    const nasdaq = sum(nasdaqTxns, (t) => t.value);
     expect(Math.abs(nasdaq - sec) / sec).toBeLessThan(0.0001);
   });
 
   it('names the same sellers, spelled the same way', () => {
     const secNames = new Set(secWeeks.flatMap((w) => w.people.map((p) => p.name)));
-    const nasdaqNames = new Set(SALE_TXNS.map((t) => t.name));
+    const nasdaqNames = new Set(nasdaqTxns.map((t) => t.name));
     expect([...nasdaqNames].sort()).toEqual([...secNames].sort());
+  });
+
+  it('agrees that the last sale in the window was the same one', () => {
+    const lastWeek = secWeeks.map((w) => w.week).sort().pop();
+    expect(mondayOf(nasdaqTxns[nasdaqTxns.length - 1].date)).toBe(lastWeek);
   });
 });

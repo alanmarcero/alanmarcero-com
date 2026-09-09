@@ -68,17 +68,27 @@ export function priceTicks(domain, step = 40) {
 /**
  * One tick per January in the series — the x axis reads as years, which is
  * what a five-year window is actually scanned by.
+ *
+ * A rolling five-year window opens partway through its first year, so that
+ * year's tick can sit a few pixels from the next one. `minWeeks` drops a year
+ * with too little of itself on screen to be worth labelling; at phone width
+ * that is the difference between an axis and "’21’22".
  */
-export function yearTicks(weeks) {
-  const seen = new Set();
-  const ticks = [];
-  weeks.forEach((week, index) => {
+export function yearTicks(weeks, { minWeeks = 0 } = {}) {
+  const counts = weeks.reduce((tally, week) => {
     const year = week.slice(0, 4);
-    if (seen.has(year)) return;
+    tally.set(year, (tally.get(year) || 0) + 1);
+    return tally;
+  }, new Map());
+
+  const seen = new Set();
+  return weeks.reduce((ticks, week, index) => {
+    const year = week.slice(0, 4);
+    if (seen.has(year)) return ticks;
     seen.add(year);
-    ticks.push({ index, year });
-  });
-  return ticks;
+    if (counts.get(year) >= minWeeks) ticks.push({ index, year });
+    return ticks;
+  }, []);
 }
 
 /** An SVG polyline `points` string for the price series. */

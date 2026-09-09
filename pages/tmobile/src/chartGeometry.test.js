@@ -117,6 +117,16 @@ describe('yearTicks', () => {
     ]);
   });
 
+  it('drops a year with too little of itself on screen to label', () => {
+    const weeks = ['2021-12-27', '2022-01-03', '2022-06-06', '2022-09-05', '2023-01-02'];
+    expect(yearTicks(weeks, { minWeeks: 3 }).map((t) => t.year)).toEqual(['2022']);
+  });
+
+  it('keeps the index of a year it keeps, whatever it drops before it', () => {
+    const weeks = ['2021-12-27', '2022-01-03', '2022-06-06', '2022-09-05'];
+    expect(yearTicks(weeks, { minWeeks: 2 })).toEqual([{ index: 1, year: '2022' }]);
+  });
+
   it('handles an empty series', () => {
     expect(yearTicks([])).toEqual([]);
   });
