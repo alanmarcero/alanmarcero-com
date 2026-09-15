@@ -235,7 +235,7 @@
   .jump a:hover,.jump a:focus-visible{color:var(--ink);background:var(--card);border-color:var(--hair-strong)}
   </style>
   <nav class="jump" aria-label="Jump to a section">
-    <span class="jump-sep">Quarter</span><a href="#stay">🏨 Hotel</a><a href="#eat">🍽️ Eat &amp; drink</a><a href="#do">🎷 Do &amp; see</a><a href="#jazzkids">🎺 Jazz kids</a><a href="#kids">🎠 Kids</a><a href="#near">📍 Near you</a><span class="jump-sep">Outside</span><a href="#out-marigny">🎺 Frenchmen</a><a href="#out-garden">🌳 Garden District</a><a href="#ink">💉 Ink</a><a href="#out-citypark">🎠 City Park</a><a href="#out-cbd">🏢 CBD</a><a href="#book">📋 Book</a>
+    <a href="#nexttime">🧳 Next time</a><span class="jump-sep">Quarter</span><a href="#stay">🏨 Hotel</a><a href="#eat">🍽️ Eat &amp; drink</a><a href="#do">🎷 Do &amp; see</a><a href="#jazzkids">🎺 Jazz kids</a><a href="#kids">🎠 Kids</a><a href="#near">📍 Near you</a><span class="jump-sep">Outside</span><a href="#out-marigny">🎺 Frenchmen</a><a href="#out-garden">🌳 Garden District</a><a href="#ink">💉 Ink</a><a href="#out-citypark">🎠 City Park</a><a href="#out-cbd">🏢 CBD</a><a href="#book">📋 Book</a>
   </nav>
   <style id="part-styles">
   .part{margin:2.6rem 0 .2rem;padding:1rem 1.15rem 1.05rem;border-radius:16px;
@@ -356,6 +356,60 @@
       </div>
     </div>
     <p class="stay-src">Amenities, pool hours and the valet rate are taken from the hotel's own site and FAQ, checked 9 Sep 2026. Anything it does not state is flagged above rather than guessed.</p>
+  </section>
+<style id="next-styles">
+  .nxt{margin:.9rem 0 .2rem;background:var(--card);border:1px solid var(--hair);border-left:3px solid var(--plum);border-radius:9px;padding:.7rem .85rem}
+  .nxt-name{font-family:var(--serif);font-size:.98rem;font-weight:600;color:var(--ink);text-decoration:none}
+  a.nxt-name:hover{color:var(--ac);text-decoration:underline}
+  .nxt-grid{list-style:none;margin:.65rem 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.34rem .9rem}
+  .nxt-row{display:flex;gap:.5rem;align-items:baseline;font-size:.8rem;line-height:1.4}
+  .nxt-ch{flex:none;width:1.5em;text-align:right;font-family:var(--mono);font-size:.68rem;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
+  .nxt-main{display:flex;flex-direction:column;gap:.05rem;min-width:0}
+  .nxt-was{font-size:.72rem;color:var(--faint);line-height:1.35}
+  .nxt-addr{margin-left:auto;flex:none;font-size:.73rem;color:var(--muted);text-align:right;white-space:nowrap}
+  .nxt-area{color:var(--faint)}
+  .nxt-gone{margin-top:.8rem;padding-top:.7rem;border-top:1px solid var(--hair)}
+  .nxt-gone h4{font-family:var(--sans);font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brass);margin:0 0 .35rem}
+  .nxt-gone .nxt-grid{grid-template-columns:1fr;gap:.45rem}
+  .nxt-row--gone .nxt-ch{color:var(--brass)}
+  .nxt-row--gone .nxt-name{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--hair-strong)}
+  .nxt-row--gone .nxt-was{white-space:normal}
+  @media (max-width:720px){.nxt-grid{grid-template-columns:1fr}}
+  @media (max-width:520px){.nxt-addr{margin-left:0;text-align:left;white-space:normal}.nxt-row{flex-wrap:wrap}}
+</style>
+  <section class="nxt" id="nexttime">
+    <div class="stay-top">
+      <span class="stay-name">🧳 For next time</span>
+      <span class="stay-addr">19 hotels &middot; from <i>Hotels of New Orleans</i> &middot; status checked 15 Sept 2026</span>
+    </div>
+    <p class="stay-note">Every hotel the book gives a chapter to, in its order &mdash; the number on the left is the chapter. <b>Sixteen still take bookings.</b> Three do not, and are kept at the foot rather than dropped, because the book is the reason you would go looking for them.</p>
+    <ol class="nxt-grid">
+      <li class="nxt-row"><span class="nxt-ch">3</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Crowne%20Plaza%20New%20Orleans%20French%20Quarter%20Astor%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Crowne Plaza New Orleans French Qtr – Astor</a><span class="nxt-was">the book&rsquo;s New Astor, and the Cosmopolitan before that</span></span><span class="nxt-addr">739 Canal St <span class="nxt-area">&middot; at Bourbon</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">4</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Maison%20de%20Ville%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hotel Maison de Ville</a></span><span class="nxt-addr">727 Rue Toulouse <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">5</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=The%20Roosevelt%20New%20Orleans%20Waldorf%20Astoria%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Roosevelt</a><span class="nxt-was">the Grunewald, then the Fairmont</span></span><span class="nxt-addr">130 Roosevelt Way <span class="nxt-area">&middot; CBD</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">6</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Audubon%20Cottages%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Audubon Cottages</a></span><span class="nxt-addr">509 Dauphine St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">7</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Le%20Pavillon%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Le Pavillon</a><span class="nxt-was">the New Hotel Denechaud, then the DeSoto</span></span><span class="nxt-addr">833 Poydras St <span class="nxt-area">&middot; CBD</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">8</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Omni%20Royal%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Omni Royal Orleans</a><span class="nxt-was">the City Exchange, the St. Louis, the Royal Orleans</span></span><span class="nxt-addr">621 St Louis St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">10</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Monteleone%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Hotel Monteleone</a></span><span class="nxt-addr">214 Royal St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">12</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Bourbon%20Orleans%20Hotel%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Bourbon Orleans Hotel</a></span><span class="nxt-addr">717 Orleans St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">13</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Le%20Richelieu%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Le Richelieu</a></span><span class="nxt-addr">1234 Chartres St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">14</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Andrew%20Jackson%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Andrew Jackson Hotel</a></span><span class="nxt-addr">919 Royal St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">15</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Lafitte%20Guest%20House%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Lafitte Guest House</a></span><span class="nxt-addr">1003 Bourbon St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">16</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Place%20d%27Armes%20Hotel%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Place d&rsquo;Armes Hotel</a></span><span class="nxt-addr">625 St Ann St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">18</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Lamothe%20House%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Lamothe House</a></span><span class="nxt-addr">621 Esplanade Ave <span class="nxt-area">&middot; Marigny edge</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">18</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Inn%20on%20Ursulines%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Inn on Ursulines</a></span><span class="nxt-addr">708 Ursulines Ave <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">18</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Inn%20on%20St.%20Peter%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Inn on St. Peter</a></span><span class="nxt-addr">1005 St Peter St <span class="nxt-area">&middot; French Quarter</span></span></li>
+      <li class="nxt-row"><span class="nxt-ch">18</span><span class="nxt-main"><a class="nxt-name" href="https://www.google.com/maps/search/?api=1&amp;query=Inn%20on%20St%20Ann%20New%20Orleans%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Inn on St. Ann</a></span><span class="nxt-addr">1013 St Ann St <span class="nxt-area">&middot; French Quarter</span></span></li>
+    </ol>
+    <div class="nxt-gone">
+      <h4>Don&rsquo;t bother &mdash; gone or shut</h4>
+      <ol class="nxt-grid">
+      <li class="nxt-row nxt-row--gone"><span class="nxt-ch">2</span><span class="nxt-main"><span class="nxt-name">The St. Charles Hotel</span><span class="nxt-was">Three hotels stood on this corner. The last was <b>demolished in 1974</b>; the lot sat empty a decade and the Place St. Charles tower went up in 1984.</span></span></li>
+      <li class="nxt-row nxt-row--gone"><span class="nxt-ch">9</span><span class="nxt-main"><span class="nxt-name">Soniat House</span><span class="nxt-was">1133 Chartres St. <b>Closed in the pandemic and never reopened.</b> Listed for sale in March 2026 &mdash; five adjoining Creole townhouses, $13.5M.</span></span></li>
+      <li class="nxt-row nxt-row--gone"><span class="nxt-ch">11</span><span class="nxt-main"><span class="nxt-name">The Cornstalk Hotel</span><span class="nxt-was">915 Royal St. The cornstalk fence is still there; the hotel behind it has been <b>closed since 2020</b> and is on the market.</span></span></li>
+      </ol>
+    </div>
+    <p class="stay-src">Chapters 1 and 17 are survey chapters, not single hotels, so they have no entry. Each hotel was checked against its own booking page; the three at the foot against news of their sale or demolition. Names are today&rsquo;s &mdash; the book&rsquo;s older ones are printed underneath where they differ.</p>
   </section>
   <style id="gc-photo-styles">.gc{overflow:hidden}.gc-photo{position:relative;display:block;height:190px;margin:-.75rem -.9rem .55rem;background:linear-gradient(135deg,var(--brass-soft),var(--green-soft));background-size:cover;background-position:center;overflow:hidden;text-decoration:none}.gc-photo .gc-ph-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;opacity:.5}.gc-photo.has-img .gc-ph-emoji{display:none}.gc-photo.has-img:hover{filter:brightness(1.06)}</style>
   <span id="eat" aria-hidden="true"></span>
