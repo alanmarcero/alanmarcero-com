@@ -81,7 +81,9 @@ describe('TMobileApp', () => {
   it('scopes that quiet-month count to whoever is selected', () => {
     render(<TMobileApp />);
     fireEvent.click(screen.getByRole('button', { name: /mike sievert only/i }));
-    expect(screen.getByText(/Mike Sievert did not sell in \d+ of the 25 months/))
+    expect(screen.getByText(new RegExp(
+      `Mike Sievert did not sell in \\d+ of the ${NASDAQ_META.monthCount} months`,
+    )))
       .toBeInTheDocument();
   });
 
@@ -157,12 +159,17 @@ describe('TMobileApp', () => {
     expect(screen.getByText(/code F\) are not sales/i)).toBeInTheDocument();
   });
 
-  it('credits Nasdaq for the monthly columns and owns up to the 250-row cap', () => {
+  it('credits Nasdaq for the monthly columns and owns up to the two-year window', () => {
     render(<TMobileApp />);
     expect(screen.getByRole('link', { name: /nasdaq/i }))
       .toHaveAttribute('href', NASDAQ_META.sourceUrl);
-    expect(screen.getByText(/hands back 250 transactions and no more/i))
-      .toBeInTheDocument();
+    // which bound is biting is said out loud: the 250-row cap, or the feed's reach
+    expect(screen.getByText(new RegExp(
+      NASDAQ_META.feedCapped
+        ? `hands back ${NASDAQ_META.feedRecords} transactions and no more`
+        : `carries ${NASDAQ_META.feedRecords} transactions of every kind`,
+      'i',
+    ))).toBeInTheDocument();
     expect(screen.getByText(/Disposition \(Non Open Market\)/i)).toBeInTheDocument();
   });
 

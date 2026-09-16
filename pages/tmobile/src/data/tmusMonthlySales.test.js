@@ -15,9 +15,13 @@ describe('NASDAQ_META', () => {
     );
   });
 
-  it('records that the feed capped the window', () => {
-    expect(NASDAQ_META.feedRecords).toBe(250);
-    expect(NASDAQ_META.feedCapped).toBe(true);
+  it('records the rows that arrived, and whether the 250 cap is what bounded them', () => {
+    // The cap is silent: feedReported has read both 250 and 251 while the body
+    // held exactly 250 rows, so feedRecords counts what ARRIVED. Under 250 and
+    // the two-year window is the feed's own reach, not the row limit.
+    expect(NASDAQ_META.feedRecords).toBeLessThanOrEqual(250);
+    expect(NASDAQ_META.feedCapped).toBe(NASDAQ_META.feedRecords >= 250);
+    expect(NASDAQ_META.feedRecords).toBeGreaterThanOrEqual(NASDAQ_META.saleRows);
   });
 
   it('excludes Deutsche Telekom and says how much that removed', () => {
