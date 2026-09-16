@@ -3,7 +3,7 @@
 
    Source: Nasdaq insider activity for TMUS (the feed behind
    https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity),
-   read 2026-09-09. The feed hands back 250 transactions and no more,
+   read 2026-09-16. The feed hands back 250 transactions and no more,
    which is what fixes this window at two years rather than five.
 
    Kept: transaction types "Sell" and "Automatic Sell" — an actual sale,
@@ -15,11 +15,10 @@
    Regenerate with pages/tmobile/scripts/fetch-nasdaq-insider-sales.py
    ======================================================================= */
 
-export const NASDAQ_META = {"symbol": "TMUS", "source": "Nasdaq insider activity", "sourceUrl": "https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity", "fetched": "2026-09-09", "feedRecords": 250, "feedReported": 251, "feedCapped": true, "saleRows": 153, "excludedFiler": "DEUTSCHE TELEKOM AG", "excludedRows": 97, "excludedShares": 6417309, "outliers": [{"date": "2026-02-12", "name": "Raul Marcelo Claure", "shares": 550000, "price": 217.57, "value": 119663500}], "txnCount": 55, "sellerCount": 13, "feedFirst": "2024-09-10", "feedLast": "2026-09-01", "firstSale": "2024-09-10", "lastSale": "2026-05-21", "monthCount": 25, "quietMonths": 11};
+export const NASDAQ_META = {"symbol": "TMUS", "source": "Nasdaq insider activity", "sourceUrl": "https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity", "fetched": "2026-09-16", "feedRecords": 249, "feedReported": 249, "feedCapped": false, "saleRows": 152, "excludedFiler": "DEUTSCHE TELEKOM AG", "excludedRows": 97, "excludedShares": 6417309, "outliers": [{"date": "2026-02-12", "name": "Raul Marcelo Claure", "shares": 550000, "price": 217.57, "value": 119663500}], "txnCount": 54, "sellerCount": 14, "feedFirst": "2024-10-01", "feedLast": "2026-09-10", "firstSale": "2024-10-01", "lastSale": "2026-09-10", "monthCount": 24, "quietMonths": 10};
 
 /** One record per calendar month in the window, months with no sale included. */
 export const MONTHLY_SALES = [
-  {"month": "2024-09", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 273428, "value": 53764590, "txns": 2, "people": [{"name": "Raul Marcelo Claure", "shares": 273428, "value": 53764590}]}},
   {"month": "2024-10", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 65769, "value": 14536124, "txns": 3, "people": [{"name": "Mark Wolfe Nelson", "shares": 42769, "value": 9249224}, {"name": "Peter Osvaldik", "shares": 20000, "value": 4671000}, {"name": "Michael J. Katz", "shares": 3000, "value": 615900}]}},
   {"month": "2024-11", "sievert": {"shares": 80000, "value": 19079800, "txns": 3, "people": [{"name": "Mike Sievert", "shares": 80000, "value": 19079800}]}, "others": {"shares": 127100, "value": 28714009, "txns": 6, "people": [{"name": "Raul Marcelo Claure", "shares": 110000, "value": 24673000}, {"name": "Nestor Cano", "shares": 11100, "value": 2560659}, {"name": "Srikant M. Datar", "shares": 6000, "value": 1480350}]}},
   {"month": "2024-12", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 1100, "value": 254188, "txns": 1, "people": [{"name": "Letitia A Long", "shares": 1100, "value": 254188}]}},
@@ -43,13 +42,11 @@ export const MONTHLY_SALES = [
   {"month": "2026-06", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 0, "value": 0, "txns": 0, "people": []}},
   {"month": "2026-07", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 0, "value": 0, "txns": 0, "people": []}},
   {"month": "2026-08", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 0, "value": 0, "txns": 0, "people": []}},
-  {"month": "2026-09", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 0, "value": 0, "txns": 0, "people": []}},
+  {"month": "2026-09", "sievert": {"shares": 0, "value": 0, "txns": 0, "people": []}, "others": {"shares": 772, "value": 137671, "txns": 1, "people": [{"name": "Daniel James Drobac", "shares": 772, "value": 137671}]}},
 ];
 
 /** Every kept sale transaction, oldest first — the table view reads this. */
 export const SALE_TXNS = [
-  {"date": "2024-09-10", "name": "Raul Marcelo Claure", "filer": "CLAURE RAUL MARCELO", "relation": "Director", "kind": "market", "own": "indirect", "shares": 141119, "price": 196.53, "value": 27734117},
-  {"date": "2024-09-11", "name": "Raul Marcelo Claure", "filer": "CLAURE RAUL MARCELO", "relation": "Director", "kind": "market", "own": "indirect", "shares": 132309, "price": 196.74, "value": 26030473},
   {"date": "2024-10-01", "name": "Michael J. Katz", "filer": "KATZ MICHAEL J.", "relation": "Officer", "kind": "plan", "own": "direct", "shares": 3000, "price": 205.3, "value": 615900},
   {"date": "2024-10-16", "name": "Mark Wolfe Nelson", "filer": "NELSON MARK WOLFE", "relation": "Officer", "kind": "plan", "own": "direct", "shares": 42769, "price": 216.26, "value": 9249224},
   {"date": "2024-10-25", "name": "Peter Osvaldik", "filer": "OSVALDIK PETER", "relation": "Officer", "kind": "market", "own": "direct", "shares": 20000, "price": 233.55, "value": 4671000},
@@ -103,4 +100,5 @@ export const SALE_TXNS = [
   {"date": "2026-03-10", "name": "Srikant M. Datar", "filer": "DATAR SRIKANT M.", "relation": "Director", "kind": "market", "own": "indirect", "shares": 1000, "price": 218.25, "value": 218250},
   {"date": "2026-05-01", "name": "Michael J. Katz", "filer": "KATZ MICHAEL J.", "relation": "Officer", "kind": "market", "own": "direct", "shares": 5000, "price": 195.81, "value": 979050},
   {"date": "2026-05-21", "name": "Jon Freier", "filer": "FREIER JON", "relation": "Officer", "kind": "plan", "own": "direct", "shares": 4799, "price": 190.0, "value": 911810},
+  {"date": "2026-09-10", "name": "Daniel James Drobac", "filer": "DROBAC DANIEL JAMES", "relation": "Officer", "kind": "plan", "own": "direct", "shares": 772, "price": 178.33, "value": 137671},
 ];

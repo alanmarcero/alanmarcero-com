@@ -14,7 +14,10 @@ Four things about this feed that will bite whoever runs it next:
     with that same count — so a paging loop looks like it reached the end of
     the data when it actually reached the end of the window. The metadata
     below therefore records the rows that ARRIVED, not the total the feed
-    claims. Every trade type shares the 250, so the ~40% of rows that are
+    claims, and `feedCapped` says whether the cap is what bit — the window is
+    ALSO bounded at about two years, so once old rows age out the count can
+    come in under 250 and asking for 500 changes nothing. The page reads
+    `feedCapped` to say which of the two bounds it is up against. Every trade type shares the 250, so the ~40% of rows that are
     grants and tax withholdings eat into the history the sales can cover. Two
     years is all this page can honestly chart; the five-year series next to it
     comes from EDGAR, which has no such cap.
@@ -32,7 +35,7 @@ Four things about this feed that will bite whoever runs it next:
     covering that date.
 
 4.  DEUTSCHE TELEKOM IS MOST OF THE FEED. The majority owner files 97 of the
-    155 sale rows and 6.4M of the 8.0M shares. Leaving it in flattens every
+    152 sale rows and 6.4M of the 7.7M shares. Leaving it in flattens every
     executive's trade into the axis, which is why it is excluded — the same
     call the five-year chart on this page makes.
 
@@ -72,7 +75,7 @@ OUTLIER_TRADES = (('2026-02-12', 'CLAURE RAUL MARCELO'),)
 
 # Display only. The feed sets names LAST FIRST MIDDLE in caps, which no
 # algorithm can reliably unpick ("SIEVERT G MICHAEL" is G. Michael Sievert),
-# so the 13 people who appear are spelled out and the spellings match the
+# so the 14 people who appear are spelled out and the spellings match the
 # five-year series so a reader can follow one person across both charts.
 DISPLAY_NAME = {
     'SIEVERT G MICHAEL': 'Mike Sievert',
@@ -88,6 +91,7 @@ DISPLAY_NAME = {
     'LONG LETITIA A': 'Letitia A Long',
     'EWALDSSON ULF': 'Ulf Ewaldsson',
     'TAYLOR TERESA': 'Teresa Taylor',
+    'DROBAC DANIEL JAMES': 'Daniel James Drobac',
 }
 
 OUT = Path(__file__).resolve().parents[1] / 'src' / 'data' / 'tmusMonthlySales.js'
