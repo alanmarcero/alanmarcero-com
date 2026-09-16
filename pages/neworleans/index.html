@@ -15,7 +15,7 @@
     --green:#216b4b; --green-soft:#e2efe6; --brass:#a97e2f; --brass-soft:#f2e9d4;
     --ac:#356a99; --ac-soft:#e2edf6; --sun:#b06f16; --sun-soft:#f7ead2;
     --kid:#a63f74; --kid-soft:#f6e4ee; --shade:#4c7a44; --shade-soft:#e6f0e0;
-    --plum:#5b3d7a;
+    --plum:#5b3d7a; --plum-soft:#efe7f6;
     --shadow:0 1px 2px rgba(40,50,30,.05), 0 14px 40px rgba(40,50,30,.07);
     --serif:"Hoefler Text","Iowan Old Style",Palatino,"Palatino Linotype",Georgia,"Times New Roman",serif;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -29,7 +29,7 @@
       --green:#5cb98d; --green-soft:#16281e; --brass:#cfa054; --brass-soft:#2b2413;
       --ac:#6aa9dc; --ac-soft:#152634; --sun:#d69a4a; --sun-soft:#2f2612;
       --kid:#dc84b3; --kid-soft:#301a26; --shade:#7bb26f; --shade-soft:#182414;
-      --plum:#a986cf;
+      --plum:#a986cf; --plum-soft:#231a2e;
       --shadow:0 1px 2px rgba(0,0,0,.5), 0 16px 44px rgba(0,0,0,.4);
       --sky1:#8a5a5f; --sky2:#5c3f68; --sky3:#241f42; --river:#0d1a22;
     }
@@ -38,14 +38,14 @@
     --paper:#f3efe6; --card:#fbf9f3; --ink:#1c2620; --muted:#666d63; --faint:#8a9084;
     --hair:#e4dfd1; --hair-strong:#d6cfbc; --green:#216b4b; --green-soft:#e2efe6;
     --brass:#a97e2f; --brass-soft:#f2e9d4; --ac:#356a99; --ac-soft:#e2edf6; --sun:#b06f16; --sun-soft:#f7ead2;
-    --kid:#a63f74; --kid-soft:#f6e4ee; --shade:#4c7a44; --shade-soft:#e6f0e0; --plum:#5b3d7a;
+    --kid:#a63f74; --kid-soft:#f6e4ee; --shade:#4c7a44; --shade-soft:#e6f0e0; --plum:#5b3d7a; --plum-soft:#efe7f6;
     --sky1:#f4c98a; --sky2:#c9738a; --sky3:#4b3f74; --river:#243a4a;
   }
   :root[data-theme="dark"]{
     --paper:#11140f; --card:#191e16; --ink:#e9ece1; --muted:#9aa392; --faint:#767e6e;
     --hair:#2a3222; --hair-strong:#39422f; --green:#5cb98d; --green-soft:#16281e;
     --brass:#cfa054; --brass-soft:#2b2413; --ac:#6aa9dc; --ac-soft:#152634; --sun:#d69a4a; --sun-soft:#2f2612;
-    --kid:#dc84b3; --kid-soft:#301a26; --shade:#7bb26f; --shade-soft:#182414; --plum:#a986cf;
+    --kid:#dc84b3; --kid-soft:#301a26; --shade:#7bb26f; --shade-soft:#182414; --plum:#a986cf; --plum-soft:#231a2e;
     --sky1:#8a5a5f; --sky2:#5c3f68; --sky3:#241f42; --river:#0d1a22;
   }
 
@@ -185,6 +185,9 @@
   .dish{font-size:.82rem;color:var(--ink);margin:.1rem 0 .45rem;line-height:1.35}
   .dish .lbl{font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);font-weight:800;margin-right:.35rem}
   .dish b{font-weight:680}
+  .mine{font-size:.82rem;color:var(--ink);line-height:1.4;margin:.1rem 0 .45rem;padding:.32rem .5rem;
+    background:var(--plum-soft);border-left:2px solid var(--plum);border-radius:0 7px 7px 0}
+  .mine .lbl{font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--plum);font-weight:800;margin-right:.35rem}
   .pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.9rem}
   .pill{font-size:.8rem;font-weight:600;color:var(--ink);background:var(--brass-soft);border:1px solid var(--hair);padding:.24rem .6rem;border-radius:999px}
   .pills .lbl{align-self:center;font-size:.78rem;color:var(--faint);margin-right:.15rem}
@@ -467,6 +470,7 @@
   <style id="gc-photo-styles">.gc{overflow:hidden}.gc-photo{position:relative;display:block;height:190px;margin:-.75rem -.9rem .55rem;background:linear-gradient(135deg,var(--brass-soft),var(--green-soft));background-size:cover;background-position:center;overflow:hidden;text-decoration:none}.gc-photo .gc-ph-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;opacity:.5}.gc-photo.has-img .gc-ph-emoji{display:none}.gc-photo.has-img:hover{filter:brightness(1.06)}</style>
   <span id="eat" aria-hidden="true"></span>
   <div class="shead" id="eatdrink"><span class="ic">🍽️</span> Eat &amp; drink <span style="font-family:var(--sans);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);font-weight:800;border:1px solid var(--green);border-radius:999px;padding:.1rem .45rem">114 places, one filter</span></div>
+  <p class="sintro">Sixteen of these carry <b>our own note from the trip</b>, in the plum block on the card. Filter to just those with <b>✍️ We went</b>.</p>
 <style id="ed-styles">
   .et-kinds{display:flex;flex-wrap:wrap;gap:.26rem;margin:.1rem 0 .05rem}
   .et-kind{font-size:.68rem;font-weight:700;letter-spacing:.02em;color:var(--green);
@@ -489,18 +493,19 @@
     <div class="ht-frow"><span class="ht-flabel">The room</span><div class="ht-chips" id="edVibe"><button class="ht-chip" data-tag="v-courtyard" aria-pressed="false">🌳 Courtyard <span class="ht-n">18</span></button><button class="ht-chip" data-tag="v-historic" aria-pressed="false">🕰️ Historic room <span class="ht-n">20</span></button><button class="ht-chip" data-tag="v-counter" aria-pressed="false">🪑 Counter &amp; casual <span class="ht-n">28</span></button><button class="ht-chip" data-tag="v-bar" aria-pressed="false">🍸 Bar-led <span class="ht-n">16</span></button><button class="ht-chip" data-tag="v-fancy" aria-pressed="false">🍽️ White tablecloth <span class="ht-n">12</span></button><button class="ht-chip" data-tag="v-artsy" aria-pressed="false">🎨 Artsy <span class="ht-n">8</span></button><button class="ht-chip" data-tag="v-jazz" aria-pressed="false">🎷 Live jazz <span class="ht-n">3</span></button><button class="ht-chip" data-tag="v-ac" aria-pressed="false">❄️ Cool indoors <span class="ht-n">12</span></button><button class="ht-chip" data-tag="v-latenight" aria-pressed="false">🌙 Late night <span class="ht-n">7</span></button></div></div>
     <div class="ht-frow"><span class="ht-flabel">Kitchen</span><div class="ht-chips" id="edCuisine"><button class="ht-chip" data-tag="c-seafood" aria-pressed="false">🦪 Seafood <span class="ht-n">14</span></button><button class="ht-chip" data-tag="c-creole" aria-pressed="false">🍲 Creole &amp; Cajun <span class="ht-n">23</span></button><button class="ht-chip" data-tag="c-poboy" aria-pressed="false">🥖 Po’boys <span class="ht-n">5</span></button><button class="ht-chip" data-tag="c-steak" aria-pressed="false">🥩 Steak <span class="ht-n">2</span></button><button class="ht-chip" data-tag="c-french" aria-pressed="false">🇫🇷 French <span class="ht-n">4</span></button><button class="ht-chip" data-tag="c-italian" aria-pressed="false">🍝 Italian <span class="ht-n">3</span></button><button class="ht-chip" data-tag="c-global" aria-pressed="false">🌍 Global <span class="ht-n">7</span></button></div></div>
     <div class="ht-frow"><span class="ht-flabel">Famous for</span><div class="ht-chips" id="edFamous"><button class="ht-chip" data-tag="f-oysters" aria-pressed="false">🦪 Char-grilled oysters <span class="ht-n">8</span></button><button class="ht-chip" data-tag="f-gumbo" aria-pressed="false">🍲 Gumbo <span class="ht-n">9</span></button><button class="ht-chip" data-tag="f-friedchicken" aria-pressed="false">🍗 Fried chicken <span class="ht-n">3</span></button><button class="ht-chip" data-tag="f-crawfish" aria-pressed="false">🦞 Crawfish <span class="ht-n">1</span></button><button class="ht-chip" data-tag="f-crawfishomelet" aria-pressed="false">🍳 Crawfish omelette <span class="ht-n">4</span></button><button class="ht-chip" data-tag="f-poboy" aria-pressed="false">🥖 Po’boy <span class="ht-n">6</span></button><button class="ht-chip" data-tag="f-muffuletta" aria-pressed="false">🥪 Muffuletta <span class="ht-n">2</span></button><button class="ht-chip" data-tag="f-bbqshrimp" aria-pressed="false">🍤 BBQ shrimp <span class="ht-n">1</span></button><button class="ht-chip" data-tag="f-beignets" aria-pressed="false">🍩 Beignets <span class="ht-n">4</span></button><button class="ht-chip" data-tag="f-praline" aria-pressed="false">🍬 Pralines <span class="ht-n">4</span></button><button class="ht-chip" data-tag="f-doberge" aria-pressed="false">🎂 Doberge <span class="ht-n">4</span></button></div></div>
-    <div class="ht-frow"><span class="ht-flabel">Only</span><div class="ht-chips" id="edOnly"><button class="ht-chip" data-tag="o-walk" aria-pressed="false">🚶 Walk from the hotel <span class="ht-n">93</span></button><button class="ht-chip" data-tag="o-kid" aria-pressed="false">🧒 Kid-friendly <span class="ht-n">41</span></button><button class="ht-chip" data-tag="o-local" aria-pressed="false">🏠 Locals go <span class="ht-n">40</span></button><button class="ht-chip" data-tag="o-reserve" aria-pressed="false">📞 Reserve-worthy <span class="ht-n">16</span></button></div></div>
+    <div class="ht-frow"><span class="ht-flabel">Only</span><div class="ht-chips" id="edOnly"><button class="ht-chip" data-tag="o-went" aria-pressed="false">✍️ We went <span class="ht-n">16</span></button><button class="ht-chip" data-tag="o-walk" aria-pressed="false">🚶 Walk from the hotel <span class="ht-n">93</span></button><button class="ht-chip" data-tag="o-kid" aria-pressed="false">🧒 Kid-friendly <span class="ht-n">41</span></button><button class="ht-chip" data-tag="o-local" aria-pressed="false">🏠 Locals go <span class="ht-n">40</span></button><button class="ht-chip" data-tag="o-reserve" aria-pressed="false">📞 Reserve-worthy <span class="ht-n">16</span></button></div></div>
     <div class="ht-frow"><span class="ht-flabel">Price</span><div class="ht-chips" id="edPrice"><button class="ht-chip" data-price="1" aria-pressed="false">$ <span class="ht-n">7</span></button><button class="ht-chip" data-price="2" aria-pressed="false">$$ <span class="ht-n">28</span></button><button class="ht-chip" data-price="3" aria-pressed="false">$$$+ <span class="ht-n">17</span></button></div></div>
   </div>
   <div class="ed-status"><button class="ht-reset" id="edReset">Reset</button><span class="ht-count" id="edCount"></span></div>
   <div id="edGrid">
-      <article class="et-card" data-tags="c-creole c-seafood f-crawfishomelet f-gumbo f-oysters o-kid o-walk t-breakfast t-meal v-counter v-courtyard v-latenight" data-price="2" data-dist="124" data-name="Oceana Grill">
+      <article class="et-card" data-tags="c-creole c-seafood f-crawfishomelet f-gumbo f-oysters o-kid o-walk o-went t-breakfast t-meal v-counter v-courtyard v-latenight" data-price="2" data-dist="124" data-name="Oceana Grill">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/oceana-grill.jpg)" href="https://www.yelp.com/biz/oceana-grill-new-orleans-4" target="_blank" rel="noopener" aria-label="Oceana Grill"><span class="et-ph-emoji">🍽️</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/oceana-grill-new-orleans-4" target="_blank" rel="noopener">Oceana Grill</a><span class="et-price">$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span><span class="et-kind">🍳 Breakfast</span></div>
         <div class="et-meta"><span class="et-nb">739 Conti St</span><span class="et-rating" title="Yelp rating">⭐ 4.2 (10.9k reviews)</span></div>
         <div class="et-blurb"><b>Nearly 11,000 reviews, more than any restaurant in the Quarter</b>, and still a 4.2. Chargrilled oysters, jambalaya and a kids&#x27; menu, served 8 AM to 1 AM. Expect a line and expect it to move.</div>
         <div class="dish"><span class="lbl">Order</span><b>Fried seafood platter</b></div><div class="dish"><span class="lbl">Omelette</span><b>Crawfish Omelette</b> $17 — sautéed in house spices, under hollandaise. Three of its seven omelettes carry crawfish.</div>
+        <div class="mine"><span class="lbl">We went</span>Fun cocktail. A little divey off Bourbon, but not bad for bar food.</div>
         <div class="et-tags"><span class="tag walk">📍 124 ft · ~1 min</span><span class="tag kid">🧒 kid</span><span class="tag ac">🌙 open late</span><span class="tag walk">📍 124 ft · ~1 min</span><span class="tag shade">🌳 courtyard</span><a class="et-map" href="https://www.yelp.com/biz/oceana-grill-new-orleans-4" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="c-creole c-french o-reserve o-walk t-breakfast t-meal v-courtyard v-fancy v-historic" data-price="3" data-dist="167" data-name="Brennan&#x27;s">
@@ -512,13 +517,14 @@
         <div class="dish"><span class="lbl">Order</span><b>Bananas Foster</b></div>
         <div class="et-tags"><span class="tag walk">📍 167 ft · ~1 min</span><span class="tag sun">📞 reserve</span><span class="tag shade">🌳 courtyard</span><a class="et-map" href="https://www.yelp.com/biz/brennans-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-creole c-seafood f-gumbo f-oysters o-kid o-walk t-meal v-bar v-counter" data-price="2" data-dist="189" data-name="Royal House Oyster Bar">
+      <article class="et-card" data-tags="c-creole c-seafood f-gumbo f-oysters o-kid o-walk o-went t-meal v-bar v-counter" data-price="2" data-dist="189" data-name="Royal House Oyster Bar">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/royal-house.jpg)" href="https://www.yelp.com/biz/royal-house-oyster-bar-new-orleans" target="_blank" rel="noopener" aria-label="Royal House Oyster Bar"><span class="et-ph-emoji">🍲</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/royal-house-oyster-bar-new-orleans" target="_blank" rel="noopener">Royal House Oyster Bar</a><span class="et-price">$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span></div>
         <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-rating" title="Yelp rating">⭐ 3.8 (6.0k reviews)</span></div>
         <div class="et-blurb">A Royal St room with balcony seating over the street, doing the traditional <b>chicken-and-andouille gumbo</b> — $12 the cup, $19 the bowl — or four Creole standards in one go on the <b>Taste of New Orleans</b> plate ($28 for three, $33 for all four). <b>3.8, under the 4&#9733; floor the rest of this list keeps.</b></div>
         <div class="dish"><span class="lbl">Order</span><b>Chicken &amp; andouille gumbo</b></div>
+        <div class="mine"><span class="lbl">We went</span>Not great. The crab claws were the wife&rsquo;s favorite, but the portions are small and the water comes in plastic Coke cups.</div>
         <div class="et-tags"><span class="tag walk">📍 189 ft · ~1 min</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.yelp.com/biz/royal-house-oyster-bar-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-walk t-bottle" data-price="0" data-dist="226" data-name="St Louis Market">
@@ -584,13 +590,14 @@
         <div class="dish"><span class="lbl">Order</span><b>Death by Gumbo</b></div>
         <div class="et-tags"><span class="tag walk">📍 409 ft · ~2 min</span><span class="tag ac">📞 reserve</span><span class="tag sun">🍾 special occasion</span><a class="et-map" href="https://www.yelp.com/biz/restaurant-revolution-new-orleans-3" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-walk t-breakfast t-meal" data-price="0" data-dist="437" data-name="Curio Bistro">
+      <article class="et-card" data-tags="o-walk o-went t-breakfast t-meal" data-price="0" data-dist="437" data-name="Curio Bistro">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/breakfast/curio.jpg)" href="https://www.yelp.com/biz/curio-new-orleans-2" target="_blank" rel="noopener" aria-label="Curio Bistro"><span class="et-ph-emoji">🍳</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/curio-new-orleans-2" target="_blank" rel="noopener">Curio Bistro</a></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span><span class="et-kind">🍳 Breakfast</span></div>
         <div class="et-meta"><span class="et-nb">301 Royal St · opens 10 AM · 9 AM Fri–Sun</span><span class="et-rating" title="Yelp rating">⭐ 4 (1k reviews)</span></div>
         <div class="et-blurb">A Royal St bistro and <b>the one place here that never opens before 9</b> — 10 AM Monday to Thursday, 9 AM Friday to Sunday. If you want breakfast at 8 this is not it; if you want French toast and blue crab cakes at 10:30, it is.</div>
         <div class="dish"><span class="lbl">Order</span><b>French toast &amp; eggs</b></div>
+        <div class="mine"><span class="lbl">We went</span>Our second time here, for the New Orleans sampler. Great server, nice cocktails. Good if there isn&rsquo;t anywhere else.</div>
         <div class="et-tags"><span class="tag walk">📍 437 ft · ~2 min</span><a class="et-map" href="https://www.yelp.com/biz/curio-new-orleans-2" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-walk t-breakfast t-meal v-ac" data-price="0" data-dist="444" data-name="Cafe Conti">
@@ -602,13 +609,14 @@
         <div class="dish"><span class="lbl">Order</span><b>Creamed spinach crepe</b></div>
         <div class="et-tags"><span class="tag walk">📍 444 ft · ~2 min</span><span class="tag ac">❄️ A/C</span><a class="et-map" href="https://www.yelp.com/biz/cafe-conti-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-kid o-walk t-coffee v-courtyard" data-price="0" data-dist="466" data-name="Pirate King Coffee">
+      <article class="et-card" data-tags="o-kid o-walk o-went t-coffee v-courtyard" data-price="0" data-dist="466" data-name="Pirate King Coffee">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/sip/pirate-king-coffee.jpg)" href="https://www.yelp.com/biz/pirate-king-coffee-new-orleans" target="_blank" rel="noopener" aria-label="Pirate King Coffee"><span class="et-ph-emoji">🏴‍☠️</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/pirate-king-coffee-new-orleans" target="_blank" rel="noopener">Pirate King Coffee</a></div>
         <div class="et-kinds"><span class="et-kind">☕ Coffee</span></div>
         <div class="et-meta"><span class="et-nb">320 Exchange Pl, FQ</span><span class="et-rating" title="Yelp rating">⭐ 4.5 (94 reviews)</span></div>
         <div class="et-blurb">A <b>pirate-themed café hidden in Exchange Alley</b>, house-roasting its own beans (including a chicory blend), with tables out in the alley. Built for a 7-year-old; the coffee's genuinely good.</div>
         <div class="dish"><span class="lbl">Drink</span><b>House-roasted chicory blend</b></div>
+        <div class="mine"><span class="lbl">We went</span>Really nice dark roast.</div>
         <div class="et-tags"><span class="tag walk">📍 466 ft · ~2 min</span><span class="tag kid">🧒 kid</span><span class="tag sun">🔥 roaster</span><span class="tag shade">🌳 alley seating</span><a class="et-map" href="https://www.yelp.com/biz/pirate-king-coffee-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-walk t-bar v-ac v-historic" data-price="0" data-dist="500" data-name="Arnaud's French 75 Bar">
@@ -647,13 +655,14 @@
         <div class="dish"><span class="lbl">Order</span><b>A Sazerac before dinner</b></div>
         <div class="et-tags"><span class="tag walk">📍 569 ft · ~2 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/may-bailys-place-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-creole o-local o-walk t-meal v-ac v-bar" data-price="2" data-dist="610" data-name="Kingfish">
+      <article class="et-card" data-tags="c-creole o-local o-walk o-went t-meal v-ac v-bar" data-price="2" data-dist="610" data-name="Kingfish">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/kingfish.jpg)" href="https://www.yelp.com/biz/kingfish-new-orleans" target="_blank" rel="noopener" aria-label="Kingfish"><span class="et-ph-emoji">🍽️</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/kingfish-new-orleans" target="_blank" rel="noopener">Kingfish</a><span class="et-price">$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span></div>
         <div class="et-meta"><span class="et-nb">337 Chartres St</span><span class="et-rating" title="Yelp rating">⭐ 4.0 (1.5k reviews)</span></div>
         <div class="et-blurb">A serious cocktail programme attached to a serious kitchen, on lower Chartres. Boudin balls and a Sazerac at the bar is a better lunch than most sit-down rooms manage.</div>
         <div class="dish"><span class="lbl">Order</span><b>Boudin balls</b></div>
+        <div class="mine"><span class="lbl">Last trip</span>Didn&rsquo;t make it this time. It was OK the last trip &mdash; maybe give it another go.</div>
         <div class="et-tags"><span class="tag walk">📍 610 ft · ~2 min</span><span class="tag local">🏠 locals go</span><span class="tag ac">❄️ A/C</span><a class="et-map" href="https://www.yelp.com/biz/kingfish-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-kid o-walk t-coffee v-ac" data-price="0" data-dist="633" data-name="Cafe Fleur De Lis">
@@ -683,13 +692,14 @@
         <div class="dish"><span class="lbl">Grab</span><b>Craft four-pack</b></div>
         <div class="et-tags"><span class="tag walk">📍 644 ft · ~3 min</span><a class="et-map" href="https://www.yelp.com/biz/vieux-carre-wine-and-spirits-new-orleans-2" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-creole c-poboy f-muffuletta o-kid o-walk t-bar t-meal v-bar v-courtyard v-historic" data-price="2" data-dist="673" data-name="Napoleon House">
+      <article class="et-card" data-tags="c-creole c-poboy f-muffuletta o-kid o-walk o-went t-bar t-meal v-bar v-courtyard v-historic" data-price="2" data-dist="673" data-name="Napoleon House">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/napoleon-house.jpg)" href="https://www.yelp.com/biz/napoleon-house-new-orleans-2" target="_blank" rel="noopener" aria-label="Napoleon House"><span class="et-ph-emoji">🥪</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/napoleon-house-new-orleans-2" target="_blank" rel="noopener">Napoleon House</a><span class="et-price">$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span><span class="et-kind">🥃 Historic bar</span></div>
         <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-rating" title="Yelp rating">⭐ 4.1 (2.1k reviews)</span></div>
         <div class="et-blurb">The 1797 landmark café-bar at Chartres &amp; St. Louis — a warm muffuletta and a <b>Pimm's Cup</b> (America's first) in a gloriously worn courtyard; easy with kids, open till 10.</div>
         <div class="dish"><span class="lbl">Order</span><b>Warm muffuletta</b></div>
+        <div class="mine"><span class="lbl">We went</span>The Pimm&rsquo;s Cup is just OK, but the red beans and rice was one of my favorites.</div>
         <div class="et-tags"><span class="tag walk">📍 673 ft · ~3 min</span><span class="tag kid">🧒 kid</span><span class="tag shade">🌳 courtyard</span><a class="et-map" href="https://www.yelp.com/biz/napoleon-house-new-orleans-2" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="c-creole c-steak o-local o-reserve o-walk t-meal v-fancy v-historic" data-price="3" data-dist="715" data-name="Galatoire&#x27;s 33 Bar &amp; Steak">
@@ -746,13 +756,14 @@
         <div class="dish"><span class="lbl">Order</span><b>Sazerac</b></div>
         <div class="et-tags"><span class="tag walk">📍 771 ft · ~3 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/21st-amendment-at-la-louisiane-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-creole c-seafood f-oysters o-kid o-walk t-meal v-bar v-counter" data-price="2" data-dist="789" data-name="Felix&#x27;s Restaurant &amp; Oyster Bar">
+      <article class="et-card" data-tags="c-creole c-seafood f-oysters o-kid o-walk o-went t-meal v-bar v-counter" data-price="2" data-dist="789" data-name="Felix&#x27;s Restaurant &amp; Oyster Bar">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/felix-s.jpg)" href="https://www.yelp.com/biz/felixs-restaurant-and-oyster-bar-new-orleans" target="_blank" rel="noopener" aria-label="Felix&#x27;s Restaurant &amp; Oyster Bar"><span class="et-ph-emoji">🦪</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/felixs-restaurant-and-oyster-bar-new-orleans" target="_blank" rel="noopener">Felix&#x27;s Restaurant &amp; Oyster Bar</a><span class="et-price">$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span></div>
         <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-rating" title="Yelp rating">⭐ 3.9 (5.3k reviews)</span></div>
         <div class="et-blurb">The oyster bar <b>directly across Iberville from the Acme line</b>, working the same trade since the 1940s — chargrilled, raw on the half shell, turtle soup, red beans. The third option on that one block, after Acme and Mr Ed&#x27;s. <b>3.9, under the 4&#9733; floor the rest of this list keeps.</b></div>
         <div class="dish"><span class="lbl">Order</span><b>Chargrilled oysters</b></div>
+        <div class="mine"><span class="lbl">We went</span>A sleeper on Bourbon St &mdash; oysters rivaling Acme&rsquo;s.</div>
         <div class="et-tags"><span class="tag walk">📍 789 ft · ~3 min</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.yelp.com/biz/felixs-restaurant-and-oyster-bar-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-walk t-coffee v-courtyard" data-price="0" data-dist="801" data-name="St Pat&#x27;s Coffeehouse">
@@ -773,31 +784,34 @@
         <div class="dish"><span class="lbl">Order</span><b>Oysters Irene</b></div>
         <div class="et-tags"><span class="tag walk">📍 816 ft · ~3 min</span><span class="tag local">🏠 locals go</span><span class="tag ac">📞 reserve</span><a class="et-map" href="https://www.yelp.com/biz/irenes-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="f-doberge o-walk t-bakery" data-price="0" data-dist="832" data-name="Victoria's Bakery">
+      <article class="et-card" data-tags="f-doberge o-walk o-went t-bakery" data-price="0" data-dist="832" data-name="Victoria's Bakery">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/bakery/victorias-bakery.jpg)" href="https://www.yelp.com/biz/victorias-bakery-new-orleans" target="_blank" rel="noopener" aria-label="Victoria's Bakery"><span class="et-ph-emoji">🥐</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/victorias-bakery-new-orleans" target="_blank" rel="noopener">Victoria's Bakery</a></div>
         <div class="et-kinds"><span class="et-kind">🥐 Bakery</span></div>
         <div class="et-meta"><span class="et-nb">833 Iberville St</span><span class="et-rating" title="Yelp rating">⭐ 4.3 (18 reviews)</span></div>
         <div class="et-blurb"><b>The only Doberge inside the Quarter</b>, four minutes from the door. A small old-school counter doing cannoli, danish and cheesecake alongside it. Only 18 reviews, so it is a bet, but it is the close one.</div>
         <div class="dish"><span class="lbl">Order</span><b>A slice of Doberge</b></div>
+        <div class="mine"><span class="lbl">We went</span>Pretty basic. Fine if you want a croissant. They didn&rsquo;t have any Doberge.</div>
         <div class="et-tags"><span class="tag walk">📍 832 ft · ~3 min</span><a class="et-map" href="https://www.yelp.com/biz/victorias-bakery-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-walk t-coffee" data-price="0" data-dist="839" data-name="French Truck Coffee">
+      <article class="et-card" data-tags="o-walk o-went t-coffee" data-price="0" data-dist="839" data-name="French Truck Coffee">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/sip/french-truck-coffee.jpg)" href="https://www.yelp.com/biz/french-truck-coffee-new-orleans-5" target="_blank" rel="noopener" aria-label="French Truck Coffee"><span class="et-ph-emoji">☕</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/french-truck-coffee-new-orleans-5" target="_blank" rel="noopener">French Truck Coffee</a></div>
         <div class="et-kinds"><span class="et-kind">☕ Coffee</span></div>
         <div class="et-meta"><span class="et-nb">217 Chartres St, FQ</span><span class="et-rating" title="Yelp rating">⭐ 4.4 (656 reviews)</span></div>
         <div class="et-blurb">The city's standout local <b>roaster</b> — bright, small-batch beans; the yellow trucks are a NOLA icon. Its Quarter shop sits on lower Chartres a block off Canal, open early.</div>
         <div class="dish"><span class="lbl">Drink</span><b>New Orleans iced coffee</b></div>
+        <div class="mine"><span class="lbl">We went</span>Nice, but nothing too special. Off Bourbon.</div>
         <div class="et-tags"><span class="tag walk">📍 839 ft · ~3 min</span><span class="tag sun">🔥 roaster</span><a class="et-map" href="https://www.yelp.com/biz/french-truck-coffee-new-orleans-5" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-creole c-seafood f-oysters f-poboy o-kid o-walk t-meal v-counter" data-price="2" data-dist="842" data-name="Acme Oyster House">
+      <article class="et-card" data-tags="c-creole c-seafood f-oysters f-poboy o-kid o-walk o-went t-meal v-counter" data-price="2" data-dist="842" data-name="Acme Oyster House">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/acme-oyster-house.jpg)" href="https://www.yelp.com/biz/acme-oyster-house-new-orleans" target="_blank" rel="noopener" aria-label="Acme Oyster House"><span class="et-ph-emoji">🥪</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/acme-oyster-house-new-orleans" target="_blank" rel="noopener">Acme Oyster House</a><span class="et-price">$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span></div>
         <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-rating" title="Yelp rating">⭐ 4.1 (9.3k reviews)</span></div>
         <div class="et-blurb">The famous FQ oyster house (since 1910) — raw &amp; chargrilled oysters, po'boys &amp; the &ldquo;Peacemaker.&rdquo; Touristy with a line, but the oysters deliver.</div>
         <div class="dish"><span class="lbl">Order</span><b>Chargrilled oysters</b></div>
+        <div class="mine"><span class="lbl">We went</span>Classic. Can&rsquo;t beat it for oysters.</div>
         <div class="et-tags"><span class="tag walk">📍 842 ft · ~3 min</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.yelp.com/biz/acme-oyster-house-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="c-poboy f-poboy o-kid o-local o-walk t-meal v-bar v-counter" data-price="2" data-dist="844" data-name="Killer PoBoys">
@@ -836,13 +850,14 @@
         <div class="dish"><span class="lbl">Order</span><b>Duck empanadas</b></div>
         <div class="et-tags"><span class="tag kid">🧒 kid</span><span class="tag walk">📍 966 ft · ~4 min</span><a class="et-map" href="https://www.yelp.com/biz/rex-house-kitchen-and-courtyard-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-kid o-walk t-coffee v-ac" data-price="0" data-dist="978" data-name="Sucré">
+      <article class="et-card" data-tags="o-kid o-walk o-went t-coffee v-ac" data-price="0" data-dist="978" data-name="Sucré">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/sip/sucre.jpg)" href="https://www.yelp.com/biz/sucre-new-orleans-16" target="_blank" rel="noopener" aria-label="Sucré"><span class="et-ph-emoji">🍫</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/sucre-new-orleans-16" target="_blank" rel="noopener">Sucré</a></div>
         <div class="et-kinds"><span class="et-kind">☕ Coffee</span></div>
         <div class="et-meta"><span class="et-nb">636 Royal St</span><span class="et-rating" title="Yelp rating">⭐ 4.2 (45 reviews)</span></div>
         <div class="et-blurb">A pastry and chocolate counter on Royal with a proper espresso bar tucked in the back. Cold, bright and easy with a kid.</div>
         <div class="dish"><span class="lbl">Drink</span><b>Espresso &amp; a macaron</b></div>
+        <div class="mine"><span class="lbl">We went</span>Nice macarons.</div>
         <div class="et-tags"><span class="tag walk">📍 978 ft · ~4 min</span><span class="tag ac">❄️ A/C</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.yelp.com/biz/sucre-new-orleans-16" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-local o-walk t-breakfast t-meal" data-price="0" data-dist="978" data-name="Mena's Palace">
@@ -917,13 +932,14 @@
         <div class="dish"><span class="lbl">Order</span><b>Oysters Rockefeller</b></div>
         <div class="et-tags"><span class="tag walk">📍 1,032 ft · ~4 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/otis-seafood-house-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-walk t-bottle" data-price="0" data-dist="1035" data-name="Rouses Market">
+      <article class="et-card" data-tags="o-walk o-went t-bottle" data-price="0" data-dist="1035" data-name="Rouses Market">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/sip/rouses-market.jpg)" href="https://www.yelp.com/biz/rouses-market-new-orleans-2" target="_blank" rel="noopener" aria-label="Rouses Market"><span class="et-ph-emoji">🛒</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/rouses-market-new-orleans-2" target="_blank" rel="noopener">Rouses Market</a></div>
         <div class="et-kinds"><span class="et-kind">🍾 Bottle shop</span></div>
         <div class="et-meta"><span class="et-nb">701 Royal St</span><span class="et-rating" title="Yelp rating">⭐ 4.2 (387 reviews)</span></div>
         <div class="et-blurb">The Louisiana grocery chain, right on Royal. <b>Biggest cold case in the Quarter</b> and the easiest place to buy for a group. Open until 10 PM.</div>
         <div class="dish"><span class="lbl">Grab</span><b>A cold six-pack</b></div>
+        <div class="mine"><span class="lbl">We went</span>Having a market nearby was a gamechanger &mdash; actual food, not just bags of chips.</div>
         <div class="et-tags"><span class="tag walk">📍 1,035 ft · ~4 min</span><a class="et-map" href="https://www.yelp.com/biz/rouses-market-new-orleans-2" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="c-creole c-seafood f-crawfish o-kid o-local o-walk t-meal v-counter" data-price="3" data-dist="1037" data-name="Hot N Cajun">
@@ -1034,13 +1050,14 @@
         <div class="dish"><span class="lbl">Order</span><b>French toast</b></div>
         <div class="et-tags"><span class="tag walk">📍 1,364 ft · ~5 min</span><a class="et-map" href="https://www.yelp.com/biz/izzat-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-kid o-walk t-coffee v-courtyard" data-price="0" data-dist="1443" data-name="Vampire Cafe">
+      <article class="et-card" data-tags="o-kid o-walk o-went t-coffee v-courtyard" data-price="0" data-dist="1443" data-name="Vampire Cafe">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/sip/vampire-cafe.jpg)" href="https://www.yelp.com/biz/vampire-cafe-new-orleans" target="_blank" rel="noopener" aria-label="Vampire Cafe"><span class="et-ph-emoji">🦇</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/vampire-cafe-new-orleans" target="_blank" rel="noopener">Vampire Cafe</a></div>
         <div class="et-kinds"><span class="et-kind">☕ Coffee</span></div>
         <div class="et-meta"><span class="et-nb">801 Royal St</span><span class="et-rating" title="Yelp rating">⭐ 3.9 (759 reviews)</span></div>
         <div class="et-blurb">A goth-themed café and absinthe bar in a Royal St courtyard. Coffee is fine rather than notable, the courtyard and the theatre are the draw, and the kid will love it.</div>
         <div class="dish"><span class="lbl">Drink</span><b>Iced coffee</b></div>
+        <div class="mine"><span class="lbl">We went</span>Probably the worst cocktails of the trip.</div>
         <div class="et-tags"><span class="tag walk">📍 1,443 ft · ~6 min</span><span class="tag shade">🌳 courtyard</span><span class="tag kid">🧒 kid</span><a class="et-map" href="https://www.yelp.com/biz/vampire-cafe-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-kid o-walk t-bbq t-meal v-counter v-latenight" data-price="2" data-dist="1449" data-name="Pig Out Nola Barbecue">
@@ -1169,13 +1186,14 @@
         <div class="dish"><span class="lbl">Grab</span><b>Beer and a po’boy</b></div>
         <div class="et-tags"><span class="tag walk">📍 1,932 ft · ~8 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/quarter-grocery-and-deli-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-seafood o-local o-walk t-meal v-bar" data-price="3" data-dist="1935" data-name="Fives">
+      <article class="et-card" data-tags="c-seafood o-local o-walk o-went t-meal v-bar" data-price="3" data-dist="1935" data-name="Fives">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/fives.jpg)" href="https://www.yelp.com/biz/fives-new-orleans-3" target="_blank" rel="noopener" aria-label="Fives"><span class="et-ph-emoji">🍸</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/fives-new-orleans-3" target="_blank" rel="noopener">Fives</a><span class="et-price">$$$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span></div>
         <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-rating" title="Yelp rating">⭐ 4.7 (123 reviews)</span></div>
         <div class="et-blurb">A little cocktail-and-seafood counter off Jackson Square doing a lobster roll, beef tartare and tuna crudo — the least New Orleans thing on this list, and very good at it.</div>
         <div class="dish"><span class="lbl">Order</span><b>Lobster roll</b></div>
+        <div class="mine"><span class="lbl">We went</span>Possibly the best cocktail bar in the city.</div>
         <div class="et-tags"><span class="tag walk">📍 1,935 ft · ~8 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/fives-new-orleans-3" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-local o-walk t-breakfast t-meal" data-price="0" data-dist="1974" data-name="Majoria's Commerce Restaurant">
@@ -1250,13 +1268,14 @@
         
         <div class="et-tags"><span class="tag walk">📍 2,234 ft · ~9 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/matassas-market-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="o-reserve o-walk t-breakfast t-meal" data-price="0" data-dist="2265" data-name="Luke">
+      <article class="et-card" data-tags="o-reserve o-walk o-went t-breakfast t-meal" data-price="0" data-dist="2265" data-name="Luke">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/breakfast/luke.jpg)" href="https://www.yelp.com/biz/luke-new-orleans-3" target="_blank" rel="noopener" aria-label="Luke"><span class="et-ph-emoji">🍳</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/luke-new-orleans-3" target="_blank" rel="noopener">Luke</a></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span><span class="et-kind">🍳 Breakfast</span></div>
         <div class="et-meta"><span class="et-nb">333 Saint Charles Ave · opens 7 AM</span><span class="et-rating" title="Yelp rating">⭐ 4.2 (5.5k reviews)</span></div>
         <div class="et-blurb">John Besh's brasserie on St Charles, open at 7 for a proper sit-down breakfast. The most polished room on this list that is not Brennan's.</div>
         <div class="dish"><span class="lbl">Order</span><b>Oysters &amp; eggs</b></div>
+        <div class="mine"><span class="lbl">We went</span>Fantastic French food and large portions. The French 75 was one of my favorites.</div>
         <div class="et-tags"><span class="tag walk">📍 2,265 ft · ~9 min</span><span class="tag sun">📞 reserve</span><a class="et-map" href="https://www.yelp.com/biz/luke-new-orleans-3" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="o-walk t-bakery t-coffee" data-price="0" data-dist="2427" data-name="TM Breads &amp; Pastries">
@@ -1322,13 +1341,14 @@
         
         <div class="et-tags"><span class="tag walk">📍 2,526 ft · ~10 min</span><span class="tag local">🏠 locals go</span><a class="et-map" href="https://www.yelp.com/biz/quartermaster-store-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
-      <article class="et-card" data-tags="c-french o-kid o-local o-walk t-bakery t-breakfast t-coffee t-meal t-sweets v-counter v-courtyard" data-price="1" data-dist="2543" data-name="Croissant D&#x27;Or">
+      <article class="et-card" data-tags="c-french o-kid o-local o-walk o-went t-bakery t-breakfast t-coffee t-meal t-sweets v-counter v-courtyard" data-price="1" data-dist="2543" data-name="Croissant D&#x27;Or">
         <a class="et-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/croissant-d-or.jpg)" href="https://www.yelp.com/biz/croissant-d-or-patisserie-new-orleans" target="_blank" rel="noopener" aria-label="Croissant D&#x27;Or"><span class="et-ph-emoji">🥐</span></a>
         <div class="et-top"><a class="et-name" href="https://www.yelp.com/biz/croissant-d-or-patisserie-new-orleans" target="_blank" rel="noopener">Croissant D&#x27;Or</a><span class="et-price">$</span></div>
         <div class="et-kinds"><span class="et-kind">🍽️ Sit-down</span><span class="et-kind">🍳 Breakfast</span><span class="et-kind">☕ Coffee</span><span class="et-kind">🥐 Bakery</span><span class="et-kind">🍨 Sweets</span></div>
         <div class="et-meta"><span class="et-nb">French Quarter</span><span class="et-rating" title="Yelp rating">⭐ 4.0 (761 reviews)</span></div>
         <div class="et-blurb">A quiet Parisian patisserie on Ursulines with tile floors and a small courtyard. Croissants, quiche and cheap coffee, and almost no tourists at 8 AM.</div>
         <div class="dish"><span class="lbl">Order</span><b>Almond chocolate croissant</b></div>
+        <div class="mine"><span class="lbl">We went</span>Bad coffee. Fine if you want a pastry or a slice of cake.</div>
         <div class="et-tags"><span class="tag walk">📍 2,543 ft · ~10 min</span><span class="tag local">🏠 locals go</span><span class="tag kid">🧒 kid</span><span class="tag shade">🌳 courtyard</span><a class="et-map" href="https://www.yelp.com/biz/croissant-d-or-patisserie-new-orleans" target="_blank" rel="noopener">Yelp ↗</a></div>
       </article>
       <article class="et-card" data-tags="c-global o-local t-meal v-artsy v-bar v-courtyard" data-price="2" data-dist="2757" data-name="Cane and Table">
@@ -1831,9 +1851,9 @@
     <div class="gc" data-dist="167"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/brennan-s.jpg)" href="https://www.google.com/maps/search/?api=1&query=Brennan%27s%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Brennan%27s%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Brennan's</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (2.5k reviews)</span></div><div class="gw">The grand pink-Royal-St brunch — bananas Foster was invented here.</div><div class="dish"><span class="lbl">Order</span><b>Bananas Foster</b></div><div class="gt"><span class="tag walk">📍 167 ft · ~1 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
     <div class="gc" data-dist="331"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/broussard-s.jpg)" href="https://www.google.com/maps/search/?api=1&query=Broussard%27s%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Broussard%27s%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Broussard's</a> <span class="et-rating" title="Yelp rating">⭐ 4.0 (969 reviews)</span></div><div class="gw">1920 Creole grande dame with a lush courtyard on Conti.</div><div class="dish"><span class="lbl">Order</span><b>Bananas Foster</b></div><div class="gt"><span class="tag walk">📍 331 ft · ~1 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
     <div class="gc" data-dist="543"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/gw-fins.jpg)" href="https://www.google.com/maps/search/?api=1&query=GW%20Fins%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=GW%20Fins%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">GW Fins</a> <span class="et-rating" title="Yelp rating">⭐ 4.6 (3.5k reviews)</span></div><div class="gw">One of the country's top seafood houses — pristine Gulf fish.</div><div class="dish"><span class="lbl">Order</span><b>Lobster dumplings</b></div><div class="gt"><span class="tag walk">📍 543 ft · ~2 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
-    <div class="gc" data-dist="673"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/napoleon-house.jpg)" href="https://www.google.com/maps/search/?api=1&query=Napoleon%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Napoleon%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Napoleon House</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (2.1k reviews)</span></div><div class="gw">1797 landmark café-bar — a warm muffuletta and a Pimm's Cup.</div><div class="dish"><span class="lbl">Order</span><b>Warm muffuletta</b></div><div class="gt"><span class="tag walk">📍 673 ft · ~3 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
+    <div class="gc" data-dist="673"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/napoleon-house.jpg)" href="https://www.google.com/maps/search/?api=1&query=Napoleon%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Napoleon%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Napoleon House</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (2.1k reviews)</span></div><div class="gw">1797 landmark café-bar — a warm muffuletta and a Pimm's Cup.</div><div class="dish"><span class="lbl">Order</span><b>Warm muffuletta</b></div><div class="mine"><span class="lbl">We went</span>The Pimm&rsquo;s Cup is just OK, but the red beans and rice was one of my favorites.</div><div class="gt"><span class="tag walk">📍 673 ft · ~3 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
     <div class="gc" data-dist="742"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/mr-b-s-bistro.jpg)" href="https://www.google.com/maps/search/?api=1&query=Mr.%20B%27s%20Bistro%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Mr.%20B%27s%20Bistro%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Mr. B's Bistro</a> <span class="et-rating" title="Yelp rating">⭐ 4.2 (2.7k reviews)</span></div><div class="gw">Brennan's-family Creole room — the hands-on BBQ shrimp.</div><div class="dish"><span class="lbl">Order</span><b>BBQ shrimp</b></div><div class="gt"><span class="tag walk">📍 742 ft · ~3 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
-    <div class="gc" data-dist="842"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/acme-oyster-house.jpg)" href="https://www.google.com/maps/search/?api=1&query=Acme%20Oyster%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Acme%20Oyster%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Acme Oyster House</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (9.3k reviews)</span></div><div class="gw">The famous oyster house (1910) — raw & chargrilled.</div><div class="dish"><span class="lbl">Order</span><b>Chargrilled oysters</b></div><div class="gt"><span class="tag walk">📍 842 ft · ~3 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
+    <div class="gc" data-dist="842"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/acme-oyster-house.jpg)" href="https://www.google.com/maps/search/?api=1&query=Acme%20Oyster%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Acme%20Oyster%20House%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Acme Oyster House</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (9.3k reviews)</span></div><div class="gw">The famous oyster house (1910) — raw & chargrilled.</div><div class="dish"><span class="lbl">Order</span><b>Chargrilled oysters</b></div><div class="mine"><span class="lbl">We went</span>Classic. Can&rsquo;t beat it for oysters.</div><div class="gt"><span class="tag walk">📍 842 ft · ~3 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
     <div class="gc" data-dist="844"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/killer-poboys.jpg)" href="https://www.google.com/maps/search/?api=1&query=Killer%20PoBoys%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍽️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Killer%20PoBoys%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Killer PoBoys</a> <span class="et-rating" title="Yelp rating">⭐ 4.2 (751 reviews)</span></div><div class="gw">Creative po'boys (glazed pork belly) tucked behind Erin Rose.</div><div class="dish"><span class="lbl">Order</span><b>Glazed pork belly po’boy</b></div><div class="gt"><span class="tag walk">📍 844 ft · ~3 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
     </div>
   </div>
@@ -1851,7 +1871,7 @@
     <div class="nr-ghead">☕ Coffee &amp; sweets <span class="nr-gcount">2</span></div>
     <div class="cards">
     <div class="gc" data-dist="323"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/sweet-saint.jpg)" href="https://www.google.com/maps/search/?api=1&query=Sweet%20Saint%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">☕</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Sweet%20Saint%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Sweet Saint</a> <span class="et-rating" title="Yelp rating">⭐ 4.9 (170 reviews)</span></div><div class="gw">Artisan ice cream, sorbet & sherbet churned in-house, a block off Bourbon.</div><div class="dish"><span class="lbl">Order</span><b>Mint chocolate chip</b></div><div class="gt"><span class="tag walk">📍 323 ft · ~1 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
-    <div class="gc" data-dist="978"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/sucr.jpg)" href="https://www.google.com/maps/search/?api=1&query=Sucr%C3%A9%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">☕</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Sucr%C3%A9%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Sucré</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (266 reviews)</span> </div><div class="gw">Macarons & gelato in a jewel box.</div><div class="dish"><span class="lbl">Order</span><b>King cake</b></div><div class="gt"><span class="tag walk">📍 978 ft · ~4 min</span><a class="nr-ptr" href="#magazine">Magazine St ↗</a></div></div>
+    <div class="gc" data-dist="978"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/sucr.jpg)" href="https://www.google.com/maps/search/?api=1&query=Sucr%C3%A9%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">☕</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Sucr%C3%A9%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Sucré</a> <span class="et-rating" title="Yelp rating">⭐ 4.1 (266 reviews)</span> </div><div class="gw">Macarons & gelato in a jewel box.</div><div class="dish"><span class="lbl">Order</span><b>King cake</b></div><div class="mine"><span class="lbl">We went</span>Nice macarons.</div><div class="gt"><span class="tag walk">📍 978 ft · ~4 min</span><a class="nr-ptr" href="#magazine">Magazine St ↗</a></div></div>
     </div>
   </div>
   <div class="nr-group">
@@ -1881,7 +1901,7 @@
     <div class="gc" data-dist="1497"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/near/jackson-square-and-st-louis-cathedral.jpg)" href="https://www.google.com/maps/search/?api=1&query=Jackson%20Square%20%26%20St.%20Louis%20Cathedral%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">📍</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Jackson%20Square%20%26%20St.%20Louis%20Cathedral%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Jackson Square & St. Louis Cathedral</a> <span class="et-rating" title="Yelp rating">⭐ 4.6 (538 reviews)</span> </div><div class="gw">The iconic heart of the Quarter — cathedral, Cabildo, Presbytère, buskers. ~6 blocks.</div><div class="gt"><span class="tag walk">📍 1,497 ft · ~6 min</span><span class="nr-only">just past ¼ mi</span></div></div>
     <div class="gc" data-dist="1504"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/near/orleans-ballroom.jpg)" href="https://www.google.com/maps/search/?api=1&query=Orleans%20Ballroom%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🏛️</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Orleans%20Ballroom%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Orleans Ballroom</a> </div><div class="gw">The 1817 Orleans Ballroom — site of the famed 19th-c. &lsquo;quadroon balls,&rsquo; later a convent, now tucked into the Bourbon Orleans; a significant, easy-to-miss bit of history.</div><div class="gt"><span class="tag walk">📍 1,504 ft · ~6 min</span><span class="nr-only">only here</span></div></div>
     <div class="gc" data-dist="1601"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/sip/the-black-penny.jpg)" href="https://www.google.com/maps/search/?api=1&query=The%20Black%20Penny%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">🍸</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=The%20Black%20Penny%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">The Black Penny</a> <span class="et-rating" title="Yelp rating">⭐ 4.3 (137 reviews)</span></div><div class="gw">The Quarter's <b>best craft-beer selection</b> — a laid-back Rampart-edge bar. See Unique beer spots.</div><div class="dish"><span class="lbl">Drink</span><b>Craft beer, deep list</b></div><div class="gt"><span class="tag walk">📍 1,601 ft · ~6 min</span></div></div>
-    <div class="gc" data-dist="2543"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/croissant-d-or.jpg)" href="https://www.google.com/maps/search/?api=1&query=Croissant%20D%27Or%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">☕</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Croissant%20D%27Or%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Croissant D'Or</a> <span class="et-rating" title="Yelp rating">⭐ 4.0 (761 reviews)</span></div><div class="gw">A quiet Parisian patisserie on Ursulines — croissants, quiche, cheap.</div><div class="dish"><span class="lbl">Order</span><b>Almond chocolate croissant</b></div><div class="gt"><span class="tag walk">📍 2,543 ft · ~10 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
+    <div class="gc" data-dist="2543"><a class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/croissant-d-or.jpg)" href="https://www.google.com/maps/search/?api=1&query=Croissant%20D%27Or%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener"><span class="gc-ph-emoji">☕</span></a><div class="gn"><a class="et-name" href="https://www.google.com/maps/search/?api=1&query=Croissant%20D%27Or%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener">Croissant D'Or</a> <span class="et-rating" title="Yelp rating">⭐ 4.0 (761 reviews)</span></div><div class="gw">A quiet Parisian patisserie on Ursulines — croissants, quiche, cheap.</div><div class="dish"><span class="lbl">Order</span><b>Almond chocolate croissant</b></div><div class="mine"><span class="lbl">We went</span>Bad coffee. Fine if you want a pastry or a slice of cake.</div><div class="gt"><span class="tag walk">📍 2,543 ft · ~10 min</span><a class="nr-ptr" href="#eat">Eat ↗</a></div></div>
     </div>
   </div>
 
@@ -2173,7 +2193,7 @@
     <div class="gc" data-dist="10208"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/stein-s-deli.jpg)"><span class="gc-ph-emoji">🥪</span></span><div class="gn">Stein's Market &amp; Deli <span class="et-rating" title="Yelp rating">⭐ 4.4 (823 reviews)</span> <span class="nb">· 2207 Magazine St</span></div><div class="gw">Cult NY/Italian-Jewish sandwiches &amp; imported goods — stroll fuel.</div><div class="dish"><span class="lbl">Order</span><b>The Reuben</b></div><div class="gt"><span class="tag walk">📍 1.9 mi</span><span class="tag walk">🚶</span></div></div>
     <div class="gc" data-dist="10225"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/district-donuts.jpg)"><span class="gc-ph-emoji">🍩</span></span><div class="gn">District Donuts <span class="et-rating" title="Yelp rating">⭐ 4.4 (2.4k reviews)</span> <span class="nb">· 2209 Magazine St</span></div><div class="gw">Your anchor — scratch donuts with monthly specials (Dirt Cake, Thai Tea), plus sliders &amp; biscuit sandwiches.</div><div class="dish"><span class="lbl">Order</span><b>Spicy chicken slider</b></div><div class="gt"><span class="tag walk">📍 1.9 mi</span><span class="tag kid">🧒</span><span class="tag ac">❄️</span></div></div>
     <div class="gc" data-dist="12641"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/joey-k-s.jpg)"><span class="gc-ph-emoji">🍤</span></span><div class="gn">Joey K's <span class="et-rating" title="Yelp rating">⭐ 4.1 (1.1k reviews)</span> <span class="nb">· 3001 Magazine St</span></div><div class="gw">📺 <i>DDD</i> — bright, family-friendly Southern comfort &amp; fried seafood.</div><div class="dish"><span class="lbl">Order</span><b>Eggplant Napoleon</b></div><div class="gt"><span class="tag walk">📍 2.4 mi</span><span class="tag kid">🧒</span></div></div>
-    <div class="gc" data-dist="12789"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/sucr.jpg)"><span class="gc-ph-emoji">🍫</span></span><div class="gn">Sucré <span class="et-rating" title="Yelp rating">⭐ 4.1 (266 reviews)</span> <span class="nb">· 3025 Magazine St</span></div><div class="gw">A jewel-box confectionery — macarons, gelato &amp; chocolates.</div><div class="dish"><span class="lbl">Order</span><b>King cake</b></div><div class="gt"><span class="tag walk">📍 2.4 mi</span><span class="tag kid">🧒</span><span class="tag ac">❄️</span></div></div>
+    <div class="gc" data-dist="12789"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/sucr.jpg)"><span class="gc-ph-emoji">🍫</span></span><div class="gn">Sucré <span class="et-rating" title="Yelp rating">⭐ 4.1 (266 reviews)</span> <span class="nb">· 3025 Magazine St</span></div><div class="gw">A jewel-box confectionery — macarons, gelato &amp; chocolates.</div><div class="dish"><span class="lbl">Order</span><b>King cake</b></div><div class="mine"><span class="lbl">We went</span>Nice macarons.</div><div class="gt"><span class="tag walk">📍 2.4 mi</span><span class="tag kid">🧒</span><span class="tag ac">❄️</span></div></div>
     <div class="gc" data-dist="14408"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/imperial-woodpecker-sno-balls.jpg)"><span class="gc-ph-emoji">🍧</span></span><div class="gn">Imperial Woodpecker Sno-Balls <span class="et-rating" title="Yelp rating">⭐ 4.2 (85 reviews)</span> <span class="nb">· 3511 Magazine St</span></div><div class="gw">Artisanal sno-balls in wild flavors — stuff one with soft-serve.</div><div class="dish"><span class="lbl">Order</span><b>Wedding cake snoball</b></div><div class="gt"><span class="tag walk">📍 2.7 mi</span><span class="tag kid">🧒</span></div></div>
     <div class="gc" data-dist="17144"><span class="gc-photo has-img" style="background-image:url(/pages/neworleans/assets/eat/piccola-gelateria.jpg)"><span class="gc-ph-emoji">🍨</span></span><div class="gn">Piccola Gelateria <span class="et-rating" title="Yelp rating">⭐ 4.7 (326 reviews)</span> <span class="nb">· 4525 Magazine St</span></div><div class="gw">Small-batch Italian gelato — the kid's reward mid-stroll.</div><div class="dish"><span class="lbl">Order</span><b>Dark chocolate gelato</b></div><div class="gt"><span class="tag walk">📍 3.2 mi</span><span class="tag kid">🧒</span><span class="tag ac">❄️</span></div></div>
   </div>
