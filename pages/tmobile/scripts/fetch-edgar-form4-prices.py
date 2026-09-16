@@ -122,6 +122,7 @@ DISPLAY_NAME = {
     'KING DEEANNE': 'Deeanne King',
     'RAY NEVILLE R': 'Neville R Ray',
     'WESTBROOK KELVIN R': 'Kelvin R Westbrook',
+    'DROBAC DANIEL JAMES': 'Daniel James Drobac',
 }
 
 OUT = Path(__file__).resolve().parents[1] / 'src' / 'data' / 'tmusInsiderSales.js'

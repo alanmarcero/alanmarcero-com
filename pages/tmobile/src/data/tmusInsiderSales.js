@@ -1,24 +1,23 @@
 /* ==========================================================================
    tmusInsiderSales.js — GENERATED DATA, do not hand-edit.
 
-   Prices:  Yahoo Finance (weekly close) — 2021-09-06 to 2026-09-07.
+   Prices:  Yahoo Finance (weekly close) — 2021-09-13 to 2026-09-14.
             The last week is a week to date, read on the fetch date below.
    Sales:   SEC Form 4 filings (the source Nasdaq mirrors).
             Transaction code 'S' only (a real sale, open-market or 10b5-1);
             code F tax withholding is not a sale and is not counted.
    Excluded: DEUTSCHE TELEKOM AG — the majority
             owner, whose block trades are nothing like an executive payday.
-   Fetched: 2026-09-09.
+   Fetched: 2026-09-16.
 
    Weeks are Monday-anchored. Regenerate with
    pages/tmobile/scripts/fetch-edgar-form4-prices.py
    ========================================================================== */
 
-export const TMUS_META = {"symbol": "TMUS", "priceSource": "Yahoo Finance (weekly close)", "insiderSource": "SEC Form 4 filings (the source Nasdaq mirrors)", "windowStart": "2021-09-06", "windowEnd": "2026-09-07", "excludedFilers": ["DEUTSCHE TELEKOM AG"], "excludedTxns": 753, "excludedShares": 30279407, "outliers": [{"date": "2026-02-12", "name": "Raul Marcelo Claure", "shares": 550000, "price": 217.57, "value": 119663500}], "saleTxnCount": 145, "sellerCount": 16, "firstSale": "2021-11-10", "lastSale": "2026-05-21", "saleDayCount": 122, "filingsRead": 356, "fetched": "2026-09-09"};
+export const TMUS_META = {"symbol": "TMUS", "priceSource": "Yahoo Finance (weekly close)", "insiderSource": "SEC Form 4 filings (the source Nasdaq mirrors)", "windowStart": "2021-09-13", "windowEnd": "2026-09-14", "excludedFilers": ["DEUTSCHE TELEKOM AG"], "excludedTxns": 753, "excludedShares": 30279407, "outliers": [{"date": "2026-02-12", "name": "Raul Marcelo Claure", "shares": 550000, "price": 217.57, "value": 119663500}], "saleTxnCount": 146, "sellerCount": 17, "firstSale": "2021-11-10", "lastSale": "2026-09-10", "saleDayCount": 123, "filingsRead": 357, "fetched": "2026-09-16"};
 
 /** Weekly closing price: one point per week. */
 export const TMUS_WEEKLY = [
-  {"week": "2021-09-06", "close": 130.81},
   {"week": "2021-09-13", "close": 128.0},
   {"week": "2021-09-20", "close": 129.43},
   {"week": "2021-09-27", "close": 126.76},
@@ -279,7 +278,8 @@ export const TMUS_WEEKLY = [
   {"week": "2026-08-17", "close": 183.04},
   {"week": "2026-08-24", "close": 181.37},
   {"week": "2026-08-31", "close": 181.52},
-  {"week": "2026-09-07", "close": 177.91},
+  {"week": "2026-09-07", "close": 182.33},
+  {"week": "2026-09-14", "close": 174.11},
 ];
 
 /** Weeks with a sale by the CEO's own sales. */
@@ -367,6 +367,7 @@ export const OTHER_SELL_WEEKS = [
   {"week": "2026-03-09", "close": 217.39, "shares": 1000, "value": 218250, "txns": 1, "people": [{"name": "Srikant M. Datar", "shares": 1000, "value": 218250}]},
   {"week": "2026-04-27", "close": 196.06, "shares": 5000, "value": 979050, "txns": 1, "people": [{"name": "Michael J. Katz", "shares": 5000, "value": 979050}]},
   {"week": "2026-05-18", "close": 191.47, "shares": 4799, "value": 911810, "txns": 1, "people": [{"name": "Jon Freier", "shares": 4799, "value": 911810}]},
+  {"week": "2026-09-07", "close": 182.33, "shares": 772, "value": 137671, "txns": 1, "people": [{"name": "Daniel James Drobac", "shares": 772, "value": 137671}]},
 ];
 
 /** Every day somebody sold, per group — what the timing figures read. */
@@ -493,4 +494,5 @@ export const SALE_DAYS = [
   {"date": "2026-03-10", "week": "2026-03-09", "group": "others", "shares": 1000, "value": 218250, "txns": 1, "people": [{"name": "Srikant M. Datar", "shares": 1000, "value": 218250}]},
   {"date": "2026-05-01", "week": "2026-04-27", "group": "others", "shares": 5000, "value": 979050, "txns": 1, "people": [{"name": "Michael J. Katz", "shares": 5000, "value": 979050}]},
   {"date": "2026-05-21", "week": "2026-05-18", "group": "others", "shares": 4799, "value": 911810, "txns": 1, "people": [{"name": "Jon Freier", "shares": 4799, "value": 911810}]},
+  {"date": "2026-09-10", "week": "2026-09-07", "group": "others", "shares": 772, "value": 137671, "txns": 1, "people": [{"name": "Daniel James Drobac", "shares": 772, "value": 137671}]},
 ];

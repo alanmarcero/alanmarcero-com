@@ -469,8 +469,8 @@ looks right.
 - **The raw XML is not the `primaryDocument`.** The submissions index points at
   `xslF345X06/…`, EDGAR's own rendering; strip that prefix for the machine copy.
 - **Excluded: Deutsche Telekom AG**, everywhere on the page. The majority owner
-  files 753 of the 899 five-year sale lines and 30.3M shares; leaving it in would
-  swamp every executive trade on the chart. 16 individual insiders and 145 sale
+  files 753 of the 900 five-year sale lines and 30.3M shares; leaving it in would
+  swamp every executive trade on the chart. 17 individual insiders and 146 sale
   transactions remain.
 - **One individual trade is held out too, by name** — `OUTLIER_TRADES` in BOTH
   generators, keyed on `(date, filer)` so it can only ever remove the trade it
@@ -503,17 +503,21 @@ that looks right:
   total the feed claims. Every trade type shares the 250, so the
   ~40% of rows that are grants and withholdings eat into the sale history. Two
   years is all this feed can honestly chart, which is why the five-year series
-  next to it stays on EDGAR.
+  next to it stays on EDGAR. **The window is bounded at about two years as well
+  as at 250 rows**, so once old rows age out the count can arrive under the cap
+  (249 on 2026-09-16, and asking for 500 returns the same 249). `feedCapped`
+  records which bound bit; the source notes and the tests read it rather than
+  asserting the cap.
 - **A disposition is not a sale.** Only `Sell` and `Automatic Sell` are kept;
   `Disposition (Non Open Market)` is overwhelmingly code-F tax withholding.
-- **Deutsche Telekom is most of the feed** — 97 of the 153 sale rows and 6.4M of
+- **Deutsche Telekom is most of the feed** — 97 of the 152 sale rows and 6.4M of
   the shares. Excluded, same call the five-year chart makes. With the one
-  held-out block trade also gone, 55 sales by 13 people remain, and
+  held-out block trade also gone, 54 sales by 14 people remain, and
   `excludedRows + outliers + txnCount === saleRows` is asserted so no row can go
   missing unaccounted for.
 
 Names are display-only: the feed sets them `LAST FIRST MIDDLE` in caps, which no
-algorithm reliably unpicks ("SIEVERT G MICHAEL" is G. Michael Sievert), so the 13
+algorithm reliably unpicks ("SIEVERT G MICHAEL" is G. Michael Sievert), so the 14
 are spelled out in a map and the spellings **match the five-year series** so one
 person can be followed across both charts. `tmusMonthlySales.test.js` asserts the
 two sources agree over the overlapping window — share for share, seller for

@@ -267,9 +267,12 @@ function TMobileApp() {
               >
                 Nasdaq&rsquo;s insider activity for TMUS
               </a>
-              . Nasdaq hands back {NASDAQ_META.feedRecords} transactions and no more,
-              of every kind, which is why these columns cover two years rather than
-              five: {NASDAQ_META.feedFirst} to {NASDAQ_META.feedLast}, the two edge
+              . Nasdaq{' '}
+              {NASDAQ_META.feedCapped
+                ? `hands back ${NASDAQ_META.feedRecords} transactions and no more, of every kind,`
+                : `carries ${NASDAQ_META.feedRecords} transactions of every kind and reaches no further back,`}{' '}
+              which is why these columns cover two years rather than five:{' '}
+              {NASDAQ_META.feedFirst} to {NASDAQ_META.feedLast}, the two edge
               months partial. Kept are the &ldquo;Sell&rdquo; and &ldquo;Automatic
               Sell&rdquo; rows; a &ldquo;Disposition (Non Open Market)&rdquo; is
               overwhelmingly tax withholding on a vest, not a sale, and is not
