@@ -34,7 +34,7 @@ Five things that will bite whoever runs this next:
 
 4.  EDGAR WANTS AN EMAIL IN THE User-Agent. Not a name, not a URL — a string
     without an @ address in it gets a blanket 403 on every Archives path,
-    including ones that load fine in a browser. It also rate-limits hard: four
+    including ones that load fine in a browser. It also rate-limits hard: three
     workers with a short pause each, and a backoff on 403/429/503, gets 350-odd
     filings without a refusal.
 
@@ -46,7 +46,8 @@ Five things that will bite whoever runs this next:
 Deutsche Telekom AG, the majority owner, is excluded: 30M+ shares in block
 trades that would flatten every executive's trade into the axis. So is one
 named trade — see OUTLIER_TRADES — for the same reason at a smaller scale. Both
-exclusions are recorded in the generated metadata and printed on the page.
+exclusions are recorded in the generated metadata and printed on the page,
+and both live in tmus_insiders.py, shared with the Nasdaq generator.
 
 Run:  python3 pages/tmobile/scripts/fetch-edgar-form4-prices.py
       python3 pages/tmobile/scripts/fetch-edgar-form4-prices.py --dry-run
@@ -61,8 +62,16 @@ import urllib.request
 import xml.etree.ElementTree as ElementTree
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+from tmus_insiders import (
+    DISPLAY_NAME,
+    EXCLUDED,
+    OUTLIER_TRADES,
+    ranked,
+    tally_by_person,
+)
 
 CIK = '0001283699'
 SUBMISSIONS = f'https://data.sec.gov/submissions/CIK{CIK}.json'
@@ -85,45 +94,7 @@ YAHOO_HEADERS = {
 }
 
 SALE_CODE = 'S'
-EXCLUDED = 'DEUTSCHE TELEKOM AG'
 CEO = 'Mike Sievert'
-
-# ONE TRANSACTION, HELD OUT OF EVERY FIGURE ON THE PAGE and named at the foot
-# of it. Raul Marcelo Claure's 550,000-share block on 2026-02-12 is $119.7M in
-# a single indirect open-market trade — on its own it is most of the dollars in
-# the trailing year, and it is the same kind of trade Deutsche Telekom is
-# excluded for: a holder unwinding a position, not an executive taking a
-# payday. Left in, it sets the axis on every chart and the cadence the page is
-# actually about disappears underneath it.
-#
-# Keyed by (date, filer) so it can only ever remove the one trade it names, and
-# the generator FAILS if that trade stops arriving — a silent no-op here would
-# quietly put the outlier back.
-OUTLIER_TRADES = (('2026-02-12', 'CLAURE RAUL MARCELO'),)
-
-# Display only. EDGAR files a name LAST FIRST MIDDLE, which no algorithm
-# reliably unpicks ("Sievert G. Michael" is G. Michael Sievert), so everyone
-# who appears is spelled out — and the spellings MATCH THE NASDAQ SCRIPT's, so
-# one person can be followed across both charts on the page.
-DISPLAY_NAME = {
-    'SIEVERT G MICHAEL': 'Mike Sievert',
-    'CLAURE RAUL MARCELO': 'Raul Marcelo Claure',
-    'NELSON MARK WOLFE': 'Mark Wolfe Nelson',
-    'KATZ MICHAEL J.': 'Michael J. Katz',
-    'DATAR SRIKANT M.': 'Srikant M. Datar',
-    'OSVALDIK PETER': 'Peter Osvaldik',
-    'FIELD CALLIE R': 'Callie R Field',
-    'BAZZANO DARA': 'Dara Bazzano',
-    'CANO NESTOR': 'Nestor Cano',
-    'FREIER JON': 'Jon Freier',
-    'LONG LETITIA A': 'Letitia A Long',
-    'EWALDSSON ULF': 'Ulf Ewaldsson',
-    'TAYLOR TERESA': 'Teresa Taylor',
-    'KING DEEANNE': 'Deeanne King',
-    'RAY NEVILLE R': 'Neville R Ray',
-    'WESTBROOK KELVIN R': 'Kelvin R Westbrook',
-    'DROBAC DANIEL JAMES': 'Daniel James Drobac',
-}
 
 OUT = Path(__file__).resolve().parents[1] / 'src' / 'data' / 'tmusInsiderSales.js'
 
@@ -212,7 +183,7 @@ def weekly_closes(timestamps, closes, tz_offset):
     for stamp, close in zip(timestamps, closes):
         if close is None:
             continue
-        local = datetime.utcfromtimestamp(stamp + tz_offset).date()
+        local = datetime.fromtimestamp(stamp + tz_offset, tz=timezone.utc).date()
         by_week[monday_of(local.isoformat())] = round(close, 2)
     return [{'week': week, 'close': by_week[week]} for week in sorted(by_week)]
 
@@ -225,13 +196,10 @@ def roll(rows):
     """Shares, dollars, filings and the named people behind a set of sales.
     Dollars are rounded ONCE, here, and every wider total is a sum of these
     rounded figures — so a week and its days can never differ by a cent."""
-    people = defaultdict(lambda: {'shares': 0, 'value': 0.0})
-    for row in rows:
-        people[row['name']]['shares'] += row['shares']
-        people[row['name']]['value'] += row['value']
     named = [
-        {'name': name, 'shares': t['shares'], 'value': int(round(t['value']))}
-        for name, t in sorted(people.items(), key=lambda kv: -kv[1]['shares'])
+        {'name': person['name'], 'shares': person['shares'],
+         'value': int(round(person['value']))}
+        for person in ranked(tally_by_person(rows))
     ]
     return {
         'shares': sum(p['shares'] for p in named),
@@ -243,15 +211,7 @@ def roll(rows):
 
 def merge(days):
     """Several day records added together, people and all."""
-    people = defaultdict(lambda: {'shares': 0, 'value': 0})
-    for day in days:
-        for person in day['people']:
-            people[person['name']]['shares'] += person['shares']
-            people[person['name']]['value'] += person['value']
-    named = [
-        {'name': name, **totals}
-        for name, totals in sorted(people.items(), key=lambda kv: -kv[1]['shares'])
-    ]
+    named = ranked(tally_by_person(person for day in days for person in day['people']))
     return {
         'shares': sum(p['shares'] for p in named),
         'value': sum(p['value'] for p in named),
@@ -303,12 +263,11 @@ def get(url, headers, attempts=5):
         except urllib.error.HTTPError as error:
             if error.code not in RETRYABLE or attempt == attempts - 1:
                 raise
-            time.sleep(1.5 * (2 ** attempt))
         except urllib.error.URLError:
             # a reset mid-run is the same rate limiter, wearing a different hat
             if attempt == attempts - 1:
                 raise
-            time.sleep(1.5 * (2 ** attempt))
+        time.sleep(1.5 * (2 ** attempt))
     raise RuntimeError(f'unreachable: {url}')
 
 
@@ -328,7 +287,7 @@ def form4_filings(window_start):
 
 def fetch_filing(filing):
     # EDGAR asks for no more than 10 requests a second and answers 403 when
-    # pushed; four workers each pausing briefly stays well inside that.
+    # pushed; three workers each pausing briefly stays well inside that.
     time.sleep(0.25)
     accession, document = filing
     url = ARCHIVE.format(cik=int(CIK), accession=accession.replace('-', ''),
@@ -397,53 +356,19 @@ def render(prices, groups, days, meta):
     return '\n'.join(lines)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dry-run', action='store_true',
-                        help='print the module instead of writing it')
-    args = parser.parse_args()
-
-    try:
-        prices = fetch_prices()
-    except (urllib.error.URLError, KeyError, IndexError) as error:
-        sys.exit(f'Yahoo prices unreachable or reshaped: {error}')
-    if not prices:
-        sys.exit('Yahoo returned no weekly closes.')
-
-    window_start, window_end = prices[0]['week'], prices[-1]['week']
-    closes_by_week = {p['week']: p['close'] for p in prices}
-
-    try:
-        filings = form4_filings(window_start)
-    except (urllib.error.URLError, KeyError) as error:
-        sys.exit(f'EDGAR submissions index unreachable or reshaped: {error}')
-    print(f'{len(filings)} Form 4 filings since {window_start}…', file=sys.stderr)
-
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        batches = list(pool.map(fetch_filing, filings))
-
-    # A trade can be filed before the price window opens or after its last
-    # Monday; only sales that land on a plotted week can carry a marker.
-    parsed = [s for batch in batches for s in batch if s['week'] in closes_by_week]
+def partition(parsed):
+    """(excluded-filer rows, held-out outliers, the sales the page counts)."""
     dropped = [s for s in parsed if s['excluded']]
     outliers = sorted((s for s in parsed if not s['excluded'] and is_outlier(s)),
                       key=lambda s: s['date'])
-    if len(outliers) != len(OUTLIER_TRADES):
-        sys.exit(f'Expected {len(OUTLIER_TRADES)} outlier trades to hold out, '
-                 f'found {len(outliers)} — check OUTLIER_TRADES against the filings.')
     sales = sorted((s for s in parsed if not s['excluded'] and not is_outlier(s)),
                    key=lambda s: (s['date'], s['name']))
-    if not sales:
-        sys.exit('No code-S sales parsed — the Form 4 shape changed.')
+    return dropped, outliers, sales
 
-    unmapped = sorted({s['filer'] for s in sales if s['filer'] not in DISPLAY_NAME})
-    if unmapped:
-        print(f'NOTE: unmapped filer names, spelled from EDGAR: {unmapped}',
-              file=sys.stderr)
 
-    days = sale_days(sales)
-    groups = sell_weeks(days, closes_by_week)
-    meta = {
+def build_meta(window, dropped, outliers, sales, days, filings_read, fetched):
+    window_start, window_end = window
+    return {
         'symbol': 'TMUS',
         'priceSource': 'Yahoo Finance (weekly close)',
         'insiderSource': 'SEC Form 4 filings (the source Nasdaq mirrors)',
@@ -466,9 +391,55 @@ def main():
         'firstSale': sales[0]['date'],
         'lastSale': sales[-1]['date'],
         'saleDayCount': len(days),
-        'filingsRead': len(filings),
-        'fetched': date.today().isoformat(),
+        'filingsRead': filings_read,
+        'fetched': fetched,
     }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dry-run', action='store_true',
+                        help='print the module instead of writing it')
+    args = parser.parse_args()
+
+    try:
+        prices = fetch_prices()
+    except (urllib.error.URLError, KeyError, IndexError) as error:
+        sys.exit(f'Yahoo prices unreachable or reshaped: {error}')
+    if not prices:
+        sys.exit('Yahoo returned no weekly closes.')
+
+    window = (prices[0]['week'], prices[-1]['week'])
+    closes_by_week = {p['week']: p['close'] for p in prices}
+
+    try:
+        filings = form4_filings(window[0])
+    except (urllib.error.URLError, KeyError) as error:
+        sys.exit(f'EDGAR submissions index unreachable or reshaped: {error}')
+    print(f'{len(filings)} Form 4 filings since {window[0]}…', file=sys.stderr)
+
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        batches = list(pool.map(fetch_filing, filings))
+
+    # A trade can be filed before the price window opens or after its last
+    # Monday; only sales that land on a plotted week can carry a marker.
+    parsed = [s for batch in batches for s in batch if s['week'] in closes_by_week]
+    dropped, outliers, sales = partition(parsed)
+    if len(outliers) != len(OUTLIER_TRADES):
+        sys.exit(f'Expected {len(OUTLIER_TRADES)} outlier trades to hold out, '
+                 f'found {len(outliers)} — check OUTLIER_TRADES against the filings.')
+    if not sales:
+        sys.exit('No code-S sales parsed — the Form 4 shape changed.')
+
+    unmapped = sorted({s['filer'] for s in sales if s['filer'] not in DISPLAY_NAME})
+    if unmapped:
+        print(f'NOTE: unmapped filer names, spelled from EDGAR: {unmapped}',
+              file=sys.stderr)
+
+    days = sale_days(sales)
+    groups = sell_weeks(days, closes_by_week)
+    meta = build_meta(window, dropped, outliers, sales, days,
+                      filings_read=len(filings), fetched=date.today().isoformat())
 
     module = render(prices, groups, days, meta)
     if args.dry_run:

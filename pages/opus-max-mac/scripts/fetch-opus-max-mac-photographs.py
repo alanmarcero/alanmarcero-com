@@ -11,15 +11,17 @@ It produces `public/opus-max-mac/plates/*.webp` and
 `src/opusmaxmac/data/plates.js`, and it is committed so the next person
 adding an instrument can regenerate the pair the same way.
 
-Three generators, three picks tables, on purpose. This one shares nothing
+Three generators, three picks tables, on purpose. This one shares no picks
 with `scripts/fetch-synth-images.py` (the earlier pages) or
-`scripts/fetch-opus5ios-synth-images.py` (the broadsheet): re-pointing
-either of those would silently re-skin a route that is already finished.
+`pages/opus5ios/scripts/fetch-opus5ios-synth-images.py` (the broadsheet):
+re-pointing either of those would silently re-skin a route that is already
+finished. Only the Commons transport and licence gate are shared, in
+`scripts/commons_images.py`.
 
 Idempotent and safe to re-run: same picks in, same files out.
 
-    python3 scripts/fetch-opus-max-mac-photographs.py            # fetch + crop + write data
-    python3 scripts/fetch-opus-max-mac-photographs.py --check    # verify only, change nothing
+    python3 pages/opus-max-mac/scripts/fetch-opus-max-mac-photographs.py            # fetch + crop + write data
+    python3 pages/opus-max-mac/scripts/fetch-opus-max-mac-photographs.py --check    # verify only, change nothing
 
 Requires Pillow (`pip install pillow`) and nothing else — no macOS-only
 binaries, so it runs on CI too.
@@ -32,18 +34,20 @@ import os
 import re
 import sys
 import time
-import urllib.parse
-import urllib.request
+from pathlib import Path
 
 from PIL import Image
 
-# Wikimedia asks for a descriptive User-Agent with contact info, and
-# rate-limits anonymous bursts. Both are honoured below.
-USER_AGENT = (
-    'alanmarcero-com-site-build/1.0 '
-    '(https://alanmarcero.com; https://github.com/alanmarcero)'
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'scripts'))
+from commons_images import (  # noqa: E402
+    ATTRIBUTION_KEYS,
+    REQUEST_PAUSE_SECONDS,
+    attribution_lines,
+    commons_metadata,
+    fetch,
+    require_reusable_licence,
+    strip_markup,
 )
-REQUEST_PAUSE_SECONDS = 1.5
 
 # Square derivatives: the plate is a circle inscribed in one of these.
 WIDTHS = (320, 640)
@@ -60,6 +64,8 @@ THUMB_REQUEST_WIDTH = 2400
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMAGE_DIR = os.path.join(ROOT, 'assets', 'plates')
 DATA_FILE = os.path.join(ROOT, 'src', 'data', 'plates.js')
+# Where IMAGE_DIR is served from; the generated srcset points here.
+IMAGE_URL = '/pages/opus-max-mac/assets/plates'
 
 # (slug, bank name as it appears in src/data/patchBanks.js, Commons file, alt text)
 #
@@ -165,21 +171,9 @@ PICKS = [
     ),
 ]
 
-# Licences that permit commercial use and modification. Anything else must
-# not ship: the site is public and carries the owner's name.
-ALLOWED = re.compile(r'^(CC BY(-SA)? \d|CC0|Public domain)', re.I)
-
-
-def strip_markup(value):
-    """Commons returns HTML in attribution fields; flatten it to text.
-
-    Newlines matter here: author strings carry derivative-work chains that
-    CC requires be preserved, and an unescaped newline inside a JS string
-    literal is a syntax error. Flattening with a separator keeps the chain
-    and keeps the file parseable.
-    """
-    text = re.sub(r'<[^>]+>', '', value or '').strip()
-    text = re.sub(r'\s*\n\s*', ' · ', text)
+def strip_plate_markup(value):
+    """`strip_markup`, then two Commons conventions a credit line should not carry."""
+    text = strip_markup(value)
     # Some Artist fields link a Commons creator page, and stripping the anchor
     # leaves the namespace behind: "Creator:SynthAddict". The credit has to name
     # the photographer, not the page they have on Commons.
@@ -190,45 +184,6 @@ def strip_markup(value):
     # the authors and the derivative-work notice, and both are after the colon.
     # The file itself is still one click away through `source`.
     return re.sub(r'^[^:]+\.(?:jpe?g|png|gif|svg|webp):\s*', '', text, flags=re.I)
-
-
-def fetch(url, tries=4):
-    for attempt in range(tries):
-        try:
-            request = urllib.request.Request(url, headers={'User-Agent': USER_AGENT})
-            return urllib.request.urlopen(request, timeout=60).read()
-        except urllib.error.HTTPError as error:
-            if error.code in (429, 503) and attempt < tries - 1:
-                time.sleep(4 * (attempt + 1))
-                continue
-            raise
-    raise RuntimeError('unreachable')
-
-
-def commons_metadata(title):
-    url = (
-        'https://commons.wikimedia.org/w/api.php?action=query&format=json'
-        f'&titles={urllib.parse.quote(title)}'
-        '&prop=imageinfo&iiprop=url|extmetadata|size'
-        f'&iiurlwidth={THUMB_REQUEST_WIDTH}'
-    )
-    pages = json.loads(fetch(url))['query']['pages']
-    page = next(iter(pages.values()))
-    if 'imageinfo' not in page:
-        raise LookupError(f'no imageinfo for {title!r} — has it been renamed?')
-
-    info = page['imageinfo'][0]
-    extra = info.get('extmetadata') or {}
-    return {
-        'download': info.get('thumburl') or info['url'],
-        # The largest square the ORIGINAL could ever give, which is what the
-        # crop is checked against.
-        'originalSquare': min(info['width'], info['height']),
-        'author': strip_markup((extra.get('Artist') or {}).get('value')) or 'Unknown',
-        'licence': strip_markup((extra.get('LicenseShortName') or {}).get('value')),
-        'licenceUrl': strip_markup((extra.get('LicenseUrl') or {}).get('value')),
-        'source': info.get('descriptionurl'),
-    }
 
 
 def crop_to_square(source_bytes, original_square, slug):
@@ -279,8 +234,7 @@ def write_derivatives(square, slug):
     return written
 
 
-def write_data_module(rows):
-    header = '''/*
+DATA_HEADER = """/*
  * Instrument photographs for /opus-max-mac — the circular plates.
  *
  * GENERATED by scripts/fetch-opus-max-mac-photographs.py — re-run that
@@ -311,19 +265,9 @@ def write_data_module(rows):
  * drawn as Airy diffraction patterns instead.
  */
 
-export const plates = {'''
+export const plates = {"""
 
-    lines = [header]
-    for row in rows:
-        lines.append(f'  {json.dumps(row["bank"])}: {{')
-        for key in ('slug', 'alt', 'author', 'licence', 'licenceUrl', 'source'):
-            lines.append(f'    {key}: {json.dumps(row[key])},')
-        lines.append(f'    widths: {json.dumps(row["widths"])},')
-        lines.append(f'    width: {row["width"]},')
-        lines.append(f'    height: {row["height"]},')
-        lines.append('  },')
-    lines.append('};\n')
-    lines.append('''export const plateFor = (bankName) => plates[bankName] || null;
+DATA_FOOTER = """export const plateFor = (bankName) => plates[bankName] || null;
 
 /** Every credited photograph, for the attribution surface. */
 export const credits = Object.entries(plates)
@@ -331,16 +275,26 @@ export const credits = Object.entries(plates)
 
 /** `srcSet` for a plate, built from the derivatives that exist. */
 export const srcSetFor = (plate) => plate.widths
-  .map((width) => `/opus-max-mac/plates/${plate.slug}-${width}.webp ${width}w`)
+  .map((width) => `IMAGE_URL/${plate.slug}-${width}.webp ${width}w`)
   .join(', ');
 
 /** The widest derivative — the `src` fallback. */
 export const sourceFor = (plate) =>
-  `/opus-max-mac/plates/${plate.slug}-${plate.widths[plate.widths.length - 1]}.webp`;
-''')
-    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
-    with open(DATA_FILE, 'w') as handle:
-        handle.write('\n'.join(lines))
+  `IMAGE_URL/${plate.slug}-${plate.widths[plate.widths.length - 1]}.webp`;
+""".replace('IMAGE_URL', IMAGE_URL)
+
+
+def render_data_module(rows):
+    lines = [DATA_HEADER]
+    for row in rows:
+        lines += attribution_lines(row)
+        lines.append(f'    widths: {json.dumps(row["widths"])},')
+        lines.append(f'    width: {row["width"]},')
+        lines.append(f'    height: {row["height"]},')
+        lines.append('  },')
+    lines.append('};\n')
+    lines.append(DATA_FOOTER)
+    return '\n'.join(lines)
 
 
 def check():
@@ -366,6 +320,26 @@ def check():
     return 1 if (missing or orphans or oblong) else 0
 
 
+def fetch_plate(slug, bank, title, alt):
+    """Download one pick, crop and write its square webps, return its data row."""
+    meta = commons_metadata(title, THUMB_REQUEST_WIDTH, clean=strip_plate_markup)
+    require_reusable_licence(slug, meta['licence'])
+
+    time.sleep(REQUEST_PAUSE_SECONDS)
+    square = crop_to_square(fetch(meta['download']), meta['originalSquare'], slug)
+    widths = write_derivatives(square, slug)
+
+    path = os.path.join(IMAGE_DIR, f'{slug}-{widths[-1]}.webp')
+    size_kb = os.path.getsize(path) // 1024
+    print(f'  {slug:14} {meta["licence"]:16} {str(widths):12} '
+          f'{size_kb:4} kB  {meta["author"][:34]}')
+    return {
+        'slug': slug, 'bank': bank, 'alt': alt,
+        'widths': widths, 'width': widths[-1], 'height': widths[-1],
+        **{k: meta[k] for k in ATTRIBUTION_KEYS},
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true',
@@ -377,33 +351,13 @@ def main():
 
     os.makedirs(IMAGE_DIR, exist_ok=True)
     rows = []
-
-    for slug, bank, title, alt in PICKS:
-        meta = commons_metadata(title)
-
-        if not ALLOWED.match(meta['licence'] or ''):
-            raise SystemExit(
-                f'REFUSING {slug}: licence {meta["licence"]!r} does not clearly '
-                'permit commercial use and modification. Pick another file.'
-            )
-
-        time.sleep(REQUEST_PAUSE_SECONDS)
-        square = crop_to_square(fetch(meta['download']), meta['originalSquare'], slug)
-        widths = write_derivatives(square, slug)
-
-        rows.append({
-            'slug': slug, 'bank': bank, 'alt': alt,
-            'widths': widths, 'width': widths[-1], 'height': widths[-1],
-            **{k: meta[k] for k in ('author', 'licence', 'licenceUrl', 'source')},
-        })
-
-        path = os.path.join(IMAGE_DIR, f'{slug}-{widths[-1]}.webp')
-        size_kb = os.path.getsize(path) // 1024
-        print(f'  {slug:14} {meta["licence"]:16} {str(widths):12} '
-              f'{size_kb:4} kB  {meta["author"][:34]}')
+    for pick in PICKS:
+        rows.append(fetch_plate(*pick))
         time.sleep(REQUEST_PAUSE_SECONDS)
 
-    write_data_module(rows)
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
+    with open(DATA_FILE, 'w') as handle:
+        handle.write(render_data_module(rows))
     print(f'\n{len(rows)} plates -> {os.path.relpath(DATA_FILE, ROOT)}')
     return 0
 

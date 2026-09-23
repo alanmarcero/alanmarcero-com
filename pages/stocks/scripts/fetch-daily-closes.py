@@ -105,7 +105,7 @@ def instruments_module(infos):
 def read_info(symbol):
     """An instrument's metadata as last written, for a partial run."""
     text = (DATA / 'closes' / f'{slug(symbol)}.js').read_text()
-    line = next(l for l in text.splitlines() if l.startswith('export const META = '))
+    line = next(row for row in text.splitlines() if row.startswith('export const META = '))
     return json.loads(line[len('export const META = '):].rstrip(';'))
 
 
