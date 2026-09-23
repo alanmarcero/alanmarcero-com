@@ -1,5 +1,5 @@
 import {
-  dateIndexMap, depthY, labelPlacement, troughMarkers, underwaterPlot,
+  dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
 } from './drawdownGeometry';
 import { plotBox } from './chartGeometry';
 import { drawdownEpisodes, underwater } from './drawdowns';
@@ -78,5 +78,27 @@ describe('labelPlacement', () => {
   it('anchors inward at either edge', () => {
     expect(labelPlacement({ x: BOX.right, y: 100 }, BOX).anchor).toBe('end');
     expect(labelPlacement({ x: BOX.left, y: 100 }, BOX).anchor).toBe('start');
+  });
+});
+
+describe('thinYears', () => {
+  const ticks = (years, perYear) => Array.from({ length: years }, (_, i) => ({
+    index: i * perYear, year: String(2000 + i),
+  }));
+
+  it('keeps every year when they fit', () => {
+    // 10 years across 440 units: 44 apart
+    expect(thinYears(ticks(10, 252), 2520, BOX, 40)).toHaveLength(10);
+  });
+
+  it('thins them when they would touch', () => {
+    // 34 years across 440 units: 13 apart, so every fourth
+    const kept = thinYears(ticks(34, 252), 34 * 252, BOX, 44);
+    expect(kept[1].year).toBe('2004');
+    expect(kept.length).toBeLessThan(34);
+  });
+
+  it('leaves a lone tick alone', () => {
+    expect(thinYears(ticks(1, 252), 252, BOX, 44)).toHaveLength(1);
   });
 });

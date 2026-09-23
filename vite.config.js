@@ -29,6 +29,7 @@ function subsitePlugin() {
         else if (url === '/neworleans-tours' || url === '/neworleans/tours') req.url = '/pages/neworleans/tours.html';
         else if (url === '/flights') req.url = '/pages/flights/index.html';
         else if (url === '/tmobile') req.url = '/pages/tmobile/index.html';
+        else if (url === '/stocks') req.url = '/pages/stocks/index.html';
         else if (url === '/matrix') req.url = '/pages/matrix/index.html';
         else if (url === '/matrix-arcade' || url === '/matrix/arcade') req.url = '/pages/matrix/arcade.html';
         else if (url === '/opus5ios') req.url = '/pages/opus5ios/index.html';
@@ -64,6 +65,7 @@ export default defineConfig({
         neworleansTours: resolve(__dirname, 'pages/neworleans/tours.html'),
         flights: resolve(__dirname, 'pages/flights/index.html'),
         tmobile: resolve(__dirname, 'pages/tmobile/index.html'),
+        stocks: resolve(__dirname, 'pages/stocks/index.html'),
         matrix: resolve(__dirname, 'pages/matrix/index.html'),
         matrixArcade: resolve(__dirname, 'pages/matrix/arcade.html'),
         opus5ios: resolve(__dirname, 'pages/opus5ios/index.html'),

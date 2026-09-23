@@ -114,6 +114,7 @@ export function formatWeek(iso) {
   return `${month} ${Number(d)}, ${y}`;
 }
 
+/** A close to the cent, with separators: a bitcoin trades in six figures. */
 export function formatPrice(close) {
-  return `$${close.toFixed(2)}`;
+  return `$${close.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }

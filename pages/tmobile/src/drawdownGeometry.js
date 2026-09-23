@@ -56,6 +56,21 @@ export function troughMarkers(episodes, dateIndex, coords) {
 }
 
 /**
+ * Every `stride`-th year tick, where the stride is the smallest that keeps
+ * labels `minGap` user units apart on average: 19 years fit a wide plot, 34
+ * do not. `count` is the number of sessions the x axis spans.
+ */
+export function thinYears(ticks, count, box, minGap) {
+  if (ticks.length < 2) return ticks;
+  const perSession = box.width / Math.max(1, count - 1);
+  const first = ticks[0].index;
+  const last = ticks[ticks.length - 1].index;
+  const spacing = ((last - first) / (ticks.length - 1)) * perSession;
+  const stride = Math.max(1, Math.ceil(minGap / spacing));
+  return ticks.filter((_, i) => i % stride === 0);
+}
+
+/**
  * Where a trough's depth label goes: under the marker unless that would run
  * off the bottom, and anchored so it never runs off either side.
  */

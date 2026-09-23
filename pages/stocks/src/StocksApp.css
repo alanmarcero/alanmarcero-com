@@ -1,0 +1,40 @@
+/* The drawdown panels are the /tmobile page's, so this page wears its
+   stylesheet and adds only what a page of fourteen of them needs. */
+@import '../../tmobile/src/TMobileApp.css';
+
+.st-index {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.st-index .tm-filter {
+  text-decoration: none;
+}
+
+.st-controls {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: var(--space-3) 0;
+  background: var(--bg);
+}
+
+/* a panel waiting on its series holds the chart's space, so nothing jumps */
+.st-placeholder {
+  aspect-ratio: 1000 / 300;
+  border-radius: var(--radius-sm);
+  background: var(--tm-well);
+}
+
+.tm-panel {
+  scroll-margin-top: 110px;
+}
+
+@media (max-width: 640px) {
+  .st-placeholder {
+    aspect-ratio: 520 / 320;
+  }
+}

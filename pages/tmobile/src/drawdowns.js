@@ -110,6 +110,34 @@ export function summarizeDrawdowns(episodes) {
   };
 }
 
+/** The filter in words: `at least 30 days`, or `any length of time`. */
+export function describeHold(hold) {
+  return hold.days ? `at least ${formatSpan(hold.days)}` : 'any length of time';
+}
+
+/**
+ * The caption under a drawdown chart, derived entirely from what is plotted.
+ * `formatDate` and `formatPrice` are passed in so this module stays free of
+ * the page's display helpers.
+ */
+export function describeDrawdowns(summary, holdLabel, { formatDate, formatPrice }) {
+  if (!summary) return `No all-time high has stood for ${holdLabel}.`;
+  const { count, deepest: worst, median, open } = summary;
+  const recovery = worst.open
+    ? ', and it has not recovered'
+    : `, and it took ${formatSpan(worst.topDays)} to close above that high again`;
+  const still = open
+    ? `The one still open topped out at ${formatPrice(open.peak)} on `
+      + `${formatDate(open.peakDate)} and is ${formatDepth(open.depth)} at its lowest `
+      + `close so far, ${formatSpan(open.topDays)} on. `
+    : '';
+  return `${count} all-time high${count === 1 ? '' : 's'} held for ${holdLabel} before `
+    + `the price closed above ${count === 1 ? 'it' : 'them'} again. The deepest fall from one was `
+    + `${formatDepth(worst.depth)}, from ${formatDate(worst.peakDate)} to its bottom on `
+    + `${formatDate(worst.troughDate)}${recovery}; the median is ${formatDepth(median)}. `
+    + `${still}A dot marks each bottom; the deepest are labelled.`;
+}
+
 /** A signed one-decimal percentage for a depth: `−40.5%`. */
 export function formatDepth(depth) {
   const percent = Math.abs(depth * 100).toFixed(1);
