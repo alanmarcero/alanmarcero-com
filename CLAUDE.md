@@ -159,8 +159,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── fetch-synth-images.py     # GENERATOR: homepage synth photographs
 │   ├── yahoo_daily.py            # Library: every daily close Yahoo holds (shared by /tmobile + /stocks generators)
 │   ├── commons_images.py         # Library: Wikimedia Commons fetch, licence check + attribution (shared by the 3 image generators)
-│   ├── fetch-nola-tour-photos.py # GENERATOR: /neworleans-tours photographs
-│   └── add-nola-tour-photos.mjs, check-nola-tours.mjs  # NOLA tours page maintenance (ESM)
+│   └── check-nola-tours.mjs      # Validator for pages/neworleans/tours.html (anchors, chips, ids, tag balance)
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -171,7 +170,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,817 tests across 127 suites**
+**Total: 1,817 tests across 128 suites**
 
 ## Key Files
 
@@ -337,7 +336,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,817 tests, 127 suites)
+npm test                       # Jest (1,817 tests, 128 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -435,7 +434,7 @@ uses the site palette so the arcade index stays consistent.):
 - **Rhythm Catcher** — 4 lanes (arrow keys), falling notes, perfect/good timing windows, combo multiplier, pattern generation
 - **Centipede** — Player in bottom zone, 10-segment centipede chain, mushroom field, spider enemy, segment splitting on hit
 - **Bird Name Generator** — Press SPACE to generate absurd-but-real-sounding bird species (Boobie, Bushtit, Smew, etc.) combined with prefixes/colors/body parts; pixel-style bird mascot with randomized body, wings, crest, beak, and Latin name
-- **Life Pulse** — Horizontal shmup built on a deployable "pulse": 17 powerups (double, shield, nova, chain, vortex, swarm…), combo/graze/chain scoring with a run multiplier, wave progression with bosses and perfect-wave bonuses, end-of-run grade. Draw code lives in `LifePulseRenderer.js`, apart from the game logic
+- **Life Pulse** — Horizontal shmup built on a deployable "pulse": 12 powerups (double, shield, nova, chain, vortex, homing…), combo/graze/chain scoring with a run multiplier, wave progression with bosses and perfect-wave bonuses, end-of-run grade. Draw code lives in `LifePulseRenderer.js`, apart from the game logic
 
 **Mobile support:** Touch controls (d-pad + action buttons) appear on `pointer: coarse` devices. Uses `touchstart`/`touchend` with `preventDefault()`.
 
@@ -967,7 +966,7 @@ rm input.png
 - **Lambda Function URL lockdown:** CloudFront Origin Access Control (OAC) with IAM auth. The Lambda Function URL auth type is `AWS_IAM` — direct access returns 403. Only CloudFront can invoke it via SigV4-signed requests, scoped to the specific distribution. Setup workflow: `infrastructure/cloudfront-add-oac.yml`
 - **Lambda error responses:** Generic `{ error: "YouTube Fetch Failed" }` — no internal error messages leaked
 - **External links:** All external links use `target="_blank" rel="noopener noreferrer"`
-- **YouTube iframes:** Sandboxed with `allow-scripts allow-same-origin allow-popups allow-presentation`
+- **YouTube iframes:** Every player on every page takes `YOUTUBE_EMBED_SANDBOX` / `YOUTUBE_EMBED_ALLOW` from `src/config.js`; `src/youtubeEmbedPolicy.test.js` scans the source and fails on any `<iframe>` that does not
 - **Environment files:** `.env*` in `.gitignore`
 - **SEO:** Meta description, canonical URL, theme-color meta tag
 - **Last audit:** Feb 2026 — 0 critical, 0 high, 0 medium findings

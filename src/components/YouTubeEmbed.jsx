@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { YOUTUBE_EMBED_ALLOW, YOUTUBE_EMBED_SANDBOX } from '../config';
 
 const thumbnailUrl = (videoId) => `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
@@ -23,8 +24,8 @@ function YouTubeEmbed({ videoId, title = 'YouTube video', width = '100%', height
         height={height}
         loading="lazy"
         allowFullScreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation"
+        allow={YOUTUBE_EMBED_ALLOW}
+        sandbox={YOUTUBE_EMBED_SANDBOX}
       />
     );
   }
