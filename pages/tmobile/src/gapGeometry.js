@@ -7,8 +7,8 @@
    two charts already use, rather than restated here.
    ========================================================================== */
 
-import { xAt } from './chartGeometry';
-import { stackDomain, stackTicks, yAt } from './monthlyGeometry';
+import { areaUnder, polyline, xAt } from './chartGeometry';
+import { amountY, stackDomain, stackTicks } from './monthlyGeometry';
 
 /**
  * A gap series placed in a plot box, keyed to the price series' own week
@@ -21,7 +21,7 @@ export function gapPlot(points, weekIndex, weekCount, box, tickCount = 4) {
     .map((p) => ({
       ...p,
       x: xAt(weekIndex.get(p.week), weekCount, box),
-      y: yAt(p.days, domain, box),
+      y: amountY(p.days, domain, box),
     }));
   return {
     domain,
@@ -30,22 +30,6 @@ export function gapPlot(points, weekIndex, weekCount, box, tickCount = 4) {
     line: polyline(coords),
     area: areaUnder(coords, box),
   };
-}
-
-/** The trace itself. */
-export function polyline(coords) {
-  return coords.map((c) => `${c.x.toFixed(2)},${c.y.toFixed(2)}`).join(' ');
-}
-
-/** The wash below the trace, closed along the baseline. */
-export function areaUnder(coords, box) {
-  if (!coords.length) return '';
-  const top = coords
-    .map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x.toFixed(2)},${c.y.toFixed(2)}`)
-    .join('');
-  const first = coords[0].x.toFixed(2);
-  const last = coords[coords.length - 1].x.toFixed(2);
-  return `${top}L${last},${box.bottom.toFixed(2)}L${first},${box.bottom.toFixed(2)}Z`;
 }
 
 /** Nearest plotted point to a pointer at `px`; null for an empty series. */

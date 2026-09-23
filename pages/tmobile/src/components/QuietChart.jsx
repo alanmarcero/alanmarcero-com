@@ -1,12 +1,14 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import useMediaQuery from '../../../../src/hooks/useMediaQuery';
-import {
-  plotBox, tipPlacement, xAt, yearTicks, weekIndexMap,
-} from '../chartGeometry';
-import { gapPlot, nearestIndex, openRun, polyline } from '../gapGeometry';
-import { yAt } from '../monthlyGeometry';
-import { formatWeek } from '../insiderFilters';
+import { useCallback, useMemo } from 'react';
+import { plotBox, polyline, yearTicks, weekIndexMap } from '../chartGeometry';
+import { gapPlot, nearestIndex, openRun } from '../gapGeometry';
+import { amountY } from '../monthlyGeometry';
+import { formatDate } from '../insiderFilters';
 import { formatDays } from '../sellPressure';
+import useChartCursor from '../hooks/useChartCursor';
+import useChartView from '../hooks/useChartView';
+import {
+  ChartSvg, ChartTip, Crosshair, ValueGrid, YearTicks,
+} from './ChartParts';
 
 // The same two coordinate spaces the price chart uses, at a shorter height:
 // this plot is read against that one, so its x axis has to march in step.
@@ -18,6 +20,7 @@ const WIDE = {
   },
   tick: 13,
   endLabel: 14,
+  yearOffset: 24,
 };
 
 const COMPACT = {
@@ -28,9 +31,10 @@ const COMPACT = {
   },
   tick: 19,
   endLabel: 17,
+  yearOffset: 28,
 };
 
-const COMPACT_QUERY = '(max-width: 640px)';
+const dayTick = (t) => t;
 
 /**
  * How long insiders had gone without selling, week by week. Each tooth falls
@@ -42,11 +46,7 @@ const COMPACT_QUERY = '(max-width: 640px)';
 function QuietChart({
   prices, series, record, current, asOf,
 }) {
-  const svgRef = useRef(null);
-  const [hover, setHover] = useState(null);
-
-  const compact = useMediaQuery(COMPACT_QUERY);
-  const view = compact ? COMPACT : WIDE;
+  const { compact, view } = useChartView(WIDE, COMPACT);
 
   const geometry = useMemo(() => {
     const box = plotBox(view.w, view.h, view.margin);
@@ -63,63 +63,29 @@ function QuietChart({
   const { box, plot, years, open } = geometry;
   const { coords, domain, ticks } = plot;
 
-  const yOf = useCallback((days) => yAt(days, domain, box), [box, domain]);
-
-  const moveTo = useCallback((index) => {
-    if (index === null || !coords[index]) return;
-    setHover({ index, ...coords[index] });
-  }, [coords]);
-
-  const handlePointer = useCallback((event) => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const rect = svg.getBoundingClientRect();
-    if (!rect.width) return;
-    const vx = ((event.clientX - rect.left) / rect.width) * view.w;
-    moveTo(nearestIndex(coords, vx));
-  }, [coords, moveTo, view.w]);
-
-  const handleKeyDown = useCallback((event) => {
-    const step = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
-    if (!step) return;
-    event.preventDefault();
-    const from = hover ? hover.index : coords.length - 1;
-    moveTo(Math.min(coords.length - 1, Math.max(0, from + step)));
-  }, [coords.length, hover, moveTo]);
-
-  const clear = useCallback(() => setHover(null), []);
+  const yOf = useCallback((days) => amountY(days, domain, box), [box, domain]);
+  const indexAtViewX = useCallback((vx) => nearestIndex(coords, vx), [coords]);
+  const cursor = useChartCursor({ count: coords.length, viewWidth: view.w, indexAtViewX });
 
   if (!coords.length) {
     return <p className="tm-panel__note">Nobody in this selection has sold, so there is no stretch to measure.</p>;
   }
 
+  const hover = cursor.index === null ? null : coords[cursor.index];
   const last = coords[coords.length - 1];
   const recordY = record ? yOf(record.days) : null;
   // The gutter holds the end label, and a day count grows a digit at a time.
   // The face is monospaced, so its width is countable rather than guessable —
   // park the label short of the viewBox edge instead of letting it clip.
+  // The compact gutter holds a number, not a number and a word.
   const endText = compact ? `${last.days}` : formatDays(last.days);
   const endX = Math.min(last.x + 10, view.w - 4 - endText.length * view.endLabel * 0.6);
   const label = `Days since the previous insider sale, week by week, ending at `
-    + `${formatDays(last.days)} on ${formatWeek(asOf)}.`;
+    + `${formatDays(last.days)} on ${formatDate(asOf)}.`;
 
   return (
     <div className="tm-chart">
-      <svg
-        ref={svgRef}
-        className="tm-chart__svg"
-        viewBox={`0 0 ${view.w} ${view.h}`}
-        preserveAspectRatio="xMidYMid meet"
-        style={{ '--tm-tick-size': `${view.tick}px`, '--tm-endlabel-size': `${view.endLabel}px` }}
-        role="img"
-        aria-label={label}
-        tabIndex={0}
-        onPointerMove={handlePointer}
-        onPointerDown={handlePointer}
-        onPointerLeave={clear}
-        onBlur={clear}
-        onKeyDown={handleKeyDown}
-      >
+      <ChartSvg cursor={cursor} view={view} labelSize={view.endLabel} label={label}>
         <defs>
           <linearGradient id="tm-quiet-wash" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--tm-quiet)" stopOpacity="0.18" />
@@ -127,41 +93,14 @@ function QuietChart({
           </linearGradient>
         </defs>
 
-        {ticks.map((t) => (
-          <line
-            key={t}
-            className="tm-chart__grid"
-            x1={box.left}
-            x2={box.right}
-            y1={yOf(t)}
-            y2={yOf(t)}
-          />
-        ))}
-
-        {ticks.map((t) => (
-          <text
-            key={t}
-            className="tm-chart__tick"
-            x={box.left - 12}
-            y={yOf(t)}
-            textAnchor="end"
-            dominantBaseline="middle"
-          >
-            {t}
-          </text>
-        ))}
-
-        {years.map(({ index, year }) => (
-          <text
-            key={year}
-            className="tm-chart__tick"
-            x={xAt(index, prices.length, box)}
-            y={box.bottom + (compact ? 28 : 24)}
-            textAnchor="middle"
-          >
-            {compact ? `’${year.slice(2)}` : year}
-          </text>
-        ))}
+        <ValueGrid ticks={ticks} box={box} yOf={yOf} format={dayTick} />
+        <YearTicks
+          years={years}
+          count={prices.length}
+          box={box}
+          offset={view.yearOffset}
+          compact={compact}
+        />
 
         <line
           className="tm-chart__axis"
@@ -196,12 +135,7 @@ function QuietChart({
           </>
         )}
 
-        {hover && (
-          <g className="tm-chart__cursor">
-            <line x1={hover.x} x2={hover.x} y1={box.top} y2={box.bottom} />
-            <circle cx={hover.x} cy={hover.y} r={4.5} />
-          </g>
-        )}
+        {hover && <Crosshair x={hover.x} y={hover.y} box={box} />}
 
         <circle className="tm-chart__dot tm-chart__dot--quiet" cx={last.x} cy={last.y} r={5} />
 
@@ -212,26 +146,20 @@ function QuietChart({
           textAnchor="start"
           dominantBaseline="middle"
         >
-          {/* the compact gutter holds a number, not a number and a word */}
           {endText}
         </text>
-      </svg>
+      </ChartSvg>
 
       {hover && (
-        <div
-          className={`tm-tip tm-tip--${tipPlacement(hover.x, view.w).side}`}
-          style={{ left: tipPlacement(hover.x, view.w).left }}
-          role="status"
-          aria-live="polite"
-        >
-          <p className="tm-tip__week">{`Week of ${formatWeek(hover.week)}`}</p>
+        <ChartTip x={hover.x} viewWidth={view.w}>
+          <p className="tm-tip__week">{`Week of ${formatDate(hover.week)}`}</p>
           <p className="tm-tip__row">
             <span className="tm-tip__key tm-tip__key--quiet" aria-hidden="true" />
             <strong>{formatDays(hover.days)}</strong>
             <span className="tm-tip__label">since a sale</span>
           </p>
-          <p className="tm-tip__who">{`Last sale ${formatWeek(hover.since)}`}</p>
-        </div>
+          <p className="tm-tip__who">{`Last sale ${formatDate(hover.since)}`}</p>
+        </ChartTip>
       )}
     </div>
   );

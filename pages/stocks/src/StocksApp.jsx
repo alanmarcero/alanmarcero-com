@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './StocksApp.css';
-import { WaveformDivider } from '../../../src/components/graphics';
+import PageHeader from '../../tmobile/src/components/PageHeader';
 import TopHoldControl from '../../tmobile/src/components/TopHoldControl';
 import { DEFAULT_TOP_HOLD, topHoldById } from '../../tmobile/src/drawdowns';
 import InstrumentPanel from './components/InstrumentPanel';
@@ -15,16 +15,18 @@ function StocksApp() {
 
   return (
     <div className="tm-page">
-      <header className="tm-header">
-        <a href="/" className="tm-back">&larr; Back to console</a>
-        <p className="kicker tm-kicker">// drawdown readout</p>
-        <h1 className="tm-title">Drawdowns</h1>
-        <p className="tm-sub">
-          How far each all-time high fell before it was beaten. Every daily close
-          Yahoo Finance holds for fourteen stocks, funds and coins, each plotted as a
-          loss from the highest close before it &mdash; so the line sits on the top
-          edge at a record and hangs below it for as long as the record stands.
-        </p>
+      <PageHeader
+        kicker="// drawdown readout"
+        title="Drawdowns"
+        intro={(
+          <>
+            How far each all-time high fell before it was beaten. Every daily close
+            Yahoo Finance holds for fourteen stocks, funds and coins, each plotted as a
+            loss from the highest close before it &mdash; so the line sits on the top
+            edge at a record and hangs below it for as long as the record stands.
+          </>
+        )}
+      >
         <nav className="st-index" aria-label="Instruments">
           {ORDERED.map((instrument) => (
             <a key={instrument.symbol} className="tm-filter" href={`#${anchorOf(instrument)}`}>
@@ -32,8 +34,7 @@ function StocksApp() {
             </a>
           ))}
         </nav>
-        <WaveformDivider variant="saw" className="tm-divider" />
-      </header>
+      </PageHeader>
 
       <main className="tm-main">
         <div className="tm-controls st-controls">

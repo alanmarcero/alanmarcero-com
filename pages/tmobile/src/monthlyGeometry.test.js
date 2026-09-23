@@ -1,6 +1,6 @@
 import {
   MAX_BAR, MIN_BAR, SEGMENT_GAP, bandIndexAtX, bandScale, columnPath,
-  monthTicks, niceStep, stackDomain, stackRects, stackTicks, yAt,
+  monthTicks, niceStep, stackDomain, stackRects, stackTicks, amountY,
 } from './monthlyGeometry';
 
 const BOX = { left: 100, top: 0, width: 900, height: 400, right: 1000, bottom: 400 };
@@ -83,18 +83,18 @@ describe('stackTicks', () => {
   });
 });
 
-describe('yAt', () => {
+describe('amountY', () => {
   it('puts zero on the baseline and the domain max at the top', () => {
     const domain = { min: 0, max: 100, step: 25 };
-    expect(yAt(0, domain, BOX)).toBe(400);
-    expect(yAt(100, domain, BOX)).toBe(0);
-    expect(yAt(50, domain, BOX)).toBe(200);
+    expect(amountY(0, domain, BOX)).toBe(400);
+    expect(amountY(100, domain, BOX)).toBe(0);
+    expect(amountY(50, domain, BOX)).toBe(200);
   });
 
   it('clamps rather than drawing outside the plot', () => {
     const domain = { min: 0, max: 100, step: 25 };
-    expect(yAt(500, domain, BOX)).toBe(0);
-    expect(yAt(-20, domain, BOX)).toBe(400);
+    expect(amountY(500, domain, BOX)).toBe(0);
+    expect(amountY(-20, domain, BOX)).toBe(400);
   });
 });
 

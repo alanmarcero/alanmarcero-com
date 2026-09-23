@@ -2,19 +2,20 @@ import BiggestDrops from './BiggestDrops';
 import DrawdownChart from './DrawdownChart';
 import DrawdownTable from './DrawdownTable';
 import { describeDrawdowns, describeHold, summarizeDrawdowns } from '../drawdowns';
-import { formatPrice, formatWeek } from '../insiderFilters';
+import { formatDate, formatPrice } from '../insiderFilters';
 
 /**
  * One instrument's drawdowns: the underwater chart, the caption derived from
- * it, the biggest drop of each year, and the table that is its accessible twin. `children` sit between the
- * heading and the chart — a page with one chart puts its control there.
+ * it, the biggest drop of each year, and the table that is its accessible
+ * twin. `children` sit between the heading and the chart — a page with one
+ * chart puts its control there.
  */
 function DrawdownPanel({
   id, title, kicker, points, episodes, hold, subject, children,
 }) {
   const holdLabel = describeHold(hold);
   const caption = describeDrawdowns(summarizeDrawdowns(episodes), holdLabel, {
-    formatDate: formatWeek, formatPrice,
+    formatDate, formatPrice,
   });
 
   return (

@@ -70,7 +70,7 @@ export function stackTicks(domain) {
 }
 
 /** Map an amount onto the plot's y range (zero sits on the baseline). */
-export function yAt(amount, domain, box) {
+export function amountY(amount, domain, box) {
   if (domain.max <= 0) return box.top + box.height;
   const fraction = Math.min(1, Math.max(0, amount / domain.max));
   return box.top + (1 - fraction) * box.height;
