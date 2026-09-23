@@ -30,9 +30,9 @@ Four things about this feed that will bite whoever runs it next:
 
 3.  ONE MORE TRADE IS HELD OUT, BY NAME. OUTLIER_TRADES carries a single block
     trade that the five-year generator also holds out; the two must agree,
-    because a test asserts the two series match over the window they share.
-    Both scripts fail loudly rather than quietly keeping it if the feed stops
-    covering that date.
+    because a test asserts the two series match over the window they share,
+    so the list lives once, in tmus_insiders.py. Both scripts fail loudly
+    rather than quietly keeping it if the feed stops covering that date.
 
 4.  DEUTSCHE TELEKOM IS MOST OF THE FEED. The majority owner files 97 of the
     152 sale rows and 6.4M of the 7.7M shares. Leaving it in flattens every
@@ -48,12 +48,14 @@ import json
 import sys
 import urllib.error
 import urllib.request
-from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
 
+from tmus_insiders import DISPLAY_NAME, EXCLUDED, OUTLIER_TRADES, ranked, tally_by_person
+
+FEED_CAP = 250
 FEED = ('https://api.nasdaq.com/api/company/TMUS/insider-trades'
-        '?limit=250&type=ALL&sortColumn=lastDate&sortOrder=DESC')
+        f'?limit={FEED_CAP}&type=ALL&sortColumn=lastDate&sortOrder=DESC')
 PAGE = 'https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity'
 
 # The feed rejects a default urllib agent.
@@ -64,35 +66,7 @@ HEADERS = {
 }
 
 SALE_TYPES = ('Sell', 'Automatic Sell')
-EXCLUDED = 'DEUTSCHE TELEKOM AG'
 CEO = 'SIEVERT G MICHAEL'
-
-# Held out of every figure and named at the foot of the page — the SAME single
-# trade the five-year generator holds out, keyed the same way, or the two
-# charts on the page would stop agreeing over the window they share. See
-# fetch-edgar-form4-prices.py for why this one trade is out.
-OUTLIER_TRADES = (('2026-02-12', 'CLAURE RAUL MARCELO'),)
-
-# Display only. The feed sets names LAST FIRST MIDDLE in caps, which no
-# algorithm can reliably unpick ("SIEVERT G MICHAEL" is G. Michael Sievert),
-# so the 14 people who appear are spelled out and the spellings match the
-# five-year series so a reader can follow one person across both charts.
-DISPLAY_NAME = {
-    'SIEVERT G MICHAEL': 'Mike Sievert',
-    'CLAURE RAUL MARCELO': 'Raul Marcelo Claure',
-    'NELSON MARK WOLFE': 'Mark Wolfe Nelson',
-    'KATZ MICHAEL J.': 'Michael J. Katz',
-    'DATAR SRIKANT M.': 'Srikant M. Datar',
-    'OSVALDIK PETER': 'Peter Osvaldik',
-    'FIELD CALLIE R': 'Callie R Field',
-    'BAZZANO DARA': 'Dara Bazzano',
-    'CANO NESTOR': 'Nestor Cano',
-    'FREIER JON': 'Jon Freier',
-    'LONG LETITIA A': 'Letitia A Long',
-    'EWALDSSON ULF': 'Ulf Ewaldsson',
-    'TAYLOR TERESA': 'Teresa Taylor',
-    'DROBAC DANIEL JAMES': 'Daniel James Drobac',
-}
 
 OUT = Path(__file__).resolve().parents[1] / 'src' / 'data' / 'tmusMonthlySales.js'
 
@@ -167,19 +141,11 @@ def roll_up(sales, months):
         record = {'month': month}
         for group in ('sievert', 'others'):
             rows = buckets[month][group]
-            people = defaultdict(lambda: {'shares': 0, 'value': 0})
-            for row in rows:
-                people[row['name']]['shares'] += row['shares']
-                people[row['name']]['value'] += row['value']
             record[group] = {
                 'shares': sum(r['shares'] for r in rows),
                 'value': sum(r['value'] for r in rows),
                 'txns': len(rows),
-                'people': [
-                    {'name': name, **totals}
-                    for name, totals in sorted(
-                        people.items(), key=lambda kv: -kv[1]['shares'])
-                ],
+                'people': ranked(tally_by_person(rows)),
             }
         records.append(record)
     return records
@@ -237,6 +203,37 @@ def render(records, sales, meta):
     return '\n'.join(lines)
 
 
+def build_meta(rows, total, sale_rows, dropped, outlier_rows, kept,
+               covered, months, records, fetched):
+    return {
+        'symbol': 'TMUS',
+        'source': 'Nasdaq insider activity',
+        'sourceUrl': PAGE,
+        'fetched': fetched,
+        'feedRecords': len(rows),
+        'feedReported': int(total),
+        'feedCapped': len(rows) >= FEED_CAP,
+        'saleRows': len(sale_rows),
+        'excludedFiler': EXCLUDED,
+        'excludedRows': len(dropped),
+        'excludedShares': int(round(sum(to_number(r['sharesTraded']) for r in dropped))),
+        'outliers': [
+            {k: v for k, v in parse_sale(r).items()
+             if k in ('date', 'name', 'shares', 'price', 'value')}
+            for r in sorted(outlier_rows, key=lambda r: to_iso(r['lastDate']))
+        ],
+        'txnCount': len(kept),
+        'sellerCount': len({s['name'] for s in kept}),
+        'feedFirst': covered[0],
+        'feedLast': covered[-1],
+        'firstSale': kept[0]['date'],
+        'lastSale': kept[-1]['date'],
+        'monthCount': len(months),
+        'quietMonths': sum(
+            1 for r in records if not r['sievert']['txns'] and not r['others']['txns']),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true',
@@ -245,7 +242,7 @@ def main():
 
     try:
         rows, total = fetch()
-    except (urllib.error.URLError, urllib.error.HTTPError) as error:
+    except urllib.error.URLError as error:
         sys.exit(f'Nasdaq feed unreachable: {error}')
 
     sale_rows = [r for r in rows if is_sale(r)]
@@ -269,33 +266,8 @@ def main():
     months = month_range(month_of(covered[0]), month_of(covered[-1]))
     records = roll_up(kept, months)
 
-    meta = {
-        'symbol': 'TMUS',
-        'source': 'Nasdaq insider activity',
-        'sourceUrl': PAGE,
-        'fetched': date.today().isoformat(),
-        'feedRecords': len(rows),
-        'feedReported': int(total),
-        'feedCapped': len(rows) >= 250,
-        'saleRows': len(sale_rows),
-        'excludedFiler': EXCLUDED,
-        'excludedRows': len(dropped),
-        'excludedShares': int(round(sum(to_number(r['sharesTraded']) for r in dropped))),
-        'outliers': [
-            {k: v for k, v in parse_sale(r).items()
-             if k in ('date', 'name', 'shares', 'price', 'value')}
-            for r in sorted(outlier_rows, key=lambda r: to_iso(r['lastDate']))
-        ],
-        'txnCount': len(kept),
-        'sellerCount': len({s['name'] for s in kept}),
-        'feedFirst': covered[0],
-        'feedLast': covered[-1],
-        'firstSale': kept[0]['date'],
-        'lastSale': kept[-1]['date'],
-        'monthCount': len(months),
-        'quietMonths': sum(
-            1 for r in records if not r['sievert']['txns'] and not r['others']['txns']),
-    }
+    meta = build_meta(rows, total, sale_rows, dropped, outlier_rows, kept,
+                      covered, months, records, fetched=date.today().isoformat())
 
     module = render(records, kept, meta)
     if args.dry_run:

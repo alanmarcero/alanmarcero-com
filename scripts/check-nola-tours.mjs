@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Validator for neworleans-tours.html. Run: node scripts/check-nola-tours.js
+/* Validator for pages/neworleans/tours.html. Run: node scripts/check-nola-tours.mjs
    Checks the invariants that matter on this page:
    - every card carries a dated verification state (.vfy or .unver)
    - every retracted figure is wrapped in <s class="retracted"> so price scrapes can exclude it
@@ -7,10 +7,11 @@
    - every filter chip's data-filter matches at least one card's data-tags
    - the master matrix row count matches the number of numbered tour cards
    - no unescaped bare ampersands, no duplicate ids, tag balance */
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const file = path.join(__dirname, '..', 'neworleans-tours.html');
+const file = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'pages', 'neworleans', 'tours.html');
 const html = fs.readFileSync(file, 'utf8');
 /* Comments are not markup a reader ever sees, and "CATEGORY 4: PACKAGES & COMBOS"
    is not a bare-ampersand bug. Strip them before the character-level checks. */
@@ -29,15 +30,19 @@ const notes = [];
 const fail = (m) => problems.push(m);
 const note = (m) => notes.push(m);
 
+const lineAt = (text, index) => text.slice(0, index).split('\n').length;
+
+const cardName = (block, i) => {
+  const nameMatch = block.match(/class="tname">([^<]+)/);
+  return nameMatch ? nameMatch[1].trim() : `card #${i + 1}`;
+};
+
 /* ---------- cards ---------- */
-const cardRe = /<div class="tcard[^"]*"[\s\S]*?(?=\n      <\/div>\n    <\/div>|<!--|<\/div>\s*<\/div>\s*<\/div>)/g;
 const cardBlocks = html.split(/<div class="tcard/).slice(1);
 note(`cards found: ${cardBlocks.length}`);
 
 cardBlocks.forEach((block, i) => {
-  const nameMatch = block.match(/class="tname">([^<]+)/);
-  const name = nameMatch ? nameMatch[1].trim() : `card #${i + 1}`;
-  if (!/class="vfy"|class="unver"/.test(block)) fail(`no dated verification state: ${name}`);
+  if (!/class="vfy"|class="unver"/.test(block)) fail(`no dated verification state: ${cardName(block, i)}`);
 });
 
 /* ---------- photo assignment ---------- */
@@ -47,8 +52,7 @@ cardBlocks.forEach((block, i) => {
    invalid -- it just quietly lied. Assert the shape that failure had. */
 const photoUse = new Map();
 cardBlocks.forEach((block, i) => {
-  const nameMatch = block.match(/class="tname">([^<]+)/);
-  const name = nameMatch ? nameMatch[1].trim() : `card #${i + 1}`;
+  const name = cardName(block, i);
   const photo = block.match(/tphoto has-img" style="background-image:url\(([^)]+)\)/);
   if (!photo) { fail(`no photo: ${name}`); return; }
   const list = photoUse.get(photo[1]) || [];
@@ -104,7 +108,7 @@ note(`numbered cards: ${tnums.length}, matrix rows: ${matrixRows.length}`);
 /* ---------- bare ampersands ---------- */
 const bare = [...body.matchAll(/&(?!#?\w{1,8};)/g)];
 if (bare.length) {
-  const lines = bare.slice(0, 6).map((m) => body.slice(0, m.index).split('\n').length);
+  const lines = bare.slice(0, 6).map((m) => lineAt(body, m.index));
   fail(`${bare.length} bare & (first on lines ${lines.join(', ')})`);
 }
 
@@ -125,13 +129,14 @@ for (const m of markup.matchAll(/<(\/?)([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g)) {
   const t = tag.toLowerCase();
   if (voids.has(t) || attrs.trim().endsWith('/')) continue;
   if (t === '!doctype') continue;
-  if (!slash) stack.push({ t, at: markup.slice(0, m.index).split('\n').length });
-  else {
-    const top = stack.pop();
-    if (!top || top.t !== t) {
-      fail(`tag mismatch: </${t}> at line ${markup.slice(0, m.index).split('\n').length} closes ${top ? `<${top.t}> from line ${top.at}` : 'nothing'}`);
-      break;
-    }
+  if (!slash) {
+    stack.push({ t, at: lineAt(markup, m.index) });
+    continue;
+  }
+  const top = stack.pop();
+  if (!top || top.t !== t) {
+    fail(`tag mismatch: </${t}> at line ${lineAt(markup, m.index)} closes ${top ? `<${top.t}> from line ${top.at}` : 'nothing'}`);
+    break;
   }
 }
 if (stack.length) fail(`unclosed tags: ${stack.slice(-5).map((s) => `<${s.t}>@${s.at}`).join(', ')}`);
@@ -143,4 +148,4 @@ if (problems.length) {
   problems.forEach((p) => console.log(`  ✗ ${p}`));
   process.exit(1);
 }
-console.log('\n✓ neworleans-tours.html passes');
+console.log('\n✓ pages/neworleans/tours.html passes');

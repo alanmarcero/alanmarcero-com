@@ -12,7 +12,7 @@ export default defineConfig([
     ],
   },
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
+    files: ["**/*.{js,mjs,jsx,ts,tsx}"],
     plugins: { js },
     extends: ["js/recommended"],
     languageOptions: {
