@@ -171,5 +171,6 @@ describe('formatPrice', () => {
   it('always shows cents', () => {
     expect(formatPrice(144.02)).toBe('$144.02');
     expect(formatPrice(136)).toBe('$136.00');
+    expect(formatPrice(112345.6)).toBe('$112,345.60');
   });
 });

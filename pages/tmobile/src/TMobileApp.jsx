@@ -11,8 +11,8 @@ import DroughtTiles from './components/DroughtTiles';
 import QuietChart from './components/QuietChart';
 import SellTable from './components/SellTable';
 import MonthlyTable from './components/MonthlyTable';
-import DrawdownChart from './components/DrawdownChart';
-import DrawdownTable from './components/DrawdownTable';
+import DrawdownPanel from './components/DrawdownPanel';
+import TopHoldControl from './components/TopHoldControl';
 import {
   DEFAULT_FILTER, filterById, formatUSD, formatWeek, selectedWeeks, summarize,
   visibleSeries,
@@ -32,8 +32,7 @@ import {
 import { MONTHLY_SALES, NASDAQ_META } from './data/tmusMonthlySales';
 import { TMUS_DAILY, TMUS_DAILY_META } from './data/tmusDailyCloses';
 import {
-  DEFAULT_TOP_HOLD, TOP_HOLDS, drawdownEpisodes, formatDepth, formatSpan,
-  heldAtLeast, summarizeDrawdowns, topHoldById, underwater,
+  DEFAULT_TOP_HOLD, drawdownEpisodes, heldAtLeast, topHoldById, underwater,
 } from './drawdowns';
 
 // Every "as of" figure is read from the date the data was fetched, not from
@@ -54,8 +53,6 @@ function TMobileApp() {
 
   const hold = topHoldById(topHold);
   const drawdowns = useMemo(() => heldAtLeast(ALL_DRAWDOWNS, hold.days), [hold.days]);
-  const drawdownSummary = useMemo(() => summarizeDrawdowns(drawdowns), [drawdowns]);
-  const holdLabel = hold.days ? `at least ${formatSpan(hold.days)}` : 'any length of time';
 
   const show = visibleSeries(filter);
   const rows = useMemo(
@@ -256,65 +253,17 @@ function TMobileApp() {
 
         <MonthlyTable rows={monthTableRows} />
 
-        <section className="tm-panel" aria-labelledby="tm-drawdown-heading">
-          <div className="tm-panel__head">
-            <h2 className="tm-panel__title" id="tm-drawdown-heading">
-              Peak-to-trough drawdowns since {TMUS_DAILY_META.first.slice(0, 4)}
-            </h2>
-          </div>
-
+        <DrawdownPanel
+          id="tm-drawdown"
+          title={`Peak-to-trough drawdowns since ${TMUS_DAILY_META.first.slice(0, 4)}`}
+          points={UNDERWATER}
+          episodes={drawdowns}
+          hold={hold}
+        >
           <div className="tm-controls tm-controls--inset">
-            <div className="tm-controls__group" role="group" aria-labelledby="tm-hold-label">
-              <p className="tm-controls__label" id="tm-hold-label">Count a top that stood at least</p>
-              <div className="tm-filters">
-                {TOP_HOLDS.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className={`tm-filter${topHold === option.id ? ' tm-filter--on' : ''}`}
-                    aria-pressed={topHold === option.id}
-                    onClick={() => setTopHold(option.id)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <TopHoldControl value={topHold} onChange={setTopHold} />
           </div>
-
-          <DrawdownChart points={UNDERWATER} episodes={drawdowns} />
-
-          <p className="tm-panel__note">
-            {drawdownSummary ? (
-              <>
-                {`${drawdownSummary.count} all-time highs held for ${holdLabel} before `}
-                {`the stock closed above them again. The deepest fall from one was `}
-                {`${formatDepth(drawdownSummary.deepest.depth)}, from `}
-                {`${formatWeek(drawdownSummary.deepest.peakDate)} to its bottom on `}
-                {`${formatWeek(drawdownSummary.deepest.troughDate)}`}
-                {drawdownSummary.deepest.open
-                  ? ', and it has not recovered'
-                  : `, and it took ${formatSpan(drawdownSummary.deepest.topDays)} to close above that high again`}
-                {`; the median is ${formatDepth(drawdownSummary.median)}. `}
-                {drawdownSummary.open
-                  ? `The one still open topped out at $${drawdownSummary.open.peak.toFixed(2)} on `
-                    + `${formatWeek(drawdownSummary.open.peakDate)} and is `
-                    + `${formatDepth(drawdownSummary.open.depth)} at its lowest close so far, `
-                    + `${formatSpan(drawdownSummary.open.topDays)} on. `
-                  : ''}
-                {'A dot marks each bottom; the deepest are labelled.'}
-              </>
-            ) : (
-              `No all-time high has stood for ${holdLabel}.`
-            )}
-          </p>
-
-          <p className="tm-hint">
-            Hover or focus the chart and use &larr; &rarr; to step a week at a time.
-          </p>
-        </section>
-
-        <DrawdownTable episodes={drawdowns} holdLabel={holdLabel} />
+        </DrawdownPanel>
 
         <footer className="tm-notes">
           <h2 className="tm-notes__title">Where this comes from</h2>
