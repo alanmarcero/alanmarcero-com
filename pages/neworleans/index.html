@@ -1822,19 +1822,62 @@
   var groups=[].slice.call(document.querySelectorAll('#aoGroups .et-group'));
   var cards=[].slice.call(document.querySelectorAll('#aoGroups .et-card'));
   var state={cats:new Set(),price:new Set(),flags:new Set()};
-  function bind(id,key,attr){var w=document.getElementById(id);w.querySelectorAll('.ht-chip').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute(attr),on=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!on);if(on)state[key].delete(v);else state[key].add(v);apply();});});}
-  bind('aoCats','cats','data-cat');bind('aoPrice','price','data-price');bind('aoToggles','flags','data-flag');
-  function reset(){state.cats.clear();state.price.clear();state.flags.clear();document.querySelectorAll('#aoBar .ht-chip').forEach(function(b){b.setAttribute('aria-pressed','false');});apply();}
-  document.getElementById('aoReset').addEventListener('click',reset);
-  var r2=document.getElementById('aoReset2');if(r2)r2.addEventListener('click',reset);
-  function vis(c){
-    if(state.price.size){var p=c.getAttribute('data-price');var pk=(p==='3')?'2':p;if(!state.price.has(pk))return false;}
-    if(state.flags.has('ac')&&c.getAttribute('data-ac')!=='1')return false;
-    if(state.flags.has('kid')&&c.getAttribute('data-kid')!=='1')return false;
-    if(state.flags.has('reserve')&&c.getAttribute('data-reserve')!=='1')return false;
-    return true;
+  var FLAGS=['ac','kid','reserve'];
+
+  function isPressed(b){ return b.getAttribute('aria-pressed')==='true'; }
+
+  function bind(id,key,attr){
+    document.getElementById(id).querySelectorAll('.ht-chip').forEach(function(b){
+      b.addEventListener('click',function(){
+        var value=b.getAttribute(attr), was=isPressed(b);
+        b.setAttribute('aria-pressed',!was);
+        if(was) state[key].delete(value);
+        else state[key].add(value);
+        apply();
+      });
+    });
   }
-  function apply(){var shown=0;groups.forEach(function(g){var on=state.cats.size===0||state.cats.has(g.getAttribute('data-cat'));var gc=[].slice.call(g.querySelectorAll('.et-card'));var v=0;gc.forEach(function(c){var ok=on&&vis(c);c.hidden=!ok;if(ok){v++;shown++;}});g.hidden=v===0;});document.getElementById('aoCount').textContent='Showing '+shown+' of '+cards.length;document.getElementById('aoEmpty').hidden=shown!==0;}
+
+  // The "$$+" chip covers tier 3 as well, so a tier-3 card files under tier 2.
+  function priceKey(card){
+    var price=card.getAttribute('data-price');
+    return price==='3' ? '2' : price;
+  }
+
+  function isVisible(card){
+    if(state.price.size && !state.price.has(priceKey(card))) return false;
+    return FLAGS.every(function(flag){
+      return !state.flags.has(flag) || card.getAttribute('data-'+flag)==='1';
+    });
+  }
+
+  function apply(){
+    var shown=0;
+    groups.forEach(function(group){
+      var categoryOn=state.cats.size===0 || state.cats.has(group.getAttribute('data-cat'));
+      var visibleInGroup=0;
+      group.querySelectorAll('.et-card').forEach(function(card){
+        var ok=categoryOn && isVisible(card);
+        card.hidden=!ok;
+        if(ok){ visibleInGroup++; shown++; }
+      });
+      group.hidden=visibleInGroup===0;
+    });
+    document.getElementById('aoCount').textContent='Showing '+shown+' of '+cards.length;
+    document.getElementById('aoEmpty').hidden=shown!==0;
+  }
+
+  function reset(){
+    state.cats.clear(); state.price.clear(); state.flags.clear();
+    document.querySelectorAll('#aoBar .ht-chip').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+    apply();
+  }
+
+  bind('aoCats','cats','data-cat');
+  bind('aoPrice','price','data-price');
+  bind('aoToggles','flags','data-flag');
+  document.getElementById('aoReset').addEventListener('click',reset);
+  var r2=document.getElementById('aoReset2'); if(r2) r2.addEventListener('click',reset);
   apply();
 })();
 </script>
@@ -2569,8 +2612,7 @@
   <script id="bk-script">
   (function(){
     var KEY='nola-book-v1';
-    var boxes=[].slice.call(document.querySelectorAll('#book, .bk-wrap').length?document.querySelectorAll('.bk-item input'):[]);
-    boxes=[].slice.call(document.querySelectorAll('.bk-item input'));
+    var boxes=[].slice.call(document.querySelectorAll('.bk-item input'));
     var saved={};
     try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
     function paint(cb){cb.closest('.bk-item').classList.toggle('done',cb.checked);}

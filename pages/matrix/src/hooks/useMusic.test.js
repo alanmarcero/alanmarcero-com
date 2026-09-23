@@ -1,4 +1,4 @@
-import { parseRelease, groupByWork } from './useMusic';
+import { parseRelease, groupByWork, roleOf } from './useMusic';
 
 /**
  * Fixtures are the nine titles the API actually returned on 2026-08-22,
@@ -139,5 +139,20 @@ describe('groupByWork', () => {
       expect(typeof group.key).toBe('string');
       expect(group.key.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('roleOf', () => {
+  it('names his own rework of someone else\'s track as the remixer role', () => {
+    expect(roleOf('Alan-M Remix', false)).toBe('remixer');
+  });
+
+  it('names someone else\'s rework as remixed', () => {
+    expect(roleOf('Temple 1 Remix', false)).toBe('remixed');
+  });
+
+  it('treats a missing or "Original Mix" version as the original', () => {
+    expect(roleOf(null, true)).toBe('original');
+    expect(roleOf('Original Mix', true)).toBe('original');
   });
 });

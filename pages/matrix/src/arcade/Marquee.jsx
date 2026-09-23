@@ -1,10 +1,17 @@
+const BULB_COUNT = 22;
+const FRAME_INSET = 3;
+const FRAME_WIDTH = 434;
+const BULB_SPACING = FRAME_WIDTH / BULB_COUNT;
+const BULB_POSITIONS = Array.from(
+  { length: BULB_COUNT },
+  (_, index) => FRAME_INSET + BULB_SPACING * (index + 0.5),
+);
+
 /**
  * The marquee: the lit sign over a cabinet, drawn rather than photographed.
  * Bulbs sit on the frame at even intervals and pulse once on load.
  */
 function Marquee() {
-  const bulbs = Array.from({ length: 22 }, (_, index) => index);
-
   return (
     <div className="marquee">
       {/*
@@ -18,24 +25,20 @@ function Marquee() {
         aria-hidden="true"
       >
         <rect
-          x="3"
-          y="3"
-          width="434"
+          x={FRAME_INSET}
+          y={FRAME_INSET}
+          width={FRAME_WIDTH}
           height="90"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
         />
-        {bulbs.map((index) => {
-          const spacing = 434 / bulbs.length;
-          const x = 3 + spacing * (index + 0.5);
-          return (
-            <g key={index} className="marquee__bulb" style={{ '--bulb': index }}>
-              <circle cx={x} cy="9" r="2.4" fill="currentColor" />
-              <circle cx={x} cy="87" r="2.4" fill="currentColor" />
-            </g>
-          );
-        })}
+        {BULB_POSITIONS.map((x, index) => (
+          <g key={index} className="marquee__bulb" style={{ '--bulb': index }}>
+            <circle cx={x} cy="9" r="2.4" fill="currentColor" />
+            <circle cx={x} cy="87" r="2.4" fill="currentColor" />
+          </g>
+        ))}
       </svg>
       {/*
         The marquee word is this page's title, so it is the h1 — the arcade

@@ -2,6 +2,8 @@ import { useMemo, useId } from 'react';
 import { buildFieldPath, columnsForAspect } from './envelope';
 import { buildLissajous, packetDash } from './lissajous';
 
+const BEAM_PACKET = packetDash();
+
 /**
  * A field of ADSR envelope glyphs rendered as a single <path>.
  *
@@ -116,8 +118,8 @@ function EnvelopeField({
           <path
             className="envelope-field__beam"
             d={carrier.d}
-            pathLength={packetDash().pathLength}
-            strokeDasharray={packetDash().dashArray}
+            pathLength={BEAM_PACKET.pathLength}
+            strokeDasharray={BEAM_PACKET.dashArray}
             fill="none"
             stroke="var(--lcd)"
             strokeWidth={strokeWidth * 1.6}

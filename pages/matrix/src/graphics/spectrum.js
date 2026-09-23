@@ -1,4 +1,5 @@
 import { hashString, seededRandom } from './envelope';
+import { roundToHundredths } from './path';
 
 /*
  * A release is not a bank.
@@ -8,8 +9,6 @@ import { hashString, seededRandom } from './envelope';
  * Same seeded-from-its-own-name idea, different truth being told, and the
  * two sections stop looking like each other.
  */
-
-const round = (value) => Math.round(value * 100) / 100;
 
 /**
  * A bar spectrum as a list of {x, width, height} in a `width` x `height`
@@ -46,9 +45,9 @@ export function buildSpectrum({ seed, bars, width, height, gap = 2 }) {
     const magnitude = Math.max(0.06, Math.min(1, tilt * jitter + hump + 0.05));
 
     return {
-      x: round(index * (barWidth + gap)),
-      width: round(barWidth),
-      height: round(magnitude * height),
+      x: roundToHundredths(index * (barWidth + gap)),
+      width: roundToHundredths(barWidth),
+      height: roundToHundredths(magnitude * height),
     };
   });
 }

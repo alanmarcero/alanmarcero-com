@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import EnvelopeField from './graphics/EnvelopeField';
+import { count, pluralize } from './lib/format';
 import './hero.css';
 
 /**
@@ -12,24 +13,8 @@ import './hero.css';
  */
 export const ANNOUNCE_DELAY_MS = 600;
 
-/**
- * Noun agreement, split from number formatting so a layout that shows the
- * two apart (the hero puts the figure at display scale and the noun beneath
- * it) uses the SAME rule as one that shows them together. One rule, two
- * presentations — the alternative is a second implementation, which is how
- * "1 releases" shipped.
- *
- * Shared by both renderers on purpose. They previously pluralized
- * independently — the spoken one did, the visible one did not — and any
- * search matching exactly one release showed "1 releases" on screen while
- * the live region said "1 release". Two implementations of one rule is the
- * defect generator, so there is now one.
- */
-export const pluralize = (n, singular, plural = `${singular}s`) =>
-  (n === 1 ? singular : plural);
-
-export const count = (n, singular, plural) =>
-  `${n.toLocaleString()} ${pluralize(n, singular, plural)}`;
+/** `null` and `undefined` both mean the release count is not known yet. */
+const isUncounted = (music) => music === null || music === undefined;
 
 /**
  * The visible readout. Terser than the spoken one, and it omits an unknown
@@ -37,7 +22,7 @@ export const count = (n, singular, plural) =>
  * a smaller truth, it is a wrong one.
  */
 export const visibleResults = ({ patches, music }) =>
-  music === null || music === undefined
+  isUncounted(music)
     ? count(patches, 'bank')
     : `${count(patches, 'bank')}, ${count(music, 'release')}`;
 
@@ -59,7 +44,7 @@ export const describeResults = (resultsCount, query) => {
   const { patches, music } = resultsCount;
   const banks = count(patches, 'bank');
 
-  if (music === null || music === undefined) {
+  if (isUncounted(music)) {
     return patches === 0
       ? `No banks match “${query}”.`
       : `${banks} for “${query}”.`;

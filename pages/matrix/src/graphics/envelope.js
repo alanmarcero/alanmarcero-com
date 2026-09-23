@@ -12,6 +12,8 @@
  * Pure. No React, no DOM, no randomness.
  */
 
+import { roundToHundredths, polylinePath } from './path';
+
 /** FNV-1a. Small, fast, good enough spread for visual variation. */
 export function hashString(input) {
   let hash = 0x811c9dc5;
@@ -36,8 +38,6 @@ export function seededRandom(seed) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-
-const round = (value) => Math.round(value * 100) / 100;
 
 /**
  * One ADSR glyph as a polyline, in a cell of `width` x `height`.
@@ -95,15 +95,11 @@ export function buildFieldPath({
   for (let index = 0; index < count; index += 1) {
     const originX = (index % columns) * stepX;
     const originY = Math.floor(index / columns) * stepY;
-    const points = envelopePoints(random, cellWidth, cellHeight);
-
-    const [first, ...rest] = points.map(
-      ([x, y]) => [round(originX + x), round(originY + y)],
+    const points = envelopePoints(random, cellWidth, cellHeight).map(
+      ([x, y]) => [roundToHundredths(originX + x), roundToHundredths(originY + y)],
     );
 
-    segments.push(
-      `M${first[0]} ${first[1]}${rest.map(([x, y]) => `L${x} ${y}`).join('')}`,
-    );
+    segments.push(polylinePath(points));
   }
 
   return {
