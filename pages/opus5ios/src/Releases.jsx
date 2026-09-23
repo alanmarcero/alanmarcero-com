@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
 import Demo from './Demo';
 import WaveTrace from './graphics/WaveTrace.jsx';
 import FilterRule from './graphics/FilterRule';
+import { serialNumber } from './format';
 
 const PENDING_ROWS = 4;
-const trackNumber = (index) => String(index + 1).padStart(2, '0');
 
 /**
  * The tracklist.
@@ -15,11 +14,7 @@ const trackNumber = (index) => String(index + 1).padStart(2, '0');
  * the printed silhouette a finished track has rather than the single-cycle
  * scope trace an oscillator has. Same ink, same rules, same sheet.
  */
-function Releases({ items, loading, error, searchQuery, onVisibleCountChange }) {
-  useEffect(() => {
-    onVisibleCountChange?.(items.length);
-  }, [items.length, onVisibleCountChange]);
-
+function Releases({ items, loading, error, searchQuery }) {
   return (
     <section className="releases sheet" aria-labelledby="releases-heading">
       <FilterRule cutoff={2400} q={5.5} label="Fig. 2 — low-pass, 12 dB/oct" />
@@ -39,7 +34,7 @@ function Releases({ items, loading, error, searchQuery, onVisibleCountChange }) 
           <ul aria-hidden="true">
             {Array.from({ length: PENDING_ROWS }, (_, row) => (
               <li key={row} className="track track--pending">
-                <span className="track__index">{trackNumber(row)}</span>
+                <span className="track__index">{serialNumber(row)}</span>
                 <span className="track__title">&mdash;</span>
               </li>
             ))}
@@ -62,7 +57,7 @@ function Releases({ items, loading, error, searchQuery, onVisibleCountChange }) 
         <ul>
           {items.map((item, index) => (
             <li className="track" key={item.videoId}>
-              <span className="track__index">{trackNumber(index)}</span>
+              <span className="track__index">{serialNumber(index)}</span>
 
               <div>
                 <h3 className="track__title">{item.title}</h3>

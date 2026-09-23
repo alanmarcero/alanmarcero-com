@@ -1,6 +1,9 @@
+import { YOUTUBE_CHANNEL_URL } from '../../../src/config';
 import { isRemix } from '../../../src/utils/trackMeta';
 import Line from './Line';
 import Eyepiece from './Eyepiece';
+
+const serialNumber = (index) => String(index + 1).padStart(2, '0');
 
 /**
  * The log — the tracks, in the order the playlist returns them.
@@ -11,8 +14,6 @@ import Eyepiece from './Eyepiece';
  * whether the title says "remix", and that is the only thing it claims.
  */
 function Tracklist({ tracks, loading, error, query }) {
-  const number = (index) => String(index + 1).padStart(2, '0');
-
   return (
     <section className="tracklist" aria-labelledby="tracklist-title">
       <div className="page">
@@ -33,7 +34,7 @@ function Tracklist({ tracks, loading, error, query }) {
         {error && (
           <p className="state" role="status">
             The log could not be read just now. The tracks are all on{' '}
-            <a className="link" href="https://www.youtube.com/alanmarcero" target="_blank" rel="noopener noreferrer">
+            <a className="link" href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
               YouTube
             </a>.
           </p>
@@ -57,7 +58,7 @@ function Tracklist({ tracks, loading, error, query }) {
           <ol className="tracklist__rows">
             {tracks.map((track, index) => (
               <li className="track" key={track.videoId}>
-                <p className="track__index gloss gloss--quiet">{number(index)}</p>
+                <p className="track__index gloss gloss--quiet">{serialNumber(index)}</p>
 
                 <h3 className="track__title">
                   <Line value={isRemix(track.title) ? 'Remix' : 'Original'}>

@@ -35,6 +35,24 @@ const readout = (bank, body) => [
   { label: 'Patches', value: bank.count ? String(bank.count) : 'MIDI files' },
 ];
 
+/**
+ * The words on one of a bank's demo lines. A lone demo needs no number; one of
+ * several has to say which, and `subject` is the demo on its own so the stop
+ * cue can name it without a second verb.
+ */
+const demoCopy = (bankName, demoIndex, demoCount) => {
+  if (demoCount <= 1) {
+    return { value: 'Demo', cue: 'Hear it', label: `Hear ${bankName}`, subject: bankName };
+  }
+  const ordinal = demoIndex + 1;
+  return {
+    value: `Demo ${ordinal}`,
+    cue: `Hear demo ${ordinal}`,
+    label: `Hear ${bankName}, demo ${ordinal} of ${demoCount}`,
+    subject: `${bankName}, demo ${ordinal}`,
+  };
+};
+
 function Register({ banks, bodyFor, query, onCurrentChange }) {
   const isWide = useMediaQuery(WIDE);
   const [rowRef, activeIndex] = useNearestRow(banks.length);
@@ -119,18 +137,7 @@ function Register({ banks, bodyFor, query, onCurrentChange }) {
                         <Eyepiece
                           key={videoId}
                           videoId={videoId}
-                          value={demos.length > 1 ? `Demo ${demoIndex + 1}` : 'Demo'}
-                          cue={demos.length > 1 ? `Hear demo ${demoIndex + 1}` : 'Hear it'}
-                          label={
-                            demos.length > 1
-                              ? `Hear ${bank.name}, demo ${demoIndex + 1} of ${demos.length}`
-                              : `Hear ${bank.name}`
-                          }
-                          subject={
-                            demos.length > 1
-                              ? `${bank.name}, demo ${demoIndex + 1}`
-                              : bank.name
-                          }
+                          {...demoCopy(bank.name, demoIndex, demos.length)}
                         />
                       ))}
 
@@ -165,4 +172,4 @@ function Register({ banks, bodyFor, query, onCurrentChange }) {
 }
 
 export default Register;
-export { readout };
+export { readout, demoCopy };

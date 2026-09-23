@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { wavePoints, linePath, silhouettePath } from './waveTrace';
+import { wavePoints, silhouettePath } from './waveTrace';
+import { polylinePath } from './svgPath';
 
 const WIDTH = 320;
 const HEIGHT = 64;
@@ -30,7 +31,7 @@ function WaveTrace({
       cycles,
     });
     return {
-      stroke: linePath(points),
+      stroke: polylinePath(points),
       fill: variant === 'silhouette' ? silhouettePath(points, HEIGHT) : null,
     };
   }, [seed, variant, cycles]);

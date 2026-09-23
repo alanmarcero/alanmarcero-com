@@ -4,6 +4,8 @@ import './arcade.css';
 import { getGameById, games } from '../../../arcade/src/games/gameRegistry';
 import Pictogram from './Pictogram';
 import AttractBand from './AttractBand';
+import { keyLine } from './keyLine';
+import { serialNumber } from '../format';
 
 // The runtime and its chrome load only when a machine is actually chosen,
 // so the list itself stays a text page.
@@ -22,17 +24,6 @@ const gameIdFromHash = () => {
   if (typeof window === 'undefined') return null;
   const id = window.location.hash.replace(/^#/, '');
   return getGameById(id) ? id : null;
-};
-
-const machineNumber = (index) => String(index + 1).padStart(2, '0');
-
-/** The keys a machine answers to, as a printable list. */
-const keyLine = (game) => {
-  const keys = Object.values(game.controls?.keyboard || {});
-  if (!keys.length) return 'Mouse';
-  return keys
-    .map((key) => key.replace(/^Arrow/, '').toUpperCase())
-    .join(' · ');
 };
 
 function ArcadeSheet() {
@@ -57,7 +48,6 @@ function ArcadeSheet() {
     };
   }, []);
 
-  const selectGame = useCallback((gameId) => setActiveGameId(gameId), []);
   const exitGame = useCallback(() => setActiveGameId(null), []);
 
   const activeGame = getGameById(activeGameId);
@@ -121,14 +111,14 @@ function ArcadeSheet() {
         <ul>
           {games.map((game, index) => (
             <li className="machine" key={game.id}>
-              <span className="machine__index">{machineNumber(index)}</span>
+              <span className="machine__index">{serialNumber(index)}</span>
               <Pictogram id={game.id} className="machine__mark" />
               <div>
                 <h3 className="machine__name">
                   <button
                     type="button"
                     className="machine__launch"
-                    onClick={() => selectGame(game.id)}
+                    onClick={() => setActiveGameId(game.id)}
                   >
                     {game.name}
                   </button>
@@ -153,4 +143,3 @@ function ArcadeSheet() {
 }
 
 export default ArcadeSheet;
-export { keyLine };

@@ -182,4 +182,3 @@ function SignalChain() {
 }
 
 export default SignalChain;
-export { xAt, NODES, BUS_START, BUS_END, BUS_Y, WIDTH, HEIGHT };

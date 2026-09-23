@@ -1,14 +1,5 @@
 import { useRef } from 'react';
 
-/**
- * One field, narrowing both the register and the log at once — "Nord" is a
- * reasonable thing to type whether you want the patches or the tracks made
- * with them.
- *
- * It has no box. The brackets are the field: an ephemeris brackets a figure it
- * is qualifying, and here they mark where the typing goes. The underline is
- * the writing line, not a border.
- */
 /** "1 banks" is not a count anybody wants read back to them. */
 const countOf = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
@@ -22,6 +13,15 @@ const summarise = (bankCount, trackCount) =>
     .filter(Boolean)
     .join(' · ');
 
+/**
+ * One field, narrowing both the register and the log at once — "Nord" is a
+ * reasonable thing to type whether you want the patches or the tracks made
+ * with them.
+ *
+ * It has no box. The brackets are the field: an ephemeris brackets a figure it
+ * is qualifying, and here they mark where the typing goes. The underline is
+ * the writing line, not a border.
+ */
 function Finder({ query, onQueryChange, bankCount, trackCount }) {
   const inputRef = useRef(null);
 

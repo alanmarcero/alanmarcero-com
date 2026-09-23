@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen, within, act } from '@testing-library/react';
-import Register from './Register';
+import Register, { demoCopy } from './Register';
 import { orbitsFor } from './graphics/orbits';
 import { plateFor, plates } from './data/plates';
 import { patchBanks } from '../../../src/data/patchBanks';
@@ -235,5 +235,25 @@ describe('Register', () => {
 
     expect(lineValue('Designation')).toBe('I');
     expect(screen.getAllByRole('img')).toHaveLength(1);
+  });
+});
+
+describe('demoCopy', () => {
+  it('leaves a lone demo unnumbered', () => {
+    expect(demoCopy('Nord Lead 3', 0, 1)).toEqual({
+      value: 'Demo',
+      cue: 'Hear it',
+      label: 'Hear Nord Lead 3',
+      subject: 'Nord Lead 3',
+    });
+  });
+
+  it('numbers one of several, and names it on its own for the stop cue', () => {
+    expect(demoCopy('Virus TI', 1, 3)).toEqual({
+      value: 'Demo 2',
+      cue: 'Hear demo 2',
+      label: 'Hear Virus TI, demo 2 of 3',
+      subject: 'Virus TI, demo 2',
+    });
   });
 });

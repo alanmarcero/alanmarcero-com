@@ -16,6 +16,11 @@
  * knob recognises.
  */
 
+/** The plot's default width in user units, and the audible band it spans. */
+const DEFAULT_WIDTH = 600;
+const MIN_HZ = 20;
+const MAX_HZ = 20000;
+
 /** Magnitude in dB at `frequency` for a 2-pole low-pass. */
 export const magnitudeDb = (frequency, cutoff, q) => {
   const ratio = frequency / cutoff;
@@ -32,11 +37,11 @@ export const magnitudeDb = (frequency, cutoff, q) => {
  * clipping it against the plate edge looks like a rendering fault.
  */
 export const responsePoints = ({
-  width = 600,
+  width = DEFAULT_WIDTH,
   height = 48,
   samples = 160,
-  minHz = 20,
-  maxHz = 20000,
+  minHz = MIN_HZ,
+  maxHz = MAX_HZ,
   cutoff = 1200,
   q = 3.2,
   dbCeiling = 16,
@@ -62,7 +67,7 @@ export const responsePoints = ({
 };
 
 /** Where a frequency sits along the axis, in user units. */
-export const frequencyToX = (frequency, { width = 600, minHz = 20, maxHz = 20000 } = {}) => {
+export const frequencyToX = (frequency, { width = DEFAULT_WIDTH, minHz = MIN_HZ, maxHz = MAX_HZ } = {}) => {
   const logMin = Math.log10(minHz);
   const logMax = Math.log10(maxHz);
   return ((Math.log10(frequency) - logMin) / (logMax - logMin)) * width;
@@ -73,7 +78,7 @@ export const frequencyToX = (frequency, { width = 600, minHz = 20, maxHz = 20000
  * Only ticks inside the axis are returned, so narrowing the range drops the
  * labels that would otherwise pile up on the edge.
  */
-export const decadeTicks = ({ width = 600, minHz = 20, maxHz = 20000 } = {}) => {
+export const decadeTicks = ({ width = DEFAULT_WIDTH, minHz = MIN_HZ, maxHz = MAX_HZ } = {}) => {
   const ticks = [];
   for (let decade = 1; decade <= 5; decade += 1) {
     const frequency = 10 ** decade;
@@ -86,8 +91,3 @@ export const decadeTicks = ({ width = 600, minHz = 20, maxHz = 20000 } = {}) => 
   }
   return ticks;
 };
-
-/** An SVG path `d` through the points. */
-export const curvePath = (points) => points
-  .map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`)
-  .join(' ');

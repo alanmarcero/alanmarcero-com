@@ -2,9 +2,9 @@ import {
   harmonics,
   sampleAt,
   wavePoints,
-  linePath,
   silhouettePath,
 } from './waveTrace';
+import { polylinePath } from './svgPath';
 
 describe('harmonics', () => {
   it('is deterministic for a seed', () => {
@@ -100,7 +100,7 @@ describe('wavePoints', () => {
 
 describe('paths', () => {
   it('starts with a move and continues with lines', () => {
-    const path = linePath(wavePoints({ seed: 'path', samples: 4 }));
+    const path = polylinePath(wavePoints({ seed: 'path', samples: 4 }));
     expect(path.startsWith('M')).toBe(true);
     expect(path.match(/L/g)).toHaveLength(4);
   });
