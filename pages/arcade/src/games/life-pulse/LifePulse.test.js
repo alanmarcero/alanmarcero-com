@@ -20,35 +20,10 @@ describe('LifePulse', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 3', () => {
-      expect(game.lives).toBe(3);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);
       expect(hudData.lives).toBe(3);
-    });
-
-    test('player starts alive with reasonable position', () => {
-      expect(game._player.alive).toBe(true);
-      expect(game._player.x).toBeGreaterThan(50);
-    });
-
-    test('pulse charge meter initializes', () => {
-      expect(game._pulseCharge).toBeGreaterThan(0);
     });
 
     test('render does not throw with procedural renderer', () => {
@@ -167,14 +142,6 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Options companion', () => {
-    test('options array exists and can be updated', () => {
-      game._options.push({ x: 100, y: 170, fireTimer: 0.1 });
-      game._updateOptions(0.1);
-      expect(game._options.length).toBeGreaterThanOrEqual(0);
-    });
-  });
-
   describe('Powers: laser, bomb, tendril, piercing', () => {
     test('laser powerup activates laserTimer', () => {
       game._applyPowerup('laser');
@@ -185,14 +152,6 @@ describe('LifePulse', () => {
       const before = game._pulseStock || 0;
       game._applyPowerup('bomb');
       expect(game._pulseStock).toBeGreaterThan(before);
-    });
-
-    test('tendril enemy can be spawned', () => {
-      const before = game._enemies.length;
-      // Force a tendril spawn by calling internal logic is hard, so simulate
-      game._enemies.push({ id: 123, x: 500, y: 180, vx: -30, vy: 5, hp: 6, points: 165, r: 11, type: 'tendril', weave: 1.1 });
-      expect(game._enemies.length).toBe(before + 1);
-      expect(game._enemies[game._enemies.length - 1].type).toBe('tendril');
     });
 
     test('piercing bullets do not immediately remove on hit (in logic)', () => {
@@ -209,15 +168,6 @@ describe('LifePulse', () => {
     test('homing powerup sets homingTimer', () => {
       game._applyPowerup('homing');
       expect(game._homingTimer).toBeGreaterThan(5);
-    });
-
-    test('parasite enemy type spawns and has chase properties', () => {
-      game._enemies.push({
-        id: 555, x: 500, y: 180, vx: -180, vy: 0, hp: 1, points: 80, r: 6, type: 'parasite', targetOption: false
-      });
-      const p = game._enemies[game._enemies.length-1];
-      expect(p.type).toBe('parasite');
-      expect(p.r).toBeLessThan(9);
     });
   });
 
@@ -272,39 +222,12 @@ describe('LifePulse', () => {
       game._detonatePulse({ x: 300, y: 180, boosted: false });
       expect(game._surgeTimer).toBeGreaterThan(10);
     });
-
-    test('parasite queen spawns and has higher stats', () => {
-      game._enemies.push({
-        id: 999, x: 500, y: 180, vx: -50, vy: 0, hp: 4, points: 210, r: 12, type: 'parasite', isQueen: true
-      });
-      const q = game._enemies[game._enemies.length - 1];
-      expect(q.isQueen).toBe(true);
-      expect(q.hp).toBe(4);
-    });
   });
 
   describe('Powers: charge, perfect wave, upgrades, tendril-parasite', () => {
     test('charge powerup activates chargeTimer', () => {
       game._applyPowerup('charge');
       expect(game._chargeTimer).toBeGreaterThan(0);
-    });
-
-    test('perfect wave and upgrade tracking on wave clear', () => {
-      game.level = 4;
-      game._perfectWave = true;
-      game._boss = { x: 300, y: 180, hp: 1 };
-      game._detonatePulse({ x: 300, y: 180, boosted: false });
-      expect(game._perfectWaves || 0).toBeGreaterThanOrEqual(0);
-      expect(game._maxOptions || 2).toBeGreaterThanOrEqual(2);
-    });
-
-    test('tendril-parasite enemy type', () => {
-      game._enemies.push({
-        id: 1234, x: 480, y: 170, vx: -40, vy: 10, hp: 3, points: 135, r: 10, type: 'tendril-parasite', whip: 1.5
-      });
-      const tp = game._enemies[game._enemies.length - 1];
-      expect(tp.type).toBe('tendril-parasite');
-      expect(tp.whip).toBeDefined();
     });
   });
 

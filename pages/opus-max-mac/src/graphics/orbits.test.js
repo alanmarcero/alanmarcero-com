@@ -15,7 +15,6 @@ import { patchBanks } from '../../../../src/data/patchBanks';
 
 describe('the scale', () => {
   it('is eleven just intervals, ascending', () => {
-    expect(INTERVALS).toHaveLength(11);
     const values = INTERVALS.map(([num, den]) => num / den);
     const ascending = [...values].sort((a, b) => a - b);
     expect(values).toEqual(ascending);

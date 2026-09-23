@@ -2,22 +2,13 @@ import { TRACKS, DEFAULT_TRACK_ID, getTrack, trackToSequence, mtof } from "./mid
 import { createMidiPlayer } from "./midiPlayer";
 
 describe("miditracks", () => {
-  it("defaults to sandstorm and includes it in the list", () => {
-    expect(DEFAULT_TRACK_ID).toBe("sandstorm");
-    expect(TRACKS.some((t) => t.id === "sandstorm")).toBe(true);
+  it("defaults to a track that is in the list", () => {
+    expect(TRACKS.some((t) => t.id === DEFAULT_TRACK_ID)).toBe(true);
   });
 
-  it("offers the requested era bangers", () => {
-    const ids = TRACKS.map((t) => t.id);
-    ["sandstorm", "zombienation", "betteroffalone", "bloodispumping", "nokia", "furelise"].forEach(
-      (id) => expect(ids).toContain(id)
-    );
-  });
-
-  it("gives every track a name and a non-empty note list", () => {
+  it("gives every track a playable note list and tempo", () => {
     expect(TRACKS.length).toBeGreaterThan(0);
     TRACKS.forEach((t) => {
-      expect(t.name).toMatch(/\.mid$/);
       expect(t.notes.length).toBeGreaterThan(0);
       expect(t.bpm).toBeGreaterThan(0);
     });

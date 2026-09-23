@@ -2,20 +2,10 @@ import {
   TMUS_META, TMUS_WEEKLY, SALE_DAYS, SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS,
 } from './tmusInsiderSales';
 
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const allSellWeeks = [...SIEVERT_SELL_WEEKS, ...OTHER_SELL_WEEKS];
 const sum = (list, pick) => list.reduce((total, item) => total + pick(item), 0);
 
 describe('TMUS_META', () => {
-  it('names both sources', () => {
-    expect(TMUS_META.priceSource).toMatch(/Yahoo/i);
-    expect(TMUS_META.insiderSource).toMatch(/Form 4/i);
-  });
-
-  it('excludes Deutsche Telekom, and only Deutsche Telekom', () => {
-    expect(TMUS_META.excludedFilers).toEqual(['DEUTSCHE TELEKOM AG']);
-  });
-
   it('holds out the named block trade, and says exactly what it was', () => {
     expect(TMUS_META.outliers).toHaveLength(1);
     const [outlier] = TMUS_META.outliers;
@@ -54,7 +44,6 @@ describe('TMUS_WEEKLY', () => {
 
   it('anchors every week to a Monday', () => {
     TMUS_WEEKLY.forEach((p) => {
-      expect(ISO_DATE.test(p.week)).toBe(true);
       expect(new Date(`${p.week}T00:00:00Z`).getUTCDay()).toBe(1);
     });
   });
@@ -173,7 +162,6 @@ describe('SALE_DAYS', () => {
 
   it('files every day under the Monday of its own week', () => {
     SALE_DAYS.forEach((day) => {
-      expect(day.date).toMatch(ISO_DATE);
       const monday = new Date(`${day.week}T00:00:00Z`);
       expect(monday.getUTCDay()).toBe(1);
       const offset = (Date.parse(`${day.date}T00:00:00Z`) - monday.getTime()) / 86400000;

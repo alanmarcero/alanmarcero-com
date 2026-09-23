@@ -172,7 +172,6 @@ describe('buildFieldPath', () => {
 
   it('emits the whole field as a single path string', () => {
     const { d } = field({ count: 1500, columns: 50 });
-    expect(typeof d).toBe('string');
     expect(subpathCount(d)).toBe(1500);
   });
 

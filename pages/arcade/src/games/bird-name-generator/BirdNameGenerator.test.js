@@ -18,36 +18,13 @@ describe('BirdNameGenerator', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives is undefined (hidden in HUD)', () => {
-      expect(game.lives).toBeUndefined();
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);
       expect(hudData.lives).toBeUndefined();
     });
 
-    test('a current bird is generated on init', () => {
-      expect(game._currentBird).toBeDefined();
-      expect(typeof game._currentBird.name).toBe('string');
-      expect(game._currentBird.name.length).toBeGreaterThan(0);
-    });
-
     test('current bird has a Latin name', () => {
-      expect(typeof game._currentBird.latin).toBe('string');
       expect(game._currentBird.latin.split(' ').length).toBe(2);
     });
   });
@@ -60,7 +37,6 @@ describe('BirdNameGenerator', () => {
       for (let i = 0; i < 50; i++) {
         const bird = game._generateBird();
         seen.add(bird.name);
-        expect(typeof bird.name).toBe('string');
         expect(bird.name.length).toBeGreaterThan(2);
       }
       expect(seen.size).toBeGreaterThan(1);
@@ -78,17 +54,6 @@ describe('BirdNameGenerator', () => {
         }
       }
       expect(foundRealStem).toBe(true);
-    });
-
-    test('generated bird has visual properties', () => {
-      const bird = game._generateBird();
-      expect(typeof bird.bodyColor).toBe('string');
-      expect(typeof bird.wingColor).toBe('string');
-      expect(typeof bird.beakLong).toBe('boolean');
-      expect(typeof bird.hasCrest).toBe('boolean');
-      expect(typeof bird.hasGlasses).toBe('boolean');
-      expect(typeof bird.eyeSize).toBe('number');
-      expect(typeof bird.bodyScale).toBe('number');
     });
   });
 

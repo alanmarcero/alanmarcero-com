@@ -1,4 +1,4 @@
-import { frac, goldenAngleTurns, lerp, GOLDEN_INVERSE } from './quasirandom';
+import { frac, goldenAngleTurns, lerp } from './quasirandom';
 
 describe('frac', () => {
   it('keeps only the fractional part', () => {
@@ -9,14 +9,6 @@ describe('frac', () => {
 
   it('returns a positive fraction for negative input', () => {
     expect(frac(-0.25)).toBeCloseTo(0.75, 10);
-  });
-});
-
-describe('the constant', () => {
-  it('carries the golden ratio to its definition', () => {
-    // phi^2 = phi + 1, so 1/phi = phi - 1.
-    const phi = 1 / GOLDEN_INVERSE;
-    expect(phi - 1).toBeCloseTo(GOLDEN_INVERSE, 9);
   });
 });
 

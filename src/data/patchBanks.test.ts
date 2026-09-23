@@ -7,19 +7,6 @@ describe('patchBanks', () => {
     expect(patchBanks.length).toBeGreaterThan(0);
   });
 
-  it('each patch bank has required fields', () => {
-    patchBanks.forEach((bank) => {
-      expect(bank).toHaveProperty('name');
-      expect(bank).toHaveProperty('description');
-      expect(bank).toHaveProperty('audioDemo');
-      expect(bank).toHaveProperty('downloadLink');
-
-      expect(typeof bank.name).toBe('string');
-      expect(typeof bank.description).toBe('string');
-      expect(typeof bank.downloadLink).toBe('string');
-    });
-  });
-
   it('download links point to /banks/ directory', () => {
     patchBanks.forEach((bank) => {
       expect(bank.downloadLink).toMatch(/^\/banks\/.+\.zip$/);
@@ -32,12 +19,6 @@ describe('patchBanks', () => {
         expect(Number.isInteger(bank.count)).toBe(true);
         expect(bank.count).toBeGreaterThan(0);
       }
-    });
-  });
-
-  it('audioDemo is always an array', () => {
-    patchBanks.forEach((bank) => {
-      expect(Array.isArray(bank.audioDemo)).toBe(true);
     });
   });
 

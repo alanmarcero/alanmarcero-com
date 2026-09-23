@@ -47,10 +47,9 @@ describe('faceplateLayout', () => {
     });
   });
 
-  it('gives each section a label and tiles them across the panel', () => {
+  it('tiles the sections across the panel', () => {
     const plan = faceplateLayout({ seed: 'sections', width: 400, height: 140 });
     plan.sections.forEach((section, index) => {
-      expect(typeof section.label).toBe('string');
       if (index === 0) return;
       const previous = plan.sections[index - 1];
       expect(section.x).toBeCloseTo(previous.x + previous.width, 6);

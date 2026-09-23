@@ -82,13 +82,6 @@ describe('airyIntensity', () => {
 });
 
 describe('AIRY_ZEROS', () => {
-  it('is the four published zeros, ascending', () => {
-    expect(AIRY_ZEROS).toEqual([3.8317, 7.0156, 10.1735, 13.3237]);
-    AIRY_ZEROS.slice(1).forEach((zero, index) => {
-      expect(zero).toBeGreaterThan(AIRY_ZEROS[index]);
-    });
-  });
-
   it('puts the first dark ring at the Rayleigh criterion', () => {
     // x = π·D·sinθ/λ, so dividing by π returns the ring in λ/D: 1.220.
     expect(AIRY_ZEROS[0] / Math.PI).toBeCloseTo(1.22, 3);

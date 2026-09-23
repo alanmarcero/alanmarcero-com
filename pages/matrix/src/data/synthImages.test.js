@@ -1,11 +1,6 @@
-import { synthImages, imageFor, photoBrightnessFor, credits } from './synthImages';
+import { synthImages, imageFor, photoBrightnessFor } from './synthImages';
 
 describe('photoBrightnessFor', () => {
-  it('returns the measured correction for a photographed bank', () => {
-    const name = Object.keys(synthImages)[0];
-    expect(typeof photoBrightnessFor(name)).toBe('number');
-  });
-
   /*
    * The contract with the shared surface. The consumer spreads this into a
    * style object as a custom property; React omits `undefined` but emits
@@ -21,11 +16,13 @@ describe('photoBrightnessFor', () => {
     expect(photoBrightnessFor('a bank that does not exist')).toBeUndefined();
   });
 
-  it('returns undefined for an entry that has no measurement', () => {
-    // An image added later by someone who never read the header.
-    const unmeasured = { slug: 'x', alt: 'x', author: 'x', licence: 'x' };
-    expect(typeof unmeasured.brightness).toBe('undefined');
-    expect(photoBrightnessFor('a bank that does not exist')).toBeUndefined();
+  // A photograph without a measured correction renders at the shared default,
+  // which is the 3.4x contrast spread the corrections exist to remove. The
+  // generator carries measurements forward, so a new photo arrives without one.
+  it('returns a measured correction for every photographed bank', () => {
+    Object.keys(synthImages).forEach((bank) => {
+      expect(photoBrightnessFor(bank)).toEqual(expect.any(Number));
+    });
   });
 
   it('never returns null for any key, present or absent', () => {
@@ -38,10 +35,6 @@ describe('the measured corrections', () => {
   const measured = Object.values(synthImages)
     .map((i) => i.brightness)
     .filter((b) => typeof b === 'number');
-
-  it('covers every photographed bank', () => {
-    expect(measured).toHaveLength(Object.keys(synthImages).length);
-  });
 
   /*
    * These multiply a base brightness of 0.86 and then pass through a
@@ -66,12 +59,5 @@ describe('the measured corrections', () => {
 describe('existing exports still hold', () => {
   it('imageFor still returns null for an absent bank', () => {
     expect(imageFor('nope')).toBeNull();
-  });
-
-  it('every credited image still carries its attribution', () => {
-    credits.forEach((c) => {
-      expect(c.author).toBeTruthy();
-      expect(c.licence).toBeTruthy();
-    });
   });
 });

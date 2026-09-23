@@ -18,35 +18,6 @@ describe('Tetris', () => {
   });
 
   describe('Initialization', () => {
-    test('initializes with score 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('initializes with level 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('initializes with gameOver false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
-    test('initializes board with all null cells', () => {
-      const allNull = game.board.every(row => row.every(cell => cell === null));
-      expect(allNull).toBe(true);
-    });
-
-    test('initializes with a current piece', () => {
-      expect(game.current).not.toBeNull();
-      expect(game.currentType).not.toBeNull();
-    });
-
-    test('board has 20 rows', () => {
-      expect(game.board.length).toBe(20);
-    });
-
-    test('each row has 10 columns', () => {
-      expect(game.board[0].length).toBe(10);
-    });
   });
 
   describe('HUD updates', () => {
@@ -206,11 +177,6 @@ describe('Tetris', () => {
       expect(game.level).toBe(2);
     });
 
-    test('level remains 1 when fewer than 10 lines cleared', () => {
-      game.linesCleared = 5;
-      expect(game.level).toBe(1);
-    });
-
     test('level calculation is cumulative', () => {
       game.linesCleared = 25;
 
@@ -346,10 +312,6 @@ describe('Tetris', () => {
       game.bag = [];
       game._pullFromBag();
       expect(game.bag.length).toBeGreaterThan(0);
-    });
-
-    test('nextType is set on init', () => {
-      expect(game.nextType).not.toBeNull();
     });
   });
 

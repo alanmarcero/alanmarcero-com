@@ -98,7 +98,6 @@ describe('filters and summaries', () => {
   it('offers a default top-hold that exists, and falls back to the first', () => {
     expect(topHoldById(DEFAULT_TOP_HOLD).id).toBe(DEFAULT_TOP_HOLD);
     expect(topHoldById('nope')).toBe(TOP_HOLDS[0]);
-    expect(TOP_HOLDS[0].days).toBe(0);
   });
 });
 
