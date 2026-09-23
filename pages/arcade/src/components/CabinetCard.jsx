@@ -5,6 +5,7 @@ import { controlGlyphs } from '../games/controlGlyphs';
 // Cabinet demos are tiny thumbnails — a low frame rate is plenty and keeps the
 // grid of 12 live canvases from saturating the compositor.
 const DEMO_FPS = 15;
+const DEMO_RESTART_DELAY_MS = 1500;
 
 function CabinetCard({ game, onSelect }) {
   const canvasRef = useRef(null);
@@ -13,23 +14,23 @@ function CabinetCard({ game, onSelect }) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return undefined;
 
     const ctx = canvas.getContext('2d');
-    const instance = game.factory();
+    let restartTimer;
 
-    instance.onHudUpdate = (data) => {
-      if (data.gameOver) {
-        setTimeout(() => {
-          if (!gameRef.current) return;
-          const fresh = game.factory();
-          fresh.onHudUpdate = instance.onHudUpdate;
-          gameRef.current.instance.destroy();
-          gameRef.current = { instance: fresh, ctx };
-          const c = canvasRef.current;
-          if (c) fresh.init(c.width, c.height);
-        }, 1500);
-      }
+    // A demo that reaches game over holds its final frame for a beat, then
+    // starts over, so the cabinet never sits dead.
+    const startDemo = () => {
+      const instance = game.factory();
+      instance.onHudUpdate = (data) => {
+        if (!data.gameOver) return;
+        clearTimeout(restartTimer);
+        restartTimer = setTimeout(startDemo, DEMO_RESTART_DELAY_MS);
+      };
+      gameRef.current?.instance.destroy();
+      gameRef.current = { instance, ctx };
+      instance.init(canvas.width, canvas.height);
     };
 
     const resize = () => {
@@ -39,15 +40,15 @@ function CabinetCard({ game, onSelect }) {
       gameRef.current?.instance.resize(canvas.width, canvas.height);
     };
 
-    gameRef.current = { instance, ctx };
     resize();
-    instance.init(canvas.width, canvas.height);
-    instance.render(ctx); // paint one frame so the cabinet isn't blank before the loop ticks
+    startDemo();
+    gameRef.current.instance.render(ctx); // paint one frame so the cabinet isn't blank before the loop ticks
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas.parentElement);
 
     return () => {
+      clearTimeout(restartTimer);
       ro.disconnect();
       gameRef.current?.instance.destroy();
       gameRef.current = null;

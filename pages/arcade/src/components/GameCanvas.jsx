@@ -3,10 +3,13 @@ import { useGameLoop } from '../games/useGameLoop';
 import { copyToClipboard } from '../../../../src/utils/clipboard';
 import TouchControls from './TouchControls';
 
+const INITIAL_HUD = { score: 0, lives: 3, level: 1 };
+const LINK_COPIED_MS = 1800;
+
 function GameCanvas({ game, onExit }) {
   const canvasRef = useRef(null);
   const gameRef = useRef(null);
-  const [hud, setHud] = useState({ score: 0, lives: 3, level: 1 });
+  const [hud, setHud] = useState(INITIAL_HUD);
   const [gameOver, setGameOver] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const copyTimerRef = useRef(null);
@@ -16,44 +19,48 @@ function GameCanvas({ game, onExit }) {
     if (!ok) return;
     setLinkCopied(true);
     clearTimeout(copyTimerRef.current);
-    copyTimerRef.current = setTimeout(() => setLinkCopied(false), 1800);
+    copyTimerRef.current = setTimeout(() => setLinkCopied(false), LINK_COPIED_MS);
   }, []);
 
   useEffect(() => () => clearTimeout(copyTimerRef.current), []);
 
-  // Initialize game
+  // Swap in a fresh run of the game, retiring whichever one was playing.
+  // Everything else reads the live run from gameRef, so a restart is seen by
+  // the loop, the keyboard, the touch controls and the resize handler alike.
+  const startNewRun = useCallback(() => {
+    const canvas = canvasRef.current;
+    const instance = game.factory();
+    instance.onHudUpdate = (data) => {
+      setHud({ score: data.score, lives: data.lives, level: data.level });
+      if (data.gameOver) setGameOver(true);
+    };
+    gameRef.current?.instance.destroy();
+    gameRef.current = { instance, ctx: canvas.getContext('2d') };
+    setGameOver(false);
+    setHud(INITIAL_HUD);
+    instance.init(canvas.width, canvas.height);
+  }, [game]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const instance = game.factory();
-
     const resizeCanvas = () => {
       const parent = canvas.parentElement;
       canvas.width = parent.clientWidth;
       canvas.height = parent.clientHeight;
-      instance.resize(canvas.width, canvas.height);
+      gameRef.current?.instance.resize(canvas.width, canvas.height);
     };
-
-    const hudCallback = (data) => {
-      setHud({ score: data.score, lives: data.lives, level: data.level });
-      if (data.gameOver) setGameOver(true);
-    };
-
-    instance.onHudUpdate = hudCallback;
-    gameRef.current = { instance, ctx };
 
     resizeCanvas();
-    instance.init(canvas.width, canvas.height);
+    startNewRun();
 
     window.addEventListener('resize', resizeCanvas);
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      instance.destroy();
+      gameRef.current?.instance.destroy();
       gameRef.current = null;
     };
-  }, [game]);
+  }, [startNewRun]);
 
-  // Game loop
   useGameLoop((dt) => {
     const g = gameRef.current;
     if (!g) return;
@@ -61,7 +68,6 @@ function GameCanvas({ game, onExit }) {
     g.instance.render(g.ctx);
   });
 
-  // Keyboard input
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -84,21 +90,6 @@ function GameCanvas({ game, onExit }) {
   const handleTouchAction = useCallback((action, active) => {
     gameRef.current?.instance.handleTouchAction(action, active);
   }, []);
-
-  const handleRestart = useCallback(() => {
-    const canvas = canvasRef.current;
-    const instance = game.factory();
-    const hudCallback = (data) => {
-      setHud({ score: data.score, lives: data.lives, level: data.level });
-      if (data.gameOver) setGameOver(true);
-    };
-    instance.onHudUpdate = hudCallback;
-    gameRef.current?.instance.destroy();
-    gameRef.current = { instance, ctx: canvas.getContext('2d') };
-    instance.init(canvas.width, canvas.height);
-    setGameOver(false);
-    setHud({ score: 0, lives: 3, level: 1 });
-  }, [game]);
 
   return (
     <div className="game-wrapper">
@@ -135,7 +126,7 @@ function GameCanvas({ game, onExit }) {
             <h2 className="game-over-title">GAME OVER</h2>
             <p className="game-over-score">Score: {hud.score}</p>
             <div className="game-over-actions">
-              <button className="game-restart-btn" onClick={handleRestart}>Play Again</button>
+              <button className="game-restart-btn" onClick={startNewRun}>Play Again</button>
               <button className="game-back-btn" onClick={onExit}>Back to Arcade</button>
             </div>
           </div>

@@ -1,5 +1,7 @@
 import { CYAN, ORANGE, BG } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed } from '../frame';
+import { actionForKey, DIRECTION_STEPS } from '../input';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -9,6 +11,12 @@ const ROWS = 12;
 
 const STARTING_LIVES = 3;
 const MOVE_COOLDOWN = 0.12;
+const DEATH_PAUSE = 0.8;
+const WRAP_MARGIN = 20;
+
+const HOP_SCORE = 10;
+const GOAL_SCORE = 50;
+const ALL_GOALS_BONUS = 100;
 
 // Lane definitions (from top to bottom):
 // Row 0: safe zone (goal slots)
@@ -117,110 +125,94 @@ export class Frogger {
     if (this.gameOver) return;
 
     if (this._frog.dead) {
-      this._frog.deathTimer -= dt;
-      if (this._frog.deathTimer <= 0) {
-        if (this.lives <= 0) {
-          this.gameOver = true;
-          this._emitHud();
-          return;
-        }
-        this._initFrog();
-      }
+      this._updateDeath(dt);
       return;
     }
 
     if (this._moveCooldown > 0) this._moveCooldown -= dt;
+    this._moveLaneObjects(dt);
 
-    // Move lane objects
-    for (let r = 0; r < ROWS; r++) {
-      const lane = this._lanes[r];
+    this._frog.ridingObj = null;
+    const laneType = LANE_TYPES[this._frog.row];
+    if (laneType === 'river') this._rideRiver(dt);
+    if (laneType === 'road') this._checkTraffic();
+    if (laneType === 'goal') this._landInGoal();
+  }
+
+  _updateDeath(dt) {
+    this._frog.deathTimer -= dt;
+    if (this._frog.deathTimer > 0) return;
+    if (this.lives <= 0) {
+      this.gameOver = true;
+      this._emitHud();
+      return;
+    }
+    this._initFrog();
+  }
+
+  _moveLaneObjects(dt) {
+    for (const lane of this._lanes) {
       if (!lane) continue;
       for (const obj of lane.objects) {
         obj.x += lane.speed * lane.dir * dt;
-        // Wrap around
-        if (lane.dir > 0 && obj.x > GAME_W + 20) {
-          obj.x = -obj.w - 20;
-        } else if (lane.dir < 0 && obj.x + obj.w < -20) {
-          obj.x = GAME_W + 20;
+        if (lane.dir > 0 && obj.x > GAME_W + WRAP_MARGIN) {
+          obj.x = -obj.w - WRAP_MARGIN;
+        } else if (lane.dir < 0 && obj.x + obj.w < -WRAP_MARGIN) {
+          obj.x = GAME_W + WRAP_MARGIN;
         }
       }
     }
+  }
 
-    // Frog on river — must be on a log
-    const frogRow = this._frog.row;
-    const frogType = LANE_TYPES[frogRow];
-    this._frog.ridingObj = null;
-
-    if (frogType === 'river') {
-      const lane = this._lanes[frogRow];
-      const frogX = this._frog.col * CELL;
-      let onLog = false;
-      for (const obj of lane.objects) {
-        if (frogX + CELL > obj.x && frogX < obj.x + obj.w) {
-          onLog = true;
-          this._frog.ridingObj = obj;
-          // Move frog with log
-          const moveX = lane.speed * lane.dir * dt;
-          const newCol = this._frog.col + moveX / CELL;
-          this._frog.col = newCol;
-          break;
-        }
-      }
-      if (!onLog) {
-        this._killFrog();
-        return;
-      }
-      // Fell off screen
-      if (this._frog.col * CELL < -CELL || this._frog.col * CELL > GAME_W) {
-        this._killFrog();
-        return;
-      }
+  // On the river the frog must be on a log, rides it, and drowns if the log
+  // carries it off the screen.
+  _rideRiver(dt) {
+    const lane = this._lanes[this._frog.row];
+    const frogX = this._frog.col * CELL;
+    const log = lane.objects.find((obj) => frogX + CELL > obj.x && frogX < obj.x + obj.w);
+    if (!log) {
+      this._killFrog();
+      return;
     }
+    this._frog.ridingObj = log;
+    this._frog.col += (lane.speed * lane.dir * dt) / CELL;
 
-    // Frog on road — check vehicle collision
-    if (frogType === 'road') {
-      const lane = this._lanes[frogRow];
-      const frogX = this._frog.col * CELL;
-      for (const obj of lane.objects) {
-        if (frogX + CELL - 4 > obj.x && frogX + 4 < obj.x + obj.w) {
-          this._killFrog();
-          return;
-        }
-      }
+    const riddenX = this._frog.col * CELL;
+    if (riddenX < -CELL || riddenX > GAME_W) this._killFrog();
+  }
+
+  // Vehicles get a few pixels of forgiveness on each side of the frog.
+  _checkTraffic() {
+    const lane = this._lanes[this._frog.row];
+    const frogX = this._frog.col * CELL;
+    const hit = lane.objects.some((obj) => frogX + CELL - 4 > obj.x && frogX + 4 < obj.x + obj.w);
+    if (hit) this._killFrog();
+  }
+
+  _landInGoal() {
+    const col = Math.round(this._frog.col);
+    const slot = GOAL_POSITIONS.findIndex((gx, i) => Math.abs(col - gx) <= 1 && !this._goalsFilled[i]);
+    if (slot < 0) {
+      this._killFrog();
+      return;
     }
+    this._goalsFilled[slot] = true;
+    this.score += GOAL_SCORE;
+    this._emitHud();
 
-    // Goal check
-    if (frogType === 'goal') {
-      let landed = false;
-      for (let i = 0; i < GOAL_SLOTS; i++) {
-        const gx = GOAL_POSITIONS[i];
-        if (Math.abs(Math.round(this._frog.col) - gx) <= 1 && !this._goalsFilled[i]) {
-          this._goalsFilled[i] = true;
-          this.score += 50;
-          landed = true;
-          break;
-        }
-      }
-      if (!landed) {
-        this._killFrog();
-        return;
-      }
+    if (this._goalsFilled.every(Boolean)) {
+      this.score += ALL_GOALS_BONUS;
+      this.level++;
+      this._goalsFilled.fill(false);
+      this._initLanes();
       this._emitHud();
-      // Check if all goals filled
-      if (this._goalsFilled.every(Boolean)) {
-        this.score += 100;
-        this.level++;
-        this._goalsFilled.fill(false);
-        this._initLanes();
-        this._emitHud();
-      }
-      this._initFrog();
     }
+    this._initFrog();
   }
 
   _killFrog() {
     this._frog.dead = true;
-    this._frog.deathTimer = 0.8;
+    this._frog.deathTimer = DEATH_PAUSE;
     this.lives--;
     this._emitHud();
   }
@@ -237,29 +229,23 @@ export class Frogger {
 
     // Score for forward progress
     if (newRow < this._highestRow) {
-      this.score += 10;
+      this.score += HOP_SCORE;
       this._highestRow = newRow;
       this._emitHud();
     }
   }
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderLanes(ctx);
+      this._renderGoals(ctx);
+      this._renderObjects(ctx);
+      this._renderFrog(ctx);
+    });
+  }
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
-
-    this._renderLanes(ctx);
-    this._renderGoals(ctx);
-    this._renderObjects(ctx);
-    this._renderFrog(ctx);
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderLanes(ctx) {
@@ -360,36 +346,24 @@ export class Frogger {
   }
 
   handleKeyDown(key) {
-    if (key === 'ArrowUp') this._moveFrog(0, -1);
-    if (key === 'ArrowDown') this._moveFrog(0, 1);
-    if (key === 'ArrowLeft') this._moveFrog(-1, 0);
-    if (key === 'ArrowRight') this._moveFrog(1, 0);
+    this._hop(actionForKey(key));
   }
 
   handleKeyUp(_key) {}
 
   handleTouchAction(action, active) {
-    if (!active) return;
-    if (action === 'up') this._moveFrog(0, -1);
-    if (action === 'down') this._moveFrog(0, 1);
-    if (action === 'left') this._moveFrog(-1, 0);
-    if (action === 'right') this._moveFrog(1, 0);
+    if (active) this._hop(action);
+  }
+
+  _hop(action) {
+    const step = DIRECTION_STEPS[action];
+    if (step) this._moveFrog(step.x, step.y);
   }
 
   destroy() {}
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {

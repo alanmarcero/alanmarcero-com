@@ -1,4 +1,4 @@
-import { RhythmCatcher } from './RhythmCatcher';
+import { RhythmCatcher, laneLeftX, laneCenterX, comboMultiplier } from './RhythmCatcher';
 
 describe('RhythmCatcher', () => {
   let game;
@@ -195,5 +195,25 @@ describe('RhythmCatcher', () => {
     test('destroy does not crash', () => {
       expect(() => game.destroy()).not.toThrow();
     });
+  });
+});
+
+describe('lane geometry and combo multiplier', () => {
+  test('lanes are laid out left to right, one lane width plus gap apart', () => {
+    expect(laneLeftX(1) - laneLeftX(0)).toBe(70);
+    expect(laneCenterX(0)).toBe(laneLeftX(0) + 30);
+  });
+
+  test('the lane block is centred in the 480-wide world', () => {
+    expect(laneLeftX(0)).toBe(480 - (laneLeftX(3) + 60));
+  });
+
+  test('multiplier steps up every five in a row and caps at 4', () => {
+    expect(comboMultiplier(1)).toBe(1);
+    expect(comboMultiplier(4)).toBe(1);
+    expect(comboMultiplier(5)).toBe(2);
+    expect(comboMultiplier(10)).toBe(3);
+    expect(comboMultiplier(15)).toBe(4);
+    expect(comboMultiplier(100)).toBe(4);
   });
 });

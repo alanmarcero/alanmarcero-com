@@ -97,6 +97,39 @@ const DAS_REPEAT_RATE = 50;   // ms between repeats
 
 const LINE_CLEAR_FLASH_MS = 200;
 
+// Seconds per gravity step, by level: ~1s at level 1, floored at 0.05s.
+const DROP_INTERVALS = [
+  1.0, 0.8, 0.65, 0.5, 0.4, 0.32, 0.25, 0.19, 0.14, 0.1,
+  0.08, 0.07, 0.06, 0.055, 0.05,
+];
+const SOFT_DROP_INTERVAL = 0.05;
+
+// Tetris maps the arrows its own way (up rotates, space hard-drops), so it
+// keeps its own table rather than the arcade's default key actions.
+const KEY_ACTIONS = {
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  ArrowDown: 'down',
+  ArrowUp: 'rotate',
+  ' ': 'drop',
+};
+
+const SHIFT_DIRECTIONS = { left: -1, right: 1 };
+
+/** Seconds between gravity steps at `level`; past the table it stays at the floor. */
+export function dropInterval(level) {
+  return DROP_INTERVALS[Math.min(level - 1, DROP_INTERVALS.length - 1)];
+}
+
+/** Indices of every row with no empty cell, top to bottom. */
+export function findFullRows(board) {
+  const fullRows = [];
+  board.forEach((row, index) => {
+    if (row.every((cell) => cell !== null)) fullRows.push(index);
+  });
+  return fullRows;
+}
+
 export class Tetris {
   onHudUpdate = null;
 
@@ -118,20 +151,14 @@ export class Tetris {
     // Piece bag (7-bag randomizer)
     this.bag = [];
 
-    // Current piece
     this.current = null;
     this.currentX = 0;
     this.currentY = 0;
     this.currentRotation = 0;
     this.currentType = null;
 
-    // Next piece
     this.nextType = null;
-
-    // Drop timing
     this.dropTimer = 0;
-
-    // Soft drop state
     this.softDrop = false;
 
     // DAS (Delayed Auto Shift) state
@@ -139,21 +166,18 @@ export class Tetris {
     this.dasTimer = 0;
     this.dasPhase = 'idle'; // 'idle' | 'initial' | 'repeat'
 
-    // Track pressed keys for DAS
     this.keysHeld = { left: false, right: false };
 
     // Line clear animation
     this.clearingLines = null; // array of row indices being cleared
     this.clearTimer = 0;
 
-    // Layout
     this._calcLayout();
 
-    // Spawn first pieces
     this.nextType = this._pullFromBag();
     this._spawnPiece();
 
-    this._sendHud();
+    this._emitHud();
   }
 
   _calcLayout() {
@@ -215,7 +239,7 @@ export class Tetris {
     // Check if spawn position is valid
     if (!this._isValid(this.current, this.currentX, this.currentY)) {
       this.gameOver = true;
-      this._sendHud();
+      this._emitHud();
     }
   }
 
@@ -241,17 +265,6 @@ export class Tetris {
     return true;
   }
 
-  _getDropSpeed() {
-    // Frames-based speed converted to seconds
-    // Level 1: ~1s, increasing speed, minimum ~0.05s
-    const speeds = [
-      1.0, 0.8, 0.65, 0.5, 0.4, 0.32, 0.25, 0.19, 0.14, 0.1,
-      0.08, 0.07, 0.06, 0.055, 0.05,
-    ];
-    const idx = Math.min(this.level - 1, speeds.length - 1);
-    return speeds[idx];
-  }
-
   _lockPiece() {
     const color = PIECE_COLORS[this.currentType];
     for (const [cx, cy] of this.current) {
@@ -262,20 +275,13 @@ export class Tetris {
       }
     }
 
-    // Check for line clears
-    const fullRows = [];
-    for (let r = 0; r < ROWS; r++) {
-      if (this.board[r].every((cell) => cell !== null)) {
-        fullRows.push(r);
-      }
-    }
-
-    if (fullRows.length > 0) {
-      this.clearingLines = fullRows;
-      this.clearTimer = LINE_CLEAR_FLASH_MS;
-    } else {
+    const fullRows = findFullRows(this.board);
+    if (fullRows.length === 0) {
       this._spawnPiece();
+      return;
     }
+    this.clearingLines = fullRows;
+    this.clearTimer = LINE_CLEAR_FLASH_MS;
   }
 
   _clearLines() {
@@ -292,7 +298,6 @@ export class Tetris {
       this.board.unshift(new Array(COLS).fill(null));
     }
 
-    // Scoring
     this.score += (LINE_SCORES[count] || 0) * this.level;
     this.linesCleared += count;
 
@@ -305,7 +310,7 @@ export class Tetris {
     this.clearingLines = null;
     this.clearTimer = 0;
 
-    this._sendHud();
+    this._emitHud();
     this._spawnPiece();
   }
 
@@ -325,7 +330,6 @@ export class Tetris {
     const newRot = (oldRot + dir + 4) % 4;
     const newCells = TETROMINOES[this.currentType][newRot];
 
-    // Get wall kick data
     const kickKey = `${oldRot}>${newRot}`;
     const kicks = this.currentType === 'I' ? WALL_KICKS_I[kickKey] : WALL_KICKS_JLSTZ[kickKey];
 
@@ -352,14 +356,14 @@ export class Tetris {
   _hardDrop() {
     if (this.gameOver || this.clearingLines) return;
     const ghostY = this._getGhostY();
-    const distance = ghostY - this.currentY;
-    this.score += distance * 2; // Hard drop bonus
+    const rowsDropped = ghostY - this.currentY;
+    this.score += rowsDropped * 2; // hard drop bonus
     this.currentY = ghostY;
     this._lockPiece();
-    this._sendHud();
+    this._emitHud();
   }
 
-  _sendHud() {
+  _emitHud() {
     emitHud(this, { lives: undefined });
   }
 
@@ -375,26 +379,27 @@ export class Tetris {
       return;
     }
 
-    // DAS (Delayed Auto Shift)
     this._updateDAS(dt);
+    this._updateGravity(dt);
+  }
 
-    // Drop timing
-    const dropSpeed = this.softDrop ? Math.min(this._getDropSpeed(), 0.05) : this._getDropSpeed();
+  _updateGravity(dt) {
+    const gravityInterval = dropInterval(this.level);
+    const interval = this.softDrop ? Math.min(gravityInterval, SOFT_DROP_INTERVAL) : gravityInterval;
     this.dropTimer += dt;
+    if (this.dropTimer < interval) return;
 
-    if (this.dropTimer >= dropSpeed) {
-      this.dropTimer = 0;
-      if (this._isValid(this.current, this.currentX, this.currentY + 1)) {
-        this.currentY++;
-        if (this.softDrop) {
-          this.score += 1; // Soft drop bonus
-          this._sendHud();
-        }
-      } else {
-        this._lockPiece();
-        this._sendHud();
-      }
+    this.dropTimer = 0;
+    if (!this._isValid(this.current, this.currentX, this.currentY + 1)) {
+      this._lockPiece();
+      this._emitHud();
+      return;
     }
+
+    this.currentY++;
+    if (!this.softDrop) return;
+    this.score += 1; // soft drop bonus
+    this._emitHud();
   }
 
   _resetDAS() {
@@ -443,19 +448,24 @@ export class Tetris {
   }
 
   render(ctx) {
-    const cs = this.cellSize;
-
-    // Clear canvas
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // Draw board background
+    this._drawBoard(ctx);
+    this._drawLockedCells(ctx);
+    this._drawClearFlash(ctx);
+    this._drawFallingPiece(ctx);
+    this._drawPreview(ctx);
+    this._drawGameOver(ctx);
+  }
+
+  _drawBoard(ctx) {
+    const cs = this.cellSize;
     const boardW = COLS * cs;
     const boardH = ROWS * cs;
     ctx.fillStyle = 'rgba(6, 6, 14, 0.6)';
     ctx.fillRect(this.boardX, this.boardY, boardW, boardH);
 
-    // Draw grid lines
     ctx.strokeStyle = GRID_COLOR;
     ctx.lineWidth = 1;
     for (let c = 0; c <= COLS; c++) {
@@ -473,12 +483,13 @@ export class Tetris {
       ctx.stroke();
     }
 
-    // Draw board border
     ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
     ctx.lineWidth = 2;
     ctx.strokeRect(this.boardX, this.boardY, boardW, boardH);
+  }
 
-    // Draw locked cells
+  _drawLockedCells(ctx) {
+    const cs = this.cellSize;
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         if (this.board[r][c]) {
@@ -486,67 +497,62 @@ export class Tetris {
         }
       }
     }
+  }
 
-    // Line clear flash
-    if (this.clearingLines) {
-      const flashAlpha = Math.min(1, this.clearTimer / LINE_CLEAR_FLASH_MS);
-      for (const row of this.clearingLines) {
-        ctx.fillStyle = `rgba(232, 230, 240, ${flashAlpha * 0.8})`;
-        ctx.fillRect(this.boardX, this.boardY + row * cs, boardW, cs);
+  _drawClearFlash(ctx) {
+    if (!this.clearingLines) return;
+    const cs = this.cellSize;
+    const flashAlpha = Math.min(1, this.clearTimer / LINE_CLEAR_FLASH_MS);
+    for (const row of this.clearingLines) {
+      ctx.fillStyle = `rgba(232, 230, 240, ${flashAlpha * 0.8})`;
+      ctx.fillRect(this.boardX, this.boardY + row * cs, COLS * cs, cs);
+    }
+  }
+
+  _drawFallingPiece(ctx) {
+    if (this.gameOver || !this.current || this.clearingLines) return;
+
+    const ghostY = this._getGhostY();
+    if (ghostY !== this.currentY) this._drawPieceCells(ctx, ghostY, 0.2);
+
+    ctx.save();
+    ctx.shadowColor = PIECE_COLORS[this.currentType];
+    ctx.shadowBlur = 6;
+    this._drawPieceCells(ctx, this.currentY, 1.0);
+    ctx.restore();
+  }
+
+  /** The current piece's cells at row offset `pieceY`, skipping any still above the board. */
+  _drawPieceCells(ctx, pieceY, alpha) {
+    const cs = this.cellSize;
+    const color = PIECE_COLORS[this.currentType];
+    for (const [cx, cy] of this.current) {
+      const bx = cx + this.currentX;
+      const by = cy + pieceY;
+      if (by >= 0 && by < ROWS) {
+        this._drawCell(ctx, this.boardX + bx * cs, this.boardY + by * cs, cs, color, alpha);
       }
     }
+  }
 
-    // Draw ghost piece
-    if (!this.gameOver && this.current && !this.clearingLines) {
-      const ghostY = this._getGhostY();
-      if (ghostY !== this.currentY) {
-        const color = PIECE_COLORS[this.currentType];
-        for (const [cx, cy] of this.current) {
-          const bx = cx + this.currentX;
-          const by = cy + ghostY;
-          if (by >= 0 && by < ROWS) {
-            this._drawCell(ctx, this.boardX + bx * cs, this.boardY + by * cs, cs, color, 0.2);
-          }
-        }
-      }
-    }
+  _drawGameOver(ctx) {
+    if (!this.gameOver) return;
+    const cs = this.cellSize;
+    const boardW = COLS * cs;
+    const boardH = ROWS * cs;
+    ctx.fillStyle = 'rgba(14, 14, 26, 0.75)';
+    ctx.fillRect(this.boardX, this.boardY, boardW, boardH);
 
-    // Draw current piece
-    if (!this.gameOver && this.current && !this.clearingLines) {
-      const color = PIECE_COLORS[this.currentType];
-      ctx.save();
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 6;
-      for (const [cx, cy] of this.current) {
-        const bx = cx + this.currentX;
-        const by = cy + this.currentY;
-        if (by >= 0 && by < ROWS) {
-          this._drawCell(ctx, this.boardX + bx * cs, this.boardY + by * cs, cs, color, 1.0);
-        }
-      }
-      ctx.restore();
-    }
-
-    // Draw next-piece preview
-    this._drawPreview(ctx);
-
-    // Game over overlay
-    if (this.gameOver) {
-      ctx.fillStyle = 'rgba(14, 14, 26, 0.75)';
-      ctx.fillRect(this.boardX, this.boardY, boardW, boardH);
-
-      ctx.fillStyle = WHITE;
-      ctx.font = `bold ${Math.max(14, cs * 1.2)}px "IBM Plex Mono", monospace`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('GAME OVER', this.boardX + boardW / 2, this.boardY + boardH / 2);
-    }
+    ctx.fillStyle = WHITE;
+    ctx.font = `bold ${Math.max(14, cs * 1.2)}px "IBM Plex Mono", monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('GAME OVER', this.boardX + boardW / 2, this.boardY + boardH / 2);
   }
 
   _drawCell(ctx, x, y, size, color, alpha) {
     const inset = Math.max(1, size * 0.08);
 
-    // Fill main cell
     ctx.globalAlpha = alpha;
     ctx.fillStyle = color;
     ctx.fillRect(x + inset, y + inset, size - inset * 2, size - inset * 2);
@@ -580,11 +586,9 @@ export class Tetris {
     const boxX = this.previewX;
     const boxY = this.previewY;
 
-    // Preview box background
     ctx.fillStyle = 'rgba(6, 6, 14, 0.6)';
     ctx.fillRect(boxX, boxY, boxW, boxH);
 
-    // Preview box border
     ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
     ctx.lineWidth = 1.5;
     ctx.strokeRect(boxX, boxY, boxW, boxH);
@@ -621,86 +625,55 @@ export class Tetris {
 
   handleKeyDown(key) {
     if (this.gameOver) return;
-
-    switch (key) {
-      case 'ArrowLeft':
-        if (!this.keysHeld.left) {
-          this.keysHeld.left = true;
-          this._moveHorizontal(-1);
-          this._startDAS(-1);
-        }
-        break;
-      case 'ArrowRight':
-        if (!this.keysHeld.right) {
-          this.keysHeld.right = true;
-          this._moveHorizontal(1);
-          this._startDAS(1);
-        }
-        break;
-      case 'ArrowDown':
-        this.softDrop = true;
-        break;
-      case 'ArrowUp':
-        this._rotate(1);
-        break;
-      case ' ':
-        this._hardDrop();
-        break;
-    }
+    this._press(KEY_ACTIONS[key]);
   }
 
   handleKeyUp(key) {
-    switch (key) {
-      case 'ArrowLeft':
-        this.keysHeld.left = false;
-        if (this.dasDirection === -1) this._resetDAS();
-        break;
-      case 'ArrowRight':
-        this.keysHeld.right = false;
-        if (this.dasDirection === 1) this._resetDAS();
-        break;
-      case 'ArrowDown':
-        this.softDrop = false;
-        break;
-    }
+    this._release(KEY_ACTIONS[key]);
   }
 
   handleTouchAction(action, active) {
-    switch (action) {
-      case 'left':
-        if (active) {
-          this.keysHeld.left = true;
-          this._moveHorizontal(-1);
-          this._startDAS(-1);
-        } else {
-          this.keysHeld.left = false;
-          if (this.dasDirection === -1) this._resetDAS();
-        }
-        break;
-      case 'right':
-        if (active) {
-          this.keysHeld.right = true;
-          this._moveHorizontal(1);
-          this._startDAS(1);
-        } else {
-          this.keysHeld.right = false;
-          if (this.dasDirection === 1) this._resetDAS();
-        }
-        break;
-      case 'down':
-        this.softDrop = active;
-        break;
-      case 'rotate':
-        if (active) this._rotate(1);
-        break;
-      case 'drop':
-        if (active) this._hardDrop();
-        break;
+    if (active) {
+      this._press(action);
+      return;
     }
+    this._release(action);
+  }
+
+  _press(action) {
+    if (Object.hasOwn(SHIFT_DIRECTIONS, action)) {
+      this._pressShift(action);
+      return;
+    }
+    if (action === 'down') this.softDrop = true;
+    if (action === 'rotate') this._rotate(1);
+    if (action === 'drop') this._hardDrop();
+  }
+
+  _release(action) {
+    if (Object.hasOwn(SHIFT_DIRECTIONS, action)) {
+      this._releaseShift(action);
+      return;
+    }
+    if (action === 'down') this.softDrop = false;
+  }
+
+  // A held key auto-repeats keydown; the guard keeps that from stepping the
+  // piece on every repeat, since DAS already owns held-key movement.
+  _pressShift(side) {
+    if (this.keysHeld[side]) return;
+    const dir = SHIFT_DIRECTIONS[side];
+    this.keysHeld[side] = true;
+    this._moveHorizontal(dir);
+    this._startDAS(dir);
+  }
+
+  _releaseShift(side) {
+    this.keysHeld[side] = false;
+    if (this.dasDirection === SHIFT_DIRECTIONS[side]) this._resetDAS();
   }
 
   destroy() {
-    // No timers or listeners to clean up - all state is instance-level
     this.board = null;
     this.current = null;
     this.bag = null;

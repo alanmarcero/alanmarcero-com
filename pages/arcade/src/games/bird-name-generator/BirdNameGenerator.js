@@ -1,5 +1,6 @@
-import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import { CYAN, VIOLET, ORANGE, WHITE, MUTED } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed } from '../frame';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -80,6 +81,9 @@ const LATIN_SPECIES = [
   'pretentiosus', 'questionabilis',
 ];
 
+const PLUMAGE_COLORS = [CYAN, VIOLET, ORANGE];
+const DISCOVER_KEYS = new Set([' ', 'Space', 'Enter']);
+
 export class BirdNameGenerator {
   onHudUpdate = null;
 
@@ -129,8 +133,8 @@ export class BirdNameGenerator {
     return {
       name,
       latin,
-      bodyColor: this._pickColor(),
-      wingColor: this._pickColor(),
+      bodyColor: this._pick(PLUMAGE_COLORS),
+      wingColor: this._pick(PLUMAGE_COLORS),
       beakLong: Math.random() < 0.4,
       hasCrest: Math.random() < 0.5,
       hasGlasses: Math.random() < 0.15,
@@ -141,11 +145,6 @@ export class BirdNameGenerator {
 
   _pick(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
-  }
-
-  _pickColor() {
-    const palette = [CYAN, VIOLET, ORANGE];
-    return palette[Math.floor(Math.random() * palette.length)];
   }
 
   _discover() {
@@ -171,49 +170,43 @@ export class BirdNameGenerator {
   }
 
   handleKeyDown(key) {
-    if (this._buttonHeld) return;
-    if (key === ' ' || key === 'Space' || key === 'Enter') {
-      this._buttonHeld = true;
-      this._discover();
-    }
+    if (DISCOVER_KEYS.has(key)) this._setButtonHeld(true);
   }
 
   handleKeyUp(key) {
-    if (key === ' ' || key === 'Space' || key === 'Enter') {
-      this._buttonHeld = false;
-    }
+    if (DISCOVER_KEYS.has(key)) this._setButtonHeld(false);
   }
 
   handleTouchAction(action, active) {
-    if (action !== 'fire') return;
-    if (active && !this._buttonHeld) {
-      this._buttonHeld = true;
-      this._discover();
-    } else if (!active) {
+    if (action === 'fire') this._setButtonHeld(active);
+  }
+
+  // One discovery per press: holding the button (or key auto-repeat) must not
+  // strobe through birds.
+  _setButtonHeld(held) {
+    if (!held) {
       this._buttonHeld = false;
+      return;
     }
+    if (this._buttonHeld) return;
+    this._buttonHeld = true;
+    this._discover();
   }
 
   destroy() {}
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderHeader(ctx);
+      this._renderBird(ctx);
+      this._renderName(ctx);
+      this._renderLatin(ctx);
+      this._renderPrompt(ctx);
+    });
+  }
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
-
-    this._renderHeader(ctx);
-    this._renderBird(ctx);
-    this._renderName(ctx);
-    this._renderLatin(ctx);
-    this._renderPrompt(ctx);
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderHeader(ctx) {
@@ -397,17 +390,7 @@ export class BirdNameGenerator {
   }
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {

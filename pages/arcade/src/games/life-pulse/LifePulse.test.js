@@ -1,4 +1,5 @@
-import { LifePulse } from './LifePulse';
+import { LifePulse, computeGrade, rankBonusMultiplier } from './LifePulse';
+import { grazeAccuracy } from './LifePulseRenderer';
 
 describe('LifePulse', () => {
   let game;
@@ -6,21 +7,6 @@ describe('LifePulse', () => {
 
   beforeEach(() => {
     jest.spyOn(Math, 'random').mockReturnValue(0.5);
-
-    // Mock browser Image for asset loading (Grok Imagine JPGs + alpha keying)
-    global.Image = class {
-      constructor() {
-        this.complete = true;
-        this.width = 40;
-        this.height = 24;
-        this.onload = null;
-      }
-      set src(val) {
-        this._src = val;
-        // Fire synchronously for fast deterministic tests
-        if (this.onload) this.onload.call(this);
-      }
-    };
 
     game = new LifePulse();
     hudData = null;
@@ -59,11 +45,6 @@ describe('LifePulse', () => {
     test('player starts alive with reasonable position', () => {
       expect(game._player.alive).toBe(true);
       expect(game._player.x).toBeGreaterThan(50);
-    });
-
-    test('assets object exists (procedural renderer)', () => {
-      expect(game.assets).toBeDefined();
-      expect(game.assetsLoaded).toBe(true);
     });
 
     test('pulse charge meter initializes', () => {
@@ -194,7 +175,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Pass 4 new systems (laser, bomb, tendril, piercing)', () => {
+  describe('Powers: laser, bomb, tendril, piercing', () => {
     test('laser powerup activates laserTimer', () => {
       game._applyPowerup('laser');
       expect(game._laserTimer).toBeGreaterThan(5);
@@ -224,7 +205,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Pass 5 new mechanics (homing, overcharge, parasite)', () => {
+  describe('Powers: homing, overcharge, parasite', () => {
     test('homing powerup sets homingTimer', () => {
       game._applyPowerup('homing');
       expect(game._homingTimer).toBeGreaterThan(5);
@@ -247,7 +228,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Pass 6 new systems (nova, focus, wave clear, end stats)', () => {
+  describe('Powers: nova, focus, wave clear, end stats', () => {
     test('nova powerup arms the one-shot clear', () => {
       game._applyPowerup('nova');
       expect(game._novaReady).toBe(true);
@@ -269,7 +250,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Pass 7 new systems (chain, reflect, rank, bullet cancel)', () => {
+  describe('Powers: chain, reflect, rank, bullet cancel', () => {
     test('chain powerup activates chainTimer and boosts combo scoring', () => {
       game._applyPowerup('chain');
       expect(game._chainTimer).toBeGreaterThan(5);
@@ -289,7 +270,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Pass 8 new systems (swarm, vortex, surge, crit, queen)', () => {
+  describe('Powers: swarm, vortex, surge, crit, queen', () => {
     test('swarm powerup activates swarmTimer and spawns minis', () => {
       const before = game._enemies.length;
       game._applyPowerup('swarm');
@@ -322,7 +303,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Pass 9 new systems (echo, orbit, charge, perfect wave, upgrades, tendril-parasite)', () => {
+  describe('Powers: echo, orbit, charge, perfect wave, upgrades, tendril-parasite', () => {
     test('echo powerup activates echoTimer', () => {
       game._applyPowerup('echo');
       expect(game._echoTimer).toBeGreaterThan(3);
@@ -357,5 +338,77 @@ describe('LifePulse', () => {
       expect(tp.type).toBe('tendril-parasite');
       expect(tp.whip).toBeDefined();
     });
+  });
+
+  describe('Input', () => {
+    test('WASD steers like the arrows, and release stops it', () => {
+      game.handleKeyDown('W');
+      expect(game._keys.up).toBe(true);
+      game.handleKeyUp('w');
+      expect(game._keys.up).toBe(false);
+    });
+
+    test('X and the fire2 touch alias both drive the secondary', () => {
+      game.handleKeyDown('X');
+      expect(game._keys.secondary).toBe(true);
+      game.handleKeyUp('X');
+      game.handleTouchAction('fire2', true);
+      expect(game._keys.secondary).toBe(true);
+    });
+
+    test('an unknown key or action changes nothing', () => {
+      const before = { ...game._keys };
+      game.handleKeyDown('q');
+      game.handleTouchAction('toString', true);
+      expect(game._keys).toEqual(before);
+    });
+  });
+
+  describe('Boss kill by bullet', () => {
+    test('the rest of the volley does not touch the cleared boss', () => {
+      game._boss = { x: 300, y: 180, hp: 1, maxHp: 10, r: 32 };
+      game._bullets = [
+        { x: 300, y: 180, vx: 0, vy: 0, r: 3.5, life: 1 },
+        { x: 300, y: 180, vx: 0, vy: 0, r: 3.5, life: 1 },
+      ];
+      expect(() => game._checkCollisions()).not.toThrow();
+      expect(game._boss).toBeNull();
+    });
+  });
+});
+
+describe('computeGrade', () => {
+  const base = { maxCombo: 0, kills: 0, level: 1, elapsed: 0, grazeCount: 0, perfectWaves: 0, runScoreMulti: 1 };
+
+  test('an empty run ranks D', () => {
+    expect(computeGrade(base)).toBe('D');
+  });
+
+  test('a big combo lifts the rank to S', () => {
+    expect(computeGrade({ ...base, maxCombo: 30 })).toBe('S');
+  });
+
+  test('a long run costs rank', () => {
+    const run = { ...base, maxCombo: 9, kills: 10 };
+    expect(computeGrade(run)).toBe('B');
+    expect(computeGrade({ ...run, elapsed: 400 })).toBe('C');
+  });
+});
+
+describe('rankBonusMultiplier', () => {
+  test('pays the most for S and nothing for D', () => {
+    expect(rankBonusMultiplier('S')).toBe(0.35);
+    expect(rankBonusMultiplier('D')).toBe(0);
+  });
+});
+
+describe('grazeAccuracy', () => {
+  test('is 100% with nothing to count', () => {
+    expect(grazeAccuracy(0, 0)).toBe(100);
+  });
+
+  test('divides by at least one hit', () => {
+    expect(grazeAccuracy(1, 0)).toBe(50);
+    expect(grazeAccuracy(3, 1)).toBe(75);
   });
 });

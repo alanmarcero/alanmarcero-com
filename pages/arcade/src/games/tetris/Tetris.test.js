@@ -1,4 +1,4 @@
-import { Tetris } from './Tetris';
+import { Tetris, dropInterval, findFullRows } from './Tetris';
 
 describe('Tetris', () => {
   let game;
@@ -128,7 +128,7 @@ describe('Tetris', () => {
       game.softDrop = true;
       const initialScore = game.score;
 
-      const dropSpeed = game._getDropSpeed();
+      const dropSpeed = dropInterval(game.level);
       game.update(dropSpeed);
 
       expect(game.score).toBe(initialScore + 1);
@@ -416,7 +416,7 @@ describe('Tetris', () => {
 
     test('piece drops over time', () => {
       const initialY = game.currentY;
-      const dropSpeed = game._getDropSpeed();
+      const dropSpeed = dropInterval(game.level);
 
       game.update(dropSpeed);
 
@@ -508,22 +508,33 @@ describe('Tetris', () => {
   });
 
   describe('Drop speed', () => {
-    test('_getDropSpeed returns slower speed for level 1', () => {
-      game.level = 1;
-      const speed = game._getDropSpeed();
-      expect(speed).toBe(1.0);
+    test('dropInterval is one second at level 1', () => {
+      expect(dropInterval(1)).toBe(1.0);
     });
 
-    test('_getDropSpeed returns faster speed for higher levels', () => {
-      game.level = 5;
-      const speed = game._getDropSpeed();
-      expect(speed).toBeLessThan(1.0);
+    test('dropInterval shortens at higher levels', () => {
+      expect(dropInterval(5)).toBeLessThan(1.0);
     });
 
-    test('_getDropSpeed has minimum speed limit', () => {
-      game.level = 999;
-      const speed = game._getDropSpeed();
-      expect(speed).toBeGreaterThan(0);
+    test('dropInterval stays at the floor past the end of the table', () => {
+      expect(dropInterval(999)).toBe(0.05);
+      expect(dropInterval(15)).toBe(0.05);
+    });
+  });
+
+  describe('findFullRows', () => {
+    test('returns the index of every complete row, top to bottom', () => {
+      const board = [
+        [null, 'a'],
+        ['a', 'a'],
+        ['a', null],
+        ['a', 'a'],
+      ];
+      expect(findFullRows(board)).toEqual([1, 3]);
+    });
+
+    test('returns nothing for an empty board', () => {
+      expect(findFullRows([[null, null]])).toEqual([]);
     });
   });
 
@@ -608,5 +619,41 @@ describe('Tetris', () => {
 
       expect(game.linesCleared).toBeGreaterThan(initialLines + 1);
     });
+  });
+});
+
+describe('Tetris input routing', () => {
+  let game;
+
+  beforeEach(() => {
+    game = new Tetris();
+    game.init(400, 800);
+  });
+
+  test('a repeated keydown on a held shift key does not step the piece again', () => {
+    const x = game.currentX;
+    game.handleKeyDown('ArrowLeft');
+    game.handleKeyDown('ArrowLeft');
+    expect(game.currentX).toBe(x - 1);
+  });
+
+  test('ArrowUp rotates and space hard-drops', () => {
+    const rotation = game.currentRotation;
+    game.handleKeyDown('ArrowUp');
+    if (game.currentType !== 'O') expect(game.currentRotation).not.toBe(rotation);
+
+    game.handleKeyDown(' ');
+    expect(game.board.flat().some(Boolean)).toBe(true);
+  });
+
+  test('keys are ignored once the game is over', () => {
+    game.gameOver = true;
+    game.handleKeyDown('ArrowDown');
+    expect(game.softDrop).toBe(false);
+  });
+
+  test('unknown keys and actions are ignored', () => {
+    expect(() => game.handleKeyDown('q')).not.toThrow();
+    expect(() => game.handleTouchAction('toString', true)).not.toThrow();
   });
 });
