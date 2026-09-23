@@ -53,6 +53,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── ModulePanel.test.jsx   # ModulePanel tests
 │   │   ├── SignalMeter.jsx        # Winamp-style spectrum analyzer (canvas rAF, paused off-screen)
 │   │   ├── SignalMeter.test.jsx   # SignalMeter tests
+│   │   ├── spectrum.js            # SignalMeter's bar simulation as pure functions (random source injected)
+│   │   ├── spectrum.test.js       # spectrum tests
 │   │   ├── TakeMeBack.jsx         # Hero era picker that drives the Take Me Back theme switch
 │   │   ├── TakeMeBack.test.jsx    # TakeMeBack tests
 │   │   ├── MusicItem.jsx          # YouTube playlist item display (card glow)
@@ -72,15 +74,19 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── useMusicItems.test.js     # useMusicItems tests
 │   │   ├── useInViewport.js          # Custom hook: IntersectionObserver visibility (pauses off-screen animations)
 │   │   ├── useInViewport.test.js     # useInViewport tests
-│   │   ├── usePrefersReducedMotion.js      # Custom hook: prefers-reduced-motion
+│   │   ├── usePopstate.js            # Custom hook: back/forward listener (latest callback via ref)
+│   │   ├── usePopstate.test.js       # usePopstate tests
+│   │   ├── usePrefersReducedMotion.js      # Custom hook: prefers-reduced-motion (wraps useMediaQuery)
 │   │   ├── usePrefersReducedMotion.test.js # usePrefersReducedMotion tests
 │   │   ├── useScrollProgress.js      # Custom hook: writes scroll-progress transform via ref + rAF (no re-render)
 │   │   └── useScrollProgress.test.js # useScrollProgress tests
 │   ├── utils/
 │   │   ├── clipboard.js           # copyToClipboard: async Clipboard API with a legacy execCommand fallback
 │   │   ├── clipboard.test.js      # clipboard tests
-│   │   ├── queryParam.js          # writeQueryParam: set/drop one ?param via replaceState, preserving path + hash
+│   │   ├── queryParam.js          # readQueryParam / writeQueryParam: read, set or drop one ?param via replaceState, preserving path + hash
 │   │   ├── queryParam.test.js     # queryParam tests
+│   │   ├── search.js              # createSearchFilter: case-insensitive name + description match
+│   │   ├── search.test.js         # search tests
 │   │   ├── trackMeta.js           # isRemix: does a track title denote a remix
 │   │   ├── trackMeta.test.js      # trackMeta tests
 │   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
@@ -118,7 +124,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── tmobile/                  # /tmobile — TMUS price + insider-selling charts
 │   │   ├── index.html            # TMUS page HTML entry
 │   │   ├── src/                  # TMobileApp, chart + gap geometry, filters, sell pressure, data
-│   │   └── scripts/              # fetch-edgar-form4-prices.py + fetch-nasdaq-insider-sales.py + fetch-yahoo-daily-closes.py
+│   │   └── scripts/              # fetch-edgar-form4-prices.py + fetch-nasdaq-insider-sales.py + fetch-yahoo-daily-closes.py; tmus_insiders.py holds the shared exclusions, held-out trades and display names
 │   ├── stocks/                   # /stocks — drawdown charts for 14 stocks, funds and coins
 │   │   ├── index.html            # Stocks page HTML entry
 │   │   ├── src/                  # StocksApp, InstrumentPanel, useCloses, data/instruments.js + data/closes/*.js
@@ -151,7 +157,10 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.html                    # Main page HTML entry with Google Fonts, meta description, canonical URL
 ├── scripts/
 │   ├── fetch-synth-images.py     # GENERATOR: homepage synth photographs
-│   └── yahoo_daily.py            # Library: every daily close Yahoo holds (shared by /tmobile + /stocks generators)
+│   ├── yahoo_daily.py            # Library: every daily close Yahoo holds (shared by /tmobile + /stocks generators)
+│   ├── commons_images.py         # Library: Wikimedia Commons fetch, licence check + attribution (shared by the 3 image generators)
+│   ├── fetch-nola-tour-photos.py # GENERATOR: /neworleans-tours photographs
+│   └── add-nola-tour-photos.mjs, check-nola-tours.mjs  # NOLA tours page maintenance (ESM)
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
@@ -162,7 +171,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,674 tests across 107 suites**
+**Total: 1,817 tests across 127 suites**
 
 ## Key Files
 
@@ -328,7 +337,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,482 tests, 97 suites)
+npm test                       # Jest (1,817 tests, 127 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -477,8 +486,8 @@ looks right.
   files 753 of the 900 five-year sale lines and 30.3M shares; leaving it in would
   swamp every executive trade on the chart. 17 individual insiders and 146 sale
   transactions remain.
-- **One individual trade is held out too, by name** — `OUTLIER_TRADES` in BOTH
-  generators, keyed on `(date, filer)` so it can only ever remove the trade it
+- **One individual trade is held out too, by name** — `OUTLIER_TRADES` in
+  `pages/tmobile/scripts/tmus_insiders.py`, which both generators import, keyed on `(date, filer)` so it can only ever remove the trade it
   names: Raul Marcelo Claure's 550,000-share block on 2026-02-12, $119.7M in a
   single indirect open-market trade. Same reasoning as Deutsche Telekom at a
   smaller scale — a holder unwinding a position, and big enough on its own to set
@@ -549,7 +558,7 @@ quiet stretch. It shares the price chart's x axis week for week (same
 series, so no legend: the title names it, the record it is up against is a
 **dashed rule with its own label** rather than a second trace, and the open run
 is redrawn over the trace at full strength. `sellPressure.js` holds the
-arithmetic and `gapGeometry.js` the geometry, both pure, both tested (53 tests).
+arithmetic and `gapGeometry.js` the geometry, both pure, both tested.
 
 - **Gaps are measured between trade dates, never between Mondays**, or a Friday
   sale and the Monday sale after it would read as a three-day pause. The chart's
@@ -706,7 +715,7 @@ src/opus5ios/
 bank's scope trace is a harmonic series seeded from the bank's name, so no
 two plates share a wave and a plate always draws the same one. The geometry
 lives in pure modules with tests (`seed`, `waveTrace`, `filterCurve`,
-`faceplate`, `attractGrid` — 62 tests); the components are thin.
+`faceplate`, `attractGrid`); the components are thin.
 
 **Three banks have no photograph and are drawn instead** — Roland SH-01A (no
 freely-licensed photograph exists; re-checked Commons and Openverse
@@ -878,7 +887,9 @@ there, and each one produces a board that looks right:
   inside an HTTP 200, which the client reports as `{"success": true,
   "count": 0}`, so a dead endpoint looks like a route with no flights.
   `flights` 0.9.0 is the latest release; there is no upgrade. The sweep goes
-  through `fast-flights` against Google's own results page instead.
+  through `fast-flights` against Google's own results page instead, **pinned
+  to `fast-flights==2.2`** — 3.x removed `FlightData`, `fast_flights.core` and
+  the bundled `primp` client the sweep is built on.
 - **Asking for nonstop is not `max_stops=0`.** The field is a literal stop
   count, and proto3 drops a scalar sitting at its default — so `0`
   serialises to nothing, the filter vanishes, and connecting itineraries
