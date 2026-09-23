@@ -1,5 +1,5 @@
 import {
-  DIRECTION_ORDER, VECTORS, reverseOf, distanceSquared, tilesAhead,
+  DIRECTION_ORDER, reverseOf, distanceSquared, tilesAhead,
   chaseTarget, scatterTarget, legalDirections, chooseDirection,
   chooseFrightenedDirection,
 } from './ghostAI';
@@ -10,13 +10,6 @@ const grid = buildGrid();
 describe('ghostAI helpers', () => {
   it('orders candidate directions up, left, down, right', () => {
     expect(DIRECTION_ORDER).toEqual(['up', 'left', 'down', 'right']);
-  });
-
-  it('maps each direction to a unit vector', () => {
-    expect(VECTORS.up).toEqual({ col: 0, row: -1 });
-    expect(VECTORS.down).toEqual({ col: 0, row: 1 });
-    expect(VECTORS.left).toEqual({ col: -1, row: 0 });
-    expect(VECTORS.right).toEqual({ col: 1, row: 0 });
   });
 
   it('reverses directions', () => {

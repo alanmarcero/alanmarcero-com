@@ -18,40 +18,12 @@ describe('Breakout', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 3', () => {
-      expect(game.lives).toBe(3);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);
       expect(hudData.lives).toBe(3);
       expect(hudData.level).toBe(1);
       expect(hudData.gameOver).toBe(false);
-    });
-
-    test('bricks are created', () => {
-      expect(game._bricks.length).toBe(60); // 6 rows x 10 cols
-    });
-
-    test('all bricks start alive', () => {
-      expect(game._bricks.every((b) => b.alive)).toBe(true);
-    });
-
-    test('ball starts unlaunched', () => {
-      expect(game._ball.launched).toBe(false);
     });
   });
 

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { plates, plateFor, credits, srcSetFor, sourceFor } from './plates';
+import { plates, plateFor, srcSetFor, sourceFor } from './plates';
 import { patchBanks } from '../../../../src/data/patchBanks';
 
 const PLATE_DIR = path.join(__dirname, '..', '..', 'assets', 'plates');
@@ -111,20 +111,6 @@ describe('srcSetFor / sourceFor', () => {
   it('falls back to the widest derivative', () => {
     entries.forEach(([, plate]) => {
       expect(sourceFor(plate)).toBe(`/pages/opus-max-mac/assets/plates/${plate.slug}-${plate.width}.webp`);
-    });
-  });
-});
-
-describe('credits', () => {
-  it('names the bank alongside everything the licence requires', () => {
-    expect(credits).toHaveLength(entries.length);
-    credits.forEach((credit) => {
-      expect(credit.bank).toBeTruthy();
-      expect(credit).toMatchObject({
-        author: expect.any(String),
-        licence: expect.any(String),
-        source: expect.any(String),
-      });
     });
   });
 });

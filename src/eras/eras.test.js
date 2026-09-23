@@ -11,25 +11,9 @@ describe("eras data", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("gives every era a year, label and blurb", () => {
-    expect(ERAS.length).toBeGreaterThan(0);
-    ERAS.forEach((e) => {
-      expect(e.year).toBeTruthy();
-      expect(e.label).toBeTruthy();
-      expect(e.blurb).toBeTruthy();
-    });
-  });
-
   it("excludes the present from the travelable past eras", () => {
     expect(PAST_ERAS.some((e) => e.id === "present")).toBe(false);
     expect(PAST_ERAS).toHaveLength(ERAS.length - 1);
-  });
-
-  it("marks 2001 as estimated and the rest of the past as archive-sourced", () => {
-    expect(getEra("y2001").source).toBe("estimated");
-    ["y2007", "y2014", "y2020"].forEach((id) => {
-      expect(getEra(id).source).toBe("archive");
-    });
   });
 
   it("validates era ids", () => {

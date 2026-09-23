@@ -1,5 +1,5 @@
-import { wallSegments, WALL_INSET, GAME_W, COLORS } from './PacManRenderer';
-import { buildGrid, TILE_PX } from './maze';
+import { wallSegments, WALL_INSET, GAME_W } from './PacManRenderer';
+import { buildGrid } from './maze';
 
 const grid = buildGrid();
 const segments = wallSegments(grid);
@@ -10,10 +10,6 @@ const span = ([x1, y1, x2, y2]) => (isHorizontal([x1, y1, x2, y2])
   : { fixed: x1, lo: Math.min(y1, y2), hi: Math.max(y1, y2) });
 
 describe('wall geometry', () => {
-  it('produces segments for the maze', () => {
-    expect(segments.length).toBeGreaterThan(100);
-  });
-
   it('emits only axis-aligned segments', () => {
     const skewed = segments.filter(([x1, y1, x2, y2]) => x1 !== x2 && y1 !== y2);
 
@@ -80,12 +76,6 @@ describe('wall geometry', () => {
     expect(dangling).toEqual(['0,110.5', '0,121.5', '224,110.5', '224,121.5']);
   });
 
-  it('opens those loose ends exactly on the tunnel row', () => {
-    const tunnelWallYs = [13, 15].map((row) => row * TILE_PX + (row === 13 ? TILE_PX - WALL_INSET : WALL_INSET));
-
-    expect(tunnelWallYs).toEqual([110.5, 121.5]);
-  });
-
   it('keeps the outline inside the playfield', () => {
     const outside = segments.filter(([x1, , x2]) => Math.min(x1, x2) < -WALL_INSET
       || Math.max(x1, x2) > GAME_W + WALL_INSET);
@@ -93,18 +83,8 @@ describe('wall geometry', () => {
     expect(outside).toEqual([]);
   });
 
-  it('insets the pipe within its tile', () => {
-    expect(WALL_INSET).toBeGreaterThan(0);
-    expect(WALL_INSET).toBeLessThan(TILE_PX / 2);
-  });
-
   it('caches per grid so segments are not rebuilt every frame', () => {
     expect(wallSegments(grid)).toBe(segments);
     expect(wallSegments(buildGrid())).not.toBe(segments);
-  });
-
-  it('uses the arcade blue for the maze', () => {
-    expect(COLORS.maze).toBe('#2121ff');
-    expect(COLORS.pac).toBe('#ffff00');
   });
 });

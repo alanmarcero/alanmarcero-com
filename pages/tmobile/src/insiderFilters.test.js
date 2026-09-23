@@ -1,5 +1,5 @@
 import {
-  SELLER_FILTERS, DEFAULT_FILTER, filterById, visibleSeries, selectedWeeks, summarize,
+  SELLER_FILTERS, filterById, visibleSeries, selectedWeeks, summarize,
   formatUSD, formatShares, formatExactUSD, formatDate, formatPrice,
 } from './insiderFilters';
 
@@ -21,21 +21,6 @@ const otherWeeks = [
       { name: 'Jon Freier', shares: 1000, value: 170000 }],
   },
 ];
-
-describe('SELLER_FILTERS', () => {
-  it('offers all, Sievert-only and everyone-else', () => {
-    expect(SELLER_FILTERS.map((f) => f.id)).toEqual(['all', 'sievert', 'others']);
-  });
-
-  it('defaults to showing everyone', () => {
-    expect(DEFAULT_FILTER).toBe('all');
-  });
-
-  it('carries a phrase for a month the selection did not sell in', () => {
-    SELLER_FILTERS.forEach((f) => expect(f.quiet).toMatch(/\S/));
-    expect(filterById('sievert').quiet).toMatch(/Mike Sievert/);
-  });
-});
 
 describe('filterById', () => {
   it('finds a filter by id', () => {

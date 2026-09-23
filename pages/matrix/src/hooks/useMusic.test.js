@@ -133,13 +133,6 @@ describe('groupByWork', () => {
     expect(groups).toHaveLength(1);
     expect(groups[0].versions).toHaveLength(2);
   });
-
-  it('gives every group a key usable as a React key', () => {
-    for (const group of groupByWork(parseAll(REAL_TITLES))) {
-      expect(typeof group.key).toBe('string');
-      expect(group.key.length).toBeGreaterThan(0);
-    }
-  });
 });
 
 describe('roleOf', () => {

@@ -170,7 +170,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,817 tests across 128 suites**
+**Total: 1,701 tests across 128 suites**
 
 ## Key Files
 
@@ -336,7 +336,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,817 tests, 128 suites)
+npm test                       # Jest (1,701 tests, 128 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally

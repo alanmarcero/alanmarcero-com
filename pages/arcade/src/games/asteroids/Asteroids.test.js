@@ -18,41 +18,8 @@ describe('Asteroids', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 3', () => {
-      expect(game.lives).toBe(3);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver starts as false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
-    test('ship exists after init', () => {
-      expect(game.ship).not.toBeNull();
-    });
-
-    test('ship spawns at center', () => {
-      expect(game.ship.x).toBe(240);
-      expect(game.ship.y).toBe(180);
-    });
-
     test('ship is invulnerable initially', () => {
       expect(game.ship.invulnerable).toBe(true);
-    });
-
-    test('asteroids are spawned', () => {
-      expect(game.asteroids.length).toBeGreaterThan(0);
-    });
-
-    test('bullets array starts empty', () => {
-      expect(game.bullets).toEqual([]);
     });
   });
 

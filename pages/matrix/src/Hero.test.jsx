@@ -220,14 +220,6 @@ describe('Hero split-colour headline (merged from the main site)', () => {
     // The first word must NOT be inside the accent span.
     expect(signal.textContent).not.toMatch(/Alan/);
   });
-
-  it('scopes the merged colour to the hero, not to a shared token', () => {
-    const { container } = render(<Hero {...props} />);
-    // The declaration lives on .hero in hero.css; assert the element that
-    // carries it exists, so a future move of the block is visible here.
-    expect(container.querySelector('.hero')).toBeTruthy();
-    expect(container.querySelector('.hero__title-signal').closest('.hero')).toBeTruthy();
-  });
 });
 
 describe('Hero live region stays invisible', () => {

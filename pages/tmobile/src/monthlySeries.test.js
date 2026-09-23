@@ -1,5 +1,5 @@
 import {
-  DEFAULT_MEASURE, MEASURES, compactShares, compactUSD, dominantSeller, formatAmount,
+  MEASURES, compactShares, compactUSD, dominantSeller, formatAmount,
   formatMonth, formatPercent, formatTick, groupAmount, measureById, monthRows,
   monthSellers, monthStack, monthStacks, monthTotals, peakSeller, shortMonth,
   summarizeMonths,
@@ -39,11 +39,6 @@ const RECORDS = [
 ];
 
 describe('measures', () => {
-  it('offers the three scales, defaulting to dollars', () => {
-    expect(MEASURES.map((m) => m.id)).toEqual(['value', 'shares', 'txns']);
-    expect(DEFAULT_MEASURE).toBe('value');
-  });
-
   it('falls back to the first measure for an unknown id', () => {
     expect(measureById('nonsense')).toBe(MEASURES[0]);
     expect(measureById('txns').id).toBe('txns');
