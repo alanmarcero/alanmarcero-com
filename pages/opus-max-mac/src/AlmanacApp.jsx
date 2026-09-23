@@ -8,6 +8,7 @@ import Tracklist from './Tracklist';
 import Imprint from './Imprint';
 import usePlaylist from './hooks/usePlaylist';
 import { orbitsFor } from './graphics/orbits';
+import { matchesQuery } from './search';
 import { patchBanks } from '../../../src/data/patchBanks';
 
 /*
@@ -31,12 +32,6 @@ const BODY_LIST = orbitsFor(patchBanks);
 const BODIES = new Map(BODY_LIST.map((body) => [body.bank.name, body]));
 const bodyFor = (bank) => BODIES.get(bank.name);
 
-const matches = (query, ...fields) => {
-  if (!query) return true;
-  const needle = query.toLowerCase();
-  return fields.some((field) => (field || '').toLowerCase().includes(needle));
-};
-
 function AlmanacApp() {
   const [query, setQuery] = useState('');
   // Which ring the orrery lights: the register reports the row being read, and
@@ -45,8 +40,11 @@ function AlmanacApp() {
   const [currentBank, setCurrentBank] = useState(null);
   const { items, loading, error } = usePlaylist();
 
-  const banks = patchBanks.filter((bank) => matches(query, bank.name, bank.description));
-  const tracks = items.filter((track) => matches(query, track.title));
+  const banks = patchBanks.filter((bank) => matchesQuery(query, bank.name, bank.description));
+  const tracks = items.filter((track) => matchesQuery(query, track.title));
+  // Until the log has arrived the page does not know how many releases there
+  // are, so it prints no count at all rather than a zero.
+  const logKnown = !loading && !error;
 
   return (
     <>
@@ -56,7 +54,7 @@ function AlmanacApp() {
         banks={patchBanks}
         bodies={BODY_LIST}
         totalPatches={TOTAL_PATCHES}
-        releaseCount={loading || error ? null : items.length}
+        releaseCount={logKnown ? items.length : null}
         currentBank={currentBank}
       />
 
@@ -65,7 +63,7 @@ function AlmanacApp() {
           query={query}
           onQueryChange={setQuery}
           bankCount={banks.length}
-          trackCount={loading || error ? null : tracks.length}
+          trackCount={logKnown ? tracks.length : null}
         />
 
         <Register
@@ -84,4 +82,3 @@ function AlmanacApp() {
 }
 
 export default AlmanacApp;
-export { TOTAL_PATCHES, bodyFor, matches };

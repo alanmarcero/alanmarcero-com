@@ -3,7 +3,6 @@ import {
   responsePoints,
   frequencyToX,
   decadeTicks,
-  curvePath,
 } from './filterCurve';
 
 describe('magnitudeDb', () => {
@@ -85,11 +84,5 @@ describe('axis', () => {
       .toEqual(['100', '1k', '10k']);
     expect(decadeTicks({ minHz: 500, maxHz: 5000 }).map((t) => t.label))
       .toEqual(['1k']);
-  });
-});
-
-describe('curvePath', () => {
-  it('starts with a move', () => {
-    expect(curvePath(responsePoints({ samples: 3 })).startsWith('M')).toBe(true);
   });
 });

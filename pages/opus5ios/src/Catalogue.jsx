@@ -2,8 +2,7 @@ import Demo from './Demo';
 import WaveTrace from './graphics/WaveTrace.jsx';
 import FaceplatePlan from './graphics/FaceplatePlan';
 import { imageFor, srcSetFor, sourceFor } from './data/synthImages';
-
-const plateNumber = (index) => String(index + 1).padStart(2, '0');
+import { serialNumber, demoCountLegend, demoCopy } from './format';
 
 /**
  * One plate per instrument.
@@ -41,7 +40,7 @@ function Catalogue({ banks, searchQuery }) {
 
         return (
           <article className="entry" key={bank.downloadLink}>
-            <p className="entry__index">{plateNumber(index)}</p>
+            <p className="entry__index">{serialNumber(index)}</p>
 
             <div className="entry__body">
               <h3 className="entry__name">{bank.name}</h3>
@@ -58,11 +57,7 @@ function Catalogue({ banks, searchQuery }) {
                 ) : (
                   <span className="legend">MIDI files</span>
                 )}
-                <span className="legend">
-                  {demos.length
-                    ? `${demos.length} audio demo${demos.length > 1 ? 's' : ''}`
-                    : 'No demo on file'}
-                </span>
+                <span className="legend">{demoCountLegend(demos.length)}</span>
                 <span className="legend legend--blue">Free</span>
               </p>
 
@@ -79,12 +74,7 @@ function Catalogue({ banks, searchQuery }) {
                   <Demo
                     key={videoId}
                     videoId={videoId}
-                    cue={demos.length > 1 ? `Demo ${demoIndex + 1}` : 'Hear it'}
-                    label={
-                      demos.length > 1
-                        ? `Hear ${bank.name}, demo ${demoIndex + 1} of ${demos.length}`
-                        : `Hear ${bank.name}`
-                    }
+                    {...demoCopy(bank.name, demoIndex, demos.length)}
                   />
                 ))}
               </div>

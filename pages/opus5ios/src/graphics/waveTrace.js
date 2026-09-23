@@ -12,6 +12,7 @@
  */
 
 import { makeRandom, between, intBetween } from './seed';
+import { polylinePath } from './svgPath';
 
 /**
  * The harmonic recipe for a seed: partials 1..n with decaying amplitudes
@@ -82,11 +83,6 @@ export const wavePoints = ({
   }));
 };
 
-/** An SVG path `d` through the points. */
-export const linePath = (points) => points
-  .map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`)
-  .join(' ');
-
 /**
  * The same trace closed against the midline and mirrored below it — the
  * printed-waveform silhouette a release gets, rather than the single-stroke
@@ -94,10 +90,8 @@ export const linePath = (points) => points
  */
 export const silhouettePath = (points, height) => {
   const midline = height / 2;
-  const top = points
-    .map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`);
   const bottom = [...points]
     .reverse()
     .map(({ x, y }) => `L${x.toFixed(2)} ${(2 * midline - y).toFixed(2)}`);
-  return `${top.join(' ')} ${bottom.join(' ')} Z`;
+  return `${polylinePath(points)} ${bottom.join(' ')} Z`;
 };

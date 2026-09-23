@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { responsePoints, curvePath, decadeTicks, frequencyToX } from './filterCurve';
+import { responsePoints, decadeTicks, frequencyToX } from './filterCurve';
+import { polylinePath } from './svgPath';
 
 const WIDTH = 1200;
 const HEIGHT = 56;
@@ -17,7 +18,7 @@ const HEIGHT = 56;
  */
 function FilterRule({ cutoff = 900, q = 4.5, label }) {
   const { path, ticks, cutoffX } = useMemo(() => ({
-    path: curvePath(responsePoints({ width: WIDTH, height: HEIGHT, cutoff, q, samples: 300 })),
+    path: polylinePath(responsePoints({ width: WIDTH, height: HEIGHT, cutoff, q, samples: 300 })),
     ticks: decadeTicks({ width: WIDTH }),
     cutoffX: frequencyToX(cutoff, { width: WIDTH }),
   }), [cutoff, q]);
