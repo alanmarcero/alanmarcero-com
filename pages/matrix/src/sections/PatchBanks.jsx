@@ -2,6 +2,7 @@ import './patchbanks.css';
 import EnvelopeField from '../graphics/EnvelopeField';
 import YouTubeFacade from '../YouTubeFacade';
 import { imageFor, photoBrightnessFor } from '../data/synthImages';
+import { count, demoCopy } from '../lib/format';
 
 /**
  * A bank's name reduced to something usable as a DOM id. Names carry
@@ -121,123 +122,111 @@ function PatchBanks({ banks, searchQuery }) {
             data-coverage={coverageBucketOf(bank)}
             aria-labelledby={headingId}
           >
-          <div className="plate__field">
-            <EnvelopeField
-              seed={bank.name}
-              count={bank.count || 64}
-              aspect={4.2}
-              cellWidth={9}
-              cellHeight={7}
-              gap={2}
-            />
-          </div>
-
-          <div className="shell plate__body entry entry--pictured">
-            {image ? (
-              <figure
-                className="entry__photo"
-                style={{ '--photo-brightness': photoBrightness }}
-              >
-                <img
-                  src={`/synths/${image.slug}-960.webp`}
-                  srcSet={`/synths/${image.slug}-480.webp 480w, /synths/${image.slug}-960.webp 960w`}
-                  sizes="(max-width: 46rem) 100vw, 20rem"
-                  width={image.width}
-                  height={image.height}
-                  alt={image.alt}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-            ) : (
-              /* No photograph exists for this entry — the SH-01A has none
-                 licensed for reuse, CODEX is a plugin, the MIDI bank is not
-                 an instrument. Rather than leaving a hole and letting the
-                 title jump to the gutter, the bank's own envelope field
-                 steps forward and becomes the portrait. */
-              <figure className="entry__photo entry__photo--field" aria-hidden="true">
-                <EnvelopeField
-                  seed={`${bank.name} portrait`}
-                  count={bank.count || 48}
-                  aspect={1.7}
-                  cellWidth={10}
-                  cellHeight={8}
-                  gap={3}
-                />
-              </figure>
-            )}
-
-            <h3 id={headingId} className="entry__name">{bank.name}</h3>
-            <p className="entry__desc">{bank.description}</p>
-
-            {/* The machines this bank loads onto, as data rather than prose.
-                A real list, because it is one — and labelled, so a screen
-                reader hears "fits 5 instruments" before the names instead of
-                five bare nouns after a paragraph. Entries with no
-                instruments (the MIDI bank) render nothing at all. */}
-            {coverage > 0 && (
-              <div className="entry__fits">
-                <span className="legend entry__fits-label" id={`${headingId}-fits`}>
-                  Fits {coverage} {coverage === 1 ? 'instrument' : 'instruments'}
-                </span>
-                <ul className="entry__instruments" aria-labelledby={`${headingId}-fits`}>
-                  {bank.instruments.map((instrument) => (
-                    <li key={instrument} className="entry__instrument">{instrument}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Not every entry is counted in patches — the MIDI bank has no
-                count, and a bare "patches" label under an empty readout is
-                worse than no readout at all. */}
-            {bank.count ? (
-              <p className="entry__meta">
-                <span className="readout entry__count">{bank.count}</span>
-                <span className="legend entry__unit">patches</span>
-              </p>
-            ) : (
-              <p className="entry__meta">
-                <span className="legend entry__unit">MIDI files</span>
-              </p>
-            )}
-
-            <div className="entry__actions">
-              <a
-                className="action"
-                href={bank.downloadLink}
-                download
-                /* WCAG 2.5.3 Label in Name: the accessible name must
-                   CONTAIN the visible text. "Download the ${bank.name}
-                   bank" splits the visible "Download the bank" around the
-                   instrument, so a voice-control user saying "click
-                   Download the bank" matches nothing. Suffixing keeps the
-                   visible string intact and still gives all eleven links
-                   distinct names. */
-                aria-label={`Download the bank — ${bank.name}`}
-              >
-                Download the bank
-              </a>
-
-              {/* `cue` is the visible text and `label` becomes aria-label,
-                  which OVERRIDES it — so every label here begins with its own
-                  cue verbatim. The previous pair ("Hear it" / "Hear <name>")
-                  dropped the word "it" from the accessible name and failed
-                  WCAG 2.5.3 on all four single-demo banks. */}
-              {(bank.audioDemo || []).map((videoId, demoIndex, demos) => (
-                <YouTubeFacade
-                  key={videoId}
-                  videoId={videoId}
-                  cue={demos.length > 1 ? `Demo ${demoIndex + 1}` : 'Hear it'}
-                  label={
-                    demos.length > 1
-                      ? `Demo ${demoIndex + 1} of ${demos.length} — ${bank.name}`
-                      : `Hear it — ${bank.name}`
-                  }
-                />
-              ))}
+            <div className="plate__field">
+              <EnvelopeField
+                seed={bank.name}
+                count={bank.count || 64}
+                aspect={4.2}
+                cellWidth={9}
+                cellHeight={7}
+                gap={2}
+              />
             </div>
-          </div>
+
+            <div className="shell plate__body entry entry--pictured">
+              {image ? (
+                <figure
+                  className="entry__photo"
+                  style={{ '--photo-brightness': photoBrightness }}
+                >
+                  <img
+                    src={`/synths/${image.slug}-960.webp`}
+                    srcSet={`/synths/${image.slug}-480.webp 480w, /synths/${image.slug}-960.webp 960w`}
+                    sizes="(max-width: 46rem) 100vw, 20rem"
+                    width={image.width}
+                    height={image.height}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              ) : (
+                /* No photograph exists for this entry — the SH-01A has none
+                   licensed for reuse, CODEX is a plugin, the MIDI bank is not
+                   an instrument. Rather than leaving a hole and letting the
+                   title jump to the gutter, the bank's own envelope field
+                   steps forward and becomes the portrait. */
+                <figure className="entry__photo entry__photo--field" aria-hidden="true">
+                  <EnvelopeField
+                    seed={`${bank.name} portrait`}
+                    count={bank.count || 48}
+                    aspect={1.7}
+                    cellWidth={10}
+                    cellHeight={8}
+                    gap={3}
+                  />
+                </figure>
+              )}
+
+              <h3 id={headingId} className="entry__name">{bank.name}</h3>
+              <p className="entry__desc">{bank.description}</p>
+
+              {/* The machines this bank loads onto, as data rather than prose.
+                  A real list, because it is one — and labelled, so a screen
+                  reader hears "fits 5 instruments" before the names instead of
+                  five bare nouns after a paragraph. Entries with no
+                  instruments (the MIDI bank) render nothing at all. */}
+              {coverage > 0 && (
+                <div className="entry__fits">
+                  <span className="legend entry__fits-label" id={`${headingId}-fits`}>
+                    Fits {count(coverage, 'instrument')}
+                  </span>
+                  <ul className="entry__instruments" aria-labelledby={`${headingId}-fits`}>
+                    {bank.instruments.map((instrument) => (
+                      <li key={instrument} className="entry__instrument">{instrument}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Not every entry is counted in patches — the MIDI bank has no
+                  count, and a bare "patches" label under an empty readout is
+                  worse than no readout at all. */}
+              {bank.count ? (
+                <p className="entry__meta">
+                  <span className="readout entry__count">{bank.count}</span>
+                  <span className="legend entry__unit">patches</span>
+                </p>
+              ) : (
+                <p className="entry__meta">
+                  <span className="legend entry__unit">MIDI files</span>
+                </p>
+              )}
+
+              <div className="entry__actions">
+                <a
+                  className="action"
+                  href={bank.downloadLink}
+                  download
+                  /* WCAG 2.5.3 Label in Name: the accessible name must
+                     CONTAIN the visible text. "Download the ${bank.name}
+                     bank" splits the visible "Download the bank" around the
+                     instrument, so a voice-control user saying "click
+                     Download the bank" matches nothing. Suffixing keeps the
+                     visible string intact and still gives all eleven links
+                     distinct names. */
+                  aria-label={`Download the bank — ${bank.name}`}
+                >
+                  Download the bank
+                </a>
+
+                {/* Every label begins with its own visible cue — see demoCopy. */}
+                {(bank.audioDemo || []).map((videoId, demoIndex, demos) => {
+                  const { cue, label } = demoCopy(bank.name, demoIndex, demos.length);
+                  return <YouTubeFacade key={videoId} videoId={videoId} cue={cue} label={label} />;
+                })}
+              </div>
+            </div>
           </article>
         );
       })}

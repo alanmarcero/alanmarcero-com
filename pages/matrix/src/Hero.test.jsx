@@ -5,10 +5,9 @@ import { render, screen, act } from '@testing-library/react';
 import Hero, {
   describeResults,
   visibleResults,
-  count,
-  pluralize,
   ANNOUNCE_DELAY_MS,
 } from './Hero';
+import { count, pluralize } from './lib/format';
 
 const baseProps = {
   totalPatches: 1148,

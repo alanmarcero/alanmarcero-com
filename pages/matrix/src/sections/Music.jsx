@@ -3,6 +3,7 @@ import SpectrumBars from '../graphics/SpectrumBars';
 import YouTubeFacade from '../YouTubeFacade';
 import useMusic, { parseRelease, groupByWork } from '../hooks/useMusic';
 import { matchesQuery } from '../lib/catalog';
+import { ordinal, pluralize } from '../lib/format';
 import './music.css';
 
 const PENDING_WORKS = 3;
@@ -72,12 +73,12 @@ function Music({ searchQuery, onVisibleCountChange }) {
         {settled && takeCount > 0 && (
           <p className="section-stat">
             <span className="readout">{takeCount}</span>
-            {takeCount === 1 ? ' release' : ' releases'}
+            {` ${pluralize(takeCount, 'release')}`}
             {workCount !== takeCount && (
               <>
                 {' across '}
                 <span className="readout">{workCount}</span>
-                {workCount === 1 ? ' work' : ' works'}
+                {` ${pluralize(workCount, 'work')}`}
               </>
             )}
             , made with the same patches.
@@ -94,7 +95,7 @@ function Music({ searchQuery, onVisibleCountChange }) {
                 <li key={row} className="work work--pending">
                   <div className="work__id">
                     <p className="work__index">
-                      <span className="work__num">{String(row + 1).padStart(2, '0')}</span>
+                      <span className="work__num">{ordinal(row)}</span>
                       <span className="work__artists">Loading</span>
                     </p>
                     <h3 className="work__title">Loading release</h3>
@@ -142,7 +143,7 @@ function Music({ searchQuery, onVisibleCountChange }) {
                       list says "this is a catalogue of six things" in a way six
                       unnumbered headings do not. */}
                   <p className="work__index">
-                    <span className="work__num">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="work__num">{ordinal(index)}</span>
                     {group.artists && (
                       <span className="work__artists">{group.artists}</span>
                     )}

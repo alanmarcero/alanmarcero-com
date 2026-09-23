@@ -31,6 +31,17 @@ const ORIGINAL = /^original(\s+mix)?$/i;
 const lower = (value) => (value || '').toLowerCase();
 
 /**
+ * Whose hands were on a take. `remixer` is the interesting one: someone
+ * else's track that he reworked, which is a different claim from his own
+ * release.
+ */
+export function roleOf(version, isOriginal) {
+  if (lower(version).includes(SELF)) return 'remixer';
+  if (!isOriginal) return 'remixed';
+  return 'original';
+}
+
+/**
  * Split one release title into `{ artists, work, version }` and name the
  * role it plays.
  *
@@ -56,12 +67,6 @@ export function parseRelease(item) {
 
   const isOriginal = !version || ORIGINAL.test(version);
 
-  // Whose hands were on it. `remixer` is the interesting one: someone else's
-  // track that he reworked, which is a different claim from his own release.
-  let role = 'original';
-  if (lower(version).includes(SELF)) role = 'remixer';
-  else if (!isOriginal) role = 'remixed';
-
   return {
     ...item,
     title,
@@ -69,7 +74,7 @@ export function parseRelease(item) {
     work: work || title || 'Untitled',
     version,
     isOriginal,
-    role,
+    role: roleOf(version, isOriginal),
   };
 }
 
