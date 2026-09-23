@@ -7,7 +7,7 @@ GENERATOR: one photograph per card on /neworleans-tours.
     python3 scripts/fetch-nola-tour-photos.py cajun-encounters gray-line-swamp
 
 Writes 960px-wide JPEGs into public/neworleans-tours/<slug>.jpg, matching the
-size and format the base /neworleans page already uses in public/neworleans-do/.
+size and format the base /neworleans page already uses in pages/neworleans/assets/do/.
 
 Where the photographs come from
 -------------------------------
@@ -46,14 +46,14 @@ meant to be filled by hand rather than approximated.
 from __future__ import annotations
 
 import argparse
+import http.client
 import io
 import os
 import re
 import sys
-import urllib.error
 import urllib.request
 from html.parser import HTMLParser
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 
 from PIL import Image
 
@@ -64,6 +64,12 @@ TARGET_W = 960
 MIN_W, MIN_H = 480, 300   # 500px is all some operators have ever uploaded
 MAX_ASPECT = 2.6          # wider than this is a banner or a wordmark
 MIN_ASPECT = 0.55         # taller than this is a phone screenshot or a poster
+
+# Everything a candidate image can fail with on the way in: the network
+# (URLError and timeouts are OSErrors), a truncated body, or bytes Pillow cannot
+# decode or refuses to (UnidentifiedImageError is an OSError too).
+IMAGE_FETCH_ERRORS = (OSError, ValueError, http.client.HTTPException,
+                      Image.DecompressionBombError)
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -200,11 +206,11 @@ class Collector(HTMLParser):
         self.candidates: list[tuple[int, str]] = []   # (tier, absolute url)
 
     def _add(self, tier: int, url: str | None) -> None:
-        if not url:
+        # srcset-style values carry a descriptor after the URL; keep the URL.
+        parts = (url or "").split()
+        if not parts or parts[0].startswith("data:"):
             return
-        url = url.strip().split()[0] if " " in url.strip() else url.strip()
-        if url.startswith("data:") or not url:
-            return
+        url = parts[0]
         absolute = urljoin(self.base, url)
         if not absolute.startswith(("http://", "https://")):
             return
@@ -299,33 +305,40 @@ def usable(im: Image.Image) -> bool:
     return not looks_like_artwork(im)
 
 
+def load_image(url: str, timeout: int = 25) -> Image.Image:
+    im = Image.open(io.BytesIO(get(url, timeout=timeout)))
+    im.load()
+    return im
+
+
+def ranked_candidates(candidates: list[tuple[int, str]]) -> list[tuple[int, str]]:
+    """First occurrence of each image (query string ignored), best tier first."""
+    seen: set[str] = set()
+    ordered = []
+    for tier, url in candidates:
+        base = url.split("?")[0]
+        if base in seen:
+            continue
+        seen.add(base)
+        ordered.append((tier, url))
+    return sorted(ordered, key=lambda t: t[0])
+
+
 def best_image(page_url: str, verbose: bool = False) -> Image.Image | None:
     try:
         html = get(page_url).decode("utf-8", "replace")
-    except (urllib.error.URLError, urllib.error.HTTPError, OSError) as exc:
+    except (OSError, http.client.HTTPException) as exc:
         print(f"    page fetch failed: {exc}")
         return None
 
     parser = Collector(page_url)
     parser.feed(html)
 
-    seen: set[str] = set()
-    ordered = []
-    for tier, url in parser.candidates:
-        base = url.split("?")[0]
-        if base in seen:
-            continue
-        seen.add(base)
-        ordered.append((tier, url))
-    ordered.sort(key=lambda t: t[0])
-
     best: tuple[int, int, Image.Image] | None = None
-    for tier, url in ordered[:28]:
+    for tier, url in ranked_candidates(parser.candidates)[:28]:
         try:
-            raw = get(url, timeout=20)
-            im = Image.open(io.BytesIO(raw))
-            im.load()
-        except Exception as exc:                     # noqa: BLE001 - any decode failure is just a skip
+            im = load_image(url, timeout=20)
+        except IMAGE_FETCH_ERRORS as exc:
             if verbose:
                 print(f"    skip {url[:70]}: {exc}")
             continue
@@ -334,9 +347,10 @@ def best_image(page_url: str, verbose: bool = False) -> Image.Image | None:
                 print(f"    reject {im.size} {url[:70]}")
             continue
         area = im.size[0] * im.size[1]
-        # tier first, then area: the biggest file on a Squarespace page is
-        # usually a background texture, so size only breaks ties within a tier.
-        if best is None or (tier, area) < (best[0], -1) or (tier == best[0] and area > best[1]):
+        # Candidates arrive best tier first, so a later one only wins on area
+        # within the same tier: the biggest file on a Squarespace page is
+        # usually a background texture.
+        if best is None or (tier == best[0] and area > best[1]):
             best = (tier, area, im)
             if tier == 0:
                 break
@@ -350,6 +364,23 @@ def save(im: Image.Image, path: str) -> tuple[int, int]:
         im = im.resize((TARGET_W, round(h * TARGET_W / w)), Image.LANCZOS)
     im.save(path, "JPEG", quality=84, optimize=True, progressive=True)
     return im.size
+
+
+def find_photo(slug: str, pages: list[str], verbose: bool) -> Image.Image | None:
+    """The hand-resolved image if there is one, else the best any page offers."""
+    if slug in DIRECT:
+        url, why = DIRECT[slug]
+        print(f"      direct ({why})")
+        try:
+            return load_image(url)
+        except IMAGE_FETCH_ERRORS as exc:
+            print(f"      direct failed: {exc}")
+    for page in pages:
+        print(f"      try {page}")
+        im = best_image(page, verbose)
+        if im is not None:
+            return im
+    return None
 
 
 def main() -> int:
@@ -374,21 +405,7 @@ def main() -> int:
             print(f"  · {slug}: already present")
             continue
         print(f"  → {slug} ({label})")
-        im = None
-        if slug in DIRECT:
-            url, why = DIRECT[slug]
-            print(f"      direct ({why})")
-            try:
-                im = Image.open(io.BytesIO(get(url)))
-                im.load()
-            except Exception as exc:                  # noqa: BLE001
-                print(f"      direct failed: {exc}")
-                im = None
-        for page in pages if im is None else []:
-            print(f"      try {page}")
-            im = best_image(page, args.verbose)
-            if im is not None:
-                break
+        im = find_photo(slug, pages, args.verbose)
         if im is None:
             print("    MISS - no usable photograph")
             misses.append(slug)

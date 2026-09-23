@@ -96,6 +96,25 @@ def recover_close(symbol, iso, tz_offset):
     return get(url)['chart']['result'][0]['meta'].get('chartPreviousClose')
 
 
+def repair_null_closes(symbol, bars, tz_offset, recover, log):
+    """(bars with every null close recovered, the dates that were repaired).
+    Raises HoleInSeries for a close that cannot be recovered or is implausible."""
+    repaired_bars = list(bars)
+    repaired = []
+    for i, (iso, close) in enumerate(repaired_bars):
+        if close is not None:
+            continue
+        value = recover(symbol, iso, tz_offset)
+        before = repaired_bars[i - 1][1] if i > 0 else None
+        after = repaired_bars[i + 1][1] if i + 1 < len(repaired_bars) else None
+        if value is None or not plausible(value, before, after):
+            raise HoleInSeries(f'{symbol}: no trustworthy close for {iso} (recovered {value})')
+        repaired_bars[i] = (iso, value)
+        repaired.append(iso)
+        log(f'{symbol} {iso}: null close recovered as {value:.2f}')
+    return repaired_bars, repaired
+
+
 def fetch_daily_closes(symbol, log=print):
     """
     ([[date, close], …], info) for every completed session Yahoo holds.
@@ -108,19 +127,7 @@ def fetch_daily_closes(symbol, log=print):
     bars = completed_bars(result['timestamp'], result['indicators']['quote'][0]['close'],
                           tz_offset, int(time.time()),
                           meta['currentTradingPeriod']['regular']['end'])
-
-    repaired = []
-    for i, (iso, close) in enumerate(bars):
-        if close is not None:
-            continue
-        value = recover_close(symbol, iso, tz_offset)
-        before = bars[i - 1][1] if i > 0 else None
-        after = bars[i + 1][1] if i + 1 < len(bars) else None
-        if value is None or not plausible(value, before, after):
-            raise HoleInSeries(f'{symbol}: no trustworthy close for {iso} (recovered {value})')
-        bars[i] = (iso, value)
-        repaired.append(iso)
-        log(f'{symbol} {iso}: null close recovered as {value:.2f}')
+    bars, repaired = repair_null_closes(symbol, bars, tz_offset, recover_close, log)
 
     rows = [[iso, round(close, 2)] for iso, close in bars]
     splits = sorted((result.get('events') or {}).get('splits', {}).values(),

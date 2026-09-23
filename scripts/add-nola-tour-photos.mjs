@@ -1,18 +1,19 @@
 #!/usr/bin/env node
-/* Put one photograph at the head of every .tcard on neworleans-tours.html.
+/* Put one photograph at the head of every .tcard on pages/neworleans/tours.html.
    Idempotent: a card that already carries a .tphoto is left alone, so this can
    be re-run after new cards are added.
 
-   Run: node scripts/add-nola-tour-photos.js
-   Then: node scripts/check-nola-tours.js
+   Run: node scripts/add-nola-tour-photos.mjs
+   Then: node scripts/check-nola-tours.mjs
 
    PHOTOS maps the card's .tname text (as it appears in the HTML, entities and
    curly apostrophes included) to an image path and the emoji to show if the
    image ever 404s. Anything unmapped is reported and left without a photo
    rather than given a stand-in — a generic swamp shot on a food-tour card is
    worse than no shot, because it reads as evidence. */
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const T = '/neworleans-tours';
 const D = '/neworleans-do';
@@ -62,54 +63,20 @@ const PHOTOS = {
   'Private Chauffeured Swamp &amp; Dining Day for 4': [`${T}/cajun-encounters.jpg`, '🚐'],
 };
 
-const file = path.join(__dirname, '..', 'neworleans-tours.html');
-let html = fs.readFileSync(file, 'utf8');
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PAGE = path.join(ROOT, 'pages', 'neworleans', 'tours.html');
+const PUBLIC_DIR = path.join(ROOT, 'public');
 
-/* every photo path must exist on disk before it is written into the page */
-const publicDir = path.join(__dirname, '..', 'public');
-const missingFiles = [...new Set(Object.values(PHOTOS).map(([p]) => p))]
-  .filter((p) => !fs.existsSync(path.join(publicDir, p.replace(/^\//, ''))));
-if (missingFiles.length) {
-  console.error('missing image files:\n' + missingFiles.map((m) => `  ✗ public${m}`).join('\n'));
-  process.exit(1);
-}
+/* The badge group is [^<]* rather than [\s\S]*? on purpose. A lazy
+   any-character group still expands on backtracking, so on a re-run it would
+   grow from an ALREADY-photographed card's opening tag all the way to the
+   next unphotographed card's .tnum -- and since the swallowed span carries
+   the word "tphoto", the idempotence guard below then skipped a card that
+   genuinely had no photo. Badge text contains no tags, so [^<]* is both
+   correct and unable to cross a card boundary. */
+const CARD_HEAD = /(<div class="tcard[^"]*"[^>]*>\s*)((?:<span class="badge-top"[^>]*>[^<]*<\/span>\s*)?)(<div>\s*)(<span class="tnum">)/g;
 
-let added = 0;
-const unmapped = [];
-
-/* Insert the photo as the first child of the card's first inner <div>, i.e.
-   immediately before the .tnum chip. The CSS pulls it out to the card edges
-   with negative margins, the same trick .et-photo uses on the base page. */
-html = html.replace(
-  /* The badge group is [^<]* rather than [\s\S]*? on purpose. A lazy
-     any-character group still expands on backtracking, so on a re-run it would
-     grow from an ALREADY-photographed card's opening tag all the way to the
-     next unphotographed card's .tnum -- and since the swallowed span carries
-     the word "tphoto", the idempotence guard below then skipped a card that
-     genuinely had no photo. Badge text contains no tags, so [^<]* is both
-     correct and unable to cross a card boundary. */
-  /(<div class="tcard[^"]*"[^>]*>\s*)((?:<span class="badge-top"[^>]*>[^<]*<\/span>\s*)?)(<div>\s*)(<span class="tnum">)/g,
-  (match, open, badge, innerOpen, tnum, offset) => {
-    /* The offset argument, NOT html.indexOf(match). Card markup repeats
-       verbatim -- every plain card opens with the same three lines -- so
-       indexOf returns the FIRST such card every time and twelve cards
-       silently inherited the ninth card's photograph. */
-    const after = html.slice(offset + match.length);
-    const nameMatch = after.match(/class="tname">([\s\S]*?)<\/div>/);
-    const name = nameMatch ? nameMatch[1].trim() : null;
-    if (!name || !PHOTOS[name]) {
-      if (name) unmapped.push(name);
-      return match;
-    }
-    if (match.includes('tphoto')) return match;
-    const [src, emoji] = PHOTOS[name];
-    added++;
-    return `${open}${badge}${innerOpen}<span class="tphoto has-img" style="background-image:url(${src})" role="presentation"><span class="tph-emoji">${emoji}</span></span>\n          ${tnum}`;
-  }
-);
-
-if (html.includes('class="tphoto')) {
-  const css = `  .tcard .tphoto{position:relative;display:block;height:168px;margin:-1.1rem -1.25rem .85rem;
+const PHOTO_CSS = `  .tcard .tphoto{position:relative;display:block;height:168px;margin:-1.1rem -1.25rem .85rem;
     border-radius:14px 14px 0 0;background:linear-gradient(135deg,var(--brass-soft),var(--green-soft));
     background-size:cover;background-position:center;overflow:hidden}
   .tcard .tphoto .tph-emoji{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;opacity:.45}
@@ -118,17 +85,60 @@ if (html.includes('class="tphoto')) {
     background:linear-gradient(180deg,transparent,rgba(10,14,8,.28))}
   @media (max-width:520px){.tcard .tphoto{height:140px}}
 `;
-  if (!html.includes('.tcard .tphoto{')) {
-    html = html.replace(
-      /(  \.tcard \.tnum\{)/,
-      `${css}$1`
-    );
+
+export const missingPhotoFiles = (photos, publicDir) =>
+  [...new Set(Object.values(photos).map(([src]) => src))]
+    .filter((src) => !fs.existsSync(path.join(publicDir, src.replace(/^\//, ''))));
+
+const photoSpan = (src, emoji) =>
+  `<span class="tphoto has-img" style="background-image:url(${src})" role="presentation"><span class="tph-emoji">${emoji}</span></span>`;
+
+/* Insert the photo as the first child of the card's first inner <div>, i.e.
+   immediately before the .tnum chip. The CSS pulls it out to the card edges
+   with negative margins, the same trick .et-photo uses on the base page. */
+export function insertPhotos(html, photos) {
+  let added = 0;
+  const unmapped = [];
+  const updated = html.replace(CARD_HEAD, (match, open, badge, innerOpen, tnum, offset) => {
+    /* The offset argument, NOT html.indexOf(match). Card markup repeats
+       verbatim -- every plain card opens with the same three lines -- so
+       indexOf returns the FIRST such card every time and twelve cards
+       silently inherited the ninth card's photograph. */
+    const after = html.slice(offset + match.length);
+    const nameMatch = after.match(/class="tname">([\s\S]*?)<\/div>/);
+    const name = nameMatch ? nameMatch[1].trim() : null;
+    if (!name) return match;
+    if (!photos[name]) {
+      unmapped.push(name);
+      return match;
+    }
+    if (match.includes('tphoto')) return match;
+    const [src, emoji] = photos[name];
+    added++;
+    return `${open}${badge}${innerOpen}${photoSpan(src, emoji)}\n          ${tnum}`;
+  });
+  return { html: updated, added, unmapped: [...new Set(unmapped)] };
+}
+
+export function ensurePhotoCss(html) {
+  if (!html.includes('class="tphoto') || html.includes('.tcard .tphoto{')) return html;
+  return html.replace(/( {2}\.tcard \.tnum\{)/, `${PHOTO_CSS}$1`);
+}
+
+function main() {
+  const missingFiles = missingPhotoFiles(PHOTOS, PUBLIC_DIR);
+  if (missingFiles.length) {
+    console.error('missing image files:\n' + missingFiles.map((m) => `  ✗ public${m}`).join('\n'));
+    process.exit(1);
+  }
+
+  const { html, added, unmapped } = insertPhotos(fs.readFileSync(PAGE, 'utf8'), PHOTOS);
+  fs.writeFileSync(PAGE, ensurePhotoCss(html));
+  console.log(`photos added: ${added}`);
+  if (unmapped.length) {
+    console.log('cards with no mapped photo (add them to PHOTOS):');
+    unmapped.forEach((name) => console.log(`  ✗ ${name}`));
   }
 }
 
-fs.writeFileSync(file, html);
-console.log(`photos added: ${added}`);
-if (unmapped.length) {
-  console.log('cards with no mapped photo (add them to PHOTOS):');
-  [...new Set(unmapped)].forEach((n) => console.log(`  ✗ ${n}`));
-}
+if (process.argv[1] === fileURLToPath(import.meta.url)) main();
