@@ -37,9 +37,8 @@ const TOUCH_ALIASES = { fire2: 'secondary' };
 
 // Timed powers that simply run down to zero each frame.
 const DECAYING_TIMERS = [
-  '_laserTimer', '_homingTimer', '_overchargeTimer', '_focusTimer', '_chainTimer',
-  '_reflectTimer', '_swarmTimer', '_vortexTimer', '_surgeTimer', '_echoTimer',
-  '_orbitTimer', '_chargeTimer',
+  '_laserTimer', '_homingTimer', '_focusTimer', '_chainTimer',
+  '_vortexTimer', '_surgeTimer', '_chargeTimer',
 ];
 
 // Powerups that only extend a timer and pay out: [timer field, seconds, points].
@@ -48,15 +47,11 @@ const TIMED_POWERUPS = {
   homing: ['_homingTimer', 11, 165],
   focus: ['_focusTimer', 12, 150],
   chain: ['_chainTimer', 14, 175],
-  reflect: ['_reflectTimer', 10, 160],
   vortex: ['_vortexTimer', 8, 155],
-  echo: ['_echoTimer', 6, 145],
   charge: ['_chargeTimer', 1, 170],
 };
 
-// What the spawner actually drops. 'speed', 'overcharge', 'reflect', 'swarm',
-// 'echo' and 'orbit' still work when applied but are left out to keep the
-// field readable.
+// What the spawner drops, curated to 12 so each type stays readable.
 const POWERUP_POOL = ['double', 'shield', 'pulse', 'option', 'laser', 'bomb', 'focus', 'nova',
   'homing', 'chain', 'vortex', 'charge'];
 
@@ -112,8 +107,6 @@ export class LifePulse {
       vy: 0,
       alive: true,
       invuln: 0,
-      speedMul: 1,
-      speedTimer: 0,
     };
 
     this._bullets = [];
@@ -134,19 +127,14 @@ export class LifePulse {
     this._grazeCount = 0;
     this._kills = 0;
 
-    this._powerLevel = 0;       // 0 = single, 1 = double, 2 = spread, 3 = overcharge
+    this._powerLevel = 0;       // 0 = single, 1 = double, 2 = spread
     this._powerTimer = 0;
     this._laserTimer = 0;       // piercing primary fire
     this._homingTimer = 0;      // bullets seek targets
-    this._overchargeTimer = 0;  // max power + fast fire, stacking laser and homing
     this._focusTimer = 0;       // tighter hitbox, wider graze
     this._chainTimer = 0;       // chained kills pay more and combos decay slower
-    this._reflectTimer = 0;     // enemy bullets that hit are fired back
-    this._swarmTimer = 0;       // periodic friendly mini-parasites
     this._vortexTimer = 0;      // pulls enemies in and amplifies kill score
     this._surgeTimer = 0;       // post-boss difficulty ramp for an endless feel
-    this._echoTimer = 0;        // extra trailing shot per volley
-    this._orbitTimer = 0;
     this._chargeTimer = 0;      // next primary is one big piercing blast
     this._pulseStock = 0;       // banked boosted Life Pulses
     this._pulseCharge = 35;     // meter 0-100; full makes the next pulse boosted
@@ -229,7 +217,6 @@ export class LifePulse {
     this._updateOptions(dt);
     this._updateCombo(dt);
     this._checkGraze();
-    this._updateSwarm(dt);
 
     this._spawnEnemies(dt);
     this._updateBoss(dt);
@@ -289,13 +276,9 @@ export class LifePulse {
   _movePlayer(dt) {
     const p = this._player;
 
-    p.speedTimer -= dt;
-    const speedMul = (p.speedTimer > 0) ? 1.38 : 1.0;
-    p.speedMul = speedMul;
-
     const accel = 1680;
     const friction = 8.5;
-    const maxSpeed = 290 * speedMul;
+    const maxSpeed = 290;
 
     let ax = 0, ay = 0;
     if (this._keys.left) ax -= 1;
@@ -338,8 +321,7 @@ export class LifePulse {
 
   _updatePrimaryFire(dt) {
     this._fireCooldown -= dt;
-    let fireRate = this._powerLevel >= 1 ? 0.052 : 0.095;
-    if (this._overchargeTimer > 0) fireRate = 0.034;
+    const fireRate = this._powerLevel >= 1 ? 0.052 : 0.095;
     if (this._keys.fire && this._fireCooldown <= 0) {
       this._fireCooldown = fireRate;
       this._shoot();
@@ -391,7 +373,7 @@ export class LifePulse {
     const speed = piercing ? BULLET_SPEED * 1.2 : BULLET_SPEED;
     const life = piercing ? 2.5 : 1.65;
     const r = piercing ? BULLET_HIT_R * 1.3 : BULLET_HIT_R;
-    const homing = (this._homingTimer > 0 || this._overchargeTimer > 0);
+    const homing = this._homingTimer > 0;
 
     this._bullets.push({
       x: baseX, y: baseY,
@@ -419,21 +401,6 @@ export class LifePulse {
           homing,
         });
       }
-    }
-
-    if (this._echoTimer > 0) {
-      this._echoTimer = Math.max(0, this._echoTimer - 1.5);
-      this._bullets.push({
-        x: baseX + 4, y: baseY,
-        vx: speed * 0.5,
-        vy: (Math.random() - 0.5) * 30,
-        r: r * 0.8,
-        life: life * 0.75,
-        pierce: piercing,
-        laser: piercing,
-        homing,
-        echo: true,
-      });
     }
   }
 
@@ -1199,7 +1166,7 @@ export class LifePulse {
 
   _checkCollisions() {
     this._collideBulletsWithEnemies();
-    if (this._overchargeTimer > 0 || this._laserTimer > 0) this._cancelEnemyBullets();
+    if (this._laserTimer > 0) this._cancelEnemyBullets();
 
     const playerHitR = this._playerHitRadius();
     if (this._player.alive && this._player.invuln <= 0) this._collideEnemyBulletsWithPlayer(playerHitR);
@@ -1253,7 +1220,7 @@ export class LifePulse {
     return dmg;
   }
 
-  // While overcharged or lasering, player shots knock enemy bullets out.
+  // While lasering, player shots knock enemy bullets out.
   _cancelEnemyBullets() {
     for (let i = this._bullets.length - 1; i >= 0; i--) {
       const pb = this._bullets[i];
@@ -1277,14 +1244,8 @@ export class LifePulse {
       const b = this._enemyBullets[i];
       const br = b.r || 3;
       if (circlesOverlap(b.x, b.y, br, p.x, p.y, playerHitR)) {
-        if (this._reflectTimer > 0) {
-          this._reflectBullet();
-          this._enemyBullets.splice(i, 1);
-          this.score += 6;
-        } else {
-          this._hitPlayer();
-          this._enemyBullets.splice(i, 1);
-        }
+        this._hitPlayer();
+        this._enemyBullets.splice(i, 1);
       } else if (this._focusTimer > 5 && circlesOverlap(b.x, b.y, br, p.x, p.y, 22)) {
         // Deep in FOCUS the ship phases through near misses and pops them.
         this._enemyBullets.splice(i, 1);
@@ -1292,19 +1253,6 @@ export class LifePulse {
         this._createHitParticle(b.x, b.y);
       }
     }
-  }
-
-  _reflectBullet() {
-    this._bullets.push({
-      x: this._player.x + 8,
-      y: this._player.y,
-      vx: 380,
-      vy: (Math.random() - 0.5) * 40,
-      r: 3.5,
-      life: 1.4,
-      pierce: true,
-      laser: true,
-    });
   }
 
   _collideEnemiesWithPlayer(playerHitR) {
@@ -1444,10 +1392,6 @@ export class LifePulse {
         this._player.invuln = Math.max(this._player.invuln, 5.8);
         this._awardPowerupPoints(195);
         return;
-      case 'speed':
-        this._player.speedTimer = Math.max(this._player.speedTimer, 9.5);
-        this._awardPowerupPoints(125);
-        return;
       case 'pulse':
         this._pulses.push({
           x: this._player.x + 18,
@@ -1474,55 +1418,9 @@ export class LifePulse {
         this._pulseStock = Math.min(5, this._pulseStock + 2);
         this._awardPowerupPoints(175);
         return;
-      case 'overcharge':
-        this._overchargeTimer = Math.max(this._overchargeTimer, 9);
-        this._powerLevel = 3;
-        this._laserTimer = Math.max(this._laserTimer, 9);
-        this._homingTimer = Math.max(this._homingTimer, 9);
-        this._awardPowerupPoints(280);
-        return;
       case 'nova':
         this._novaReady = true;
         this._awardPowerupPoints(195);
-        return;
-      case 'swarm':
-        this._swarmTimer = Math.max(this._swarmTimer, 9);
-        this._awardPowerupPoints(140);
-        this._spawnSwarmBurst();
-        return;
-      case 'orbit':
-        this._orbitTimer = Math.max(this._orbitTimer, 10);
-        this._spawnOrbiters();
-        this._awardPowerupPoints(160);
-    }
-  }
-
-  _spawnSwarmBurst() {
-    for (let s = 0; s < 3; s++) {
-      this._enemies.push({
-        id: randomEnemyId(),
-        x: this._player.x + 10 + (s - 1) * 8,
-        y: this._player.y + (Math.random() - 0.5) * 12,
-        vx: -60,
-        vy: (Math.random() - 0.5) * 40,
-        hp: 1,
-        points: 25,
-        r: 4,
-        type: 'parasite',
-        isSwarm: true,
-      });
-    }
-  }
-
-  // Orbiters are options that ignore the option cap.
-  _spawnOrbiters() {
-    for (let o = 0; o < 2; o++) {
-      this._options.push({
-        x: this._player.x - 20 - o * 5,
-        y: this._player.y + (o - 0.5) * 14,
-        fireTimer: 0.3,
-        isOrbit: true,
-      });
     }
   }
 
@@ -1616,13 +1514,12 @@ export class LifePulse {
     for (const b of this._enemyBullets) R.drawEnemyBullet(ctx, b);
     for (const b of this._bullets) R.drawBullet(ctx, b);
 
-    R.drawOptions(ctx, this._options, this._time);
+    R.drawOptions(ctx, this._options);
     R.drawPlayer(ctx, {
       player: this._player,
       time: this._time,
       powerLevel: this._powerLevel,
       timers: {
-        overcharge: this._overchargeTimer,
         laser: this._laserTimer,
         focus: this._focusTimer,
       },
@@ -1658,10 +1555,8 @@ export class LifePulse {
       timers: {
         laser: this._laserTimer,
         homing: this._homingTimer,
-        overcharge: this._overchargeTimer,
         focus: this._focusTimer,
         chain: this._chainTimer,
-        reflect: this._reflectTimer,
         vortex: this._vortexTimer,
         surge: this._surgeTimer,
       },
@@ -1731,28 +1626,6 @@ export class LifePulse {
       if (!p.alive || o.x < -30) {
         this._options.splice(i, 1);
       }
-    }
-  }
-
-  // While SWARM runs, mini parasites trickle out behind the ship.
-  _updateSwarm(dt) {
-    if (this._swarmTimer <= 0) return;
-    if (Math.random() >= 0.18 * dt * 12) return;
-
-    const count = 1 + (this._overchargeTimer > 0 ? 1 : 0);
-    for (let s = 0; s < count; s++) {
-      this._enemies.push({
-        id: randomEnemyId(),
-        x: this._player.x - 15 - s * 6,
-        y: this._player.y + (s - 0.5) * 10,
-        vx: -70,
-        vy: (Math.random() - 0.5) * 55,
-        hp: 1,
-        points: 22,
-        r: 4.2,
-        type: 'parasite',
-        isSwarm: true,
-      });
     }
   }
 
