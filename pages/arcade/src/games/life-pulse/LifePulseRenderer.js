@@ -21,21 +21,15 @@ const BIO = {
 const POWERUP_COLORS = {
   double: '#ffe566',
   shield: '#7cffe0',
-  speed: '#ffeb3b',
   pulse: '#00e8d4',
   option: '#a0fff4',
   laser: '#7cffe0',
   bomb: '#ff6b4a',
   homing: '#ffe566',
-  overcharge: '#ffffff',
   nova: '#ff5722',
   focus: '#7cffe0',
   chain: '#ffe566',
-  reflect: '#a0fff4',
-  swarm: '#ff3d6b',
   vortex: '#c840ff',
-  echo: '#a0fff4',
-  orbit: '#00f0ff',
   charge: '#ffe566',
 };
 
@@ -132,18 +126,16 @@ export function drawPlayer(ctx, state) {
   const { player, time, powerLevel, timers } = state;
   if (!player.alive) return;
 
-  const { x: px, y: py, invuln, speedTimer } = player;
+  const { x: px, y: py, invuln } = player;
   const flicker = invuln > 0 ? (Math.floor(time * 18) % 2 === 0 ? 0.35 : 1) : 1;
   ctx.globalAlpha = flicker;
 
-  const boosted = speedTimer > 0;
-  const overcharge = timers.overcharge > 0;
   const laser = timers.laser > 0;
   const focus = timers.focus > 0;
   const power = powerLevel;
 
   // Thruster particles
-  const thrustLen = 8 + Math.sin(time * 22) * 3 + (boosted ? 5 : 0);
+  const thrustLen = 8 + Math.sin(time * 22) * 3;
   withGlow(ctx, BIO.coral, 12, () => {
     const tg = ctx.createLinearGradient(px - 18, py, px - 18 - thrustLen, py);
     tg.addColorStop(0, BIO.coral);
@@ -158,22 +150,9 @@ export function drawPlayer(ctx, state) {
     ctx.fill();
   });
 
-  if (boosted) {
-    ctx.strokeStyle = 'rgba(255, 230, 180, 0.6)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 4; i++) {
-      const off = i * 4;
-      ctx.beginPath();
-      ctx.moveTo(px - 16 - off, py - 2);
-      ctx.lineTo(px - 26 - off, py);
-      ctx.stroke();
-    }
-    ctx.lineWidth = 1;
-  }
-
   // Ship body — organic arrow with membrane wings
-  withGlow(ctx, overcharge ? WHITE : BIO.glow, overcharge ? 18 : 10, () => {
-    const hull = overcharge ? '#e8ffff' : (power >= 2 ? '#9afff0' : (power >= 1 ? '#6ef5e8' : BIO.glow));
+  withGlow(ctx, BIO.glow, 10, () => {
+    const hull = power >= 2 ? '#9afff0' : (power >= 1 ? '#6ef5e8' : BIO.glow);
     ctx.fillStyle = hull;
     ctx.beginPath();
     ctx.moveTo(px + 14, py);
@@ -185,7 +164,7 @@ export function drawPlayer(ctx, state) {
     ctx.fill();
 
     // Wing membranes
-    ctx.fillStyle = overcharge ? 'rgba(255, 230, 120, 0.5)' : 'rgba(0, 200, 180, 0.35)';
+    ctx.fillStyle = 'rgba(0, 200, 180, 0.35)';
     ctx.beginPath();
     ctx.moveTo(px - 2, py - 6);
     ctx.quadraticCurveTo(px - 10, py - 14, px - 6, py - 2);
@@ -198,7 +177,7 @@ export function drawPlayer(ctx, state) {
     ctx.fill();
 
     // Core nucleus
-    ctx.fillStyle = overcharge ? BIO.nucleus : WHITE;
+    ctx.fillStyle = WHITE;
     ctx.beginPath();
     ctx.arc(px + 2, py, 3.5, 0, Math.PI * 2);
     ctx.fill();
@@ -216,15 +195,6 @@ export function drawPlayer(ctx, state) {
   }
 
   // Power auras
-  if (overcharge) {
-    const ar = 20 + Math.sin(time * 11) * 3;
-    ctx.strokeStyle = 'rgba(255, 230, 120, 0.45)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(px, py, ar, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.lineWidth = 1;
-  }
   if (focus) {
     ctx.strokeStyle = 'rgba(124, 255, 224, 0.55)';
     ctx.lineWidth = 1.5;
@@ -239,7 +209,7 @@ export function drawPlayer(ctx, state) {
     ctx.setLineDash([]);
     ctx.lineWidth = 1;
   }
-  if (laser && !overcharge) {
+  if (laser) {
     ctx.strokeStyle = 'rgba(160, 255, 240, 0.4)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -274,7 +244,7 @@ export function drawBullet(ctx, b) {
     });
   } else {
     withGlow(ctx, BIO.glow, 6, () => {
-      ctx.fillStyle = b.echo ? 'rgba(160, 255, 240, 0.7)' : BIO.glow;
+      ctx.fillStyle = BIO.glow;
       ctx.beginPath();
       ctx.arc(b.x + 4, b.y, 2.2, 0, Math.PI * 2);
       ctx.fill();
@@ -730,11 +700,10 @@ export function drawParticles(ctx, particles) {
   ctx.globalAlpha = 1;
 }
 
-export function drawOptions(ctx, options, time) {
+export function drawOptions(ctx, options) {
   for (const o of options) {
     withGlow(ctx, BIO.glow, 6, () => {
-      const col = o.isOrbit ? '#a0fff4' : BIO.glow;
-      ctx.fillStyle = col;
+      ctx.fillStyle = BIO.glow;
       ctx.beginPath();
       ctx.arc(o.x, o.y, 4.5, 0, Math.PI * 2);
       ctx.fill();
@@ -743,14 +712,6 @@ export function drawOptions(ctx, options, time) {
       ctx.arc(o.x + 1, o.y, 1.5, 0, Math.PI * 2);
       ctx.fill();
     });
-    if (o.isOrbit) {
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.3)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(o.x, o.y, 8 + Math.sin(time * 6) * 1, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.lineWidth = 1;
-    }
   }
 }
 
@@ -772,8 +733,8 @@ const METER = { x: 14, y: GAME_H - 14, w: 80, h: 6 };
 
 // Short tags for each running power, in display order.
 const POWER_TAGS = [
-  ['laser', 'LSR'], ['homing', 'HOM'], ['overcharge', 'OVR'], ['focus', 'FOC'],
-  ['chain', 'CHN'], ['reflect', 'REF'], ['vortex', 'VTX'], ['surge', 'SURGE'],
+  ['laser', 'LSR'], ['homing', 'HOM'], ['focus', 'FOC'],
+  ['chain', 'CHN'], ['vortex', 'VTX'], ['surge', 'SURGE'],
 ];
 
 /**
