@@ -7,6 +7,8 @@ import {
   SALE_DAYS, SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS, TMUS_META, TMUS_WEEKLY,
 } from './data/tmusInsiderSales';
 import { MONTHLY_SALES, NASDAQ_META } from './data/tmusMonthlySales';
+import { TMUS_DAILY } from './data/tmusDailyCloses';
+import { drawdownEpisodes, heldAtLeast } from './drawdowns';
 
 const sellWeekTotal = new Set(
   [...SIEVERT_SELL_WEEKS, ...OTHER_SELL_WEEKS].map((w) => w.week),
@@ -153,7 +155,8 @@ describe('TMobileApp', () => {
 
   it('credits the sources and the sale-code definition', () => {
     render(<TMobileApp />);
-    expect(screen.getByText(/Yahoo Finance/i)).toBeInTheDocument();
+    // weekly prices and the daily drawdown closes both come from Yahoo
+    expect(screen.getAllByText(/Yahoo Finance/i)).toHaveLength(2);
     expect(screen.getByText(/SEC Form 4 filings/i)).toBeInTheDocument();
     // the page is explicit that tax withholding is not counted as a sale
     expect(screen.getByText(/code F\) are not sales/i)).toBeInTheDocument();
@@ -245,5 +248,47 @@ describe('TMobileApp', () => {
     render(<TMobileApp />);
     expect(screen.getByText(new RegExp(`of the ${TMUS_WEEKLY.length} weeks shown`)))
       .toBeInTheDocument();
+  });
+
+  describe('drawdown chart', () => {
+    const episodes = drawdownEpisodes(TMUS_DAILY);
+    const drawdownTable = () => screen.getByRole('button', { name: /drawdowns as a table/i });
+
+    it('plots the whole daily history, back to the first trade', () => {
+      render(<TMobileApp />);
+      expect(screen.getByRole('heading', { level: 2, name: /drawdowns since 2007/i }))
+        .toBeInTheDocument();
+      expect(screen.getByRole('img', { name: /loss from its all-time high/i }))
+        .toBeInTheDocument();
+    });
+
+    it('counts tops that stood a month by default', () => {
+      render(<TMobileApp />);
+      expect(screen.getByRole('button', { name: '1 month' }))
+        .toHaveAttribute('aria-pressed', 'true');
+      expect(drawdownTable()).toHaveTextContent(
+        `Show all ${heldAtLeast(episodes, 30).length} drawdowns`,
+      );
+    });
+
+    it('narrows to longer-standing tops', () => {
+      render(<TMobileApp />);
+      fireEvent.click(screen.getByRole('button', { name: '1 year' }));
+      expect(screen.getByRole('button', { name: '1 year' }))
+        .toHaveAttribute('aria-pressed', 'true');
+      expect(drawdownTable()).toHaveTextContent(
+        `Show all ${heldAtLeast(episodes, 365).length} drawdowns`,
+      );
+    });
+
+    it('lists every counted drawdown in its table, deepest first', () => {
+      render(<TMobileApp />);
+      fireEvent.click(drawdownTable());
+      const table = screen.getByRole('table', { name: /every drawdown/i });
+      const rows = within(table).getAllByRole('row').slice(1);
+      expect(rows).toHaveLength(heldAtLeast(episodes, 30).length);
+      const [worst] = [...heldAtLeast(episodes, 30)].sort((a, b) => a.depth - b.depth);
+      expect(rows[0]).toHaveTextContent(`$${worst.peak.toFixed(2)}`);
+    });
   });
 });

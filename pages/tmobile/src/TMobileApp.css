@@ -20,6 +20,9 @@
      separation from the two sale hues — it never appears beside them. VU
      amber, 11.4:1 on the well. */
   --tm-quiet: var(--amber);
+  /* The drawdown trace is alone in its own plot too. A cool blue, so a loss
+     is not dressed in the reserved alarm red; 7.8:1 on the well. */
+  --tm-drawdown: #5aa9ff;
   --tm-well: var(--panel-inset);
 
   min-height: 100vh;
@@ -98,6 +101,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4) var(--space-6);
+}
+
+.tm-controls--inset {
+  margin-bottom: var(--space-3);
 }
 
 .tm-controls__label {
@@ -369,6 +376,25 @@
   stroke-opacity: 0.55;
 }
 
+.tm-chart__line--drawdown {
+  stroke: var(--tm-drawdown);
+  stroke-width: 1.5;
+}
+
+.tm-chart__dot--drawdown {
+  fill: var(--tm-drawdown);
+}
+
+/* the drawdown still in progress: a ring, because its bottom may not be in */
+.tm-chart__dot--open {
+  fill: var(--tm-well);
+  stroke: var(--tm-drawdown);
+}
+
+.tm-chart__cursor .tm-chart__cursor-dot--drawdown {
+  fill: var(--tm-drawdown);
+}
+
 /* the run that has not ended yet, drawn at full strength over the rest */
 .tm-chart__line--open {
   stroke: var(--tm-quiet);
@@ -484,6 +510,7 @@
 .tm-tip__key--sievert { background: var(--tm-sievert); }
 .tm-tip__key--others { background: var(--tm-others); }
 .tm-tip__key--quiet { background: var(--tm-quiet); }
+.tm-tip__key--drawdown { background: var(--tm-drawdown); }
 
 /* the month total, set off from the segments it sums */
 .tm-tip__row--total {
