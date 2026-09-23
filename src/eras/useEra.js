@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { isEra, DEFAULT_ERA } from './eras';
-import { writeQueryParam } from '../utils/queryParam';
+import { readQueryParam, writeQueryParam } from '../utils/queryParam';
+import usePopstate from '../hooks/usePopstate';
 
-const readEraFromUrl = () => {
-  if (typeof window === 'undefined') return DEFAULT_ERA;
-  const value = new URLSearchParams(window.location.search).get('era');
-  return isEra(value) ? value : DEFAULT_ERA;
-};
+const toEra = (id) => (isEra(id) ? id : DEFAULT_ERA);
+
+const readEraFromUrl = () => toEra(readQueryParam('era'));
 
 /**
  * Manages the active "Take Me Back" era.
@@ -32,14 +31,9 @@ export default function useEra() {
     writeQueryParam('era', isPresent ? null : era);
   }, [era]);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const onPopstate = () => setEraState(readEraFromUrl());
-    window.addEventListener('popstate', onPopstate);
-    return () => window.removeEventListener('popstate', onPopstate);
-  }, []);
+  usePopstate(() => setEraState(readEraFromUrl()));
 
-  const setEra = useCallback((id) => setEraState(isEra(id) ? id : DEFAULT_ERA), []);
+  const setEra = useCallback((id) => setEraState(toEra(id)), []);
 
   return [era, setEra];
 }

@@ -3,51 +3,50 @@ import path, { resolve } from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-function copyDirSync(src, dest) {
-  if (!fs.existsSync(src)) return;
-  fs.mkdirSync(dest, { recursive: true });
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-    if (entry.isDirectory()) {
-      copyDirSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
+// Clean URL → subsite HTML entry, mirroring the CloudFront clean-URL rewrite so
+// the dev server answers the same paths production does.
+const DEV_ROUTES = {
+  '/arcade': '/pages/arcade/index.html',
+  '/neworleans': '/pages/neworleans/index.html',
+  '/neworleans-tours': '/pages/neworleans/tours.html',
+  '/neworleans/tours': '/pages/neworleans/tours.html',
+  '/flights': '/pages/flights/index.html',
+  '/tmobile': '/pages/tmobile/index.html',
+  '/stocks': '/pages/stocks/index.html',
+  '/matrix': '/pages/matrix/index.html',
+  '/matrix-arcade': '/pages/matrix/arcade.html',
+  '/matrix/arcade': '/pages/matrix/arcade.html',
+  '/opus5ios': '/pages/opus5ios/index.html',
+  '/opus5ios-arcade': '/pages/opus5ios/arcade.html',
+  '/opus5ios/arcade': '/pages/opus5ios/arcade.html',
+  '/opus-max-mac': '/pages/opus-max-mac/index.html',
+  '/opus-max-mac-arcade': '/pages/opus-max-mac/arcade.html',
+  '/opus-max-mac/arcade': '/pages/opus-max-mac/arcade.html',
+  '/codex': '/pages/codex/index.html',
+};
+
+// Subsite asset folders that live outside public/, so Vite does not copy them.
+const SUBSITE_ASSET_DIRS = [
+  'pages/neworleans/assets',
+  'pages/opus5ios/assets',
+  'pages/opus-max-mac/assets',
+];
 
 function subsitePlugin() {
   return {
     name: 'subsite-plugin',
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        const url = req.url.split('?')[0];
-        if (url === '/arcade') req.url = '/pages/arcade/index.html';
-        else if (url === '/neworleans') req.url = '/pages/neworleans/index.html';
-        else if (url === '/neworleans-tours' || url === '/neworleans/tours') req.url = '/pages/neworleans/tours.html';
-        else if (url === '/flights') req.url = '/pages/flights/index.html';
-        else if (url === '/tmobile') req.url = '/pages/tmobile/index.html';
-        else if (url === '/stocks') req.url = '/pages/stocks/index.html';
-        else if (url === '/matrix') req.url = '/pages/matrix/index.html';
-        else if (url === '/matrix-arcade' || url === '/matrix/arcade') req.url = '/pages/matrix/arcade.html';
-        else if (url === '/opus5ios') req.url = '/pages/opus5ios/index.html';
-        else if (url === '/opus5ios-arcade' || url === '/opus5ios/arcade') req.url = '/pages/opus5ios/arcade.html';
-        else if (url === '/opus-max-mac') req.url = '/pages/opus-max-mac/index.html';
-        else if (url === '/opus-max-mac-arcade' || url === '/opus-max-mac/arcade') req.url = '/pages/opus-max-mac/arcade.html';
-        else if (url === '/codex') req.url = '/pages/codex/index.html';
+      server.middlewares.use((req, _res, next) => {
+        const route = DEV_ROUTES[req.url.split('?')[0]];
+        if (route) req.url = route;
         next();
       });
     },
     closeBundle() {
-      const subsiteAssets = [
-        { src: 'pages/neworleans/assets', dest: 'dist/pages/neworleans/assets' },
-        { src: 'pages/opus5ios/assets', dest: 'dist/pages/opus5ios/assets' },
-        { src: 'pages/opus-max-mac/assets', dest: 'dist/pages/opus-max-mac/assets' },
-      ];
-      for (const { src, dest } of subsiteAssets) {
-        copyDirSync(path.resolve(__dirname, src), path.resolve(__dirname, dest));
+      for (const dir of SUBSITE_ASSET_DIRS) {
+        const src = path.resolve(__dirname, dir);
+        if (!fs.existsSync(src)) continue;
+        fs.cpSync(src, path.resolve(__dirname, 'dist', dir), { recursive: true });
       }
     }
   };

@@ -7,18 +7,21 @@ import { getEraHero } from '../eras/eraHero';
 const isTypingTarget = (el) =>
   el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
 
+// 2007–2020 used the "Alan Marcero" name graphic (me.png) as the banner.
+const NAME_BANNER_ERAS = new Set(['y2007', 'y2014', 'y2020']);
+
+const countLabel = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`;
+
 function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'present' }) {
   const inputRef = useRef(null);
   const eraHero = getEraHero(era);
-  // 2007–2020 used the "Alan Marcero" name graphic (me.png) as the banner
-  const showNameBanner = era === 'y2007' || era === 'y2014' || era === 'y2020';
+  const showNameBanner = NAME_BANNER_ERAS.has(era);
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Escape' && searchQuery) {
-      event.preventDefault();
-      onSearchChange('');
-      inputRef.current?.focus();
-    }
+    if (event.key !== 'Escape' || !searchQuery) return;
+    event.preventDefault();
+    onSearchChange('');
+    inputRef.current?.focus();
   };
 
   // Press "/" anywhere (when not already typing) to jump to search.
@@ -108,8 +111,8 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
         </div>
         {resultsCount && (
           <p className="hero-results-count" role="status" aria-live="polite">
-            {resultsCount.patches} {resultsCount.patches === 1 ? 'patch bank' : 'patch banks'},{' '}
-            {resultsCount.music} {resultsCount.music === 1 ? 'music item' : 'music items'}
+            {countLabel(resultsCount.patches, 'patch bank', 'patch banks')},{' '}
+            {countLabel(resultsCount.music, 'music item', 'music items')}
           </p>
         )}
       </div>

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, waitFor } from "@testing-library/react";
-import useMusicItems from "./useMusicItems";
+import useMusicItems, { fetchMusicItems } from "./useMusicItems";
 
 beforeAll(() => {
   global.fetch = jest.fn();
@@ -72,11 +72,43 @@ describe("useMusicItems", () => {
       json: async () => ({ items: [] }),
     });
 
-    renderHook(() => useMusicItems());
+    const { result } = renderHook(() => useMusicItems());
 
     expect(global.fetch).toHaveBeenCalledWith(
       "/api",
       expect.objectContaining({ signal: expect.any(AbortSignal) })
     );
+    await waitFor(() => expect(result.current.musicLoading).toBe(false));
+  });
+
+  it("ignores a response that lands after unmount", async () => {
+    let resolveFetch;
+    global.fetch.mockImplementation(() => new Promise((resolve) => { resolveFetch = resolve; }));
+
+    const { result, unmount } = renderHook(() => useMusicItems());
+    unmount();
+    resolveFetch({ ok: true, json: async () => ({ items: [{ title: "Late", videoId: "l1" }] }) });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(result.current.musicLoading).toBe(true);
+    expect(result.current.musicItems).toEqual([]);
+  });
+});
+
+describe("fetchMusicItems", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("resolves to the response's items", async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => ({ items: [{ title: "A", videoId: "a" }] }) });
+
+    await expect(fetchMusicItems()).resolves.toEqual([{ title: "A", videoId: "a" }]);
+  });
+
+  it("rejects with the HTTP status on a non-ok response", async () => {
+    global.fetch.mockResolvedValue({ ok: false, status: 500 });
+
+    await expect(fetchMusicItems()).rejects.toThrow("Failed to load music: 500");
   });
 });

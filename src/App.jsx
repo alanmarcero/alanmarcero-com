@@ -13,8 +13,10 @@ import EraChrome from './eras/EraChrome';
 import useEra from './eras/useEra';
 import useMusicItems from './hooks/useMusicItems';
 import useScrollProgress from './hooks/useScrollProgress';
+import usePopstate from './hooks/usePopstate';
 import { patchBanks as patchBanksData } from './data/patchBanks';
-import { writeQueryParam } from './utils/queryParam';
+import { readQueryParam, writeQueryParam } from './utils/queryParam';
+import { createSearchFilter } from './utils/search';
 import { TOAST_DISMISS_MS } from './config';
 
 const SKELETON_COUNT = 3;
@@ -23,18 +25,7 @@ const SKELETON_COUNT = 3;
 const TOTAL_PATCHES = patchBanksData.reduce((sum, bank) => sum + (bank.count || 0), 0);
 const PATCH_BANK_COUNT = patchBanksData.filter((bank) => bank.count).length;
 
-const createSearchFilter = (query, ...fields) => (item) => {
-  if (!query) return true;
-  const lowerQuery = query.toLowerCase();
-  const searchableText = fields.map(field => item[field] || '').join(' ').toLowerCase();
-  return searchableText.includes(lowerQuery);
-};
-
-const readSearchFromUrl = () => {
-  if (typeof window === 'undefined') return '';
-  const params = new URLSearchParams(window.location.search);
-  return params.get('q') || '';
-};
+const readSearchFromUrl = () => readQueryParam('q') || '';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState(readSearchFromUrl);
@@ -56,13 +47,10 @@ function App() {
     writeQueryParam('q', searchQuery);
   }, [searchQuery]);
 
-  // Restore searchQuery from URL when back/forward navigation fires popstate.
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const onPopstate = () => setSearchQuery(readSearchFromUrl());
-    window.addEventListener('popstate', onPopstate);
-    return () => window.removeEventListener('popstate', onPopstate);
-  }, []);
+  usePopstate(() => setSearchQuery(readSearchFromUrl()));
+
+  // A pending dismissal must not fire into an unmounted App.
+  useEffect(() => () => clearTimeout(toastTimerRef.current), []);
 
   const filteredPatchBanks = patchBanksData.filter(createSearchFilter(searchQuery, 'name', 'description'));
   const filteredMusicItems = musicItems.filter(createSearchFilter(searchQuery, 'title', 'description'));
