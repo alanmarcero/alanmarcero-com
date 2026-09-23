@@ -33,8 +33,7 @@
  */
 
 import { hashString, seededRandom } from './envelope';
-
-const round = (value) => Math.round(value * 100) / 100;
+import { roundToHundredths, polylinePath } from './path';
 
 /*
  * Frequency pairs that close. A Lissajous closes only when its two
@@ -70,19 +69,19 @@ export function buildLissajous({ seed, width, height, samples = 240, inset = 6 }
   for (let i = 0; i <= samples; i += 1) {
     const t = (i / samples) * Math.PI * 2;
     points.push([
-      round(cx + rx * Math.sin(a * t + phase)),
-      round(cy + ry * Math.sin(b * t)),
+      roundToHundredths(cx + rx * Math.sin(a * t + phase)),
+      roundToHundredths(cy + ry * Math.sin(b * t)),
     ]);
   }
 
-  const [first, ...rest] = points;
+  const first = points[0];
+  const last = points[points.length - 1];
   return {
     // ONE moveto. That is the whole point — see reason 3 above.
-    d: `M${first[0]} ${first[1]}${rest.map(([x, y]) => `L${x} ${y}`).join('')}`,
+    d: polylinePath(points),
     ratio: [a, b],
     phase,
-    closed: first[0] === points[points.length - 1][0]
-      && first[1] === points[points.length - 1][1],
+    closed: first[0] === last[0] && first[1] === last[1],
   };
 }
 
@@ -102,10 +101,10 @@ export function packetDash(fraction = 0.05) {
   // both independently broke the sum: round(0.995) is 1, so a 0.005 packet
   // emitted "0.01 1" — a dash pattern 1% longer than the path, drifting the
   // packet a little every lap. Caught by the sums-to-the-whole-path test.
-  const on = round(clamped);
+  const on = roundToHundredths(clamped);
 
   return {
-    dashArray: `${on} ${round(1 - on)}`,
+    dashArray: `${on} ${roundToHundredths(1 - on)}`,
     pathLength: 1,
   };
 }

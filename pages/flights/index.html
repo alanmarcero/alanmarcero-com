@@ -310,14 +310,17 @@ const fmtDate = iso => D(iso).toLocaleDateString("en-US",{weekday:"short",month:
 const fmtTime = iso => D(iso).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
 const fmtDur = m => Math.floor(m/60)+"h "+String(m%60).padStart(2,"0")+"m";
 const al = c => AIRLINES[c]||c;
-const rvar = reg => "var(--"+(RVAR[reg]||"ne")+")";
-const rvarSoft = reg => "var(--"+(RVAR[reg]||"ne")+"-soft)";
+const regionToken = reg => RVAR[reg]||"ne";
+const rvar = reg => "var(--"+regionToken(reg)+")";
+const rvarSoft = reg => "var(--"+regionToken(reg)+"-soft)";
 // A month nobody has put on sale yet is not a gap in service, so it does not
 // count toward calling a route seasonal.
 const sampled = v => v.monthly.filter(m=>!m.beyond);
 const isSeasonal = v => { let run=0,mx=0; for(const m of sampled(v)){ if(m.min==null){run++; if(run>mx)mx=run;} else run=0; } return mx>=3; };
 let MODE = "all";                        // "all" = cheapest any airline · "jb" = JetBlue only
 const view = r => (MODE==="jb" ? r.jb : r.all);
+const priceOf = k => view(FLIGHTS.routes[k]).cheapest.price;
+const byPrice = (a,b) => priceOf(a)-priceOf(b);
 const inbound = r => r.dir==="in";       // the trip run the other way: origin is not Boston
 // Most of the board is the family of three with no bag priced in; a re-swept route
 // carries its own party size and bag count, so nothing divides by a stale 3.
@@ -359,7 +362,9 @@ function call(r){
 // it, falling back to the wider board only if none of it prices. Either way the
 // pick skips inbound routes, so a cheap leg into Boston never opens the page.
 const cheapestKeyFor = () => {
-  const pick = pool => { let best=null; for(const k of pool){ const r=FLIGHTS.routes[k]; if(!r||inbound(r)) continue; const v=view(r); if(v && (best===null || v.cheapest.price<view(FLIGHTS.routes[best]).cheapest.price)) best=k; } return best; };
+  const pick = pool => pool
+    .filter(k => { const r=FLIGHTS.routes[k]; return r && !inbound(r) && view(r); })
+    .reduce((best,k) => (best===null || priceOf(k)<priceOf(best) ? k : best), null);
   return pick(favKeys()) || pick(Object.keys(FLIGHTS.routes));
 };
 
@@ -387,6 +392,8 @@ function gateFor(k, rv, withCall){
   </button>`;
 }
 
+const bindGates = root => root.querySelectorAll(".gate").forEach(g=>g.addEventListener("click",()=>select(g.dataset.key)));
+
 function renderFavourites(){
   const box = $("#favs");
   const keys = favKeys().filter(k=>FLIGHTS.routes[k] && view(FLIGHTS.routes[k]));
@@ -395,7 +402,6 @@ function renderFavourites(){
     return;
   }
   box.hidden = false;
-  const byPrice = (a,b)=>view(FLIGHTS.routes[a]).cheapest.price-view(FLIGHTS.routes[b]).cheapest.price;
   const groups = [
     {label:"Leaving Boston", keys:keys.filter(k=>!inbound(FLIGHTS.routes[k])).sort(byPrice)},
     {label:"Into Boston and home again", keys:keys.filter(k=>inbound(FLIGHTS.routes[k])).sort(byPrice)},
@@ -412,18 +418,16 @@ function renderFavourites(){
   box.innerHTML = `<h2>Favourites ${swept}</h2>${sub}` + groups.map(g=>`
     <div class="fav-group">
       <h3>${g.label} <span>${g.keys.length}</span></h3>
-      <div class="gates">${g.keys.map(k=>gateFor(k, RVAR[FLIGHTS.routes[k].region]||"ne", MODE==="all")).join("")}</div>
+      <div class="gates">${g.keys.map(k=>gateFor(k, regionToken(FLIGHTS.routes[k].region), MODE==="all")).join("")}</div>
     </div>`).join("");
-  box.querySelectorAll(".gate").forEach(g=>g.addEventListener("click",()=>select(g.dataset.key)));
+  bindGates(box);
 }
 
 function renderInbound(){
   const box = $("#inbound");
   // The shortlist board already carries the runs into Boston; this second
   // board is only for any that are not on it.
-  const keys = inboundKeys().filter(k=>!isFav(k) && view(FLIGHTS.routes[k]))
-    .sort((a,b)=>view(FLIGHTS.routes[a]).cheapest.price-view(FLIGHTS.routes[b]).cheapest.price);
-  const heading = `<h2>Round trip into Boston</h2>`;
+  const keys = inboundKeys().filter(k=>!isFav(k) && view(FLIGHTS.routes[k])).sort(byPrice);
   if(!keys.length){
     box.hidden = true;
     return;
@@ -437,17 +441,17 @@ function renderInbound(){
     cheapest departure sampled per month over the next 12 months. Charlotte and Asheville, not a Boston
     departure, so these sit on their own board — and one traveller, not the family of three the rest of
     the board is priced for.</p>`;
-  box.innerHTML = `${heading}${sub}<div class="gates">${keys.map(k=>gateFor(k,"se")).join("")}</div>`;
-  box.querySelectorAll(".gate").forEach(g=>g.addEventListener("click",()=>select(g.dataset.key)));
+  box.innerHTML = `<h2>Round trip into Boston</h2>${sub}<div class="gates">${keys.map(k=>gateFor(k,"se")).join("")}</div>`;
+  bindGates(box);
 }
 
 function renderRegions(){
   const nav = $("#regions");
   nav.innerHTML = FLIGHTS.regions.filter(reg=>!reg.keys.every(k=>inbound(FLIGHTS.routes[k]))).map(reg=>{
-    const rv = RVAR[reg.name]||"ne";
-    const keys = reg.keys.filter(k=>view(FLIGHTS.routes[k])).sort((a,b)=>view(FLIGHTS.routes[a]).cheapest.price-view(FLIGHTS.routes[b]).cheapest.price);
+    const rv = regionToken(reg.name);
+    const keys = reg.keys.filter(k=>view(FLIGHTS.routes[k])).sort(byPrice);
     if(!keys.length) return "";                       // region has nothing in this mode
-    const cheapest = Math.min(...keys.map(k=>view(FLIGHTS.routes[k]).cheapest.price));
+    const cheapest = Math.min(...keys.map(priceOf));
     const gates = keys.map(k=>gateFor(k,rv)).join("");
     const badge = reg.name==="Europe" ? `<span class="rbadge">✦ meal + drink included</span>` : "";
     return `<section class="region" style="--rc:var(--${rv})">
@@ -459,7 +463,7 @@ function renderRegions(){
       <div class="gates">${gates}</div>
     </section>`;
   }).join("");
-  nav.querySelectorAll(".gate").forEach(g=>g.addEventListener("click",()=>select(g.dataset.key)));
+  bindGates(nav);
 }
 
 function segRow(dir, seg, fallbackDate){

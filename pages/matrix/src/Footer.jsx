@@ -39,7 +39,7 @@ function Footer() {
                 <span className="credits__author">{item.author}</span>
                 {', '}
                 {item.licenceUrl ? (
-                  <a className="credits__link" href={item.licenceUrl} rel="license noopener" target="_blank">
+                  <a className="credits__link" href={item.licenceUrl} rel="license noopener noreferrer" target="_blank">
                     {item.licence}
                   </a>
                 ) : (
@@ -48,7 +48,7 @@ function Footer() {
                 {item.source && (
                   <>
                     {' · '}
-                    <a className="credits__link" href={item.source} rel="noopener" target="_blank">
+                    <a className="credits__link" href={item.source} rel="noopener noreferrer" target="_blank">
                       source
                     </a>
                   </>
