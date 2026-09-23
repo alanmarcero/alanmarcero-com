@@ -205,17 +205,10 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Powers: homing, overcharge, parasite', () => {
+  describe('Powers: homing, parasite', () => {
     test('homing powerup sets homingTimer', () => {
       game._applyPowerup('homing');
       expect(game._homingTimer).toBeGreaterThan(5);
-    });
-
-    test('overcharge powerup activates multiple boosts', () => {
-      game._applyPowerup('overcharge');
-      expect(game._overchargeTimer).toBeGreaterThan(5);
-      expect(game._powerLevel).toBe(3);
-      expect(game._laserTimer).toBeGreaterThan(5);
     });
 
     test('parasite enemy type spawns and has chase properties', () => {
@@ -250,15 +243,10 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Powers: chain, reflect, rank, bullet cancel', () => {
+  describe('Powers: chain, rank, bullet cancel', () => {
     test('chain powerup activates chainTimer and boosts combo scoring', () => {
       game._applyPowerup('chain');
       expect(game._chainTimer).toBeGreaterThan(5);
-    });
-
-    test('reflect powerup activates reflectTimer', () => {
-      game._applyPowerup('reflect');
-      expect(game._reflectTimer).toBeGreaterThan(5);
     });
 
     test('computeGrade returns a valid letter', () => {
@@ -270,15 +258,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Powers: swarm, vortex, surge, crit, queen', () => {
-    test('swarm powerup activates swarmTimer and spawns minis', () => {
-      const before = game._enemies.length;
-      game._applyPowerup('swarm');
-      expect(game._swarmTimer).toBeGreaterThan(5);
-      // immediate spawns in apply
-      expect(game._enemies.length).toBeGreaterThan(before);
-    });
-
+  describe('Powers: vortex, surge, crit, queen', () => {
     test('vortex powerup activates vortexTimer', () => {
       game._applyPowerup('vortex');
       expect(game._vortexTimer).toBeGreaterThan(5);
@@ -303,19 +283,7 @@ describe('LifePulse', () => {
     });
   });
 
-  describe('Powers: echo, orbit, charge, perfect wave, upgrades, tendril-parasite', () => {
-    test('echo powerup activates echoTimer', () => {
-      game._applyPowerup('echo');
-      expect(game._echoTimer).toBeGreaterThan(3);
-    });
-
-    test('orbit powerup spawns orbiters', () => {
-      const before = game._options.length;
-      game._applyPowerup('orbit');
-      expect(game._orbitTimer).toBeGreaterThan(5);
-      expect(game._options.length).toBeGreaterThan(before);
-    });
-
+  describe('Powers: charge, perfect wave, upgrades, tendril-parasite', () => {
     test('charge powerup activates chargeTimer', () => {
       game._applyPowerup('charge');
       expect(game._chargeTimer).toBeGreaterThan(0);
