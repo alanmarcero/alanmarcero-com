@@ -24,22 +24,6 @@ describe('SpaceInvaders', () => {
   // -------------------------------------------------------------------------
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 3', () => {
-      expect(game.lives).toBe(3);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);

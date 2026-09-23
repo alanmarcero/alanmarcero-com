@@ -18,39 +18,10 @@ describe('Centipede', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 3', () => {
-      expect(game.lives).toBe(3);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);
       expect(hudData.lives).toBe(3);
-    });
-
-    test('centipede has 10 segments', () => {
-      const totalSegments = game._centipedes.reduce((sum, c) => sum + c.segments.length, 0);
-      expect(totalSegments).toBe(10);
-    });
-
-    test('mushrooms are spawned', () => {
-      expect(game._mushrooms.length).toBeGreaterThan(0);
-    });
-
-    test('player starts alive', () => {
-      expect(game._player.alive).toBe(true);
     });
   });
 
@@ -135,10 +106,12 @@ describe('Centipede', () => {
         w: 2,
         h: 8,
       });
-      const mushroomCountBefore = game._mushrooms.length;
+      const { col, row } = seg;
+      expect(game._mushroomAt(col, row)).toBeUndefined();
+
       game._checkCollisions();
-      // New mushroom should be at segment position
-      expect(game._mushrooms.length).toBeGreaterThanOrEqual(mushroomCountBefore);
+
+      expect(game._mushroomAt(col, row)).toBeDefined();
     });
 
     test('shooting segment increases score', () => {

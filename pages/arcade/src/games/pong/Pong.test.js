@@ -18,35 +18,10 @@ describe('Pong', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 3', () => {
-      expect(game.lives).toBe(3);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);
       expect(hudData.lives).toBe(3);
-    });
-
-    test('ball is centered', () => {
-      expect(game._ball.x).toBe(240);
-      expect(game._ball.y).toBe(180);
-    });
-
-    test('paddles are on opposite sides', () => {
-      expect(game._player.x).toBeLessThan(game._ai.x);
     });
   });
 

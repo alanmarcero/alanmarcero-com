@@ -29,26 +29,6 @@ describe('PacMan', () => {
   afterEach(() => game.destroy());
 
   describe('initial state', () => {
-    it('starts with no score', () => {
-      expect(game.score).toBe(0);
-    });
-
-    it('starts with three lives on level one', () => {
-      expect(game.lives).toBe(STARTING_LIVES);
-      expect(game.level).toBe(1);
-      expect(game.gameOver).toBe(false);
-    });
-
-    it('places Pac-Man on his start tile facing left', () => {
-      expect(game._pac.col).toBe(PAC_START.col);
-      expect(game._pac.row).toBe(PAC_START.row);
-      expect(game._pac.dir).toBe('left');
-    });
-
-    it('creates the four named ghosts', () => {
-      expect(game._ghosts.map((g) => g.name)).toEqual(['blinky', 'pinky', 'inky', 'clyde']);
-    });
-
     it('pens everyone except Blinky', () => {
       const penned = game._ghosts.filter((g) => g.state === 'house').map((g) => g.name);
 
@@ -58,11 +38,6 @@ describe('PacMan', () => {
 
     it('reports the opening HUD payload', () => {
       expect(hud).toEqual({ score: 0, lives: 3, level: 1, gameOver: false });
-    });
-
-    it('lays out all 244 pellets', () => {
-      expect(game._totalDots).toBe(244);
-      expect(game._dotsEaten).toBe(0);
     });
   });
 

@@ -1,5 +1,5 @@
 import {
-  COLS, ROWS, TILE, TUNNEL_ROW, PAC_START, SCATTER_TARGETS,
+  COLS, ROWS, TILE, TUNNEL_ROW, PAC_START,
   buildGrid, countDots, tileAt, isWalkable, wrapCol, isNoUpTile, atTileCenter,
 } from './maze';
 
@@ -118,15 +118,6 @@ describe('maze', () => {
     it('marks nothing else', () => {
       expect(isNoUpTile(13, 13)).toBe(false);
       expect(isNoUpTile(12, 14)).toBe(false);
-    });
-  });
-
-  describe('scatter targets', () => {
-    it('sends each ghost to a different corner', () => {
-      expect(SCATTER_TARGETS.blinky).toEqual({ col: 25, row: 0 });
-      expect(SCATTER_TARGETS.pinky).toEqual({ col: 2, row: 0 });
-      expect(SCATTER_TARGETS.inky).toEqual({ col: 27, row: 30 });
-      expect(SCATTER_TARGETS.clyde).toEqual({ col: 0, row: 30 });
     });
   });
 

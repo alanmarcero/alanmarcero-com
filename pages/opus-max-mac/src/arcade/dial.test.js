@@ -6,7 +6,6 @@ import {
   LIMB_OUTER,
   TICKS_PER_SECTOR,
   MAX_READING_CHARS,
-  ROMAN,
   numeralFor,
   bearingPoint,
   sectors,
@@ -199,7 +198,6 @@ describe('dialTicks', () => {
 
 describe('numeralFor', () => {
   it('numbers the twelve machines in roman', () => {
-    expect(ROMAN).toHaveLength(12);
     expect(games.map((_game, index) => numeralFor(index))).toEqual([
       'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII',
     ]);

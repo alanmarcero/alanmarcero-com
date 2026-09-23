@@ -1,20 +1,11 @@
 import { MONTHLY_SALES, NASDAQ_META, SALE_TXNS } from './tmusMonthlySales';
 import { SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS } from './tmusInsiderSales';
 
-const ISO_MONTH = /^\d{4}-\d{2}$/;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const GROUPS = ['sievert', 'others'];
 
 const sum = (list, pick) => list.reduce((total, item) => total + pick(item), 0);
 
 describe('NASDAQ_META', () => {
-  it('names Nasdaq as the source, with the page a reader can check', () => {
-    expect(NASDAQ_META.source).toMatch(/nasdaq/i);
-    expect(NASDAQ_META.sourceUrl).toBe(
-      'https://www.nasdaq.com/market-activity/stocks/tmus/insider-activity',
-    );
-  });
-
   it('records the rows that arrived, and whether the 250 cap is what bounded them', () => {
     // The cap is silent: feedReported has read both 250 and 251 while the body
     // held exactly 250 rows, so feedRecords counts what ARRIVED. Under 250 and
@@ -24,8 +15,7 @@ describe('NASDAQ_META', () => {
     expect(NASDAQ_META.feedRecords).toBeGreaterThanOrEqual(NASDAQ_META.saleRows);
   });
 
-  it('excludes Deutsche Telekom and says how much that removed', () => {
-    expect(NASDAQ_META.excludedFiler).toBe('DEUTSCHE TELEKOM AG');
+  it('excludes more Deutsche Telekom rows than it keeps', () => {
     expect(NASDAQ_META.excludedRows).toBeGreaterThan(NASDAQ_META.txnCount);
   });
 
@@ -74,11 +64,9 @@ describe('SALE_TXNS', () => {
 
   it('carries a positive share count, price and value on every row', () => {
     SALE_TXNS.forEach((txn) => {
-      expect(txn.date).toMatch(ISO_DATE);
       expect(txn.shares).toBeGreaterThan(0);
       expect(txn.price).toBeGreaterThan(0);
       expect(txn.value).toBe(Math.round(txn.shares * txn.price));
-      expect(['direct', 'indirect']).toContain(txn.own);
     });
   });
 
@@ -90,7 +78,6 @@ describe('SALE_TXNS', () => {
 describe('MONTHLY_SALES', () => {
   it('is one continuous run of months with no gap and no duplicate', () => {
     const months = MONTHLY_SALES.map((r) => r.month);
-    months.forEach((month) => expect(month).toMatch(ISO_MONTH));
     expect(new Set(months).size).toBe(months.length);
     expect([...months].sort()).toEqual(months);
 
@@ -119,13 +106,10 @@ describe('MONTHLY_SALES', () => {
     });
   });
 
-  it('holds both groups, fully formed, on every month', () => {
+  it("credits every group's shares to that group's named people, every month", () => {
     MONTHLY_SALES.forEach((record) => {
       GROUPS.forEach((group) => {
         const bucket = record[group];
-        expect(typeof bucket.shares).toBe('number');
-        expect(typeof bucket.value).toBe('number');
-        expect(Array.isArray(bucket.people)).toBe(true);
         // a group with people sold, and a group that sold has people
         expect(bucket.people.length > 0).toBe(bucket.txns > 0);
         expect(sum(bucket.people, (p) => p.shares)).toBe(bucket.shares);

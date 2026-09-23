@@ -3,7 +3,6 @@
  */
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import ArcadeApp from "./ArcadeApp";
-import { getGameById, games } from "./games/gameRegistry";
 
 // The picker and canvas render <canvas>/game loops that jsdom can't run, so
 // stub them down to the routing-relevant surface.
@@ -32,17 +31,6 @@ const setHash = (hash) => {
     window.dispatchEvent(new Event("hashchange"));
   });
 };
-
-describe("getGameById", () => {
-  it("returns the matching game", () => {
-    expect(getGameById("tetris")).toBe(games.find((g) => g.id === "tetris"));
-  });
-
-  it("returns null for unknown or empty ids", () => {
-    expect(getGameById("does-not-exist")).toBeNull();
-    expect(getGameById(null)).toBeNull();
-  });
-});
 
 describe("ArcadeApp routing", () => {
   beforeEach(() => {

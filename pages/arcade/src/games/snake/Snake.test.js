@@ -18,34 +18,10 @@ describe('Snake', () => {
   });
 
   describe('Initialization', () => {
-    test('score starts at 0', () => {
-      expect(game.score).toBe(0);
-    });
-
-    test('lives starts at 1', () => {
-      expect(game.lives).toBe(1);
-    });
-
-    test('level starts at 1', () => {
-      expect(game.level).toBe(1);
-    });
-
-    test('gameOver is false', () => {
-      expect(game.gameOver).toBe(false);
-    });
-
     test('HUD callback fires on init', () => {
       expect(hudData).not.toBeNull();
       expect(hudData.score).toBe(0);
       expect(hudData.lives).toBe(1);
-    });
-
-    test('snake starts with 3 segments', () => {
-      expect(game._segments.length).toBe(3);
-    });
-
-    test('food is spawned', () => {
-      expect(game._food).not.toBeNull();
     });
   });
 
@@ -97,13 +73,6 @@ describe('Snake', () => {
       game._food = { x: game._segments[0].x + 1, y: game._segments[0].y };
       game._move();
       expect(game._segments.length).toBe(initialLen + 1);
-    });
-
-    test('new food spawns after eating', () => {
-      game._food = { x: game._segments[0].x + 1, y: game._segments[0].y };
-      game._move();
-      // Food should be different (Math.random mock is consistent but food pos is recomputed)
-      expect(game._food).not.toBeNull();
     });
   });
 

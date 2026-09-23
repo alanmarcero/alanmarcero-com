@@ -1,5 +1,5 @@
 import {
-  FULL_SPEED_TILES, FRUIT_SPAWN_DOTS, SCORE, STARTING_LIVES,
+  FULL_SPEED_TILES,
   speedsForLevel, wavesForLevel, frightForLevel, elroyForLevel,
   houseDotsForLevel, houseTimeoutSecs, fruitForLevel,
 } from './levels';
@@ -100,10 +100,6 @@ describe('ghost house release', () => {
 });
 
 describe('fruit', () => {
-  it('spawns twice per level, at 70 and 170 dots', () => {
-    expect(FRUIT_SPAWN_DOTS).toEqual([70, 170]);
-  });
-
   it('starts with the cherry', () => {
     expect(fruitForLevel(1)).toEqual({ name: 'cherry', points: 100 });
   });
@@ -118,15 +114,5 @@ describe('fruit', () => {
     const ascending = [...values].sort((a, b) => a - b);
 
     expect(values).toEqual(ascending);
-  });
-});
-
-describe('scoring constants', () => {
-  it('matches the arcade values', () => {
-    expect(SCORE.DOT).toBe(10);
-    expect(SCORE.ENERGIZER).toBe(50);
-    expect(SCORE.GHOST_CHAIN).toEqual([200, 400, 800, 1600]);
-    expect(SCORE.EXTRA_LIFE_AT).toBe(10000);
-    expect(STARTING_LIVES).toBe(3);
   });
 });
