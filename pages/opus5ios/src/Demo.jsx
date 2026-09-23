@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { YOUTUBE_EMBED_ALLOW, YOUTUBE_EMBED_SANDBOX } from '../../../src/config';
 
 /**
  * A demo that only becomes a player once someone asks for it — nothing
@@ -20,7 +21,8 @@ function Demo({ videoId, label, cue = 'Hear it', onOpen, stopLabel }) {
         className="player__frame"
         src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
         title={label}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow={YOUTUBE_EMBED_ALLOW}
+        sandbox={YOUTUBE_EMBED_SANDBOX}
         allowFullScreen
       />
     </div>

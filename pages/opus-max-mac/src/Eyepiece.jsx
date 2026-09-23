@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Line from './Line';
+import { YOUTUBE_EMBED_ALLOW, YOUTUBE_EMBED_SANDBOX } from '../../../src/config';
 
 /**
  * A video that only becomes a player once someone asks for it, and stops
@@ -42,8 +43,8 @@ function Eyepiece({ videoId, label, subject = label, cue = 'Hear it', value }) {
           <iframe
             src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
             title={label}
-            sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow={YOUTUBE_EMBED_ALLOW}
+            sandbox={YOUTUBE_EMBED_SANDBOX}
             allowFullScreen
           />
         </div>
