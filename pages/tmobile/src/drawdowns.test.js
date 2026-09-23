@@ -1,5 +1,6 @@
 import {
-  DEFAULT_TOP_HOLD, TOP_HOLDS, deepest, drawdownEpisodes, formatDepth, formatSpan,
+  DEFAULT_TOP_HOLD, TOP_HOLDS, deepest, describeDrawdowns, describeHold, drawdownEpisodes,
+  formatDepth, formatSpan,
   heldAtLeast, summarizeDrawdowns, topHoldById, underwater,
 } from './drawdowns';
 
@@ -111,5 +112,27 @@ describe('formatting', () => {
     expect(formatSpan(1)).toBe('1 day');
     expect(formatSpan(90)).toBe('90 days');
     expect(formatSpan(4392)).toBe('12.0 years');
+  });
+});
+
+describe('captions', () => {
+  const fmt = { formatDate: (d) => d, formatPrice: (p) => `$${p}` };
+
+  it('names the filter in words', () => {
+    expect(describeHold(topHoldById('any'))).toBe('any length of time');
+    expect(describeHold(topHoldById('3m'))).toBe('at least 90 days');
+  });
+
+  it('describes the deepest, the median and the open drawdown', () => {
+    const text = describeDrawdowns(summarizeDrawdowns(drawdownEpisodes(CLOSES)), 'x', fmt);
+    expect(text).toMatch(/^2 all-time highs held for x/);
+    expect(text).toContain('\u221220.0%, from 2025-01-01 to its bottom on 2025-01-03');
+    expect(text).toContain('took 4 days to close above that high again');
+    expect(text).toContain('The one still open topped out at $110 on 2025-01-05');
+  });
+
+  it('says so when nothing qualifies', () => {
+    expect(describeDrawdowns(null, 'at least 1 year', fmt))
+      .toBe('No all-time high has stood for at least 1 year.');
   });
 });

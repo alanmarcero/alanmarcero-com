@@ -1,8 +1,10 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  useCallback, useId, useMemo, useRef, useState,
+} from 'react';
 import useMediaQuery from '../../../../src/hooks/useMediaQuery';
 import { indexAtX, plotBox, xAt, yearTicks } from '../chartGeometry';
 import {
-  dateIndexMap, depthY, labelPlacement, troughMarkers, underwaterPlot,
+  dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
 } from '../drawdownGeometry';
 import { deepest, formatDepth, formatSpan } from '../drawdowns';
 import { formatPrice, formatWeek } from '../insiderFilters';
@@ -16,6 +18,8 @@ const WIDE = {
   tick: 13,
   label: 13,
   labelled: 4,
+  // a four-digit year at the tick size, plus air
+  yearGap: 44,
 };
 
 const COMPACT = {
@@ -27,11 +31,12 @@ const COMPACT = {
   tick: 19,
   label: 17,
   labelled: 3,
+  yearGap: 50,
 };
 
 const COMPACT_QUERY = '(max-width: 640px)';
 
-// a year label needs this many sessions of its own year beside it to be read
+// a partial year needs this many of its own sessions beside it to be labelled
 const MIN_YEAR_SESSIONS = 200;
 
 /**
@@ -42,8 +47,10 @@ const MIN_YEAR_SESSIONS = 200;
  * of the drawdowns that pass the top-held filter are marked, and only the
  * deepest few are labelled.
  */
-function DrawdownChart({ points, episodes }) {
+function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
   const svgRef = useRef(null);
+  // several of these can share a page, and a gradient id has to be unique on it
+  const washId = `tm-drawdown-wash-${useId().replace(/[^\w-]/g, '')}`;
   const [hover, setHover] = useState(null);
 
   const compact = useMediaQuery(COMPACT_QUERY);
@@ -56,10 +63,14 @@ function DrawdownChart({ points, episodes }) {
       box,
       plot,
       dateIndex: dateIndexMap(points),
-      years: yearTicks(points.map((p) => p.date))
-        // a partial first year sits on top of the next; at phone width, every other year
-        .filter((t, i, all) => !all[i + 1] || all[i + 1].index - t.index >= MIN_YEAR_SESSIONS)
-        .filter((t, i) => !compact || i % 2 === 0),
+      years: thinYears(
+        yearTicks(points.map((p) => p.date))
+          // a partial first year sits on top of the next
+          .filter((t, i, all) => !all[i + 1] || all[i + 1].index - t.index >= MIN_YEAR_SESSIONS),
+        points.length,
+        box,
+        view.yearGap,
+      ),
     };
   }, [points, view, compact]);
 
@@ -105,7 +116,7 @@ function DrawdownChart({ points, episodes }) {
   const first = points[0];
   const last = points[points.length - 1];
   const worst = deepest(episodes, 1)[0];
-  const label = `Daily close as a loss from its all-time high, ${formatWeek(first.date)} `
+  const label = `${subject} as a loss from its all-time high, ${formatWeek(first.date)} `
     + `to ${formatWeek(last.date)}`
     + (worst ? `. The deepest drawdown shown is ${formatDepth(worst.depth)}.` : '.');
 
@@ -132,7 +143,7 @@ function DrawdownChart({ points, episodes }) {
         onKeyDown={handleKeyDown}
       >
         <defs>
-          <linearGradient id="tm-drawdown-wash" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={washId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--tm-drawdown)" stopOpacity="0" />
             <stop offset="100%" stopColor="var(--tm-drawdown)" stopOpacity="0.22" />
           </linearGradient>
@@ -183,7 +194,7 @@ function DrawdownChart({ points, episodes }) {
           y2={box.top}
         />
 
-        <path className="tm-chart__area" d={plot.area} fill="url(#tm-drawdown-wash)" />
+        <path className="tm-chart__area" d={plot.area} fill={`url(#${washId})`} />
         <polyline className="tm-chart__line tm-chart__line--drawdown" points={plot.line} />
 
         {markers.map((m) => (

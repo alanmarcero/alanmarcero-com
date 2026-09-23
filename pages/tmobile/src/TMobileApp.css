@@ -223,6 +223,14 @@
   padding: var(--space-4);
 }
 
+/* a line under a panel title: what the series is and what it covers */
+.tm-panel__kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+
 .tm-panel__head {
   display: flex;
   flex-wrap: wrap;
