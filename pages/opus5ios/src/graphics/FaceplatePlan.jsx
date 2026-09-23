@@ -1,8 +1,46 @@
 import { useMemo } from 'react';
-import { faceplateLayout, blackKeys } from './faceplate';
+import { faceplateLayout, blackKeys, KNOB, SLIDER, SWITCH } from './faceplate';
 
 const WIDTH = 480;
 const HEIGHT = 170;
+
+function Knob({ x, y, radius, angle }) {
+  return (
+    <g className="plan__knob">
+      <circle cx={x} cy={y} r={radius} />
+      <line
+        x1={x}
+        y1={y}
+        x2={x + Math.sin(angle) * radius}
+        y2={y - Math.cos(angle) * radius}
+      />
+    </g>
+  );
+}
+
+function Slider({ x, y, length, position }) {
+  const capY = y + length * (1 - position);
+  return (
+    <g className="plan__slider">
+      <line x1={x} y1={y} x2={x} y2={y + length} />
+      <rect x={x - 5} y={capY - 3} width="10" height="6" />
+    </g>
+  );
+}
+
+function Switch({ x, y, width, height, on }) {
+  return (
+    <rect
+      className={`plan__switch${on ? ' plan__switch--on' : ''}`}
+      x={x - width / 2}
+      y={y - height / 2}
+      width={width}
+      height={height}
+    />
+  );
+}
+
+const CONTROL_COMPONENTS = { [KNOB]: Knob, [SLIDER]: Slider, [SWITCH]: Switch };
 
 /**
  * The plan view an entry gets when no photograph of it exists.
@@ -51,45 +89,8 @@ function FaceplatePlan({ seed, className = '' }) {
       ))}
 
       {plan.controls.map((control, index) => {
-        if (control.type === 'knob') {
-          return (
-            <g key={index} className="plan__knob">
-              <circle cx={control.x} cy={control.y} r={control.radius} />
-              <line
-                x1={control.x}
-                y1={control.y}
-                x2={control.x + Math.sin(control.angle) * control.radius}
-                y2={control.y - Math.cos(control.angle) * control.radius}
-              />
-            </g>
-          );
-        }
-
-        if (control.type === 'slider') {
-          const capY = control.y + control.length * (1 - control.position);
-          return (
-            <g key={index} className="plan__slider">
-              <line
-                x1={control.x}
-                y1={control.y}
-                x2={control.x}
-                y2={control.y + control.length}
-              />
-              <rect x={control.x - 5} y={capY - 3} width="10" height="6" />
-            </g>
-          );
-        }
-
-        return (
-          <rect
-            key={index}
-            className={`plan__switch${control.on ? ' plan__switch--on' : ''}`}
-            x={control.x - control.width / 2}
-            y={control.y - control.height / 2}
-            width={control.width}
-            height={control.height}
-          />
-        );
+        const Control = CONTROL_COMPONENTS[control.type];
+        return <Control key={index} {...control} />;
       })}
 
       {plan.keybed && (

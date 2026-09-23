@@ -51,6 +51,7 @@ function Machines() {
   const [runningId, setRunningId] = useState(gameIdFromHash);
   const arriving = useRef(!hasArrived).current;
   const arrival = arriving ? ' rise' : '';
+  const arrivalDelay = (ms) => (arriving ? { animationDelay: `${ms}ms` } : undefined);
   /*
    * The dial follows the pointer and the keyboard, and it has to track them
    * separately. With one shared value, moving the mouse across the list and off
@@ -80,8 +81,11 @@ function Machines() {
     // because pushing on the way out too would mean Back re-enters the game
     // just left, and a visitor who played three machines could not get off the
     // page in fewer than six presses.
-    if (runningId) window.history.pushState(null, '', url);
-    else window.history.replaceState(null, '', url);
+    if (runningId) {
+      window.history.pushState(null, '', url);
+      return;
+    }
+    window.history.replaceState(null, '', url);
   }, [runningId]);
 
   // Both events matter: `hashchange` for someone editing the address bar,
@@ -133,23 +137,23 @@ function Machines() {
         <div className="page masthead__grid">
           <div>
             <p className={`gloss${arrival}`}>Twelve machines · free · no sign-in</p>
-            <h1 className={`masthead__title${arrival}`} style={arriving ? { animationDelay: '70ms' } : undefined}>
+            <h1 className={`masthead__title${arrival}`} style={arrivalDelay(70)}>
               Arcade
             </h1>
-            <p className={`prose masthead__lead${arrival}`} style={arriving ? { animationDelay: '140ms' } : undefined}>
+            <p className={`prose masthead__lead${arrival}`} style={arrivalDelay(140)}>
               Every machine here was written from scratch as a canvas game: the maze,
               the ghost targeting, the scatter and chase tables, the collision maths.
               There is no emulator and no ROM behind any of them. Keyboard on a
               desktop; touch controls appear on a phone.
             </p>
-            <div className={`masthead__act${arrival}`} style={arriving ? { animationDelay: '210ms' } : undefined}>
+            <div className={`masthead__act${arrival}`} style={arrivalDelay(210)}>
               <Line as="a" value="Eleven banks" href="/opus-max-mac">
                 Back to the patch banks
               </Line>
             </div>
           </div>
 
-          <figure className={`masthead__figure${arriving ? ' bloom' : ''}`} style={arriving ? { animationDelay: '280ms' } : undefined}>
+          <figure className={`masthead__figure${arriving ? ' bloom' : ''}`} style={arrivalDelay(280)}>
             <AzimuthDial items={games} activeId={activeId} />
             <figcaption className="gloss gloss--quiet masthead__caption">
               One sector per machine · the lit sector is the row you are on
@@ -178,7 +182,7 @@ function Machines() {
               <li
                 className={`machine${arrival}`}
                 key={game.id}
-                style={arriving ? { animationDelay: `${index * 45}ms` } : undefined}
+                style={arrivalDelay(index * 45)}
                 onMouseEnter={() => setHoveredId(game.id)}
                 onMouseLeave={clearHover}
                 onFocus={() => setFocusedId(game.id)}
