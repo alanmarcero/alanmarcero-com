@@ -42,17 +42,13 @@ function ArcadeApp() {
 
   const activeGame = getGameById(activeGameId);
 
+  if (activeGame) return <GameCanvas game={activeGame} onExit={handleExitGame} />;
+
   return (
-    <>
-      {activeGame ? (
-        <GameCanvas game={activeGame} onExit={handleExitGame} />
-      ) : (
-        <div className="arcade-page">
-          <ArcadeHeader />
-          <GamePicker onSelectGame={handleSelectGame} />
-        </div>
-      )}
-    </>
+    <div className="arcade-page">
+      <ArcadeHeader />
+      <GamePicker onSelectGame={handleSelectGame} />
+    </div>
   );
 }
 

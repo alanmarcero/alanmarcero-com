@@ -7,6 +7,8 @@
  */
 
 import { emitHud } from '../gameHud';
+import { letterbox } from '../frame';
+import { actionForKey } from '../input';
 import {
   COLS, TILE, TUNNEL_ROW, PAC_START, HOUSE_DOOR, HOUSE_CENTER,
   buildGrid, tileAt, isWalkable, wrapCol, atTileCenter,
@@ -36,6 +38,9 @@ const DEATH_SECS = 1.6;
 const LEVEL_CLEAR_SECS = 1.8;
 const GHOST_SCORE_PAUSE = 0.7;
 
+/** Phases that hold play for a fixed time, then hand over to `_endTimedPhase`. */
+const TIMED_PHASES = new Set(['ready', 'dying', 'levelClear', 'ghostScore']);
+
 /** Guards the centre-to-centre walk against spinning if a step is huge. */
 const MAX_GHOST_HOPS = 4;
 const CENTER_EPS = 1e-6;
@@ -50,6 +55,13 @@ const IDLE_MOUTH = 0.4;
  * vanishes as the mouth shuts on it rather than ahead of it.
  */
 const EAT_RADIUS = 0.15;
+
+/** Blinky's Cruise Elroy stage (0, 1 or 2) with `remaining` dots left in the maze. */
+export function elroyStage(remaining, { dots1, dots2 }) {
+  if (remaining <= dots2) return 2;
+  if (remaining <= dots1) return 1;
+  return 0;
+}
 
 export class PacMan {
   onHudUpdate = null;
@@ -77,12 +89,7 @@ export class PacMan {
   resize(width, height) {
     this._canvasW = width;
     this._canvasH = height;
-    const scale = Math.min(width / R.GAME_W, height / R.GAME_H);
-    this._transform = {
-      scale,
-      offsetX: (width - R.GAME_W * scale) / 2,
-      offsetY: (height - R.GAME_H * scale) / 2,
-    };
+    this._transform = letterbox(width, height, R.GAME_W, R.GAME_H);
   }
 
   // ---------------------------------------------------------------------
@@ -159,34 +166,9 @@ export class PacMan {
   _step(dt) {
     this._energizerBlink = (this._energizerBlink + dt) % 0.4;
 
-    if (this._phase === 'ready') {
+    if (TIMED_PHASES.has(this._phase)) {
       this._phaseTimer -= dt;
-      if (this._phaseTimer <= 0) this._phase = 'playing';
-      return;
-    }
-
-    if (this._phase === 'dying') {
-      this._phaseTimer -= dt;
-      if (this._phaseTimer <= 0) this._afterDeath();
-      return;
-    }
-
-    if (this._phase === 'levelClear') {
-      this._phaseTimer -= dt;
-      if (this._phaseTimer <= 0) {
-        this.level += 1;
-        this._startLevel();
-        this._emitHud();
-      }
-      return;
-    }
-
-    if (this._phase === 'ghostScore') {
-      this._phaseTimer -= dt;
-      if (this._phaseTimer <= 0) {
-        this._phase = 'playing';
-        this._scorePopup = null;
-      }
+      if (this._phaseTimer <= 0) this._endTimedPhase();
       return;
     }
 
@@ -197,6 +179,21 @@ export class PacMan {
     this._updateGhosts(dt);
     this._updateFruit(dt);
     this._checkCollisions();
+  }
+
+  _endTimedPhase() {
+    if (this._phase === 'dying') {
+      this._afterDeath();
+      return;
+    }
+    if (this._phase === 'levelClear') {
+      this.level += 1;
+      this._startLevel();
+      this._emitHud();
+      return;
+    }
+    if (this._phase === 'ghostScore') this._scorePopup = null;
+    this._phase = 'playing';
   }
 
   _updateModeTimers(dt) {
@@ -353,9 +350,7 @@ export class PacMan {
     const remaining = this._totalDots - this._dotsEaten;
     const blinky = this._ghosts.find((g) => g.name === 'blinky');
     if (!blinky) return;
-    if (remaining <= this._elroy.dots2) blinky.elroy = 2;
-    else if (remaining <= this._elroy.dots1) blinky.elroy = 1;
-    else blinky.elroy = 0;
+    blinky.elroy = elroyStage(remaining, this._elroy);
   }
 
   // ---------------------------------------------------------------------
@@ -599,8 +594,7 @@ export class PacMan {
   // ---------------------------------------------------------------------
 
   handleKeyDown(key) {
-    const dir = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }[key];
-    if (dir) this._pac.wanted = dir;
+    this.handleTouchAction(actionForKey(key), true);
   }
 
   handleKeyUp() {
@@ -608,8 +602,8 @@ export class PacMan {
   }
 
   handleTouchAction(action, active) {
-    if (!active) return;
-    if (['left', 'right', 'up', 'down'].includes(action)) this._pac.wanted = action;
+    if (!active || !Object.hasOwn(VECTORS, action)) return;
+    this._pac.wanted = action;
   }
 
   destroy() {

@@ -1,5 +1,8 @@
-import { BG, CYAN, VIOLET, ORANGE } from '../palette';
+import { CYAN, VIOLET, ORANGE } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed, drawLevelFlash, LEVEL_TRANSITION_SECONDS } from '../frame';
+import { clamp, rectsOverlap } from '../geometry';
+import { actionForKey } from '../input';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -40,6 +43,10 @@ const SHIELD_BLOCK = 3; // pixel block size in virtual coords
 const SHIELD_ROWS = 6;
 const SHIELD_COLS = 10;
 const SHIELD_Y_OFFSET = 58; // from bottom
+const SHIELD_TOP_Y = GAME_H - SHIELD_Y_OFFSET - SHIELD_ROWS * SHIELD_BLOCK;
+
+// Neither the player nor the fleet may come closer than this to a side wall.
+const EDGE_MARGIN = 4;
 
 // Scoring
 const SCORE_TOP = 30;
@@ -87,11 +94,10 @@ const SHIELD_PATTERN = [
   [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
 ];
 
-// ---------------------------------------------------------------------------
-// Helper: axis-aligned bounding box collision
-// ---------------------------------------------------------------------------
-function aabb(ax, ay, aw, ah, bx, by, bw, bh) {
-  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+function alienStyleForRow(row) {
+  if (row < 2) return { color: ORANGE, points: SCORE_TOP, sprite: ALIEN_SPRITE_A };
+  if (row < 4) return { color: VIOLET, points: SCORE_MID, sprite: ALIEN_SPRITE_B };
+  return { color: CYAN, points: SCORE_BOT, sprite: ALIEN_SPRITE_C };
 }
 
 // ---------------------------------------------------------------------------
@@ -147,33 +153,19 @@ export class SpaceInvaders {
   }
 
   render(ctx) {
-    // Clear
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderShields(ctx);
+      this._renderAliens(ctx);
+      this._renderPlayer(ctx);
+      this._renderPlayerBullets(ctx);
+      this._renderAlienBullets(ctx);
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
+      if (this._levelTransition) drawLevelFlash(ctx, this._levelTransitionTimer, GAME_W, GAME_H);
+    });
+  }
 
-    // Clip to game area
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
-
-    this._renderShields(ctx);
-    this._renderAliens(ctx);
-    this._renderPlayer(ctx);
-    this._renderPlayerBullets(ctx);
-    this._renderAlienBullets(ctx);
-
-    // Level transition flash
-    if (this._levelTransition) {
-      const alpha = 0.15 + 0.1 * Math.sin(this._levelTransitionTimer * 12);
-      ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
-      ctx.fillRect(0, 0, GAME_W, GAME_H);
-    }
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   resize(width, height) {
@@ -183,36 +175,30 @@ export class SpaceInvaders {
   }
 
   handleKeyDown(key) {
-    if (key === 'ArrowLeft') this._keys.left = true;
-    if (key === 'ArrowRight') this._keys.right = true;
-    if (key === ' ' || key === 'Space') {
-      if (!this._keys.fireLock) {
-        this._keys.fire = true;
-        this._keys.fireLock = true;
-      }
-    }
+    this._setControl(actionForKey(key), true);
   }
 
   handleKeyUp(key) {
-    if (key === 'ArrowLeft') this._keys.left = false;
-    if (key === 'ArrowRight') this._keys.right = false;
-    if (key === ' ' || key === 'Space') {
-      this._keys.fireLock = false;
-    }
+    this._setControl(actionForKey(key), false);
   }
 
   handleTouchAction(action, active) {
+    this._setControl(action, active);
+  }
+
+  // `fireLock` makes fire one shot per press: key auto-repeat and a held
+  // button must not stream bullets.
+  _setControl(action, active) {
     if (action === 'left') this._keys.left = active;
     if (action === 'right') this._keys.right = active;
-    if (action === 'fire') {
-      if (active && !this._keys.fireLock) {
-        this._keys.fire = true;
-        this._keys.fireLock = true;
-      }
-      if (!active) {
-        this._keys.fireLock = false;
-      }
+    if (action !== 'fire') return;
+    if (!active) {
+      this._keys.fireLock = false;
+      return;
     }
+    if (this._keys.fireLock) return;
+    this._keys.fire = true;
+    this._keys.fireLock = true;
   }
 
   destroy() {
@@ -224,21 +210,7 @@ export class SpaceInvaders {
   // -----------------------------------------------------------------------
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H; // 4:3
-    let w = this.canvasW;
-    let h = this.canvasH;
-
-    if (w / h > aspect) {
-      // Canvas is wider than 4:3 - fit to height
-      w = h * aspect;
-    } else {
-      // Canvas is taller than 4:3 - fit to width
-      h = w / aspect;
-    }
-
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   // -----------------------------------------------------------------------
@@ -268,20 +240,6 @@ export class SpaceInvaders {
     this._aliens = [];
     for (let r = 0; r < ALIEN_ROWS; r++) {
       for (let c = 0; c < ALIEN_COLS; c++) {
-        let color, points, sprite;
-        if (r < 2) {
-          color = ORANGE;
-          points = SCORE_TOP;
-          sprite = ALIEN_SPRITE_A;
-        } else if (r < 4) {
-          color = VIOLET;
-          points = SCORE_MID;
-          sprite = ALIEN_SPRITE_B;
-        } else {
-          color = CYAN;
-          points = SCORE_BOT;
-          sprite = ALIEN_SPRITE_C;
-        }
         this._aliens.push({
           x: startX + c * ALIEN_PAD_X,
           y: startY + r * ALIEN_PAD_Y,
@@ -290,9 +248,7 @@ export class SpaceInvaders {
           row: r,
           col: c,
           alive: true,
-          color,
-          points,
-          sprite,
+          ...alienStyleForRow(r),
         });
       }
     }
@@ -306,7 +262,6 @@ export class SpaceInvaders {
 
   _initShields() {
     this._shields = [];
-    const shieldY = GAME_H - SHIELD_Y_OFFSET - SHIELD_ROWS * SHIELD_BLOCK;
     const totalShieldWidth = SHIELD_COUNT * SHIELD_COLS * SHIELD_BLOCK;
     const spacing = (GAME_W - totalShieldWidth) / (SHIELD_COUNT + 1);
 
@@ -318,7 +273,7 @@ export class SpaceInvaders {
           if (SHIELD_PATTERN[r][c]) {
             blocks.push({
               x: sx + c * SHIELD_BLOCK,
-              y: shieldY + r * SHIELD_BLOCK,
+              y: SHIELD_TOP_Y + r * SHIELD_BLOCK,
               w: SHIELD_BLOCK,
               h: SHIELD_BLOCK,
               alive: true,
@@ -358,9 +313,7 @@ export class SpaceInvaders {
     if (this._keys.left) p.x -= PLAYER_SPEED * dt;
     if (this._keys.right) p.x += PLAYER_SPEED * dt;
 
-    // Clamp to game area
-    if (p.x < 4) p.x = 4;
-    if (p.x + p.w > GAME_W - 4) p.x = GAME_W - 4 - p.w;
+    p.x = clamp(p.x, EDGE_MARGIN, GAME_W - EDGE_MARGIN - p.w);
 
     // Fire
     if (this._keys.fire) {
@@ -405,7 +358,7 @@ export class SpaceInvaders {
     for (const a of this._aliens) {
       if (!a.alive) continue;
       a.x += speed * this._alienDir * dt;
-      if (a.x < 4 || a.x + a.w > GAME_W - 4) {
+      if (a.x < EDGE_MARGIN || a.x + a.w > GAME_W - EDGE_MARGIN) {
         hitEdge = true;
       }
     }
@@ -422,12 +375,9 @@ export class SpaceInvaders {
     }
 
     // Check if aliens reached shield line -> game over
-    const shieldLineY = GAME_H - SHIELD_Y_OFFSET - SHIELD_ROWS * SHIELD_BLOCK;
-    for (const a of this._aliens) {
-      if (a.alive && a.y + a.h >= shieldLineY) {
-        this._triggerGameOver();
-        return;
-      }
+    if (this._aliens.some((a) => a.alive && a.y + a.h >= SHIELD_TOP_Y)) {
+      this._triggerGameOver();
+      return;
     }
 
     // Alien firing
@@ -444,7 +394,7 @@ export class SpaceInvaders {
     // Check level complete
     if (aliveCount === 0) {
       this._levelTransition = true;
-      this._levelTransitionTimer = 1.0;
+      this._levelTransitionTimer = LEVEL_TRANSITION_SECONDS;
     }
   }
 
@@ -494,7 +444,7 @@ export class SpaceInvaders {
       for (const shield of this._shields) {
         for (const block of shield) {
           if (!block.alive) continue;
-          if (aabb(b.x, b.y, b.w, b.h, block.x, block.y, block.w, block.h)) {
+          if (rectsOverlap(b.x, b.y, b.w, b.h, block.x, block.y, block.w, block.h)) {
             block.alive = false;
             hit = true;
             break;
@@ -515,7 +465,7 @@ export class SpaceInvaders {
       let hit = false;
       for (const a of this._aliens) {
         if (!a.alive) continue;
-        if (aabb(b.x, b.y, b.w, b.h, a.x, a.y, a.w, a.h)) {
+        if (rectsOverlap(b.x, b.y, b.w, b.h, a.x, a.y, a.w, a.h)) {
           a.alive = false;
           hit = true;
           this.score += a.points;
@@ -536,7 +486,7 @@ export class SpaceInvaders {
     if (p.alive && p.invulnTimer <= 0) {
       for (let bi = this._alienBullets.length - 1; bi >= 0; bi--) {
         const b = this._alienBullets[bi];
-        if (aabb(b.x, b.y, b.w, b.h, p.x, p.y, p.w, p.h)) {
+        if (rectsOverlap(b.x, b.y, b.w, b.h, p.x, p.y, p.w, p.h)) {
           this._alienBullets.splice(bi, 1);
           this._playerHit();
           break;
@@ -553,7 +503,7 @@ export class SpaceInvaders {
       for (const shield of this._shields) {
         for (const block of shield) {
           if (!block.alive) continue;
-          if (aabb(a.x, a.y, a.w, a.h, block.x, block.y, block.w, block.h)) {
+          if (rectsOverlap(a.x, a.y, a.w, a.h, block.x, block.y, block.w, block.h)) {
             block.alive = false;
           }
         }

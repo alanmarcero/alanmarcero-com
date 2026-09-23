@@ -1,5 +1,7 @@
-import { CYAN, VIOLET, ORANGE, BG } from '../palette';
+import { CYAN, VIOLET, ORANGE } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed } from '../frame';
+import { actionForKey, DIRECTION_STEPS } from '../input';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -84,12 +86,9 @@ export class Snake {
       return;
     }
 
-    // Self collision
-    for (let i = 0; i < this._segments.length; i++) {
-      if (this._segments[i].x === nx && this._segments[i].y === ny) {
-        this._triggerGameOver();
-        return;
-      }
+    if (this._segments.some((s) => s.x === nx && s.y === ny)) {
+      this._triggerGameOver();
+      return;
     }
 
     this._segments.unshift({ x: nx, y: ny });
@@ -124,21 +123,15 @@ export class Snake {
   }
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderGrid(ctx);
+      this._renderFood(ctx);
+      this._renderSnake(ctx);
+    });
+  }
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
-
-    this._renderGrid(ctx);
-    this._renderFood(ctx);
-    this._renderSnake(ctx);
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderGrid(ctx) {
@@ -209,38 +202,29 @@ export class Snake {
   }
 
   handleKeyDown(key) {
-    const d = this._direction;
-    if (key === 'ArrowUp' && d.y !== 1) this._nextDirection = { x: 0, y: -1 };
-    if (key === 'ArrowDown' && d.y !== -1) this._nextDirection = { x: 0, y: 1 };
-    if (key === 'ArrowLeft' && d.x !== 1) this._nextDirection = { x: -1, y: 0 };
-    if (key === 'ArrowRight' && d.x !== -1) this._nextDirection = { x: 1, y: 0 };
+    this._steer(actionForKey(key));
   }
 
   handleKeyUp(_key) {}
 
   handleTouchAction(action, active) {
-    if (!active) return;
+    if (active) this._steer(action);
+  }
+
+  // Checked against the direction of the last move, not the queued one, so two
+  // quick presses cannot fold the snake back onto its own neck.
+  _steer(action) {
+    const step = DIRECTION_STEPS[action];
+    if (!step) return;
     const d = this._direction;
-    if (action === 'up' && d.y !== 1) this._nextDirection = { x: 0, y: -1 };
-    if (action === 'down' && d.y !== -1) this._nextDirection = { x: 0, y: 1 };
-    if (action === 'left' && d.x !== 1) this._nextDirection = { x: -1, y: 0 };
-    if (action === 'right' && d.x !== -1) this._nextDirection = { x: 1, y: 0 };
+    const reverses = step.x === -d.x && step.y === -d.y;
+    if (!reverses) this._nextDirection = { ...step };
   }
 
   destroy() {}
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {
