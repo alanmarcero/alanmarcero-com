@@ -11,6 +11,8 @@ import DroughtTiles from './components/DroughtTiles';
 import QuietChart from './components/QuietChart';
 import SellTable from './components/SellTable';
 import MonthlyTable from './components/MonthlyTable';
+import DrawdownChart from './components/DrawdownChart';
+import DrawdownTable from './components/DrawdownTable';
 import {
   DEFAULT_FILTER, filterById, formatUSD, formatWeek, selectedWeeks, summarize,
   visibleSeries,
@@ -28,6 +30,11 @@ import {
   TMUS_META, TMUS_WEEKLY, SALE_DAYS, SIEVERT_SELL_WEEKS, OTHER_SELL_WEEKS,
 } from './data/tmusInsiderSales';
 import { MONTHLY_SALES, NASDAQ_META } from './data/tmusMonthlySales';
+import { TMUS_DAILY, TMUS_DAILY_META } from './data/tmusDailyCloses';
+import {
+  DEFAULT_TOP_HOLD, TOP_HOLDS, drawdownEpisodes, formatDepth, formatSpan,
+  heldAtLeast, summarizeDrawdowns, topHoldById, underwater,
+} from './drawdowns';
 
 // Every "as of" figure is read from the date the data was fetched, not from
 // the clock: the page is static, so a live `new Date()` would quietly inflate
@@ -36,9 +43,19 @@ const AS_OF = TMUS_META.fetched;
 const HALF_YEAR = 182;
 const YEAR = 365;
 
+// the whole daily history, computed once: it does not move with any control
+const UNDERWATER = underwater(TMUS_DAILY);
+const ALL_DRAWDOWNS = drawdownEpisodes(TMUS_DAILY);
+
 function TMobileApp() {
   const [filter, setFilter] = useState(DEFAULT_FILTER);
   const [measure, setMeasure] = useState(DEFAULT_MEASURE);
+  const [topHold, setTopHold] = useState(DEFAULT_TOP_HOLD);
+
+  const hold = topHoldById(topHold);
+  const drawdowns = useMemo(() => heldAtLeast(ALL_DRAWDOWNS, hold.days), [hold.days]);
+  const drawdownSummary = useMemo(() => summarizeDrawdowns(drawdowns), [drawdowns]);
+  const holdLabel = hold.days ? `at least ${formatSpan(hold.days)}` : 'any length of time';
 
   const show = visibleSeries(filter);
   const rows = useMemo(
@@ -97,6 +114,8 @@ function TMobileApp() {
           without selling, and the last two years totalled up by month. Deutsche
           Telekom &mdash; which owns most of the company and trades in blocks
           nothing like an executive&rsquo;s payday &mdash; is left out of all three.
+          Last, every daily close since the stock first traded, measured as a loss
+          from its all-time high.
         </p>
         <WaveformDivider variant="saw" className="tm-divider" />
       </header>
@@ -237,6 +256,66 @@ function TMobileApp() {
 
         <MonthlyTable rows={monthTableRows} />
 
+        <section className="tm-panel" aria-labelledby="tm-drawdown-heading">
+          <div className="tm-panel__head">
+            <h2 className="tm-panel__title" id="tm-drawdown-heading">
+              Peak-to-trough drawdowns since {TMUS_DAILY_META.first.slice(0, 4)}
+            </h2>
+          </div>
+
+          <div className="tm-controls tm-controls--inset">
+            <div className="tm-controls__group" role="group" aria-labelledby="tm-hold-label">
+              <p className="tm-controls__label" id="tm-hold-label">Count a top that stood at least</p>
+              <div className="tm-filters">
+                {TOP_HOLDS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className={`tm-filter${topHold === option.id ? ' tm-filter--on' : ''}`}
+                    aria-pressed={topHold === option.id}
+                    onClick={() => setTopHold(option.id)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <DrawdownChart points={UNDERWATER} episodes={drawdowns} />
+
+          <p className="tm-panel__note">
+            {drawdownSummary ? (
+              <>
+                {`${drawdownSummary.count} all-time highs held for ${holdLabel} before `}
+                {`the stock closed above them again. The deepest fall from one was `}
+                {`${formatDepth(drawdownSummary.deepest.depth)}, from `}
+                {`${formatWeek(drawdownSummary.deepest.peakDate)} to its bottom on `}
+                {`${formatWeek(drawdownSummary.deepest.troughDate)}`}
+                {drawdownSummary.deepest.open
+                  ? ', and it has not recovered'
+                  : `, and it took ${formatSpan(drawdownSummary.deepest.topDays)} to close above that high again`}
+                {`; the median is ${formatDepth(drawdownSummary.median)}. `}
+                {drawdownSummary.open
+                  ? `The one still open topped out at $${drawdownSummary.open.peak.toFixed(2)} on `
+                    + `${formatWeek(drawdownSummary.open.peakDate)} and is `
+                    + `${formatDepth(drawdownSummary.open.depth)} at its lowest close so far, `
+                    + `${formatSpan(drawdownSummary.open.topDays)} on. `
+                  : ''}
+                {'A dot marks each bottom; the deepest are labelled.'}
+              </>
+            ) : (
+              `No all-time high has stood for ${holdLabel}.`
+            )}
+          </p>
+
+          <p className="tm-hint">
+            Hover or focus the chart and use &larr; &rarr; to step a week at a time.
+          </p>
+        </section>
+
+        <DrawdownTable episodes={drawdowns} holdLabel={holdLabel} />
+
         <footer className="tm-notes">
           <h2 className="tm-notes__title">Where this comes from</h2>
           <ul className="tm-notes__list">
@@ -302,6 +381,21 @@ function TMobileApp() {
                 {formatUSD(trade.value)} into the totals above.
               </li>
             ))}
+            <li>
+              Drawdowns: {TMUS_DAILY_META.sessions.toLocaleString('en-US')} daily closes
+              from {TMUS_DAILY_META.source}, {TMUS_DAILY_META.first} to{' '}
+              {TMUS_DAILY_META.last} &mdash; everything Yahoo holds. The stock first
+              traded as MetroPCS and became T-Mobile US in the 2013 merger, so the
+              early years are MetroPCS&rsquo;s, adjusted for the{' '}
+              {TMUS_DAILY_META.splits.map((s) => `${s.ratio} split of ${s.date}`).join(', ')}.
+              Closes are not adjusted for dividends. A drawdown runs from an all-time
+              closing high to the first close above it, and its depth is the lowest
+              close in between.
+              {TMUS_DAILY_META.repaired.length
+                ? ` Yahoo had no close for ${TMUS_DAILY_META.repaired.join(', ')}; it was `
+                  + 'read back from the following session\u2019s previous close.'
+                : ''}
+            </li>
             <li>
               A dot on the weekly chart sits at the week&rsquo;s closing price, not at
               the exact price of the trade. Both tables carry the real numbers.
