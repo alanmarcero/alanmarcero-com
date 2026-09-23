@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useMediaQuery from '../../../../src/hooks/useMediaQuery';
-import { plotBox } from '../chartGeometry';
+import { plotBox, tipPlacement } from '../chartGeometry';
 import {
   bandScale, bandIndexAtX, columnPath, monthTicks, stackDomain, stackRects,
   stackTicks, yAt,
@@ -33,9 +33,6 @@ const COMPACT = {
 };
 
 const COMPACT_QUERY = '(max-width: 640px)';
-
-/** Keep the tooltip inside the well at the two ends of the axis. */
-const clampPercent = (value) => Math.min(84, Math.max(16, value));
 
 function MonthlySalesChart({ records, stacks, measure, summary, show }) {
   const svgRef = useRef(null);
@@ -212,8 +209,8 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
 
       {hover && (
         <div
-          className="tm-tip"
-          style={{ left: `${clampPercent((band.centerAt(hover.index) / view.w) * 100)}%` }}
+          className={`tm-tip tm-tip--${tipPlacement(band.centerAt(hover.index), view.w).side}`}
+          style={{ left: tipPlacement(band.centerAt(hover.index), view.w).left }}
           role="status"
           aria-live="polite"
         >

@@ -1,3 +1,4 @@
+import BiggestDrops from './BiggestDrops';
 import DrawdownChart from './DrawdownChart';
 import DrawdownTable from './DrawdownTable';
 import { describeDrawdowns, describeHold, summarizeDrawdowns } from '../drawdowns';
@@ -5,7 +6,7 @@ import { formatPrice, formatWeek } from '../insiderFilters';
 
 /**
  * One instrument's drawdowns: the underwater chart, the caption derived from
- * it, and the table that is its accessible twin. `children` sit between the
+ * it, the biggest drop of each year, and the table that is its accessible twin. `children` sit between the
  * heading and the chart — a page with one chart puts its control there.
  */
 function DrawdownPanel({
@@ -29,6 +30,8 @@ function DrawdownPanel({
         <DrawdownChart points={points} episodes={episodes} subject={subject} />
 
         <p className="tm-panel__note">{caption}</p>
+
+        <BiggestDrops episodes={episodes} id={id} />
 
         <p className="tm-hint">
           Hover or focus the chart and use &larr; &rarr; to step a week at a time.

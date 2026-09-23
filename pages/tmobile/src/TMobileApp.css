@@ -465,18 +465,29 @@
 }
 
 /* -- tooltip: values lead, labels follow -------------------------------- */
+/* The tooltip sits BESIDE the cursor line, on the side with more room, so
+   the point being read is never under it. Its width is capped at just under
+   half the chart, which is what guarantees that side always fits. */
 .tm-tip {
+  --tm-tip-gap: 14px;
   position: absolute;
   top: var(--space-3);
-  transform: translateX(-50%);
-  min-width: 190px;
-  max-width: 260px;
+  min-width: min(190px, calc(50% - 2 * var(--tm-tip-gap)));
+  max-width: min(260px, calc(50% - 2 * var(--tm-tip-gap)));
   pointer-events: none;
   background: var(--panel-raised);
   border-radius: var(--radius-sm);
   box-shadow: 0 0 0 1px var(--line-strong), 0 12px 28px rgba(0, 0, 0, 0.55);
   padding: var(--space-2) var(--space-3);
   z-index: 2;
+}
+
+.tm-tip--right {
+  transform: translateX(var(--tm-tip-gap));
+}
+
+.tm-tip--left {
+  transform: translateX(calc(-100% - var(--tm-tip-gap)));
 }
 
 .tm-tip__week {
@@ -543,6 +554,64 @@
   margin-top: var(--space-3);
   font-size: var(--text-sm);
   color: var(--ink-muted);
+}
+
+/* -- biggest drops: one per year, a compact ranked readout --------------- */
+.tm-drops {
+  margin-top: var(--space-4);
+}
+
+.tm-drops__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: var(--space-2);
+}
+
+.tm-drops__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  /* columns, not a grid: the ranking reads down, deepest at the top left */
+  columns: 3 280px;
+  column-gap: var(--space-5);
+}
+
+.tm-drops__row {
+  break-inside: avoid;
+  display: grid;
+  grid-template-columns: 3.2em 4.6em 1fr;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.tm-drops__year,
+.tm-drops__depth {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tm-drops__year {
+  color: var(--ink-faint);
+}
+
+.tm-drops__depth {
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+.tm-drops__days {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
 }
 
 .tm-hint {
