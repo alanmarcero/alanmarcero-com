@@ -1,5 +1,8 @@
-import { CYAN, VIOLET, ORANGE, BG, WHITE } from '../palette';
+import { CYAN, VIOLET, ORANGE, WHITE } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed, drawLevelFlash, LEVEL_TRANSITION_SECONDS } from '../frame';
+import { clamp, rectsOverlap } from '../geometry';
+import { actionForKey } from '../input';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -26,10 +29,6 @@ const RESPAWN_DELAY = 1;
 
 const ROW_COLORS = [ORANGE, ORANGE, VIOLET, VIOLET, CYAN, CYAN];
 const ROW_SCORES = [7, 7, 5, 5, 3, 1];
-
-function aabb(ax, ay, aw, ah, bx, by, bw, bh) {
-  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-}
 
 export class Breakout {
   onHudUpdate = null;
@@ -124,8 +123,7 @@ export class Breakout {
     const p = this._paddle;
     if (this._keys.left) p.x -= PADDLE_SPEED * dt;
     if (this._keys.right) p.x += PADDLE_SPEED * dt;
-    if (p.x < 0) p.x = 0;
-    if (p.x + p.w > GAME_W) p.x = GAME_W - p.w;
+    p.x = clamp(p.x, 0, GAME_W - p.w);
   }
 
   _updateBall(dt) {
@@ -173,7 +171,7 @@ export class Breakout {
 
     // Ball vs paddle
     const p = this._paddle;
-    if (b.vy > 0 && aabb(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2, p.x, p.y, p.w, p.h)) {
+    if (b.vy > 0 && rectsOverlap(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2, p.x, p.y, p.w, p.h)) {
       b.vy = -Math.abs(b.vy);
       b.y = p.y - b.size;
       // Adjust angle based on hit position
@@ -188,7 +186,7 @@ export class Breakout {
     for (let i = this._bricks.length - 1; i >= 0; i--) {
       const brick = this._bricks[i];
       if (!brick.alive) continue;
-      if (aabb(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2, brick.x, brick.y, brick.w, brick.h)) {
+      if (rectsOverlap(b.x - b.size, b.y - b.size, b.size * 2, b.size * 2, brick.x, brick.y, brick.w, brick.h)) {
         brick.alive = false;
         this.score += brick.points;
         this._emitHud();
@@ -213,7 +211,7 @@ export class Breakout {
     // Check level complete
     if (this._bricks.every((brick) => !brick.alive)) {
       this._levelTransition = true;
-      this._levelTransitionTimer = 1.0;
+      this._levelTransitionTimer = LEVEL_TRANSITION_SECONDS;
     }
   }
 
@@ -236,27 +234,17 @@ export class Breakout {
   }
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderBricks(ctx);
+      this._renderPaddle(ctx);
+      this._renderBall(ctx);
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
+      if (this._levelTransition) drawLevelFlash(ctx, this._levelTransitionTimer, GAME_W, GAME_H);
+    });
+  }
 
-    this._renderBricks(ctx);
-    this._renderPaddle(ctx);
-    this._renderBall(ctx);
-
-    if (this._levelTransition) {
-      const alpha = 0.15 + 0.1 * Math.sin(this._levelTransitionTimer * 12);
-      ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
-      ctx.fillRect(0, 0, GAME_W, GAME_H);
-    }
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderBricks(ctx) {
@@ -305,39 +293,31 @@ export class Breakout {
   }
 
   handleKeyDown(key) {
-    if (key === 'ArrowLeft') this._keys.left = true;
-    if (key === 'ArrowRight') this._keys.right = true;
-    if (key === ' ' || key === 'Space') this._keys.launch = true;
+    this._setControl(actionForKey(key), true);
   }
 
   handleKeyUp(key) {
-    if (key === 'ArrowLeft') this._keys.left = false;
-    if (key === 'ArrowRight') this._keys.right = false;
-    if (key === ' ' || key === 'Space') this._keys.launch = false;
+    this._setControl(actionForKey(key), false);
   }
 
+  // A tap on FIRE stays latched until the ball is served, so a tap during the
+  // respawn pause still launches the next ball; the key, being held, clears
+  // on release.
   handleTouchAction(action, active) {
+    if (action === 'fire' && !active) return;
+    this._setControl(action, active);
+  }
+
+  _setControl(action, active) {
     if (action === 'left') this._keys.left = active;
     if (action === 'right') this._keys.right = active;
-    if (action === 'fire' || action === 'action') {
-      if (active) this._keys.launch = true;
-    }
+    if (action === 'fire') this._keys.launch = active;
   }
 
   destroy() {}
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {

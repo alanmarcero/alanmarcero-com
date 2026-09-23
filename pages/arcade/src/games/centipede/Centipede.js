@@ -1,5 +1,8 @@
-import { CYAN, VIOLET, ORANGE, BG, WHITE } from '../palette';
+import { CYAN, VIOLET, ORANGE, WHITE } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed, drawLevelFlash, LEVEL_TRANSITION_SECONDS } from '../frame';
+import { clamp } from '../geometry';
+import { actionForKey } from '../input';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -7,6 +10,7 @@ const CELL = 15;
 const COLS = Math.floor(GAME_W / CELL);
 const ROWS = Math.floor(GAME_H / CELL);
 const PLAYER_ZONE_ROWS = 6; // bottom rows where player can move
+const PLAYER_ZONE_TOP = GAME_H - PLAYER_ZONE_ROWS * CELL;
 
 const PLAYER_SIZE = 12;
 const PLAYER_SPEED = 180;
@@ -27,10 +31,17 @@ const MUSHROOM_HP = 4;
 const STARTING_MUSHROOMS = 25;
 
 const STARTING_LIVES = 3;
+const DEATH_PAUSE = 0.8;
+const RESPAWN_INVULN = 1.5;
 
 const SCORE_SEGMENT = 10;
 const SCORE_MUSHROOM = 1;
 const SCORE_SPIDER = 600;
+
+/** Is (ax, ay) within `reachX` / `reachY` of (bx, by) on each axis? */
+function withinReach(ax, ay, bx, by, reachX, reachY) {
+  return Math.abs(ax - bx) < reachX && Math.abs(ay - by) < reachY;
+}
 
 export class Centipede {
   onHudUpdate = null;
@@ -126,7 +137,7 @@ export class Centipede {
         this._player.alive = true;
         this._player.x = GAME_W / 2;
         this._player.y = GAME_H - PLAYER_SIZE * 2;
-        this._player.invulnTimer = 1.5;
+        this._player.invulnTimer = RESPAWN_INVULN;
       }
       return;
     }
@@ -143,7 +154,7 @@ export class Centipede {
     const totalSegments = this._centipedes.reduce((sum, c) => sum + c.segments.length, 0);
     if (totalSegments === 0 && !this._levelTransition) {
       this._levelTransition = true;
-      this._levelTransitionTimer = 1.0;
+      this._levelTransitionTimer = LEVEL_TRANSITION_SECONDS;
     }
   }
 
@@ -154,12 +165,8 @@ export class Centipede {
     if (this._keys.up) p.y -= PLAYER_SPEED * dt;
     if (this._keys.down) p.y += PLAYER_SPEED * dt;
 
-    // Clamp to player zone
-    const minY = GAME_H - PLAYER_ZONE_ROWS * CELL;
-    if (p.x < PLAYER_SIZE) p.x = PLAYER_SIZE;
-    if (p.x > GAME_W - PLAYER_SIZE) p.x = GAME_W - PLAYER_SIZE;
-    if (p.y < minY) p.y = minY;
-    if (p.y > GAME_H - PLAYER_SIZE) p.y = GAME_H - PLAYER_SIZE;
+    p.x = clamp(p.x, PLAYER_SIZE, GAME_W - PLAYER_SIZE);
+    p.y = clamp(p.y, PLAYER_ZONE_TOP, GAME_H - PLAYER_SIZE);
 
     // Auto-fire
     this._fireCooldown -= dt;
@@ -199,7 +206,7 @@ export class Centipede {
           cent.dir *= -1;
         }
 
-        // Bottom reached — move up (or stay at bottom)
+        // Once on the bottom row it keeps sweeping along it
         if (nextRow >= ROWS) {
           nextRow = ROWS - 1;
         }
@@ -241,105 +248,87 @@ export class Centipede {
       s.y += s.vy * dt;
 
       // Bounce vertically in player zone
-      const minY = GAME_H - PLAYER_ZONE_ROWS * CELL;
-      if (s.y < minY || s.y > GAME_H - SPIDER_SIZE) {
+      if (s.y < PLAYER_ZONE_TOP || s.y > GAME_H - SPIDER_SIZE) {
         s.vy *= -1;
       }
 
-      // Remove if off screen
       if (s.x < -SPIDER_SIZE * 3 || s.x > GAME_W + SPIDER_SIZE * 3) {
         this._spider = null;
         this._spiderTimer = SPIDER_SPAWN_INTERVAL;
+        return;
       }
 
       // Spider eats mushrooms
-      if (s) {
-        const col = Math.floor(s.x / CELL);
-        const row = Math.floor(s.y / CELL);
-        const m = this._mushroomAt(col, row);
-        if (m) m.hp = 0;
-      }
+      const m = this._mushroomAt(Math.floor(s.x / CELL), Math.floor(s.y / CELL));
+      if (m) m.hp = 0;
     }
   }
 
   _checkCollisions() {
-    // Bullets vs mushrooms
     for (let bi = this._bullets.length - 1; bi >= 0; bi--) {
-      const b = this._bullets[bi];
-      const col = Math.floor(b.x / CELL);
-      const row = Math.floor(b.y / CELL);
-      const m = this._mushroomAt(col, row);
-      if (m) {
-        m.hp--;
-        if (m.hp <= 0) {
-          this.score += SCORE_MUSHROOM;
-          this._emitHud();
-        }
-        this._bullets.splice(bi, 1);
-        continue;
-      }
-
-      // Bullets vs centipede segments
-      let hitSeg = false;
-      for (let ci = 0; ci < this._centipedes.length && !hitSeg; ci++) {
-        const cent = this._centipedes[ci];
-        for (let si = 0; si < cent.segments.length; si++) {
-          const seg = cent.segments[si];
-          if (Math.abs(b.x - (seg.x + CELL / 2)) < CELL / 2 + BULLET_W &&
-              Math.abs(b.y - (seg.y + CELL / 2)) < CELL / 2 + BULLET_H) {
-            // Hit! Drop mushroom, split centipede
-            this.score += SCORE_SEGMENT;
-            this._emitHud();
-
-            // Add mushroom where segment was
-            if (!this._mushroomAt(seg.col, seg.row)) {
-              this._mushrooms.push({ col: seg.col, row: seg.row, hp: MUSHROOM_HP });
-            }
-
-            // Split centipede
-            this._splitCentipede(ci, si);
-            this._bullets.splice(bi, 1);
-            hitSeg = true;
-            break;
-          }
-        }
-      }
-      if (hitSeg) continue;
-
-      // Bullets vs spider
-      if (this._spider) {
-        const s = this._spider;
-        if (Math.abs(b.x - s.x) < SPIDER_SIZE + BULLET_W &&
-            Math.abs(b.y - s.y) < SPIDER_SIZE + BULLET_H) {
-          this.score += SCORE_SPIDER;
-          this._spider = null;
-          this._spiderTimer = SPIDER_SPAWN_INTERVAL;
-          this._bullets.splice(bi, 1);
-          this._emitHud();
-        }
-      }
+      const bullet = this._bullets[bi];
+      const spent = this._bulletHitsMushroom(bullet)
+        || this._bulletHitsSegment(bullet)
+        || this._bulletHitsSpider(bullet);
+      if (spent) this._bullets.splice(bi, 1);
     }
 
-    // Centipede segments vs player
-    if (this._player.alive && this._player.invulnTimer <= 0) {
-      for (const cent of this._centipedes) {
-        for (const seg of cent.segments) {
-          if (Math.abs(this._player.x - (seg.x + CELL / 2)) < PLAYER_SIZE + CELL / 3 &&
-              Math.abs(this._player.y - (seg.y + CELL / 2)) < PLAYER_SIZE + CELL / 3) {
-            this._playerHit();
-            return;
-          }
-        }
-      }
-
-      // Spider vs player
-      if (this._spider) {
-        if (Math.abs(this._player.x - this._spider.x) < PLAYER_SIZE + SPIDER_SIZE &&
-            Math.abs(this._player.y - this._spider.y) < PLAYER_SIZE + SPIDER_SIZE) {
-          this._playerHit();
-        }
-      }
+    if (this._player.alive && this._player.invulnTimer <= 0 && this._playerIsTouched()) {
+      this._playerHit();
     }
+  }
+
+  _bulletHitsMushroom(b) {
+    const m = this._mushroomAt(Math.floor(b.x / CELL), Math.floor(b.y / CELL));
+    if (!m) return false;
+    m.hp--;
+    if (m.hp <= 0) {
+      this.score += SCORE_MUSHROOM;
+      this._emitHud();
+    }
+    return true;
+  }
+
+  // A shot segment leaves a mushroom behind and cuts its centipede in two.
+  _bulletHitsSegment(b) {
+    for (let ci = 0; ci < this._centipedes.length; ci++) {
+      const segments = this._centipedes[ci].segments;
+      const si = segments.findIndex((seg) =>
+        withinReach(b.x, b.y, seg.x + CELL / 2, seg.y + CELL / 2, CELL / 2 + BULLET_W, CELL / 2 + BULLET_H));
+      if (si < 0) continue;
+
+      const seg = segments[si];
+      this.score += SCORE_SEGMENT;
+      this._emitHud();
+      if (!this._mushroomAt(seg.col, seg.row)) {
+        this._mushrooms.push({ col: seg.col, row: seg.row, hp: MUSHROOM_HP });
+      }
+      this._splitCentipede(ci, si);
+      return true;
+    }
+    return false;
+  }
+
+  _bulletHitsSpider(b) {
+    const s = this._spider;
+    if (!s || !withinReach(b.x, b.y, s.x, s.y, SPIDER_SIZE + BULLET_W, SPIDER_SIZE + BULLET_H)) return false;
+    this.score += SCORE_SPIDER;
+    this._spider = null;
+    this._spiderTimer = SPIDER_SPAWN_INTERVAL;
+    this._emitHud();
+    return true;
+  }
+
+  _playerIsTouched() {
+    const p = this._player;
+    const segmentReach = PLAYER_SIZE + CELL / 3;
+    const touchedBySegment = this._centipedes.some((cent) => cent.segments.some((seg) =>
+      withinReach(p.x, p.y, seg.x + CELL / 2, seg.y + CELL / 2, segmentReach, segmentReach)));
+    if (touchedBySegment) return true;
+
+    const s = this._spider;
+    const spiderReach = PLAYER_SIZE + SPIDER_SIZE;
+    return Boolean(s) && withinReach(p.x, p.y, s.x, s.y, spiderReach, spiderReach);
   }
 
   _splitCentipede(centIdx, segIdx) {
@@ -366,7 +355,7 @@ export class Centipede {
   _playerHit() {
     this.lives--;
     this._player.alive = false;
-    this._player.invulnTimer = 0.8;
+    this._player.invulnTimer = DEATH_PAUSE;
     this._bullets = [];
     this._emitHud();
 
@@ -377,30 +366,20 @@ export class Centipede {
   }
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderPlayerZone(ctx);
+      this._renderMushrooms(ctx);
+      this._renderCentipedes(ctx);
+      this._renderSpider(ctx);
+      this._renderBullets(ctx);
+      this._renderPlayer(ctx);
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
+      if (this._levelTransition) drawLevelFlash(ctx, this._levelTransitionTimer, GAME_W, GAME_H);
+    });
+  }
 
-    this._renderPlayerZone(ctx);
-    this._renderMushrooms(ctx);
-    this._renderCentipedes(ctx);
-    this._renderSpider(ctx);
-    this._renderBullets(ctx);
-    this._renderPlayer(ctx);
-
-    if (this._levelTransition) {
-      const alpha = 0.15 + 0.1 * Math.sin(this._levelTransitionTimer * 12);
-      ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
-      ctx.fillRect(0, 0, GAME_W, GAME_H);
-    }
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderPlayerZone(ctx) {
@@ -526,43 +505,25 @@ export class Centipede {
   }
 
   handleKeyDown(key) {
-    if (key === 'ArrowLeft') this._keys.left = true;
-    if (key === 'ArrowRight') this._keys.right = true;
-    if (key === 'ArrowUp') this._keys.up = true;
-    if (key === 'ArrowDown') this._keys.down = true;
-    if (key === ' ' || key === 'Space') this._keys.fire = true;
+    this._setControl(actionForKey(key), true);
   }
 
   handleKeyUp(key) {
-    if (key === 'ArrowLeft') this._keys.left = false;
-    if (key === 'ArrowRight') this._keys.right = false;
-    if (key === 'ArrowUp') this._keys.up = false;
-    if (key === 'ArrowDown') this._keys.down = false;
-    if (key === ' ' || key === 'Space') this._keys.fire = false;
+    this._setControl(actionForKey(key), false);
   }
 
   handleTouchAction(action, active) {
-    if (action === 'left') this._keys.left = active;
-    if (action === 'right') this._keys.right = active;
-    if (action === 'up') this._keys.up = active;
-    if (action === 'down') this._keys.down = active;
-    if (action === 'fire') this._keys.fire = active;
+    this._setControl(action, active);
+  }
+
+  _setControl(action, active) {
+    if (Object.hasOwn(this._keys, action)) this._keys[action] = active;
   }
 
   destroy() {}
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {

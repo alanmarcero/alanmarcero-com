@@ -1,4 +1,4 @@
-import { PacMan } from './PacMan';
+import { PacMan, elroyStage } from './PacMan';
 import { TILE, PAC_START, COLS, wrapCol, isWalkable } from './maze';
 import { SCORE, STARTING_LIVES } from './levels';
 
@@ -682,5 +682,23 @@ describe('maze mutation', () => {
     second.init(448, 496);
 
     expect(second._totalDots).toBe(244);
+  });
+});
+
+describe('elroyStage', () => {
+  const thresholds = { dots1: 20, dots2: 10 };
+
+  it('is 0 while more dots remain than the first threshold', () => {
+    expect(elroyStage(21, thresholds)).toBe(0);
+  });
+
+  it('is 1 at and below the first threshold', () => {
+    expect(elroyStage(20, thresholds)).toBe(1);
+    expect(elroyStage(11, thresholds)).toBe(1);
+  });
+
+  it('is 2 at and below the second threshold', () => {
+    expect(elroyStage(10, thresholds)).toBe(2);
+    expect(elroyStage(0, thresholds)).toBe(2);
   });
 });

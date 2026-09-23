@@ -300,183 +300,189 @@ export function drawEnemyBullet(ctx, b) {
   });
 }
 
+/** Enemy kinds with a weakpoint: a centre hit on one does extra damage. */
+export const WEAKPOINT_TYPES = ['growth', 'tendril', 'parasite'];
+
+function drawTurret(ctx, ex, ey, er) {
+  withGlow(ctx, VIOLET, 8, () => {
+    ctx.fillStyle = BIO.membrane;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, er, er * 0.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#4a3068';
+    ctx.beginPath();
+    ctx.arc(ex - 3, ey, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = BIO.coral;
+    ctx.beginPath();
+    ctx.arc(ex - 3, ey, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawGrowth(ctx, ex, ey, er, pulse) {
+  const ps = 0.85 + (pulse - 0.5) * 0.2;
+  withGlow(ctx, BIO.acid, 10, () => {
+    ctx.fillStyle = `rgba(124, 255, 154, ${0.25 + pulse * 0.1})`;
+    ctx.beginPath();
+    ctx.arc(ex, ey, er * ps * 1.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = BIO.acid;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(ex, ey, er * ps, 0, Math.PI * 2);
+    ctx.stroke();
+    // Nucleus
+    ctx.fillStyle = VIOLET;
+    ctx.beginPath();
+    ctx.arc(ex - 3, ey - 2, 3.5 * ps, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = BIO.nucleus;
+    ctx.beginPath();
+    ctx.arc(ex + 2, ey + 3, 2 * ps, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 1;
+  });
+}
+
+function drawSpiker(ctx, ex, ey, er, time) {
+  withGlow(ctx, BIO.blood, 7, () => {
+    ctx.fillStyle = '#5a2040';
+    ctx.beginPath();
+    ctx.arc(ex, ey, er * 0.85, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = BIO.blood;
+    ctx.lineWidth = 1.8;
+    for (let i = 0; i < 6; i++) {
+      const ang = (i / 6) * Math.PI * 2 + time * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(ex + Math.cos(ang) * er * 0.5, ey + Math.sin(ang) * er * 0.5);
+      ctx.lineTo(ex + Math.cos(ang) * er * 1.3, ey + Math.sin(ang) * er * 1.3);
+      ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+  });
+}
+
+function drawTendril(ctx, ex, ey, er, time, whip) {
+  withGlow(ctx, VIOLET, 6, () => {
+    ctx.strokeStyle = '#8a50c8';
+    ctx.lineWidth = 3;
+    const segments = 5;
+    ctx.beginPath();
+    ctx.moveTo(ex - er, ey);
+    for (let s = 1; s <= segments; s++) {
+      const t = s / segments;
+      const wx = ex - er + t * er * 2.2;
+      const wy = ey + Math.sin(time * 3 * whip + s * 1.2) * (12 + s * 3);
+      ctx.lineTo(wx, wy);
+    }
+    ctx.stroke();
+    ctx.fillStyle = BIO.membrane;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, er * 0.9, er * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = BIO.coral;
+    ctx.beginPath();
+    ctx.arc(ex + er * 0.3, ey, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 1;
+  });
+}
+
+function drawParasite(ctx, ex, ey, er, time, { isQueen, isSwarm }) {
+  const col = isQueen ? BIO.blood : (isSwarm ? '#ff7090' : '#c840ff');
+  withGlow(ctx, col, isQueen ? 10 : 5, () => {
+    const s = isQueen ? 1.3 : (isSwarm ? 0.75 : 1);
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, er * s, er * 0.8 * s, time * 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Flagella
+    ctx.strokeStyle = 'rgba(200, 64, 255, 0.6)';
+    ctx.lineWidth = 1;
+    for (let f = 0; f < (isQueen ? 5 : 3); f++) {
+      const ang = time * 4 + f * 2.1;
+      ctx.beginPath();
+      ctx.moveTo(ex - er * 0.3, ey);
+      ctx.quadraticCurveTo(
+        ex - er - 4, ey + Math.sin(ang) * 6,
+        ex - er - 10, ey + Math.sin(ang + 1) * 4
+      );
+      ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+  });
+}
+
+function drawSwooper(ctx, ex, ey, er) {
+  withGlow(ctx, '#7dd4ff', 6, () => {
+    ctx.fillStyle = '#4ab8e8';
+    ctx.beginPath();
+    ctx.moveTo(ex + er, ey);
+    ctx.lineTo(ex - er * 0.6, ey - er * 0.8);
+    ctx.lineTo(ex - er * 0.4, ey);
+    ctx.lineTo(ex - er * 0.6, ey + er * 0.8);
+    ctx.closePath();
+    ctx.fill();
+  });
+}
+
+function drawDrone(ctx, ex, ey, er, pulse) {
+  withGlow(ctx, BIO.glow, 5, () => {
+    ctx.fillStyle = `rgba(0, 200, 180, ${0.5 + pulse * 0.15})`;
+    ctx.beginPath();
+    ctx.arc(ex, ey, er, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = BIO.glow;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(ex, ey, er * 0.55, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = WHITE;
+    ctx.beginPath();
+    ctx.arc(ex + 2, ey - 1, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 1;
+  });
+}
+
+function drawEnemyBody(ctx, e, ex, ey, er, time, pulse) {
+  switch (e.type) {
+    case 'turret': return drawTurret(ctx, ex, ey, er);
+    case 'growth': return drawGrowth(ctx, ex, ey, er, pulse);
+    case 'spiker': return drawSpiker(ctx, ex, ey, er, time);
+    case 'tendril':
+    case 'tendril-parasite': return drawTendril(ctx, ex, ey, er, time, e.whip || 1);
+    case 'parasite': return drawParasite(ctx, ex, ey, er, time, e);
+    case 'swooper': return drawSwooper(ctx, ex, ey, er);
+    default: return drawDrone(ctx, ex, ey, er, pulse);
+  }
+}
+
+function drawHitFlash(ctx, ex, ey, er) {
+  ctx.globalAlpha = 0.7;
+  withGlow(ctx, WHITE, 14, () => {
+    ctx.fillStyle = WHITE;
+    ctx.beginPath();
+    ctx.arc(ex, ey, er * 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
 export function drawEnemy(ctx, e, time) {
   const ex = e.x;
   const ey = e.y;
   const er = e.r || 9;
-  const pulse = Math.sin(time * 5.5 + (e.id || 0)) * 0.5 + 1;
-  const hitFlash = e.lastHit && (time - e.lastHit) < 0.12;
 
-  if (hitFlash) {
-    ctx.globalAlpha = 0.7;
-    withGlow(ctx, WHITE, 14, () => {
-      ctx.fillStyle = WHITE;
-      ctx.beginPath();
-      ctx.arc(ex, ey, er * 1.2, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    ctx.globalAlpha = 1;
+  if (e.lastHit && (time - e.lastHit) < 0.12) {
+    drawHitFlash(ctx, ex, ey, er);
     return;
   }
 
-  const drawType = () => {
-    switch (e.type) {
-      case 'turret':
-        withGlow(ctx, VIOLET, 8, () => {
-          ctx.fillStyle = BIO.membrane;
-          ctx.beginPath();
-          ctx.ellipse(ex, ey, er, er * 0.7, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#4a3068';
-          ctx.beginPath();
-          ctx.arc(ex - 3, ey, 4, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = BIO.coral;
-          ctx.beginPath();
-          ctx.arc(ex - 3, ey, 2, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        break;
-
-      case 'growth': {
-        const ps = 0.85 + (pulse - 0.5) * 0.2;
-        withGlow(ctx, BIO.acid, 10, () => {
-          ctx.fillStyle = `rgba(124, 255, 154, ${0.25 + pulse * 0.1})`;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * ps * 1.2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = BIO.acid;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * ps, 0, Math.PI * 2);
-          ctx.stroke();
-          // Nucleus
-          ctx.fillStyle = VIOLET;
-          ctx.beginPath();
-          ctx.arc(ex - 3, ey - 2, 3.5 * ps, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = BIO.nucleus;
-          ctx.beginPath();
-          ctx.arc(ex + 2, ey + 3, 2 * ps, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.lineWidth = 1;
-        });
-        break;
-      }
-
-      case 'spiker':
-        withGlow(ctx, BIO.blood, 7, () => {
-          ctx.fillStyle = '#5a2040';
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * 0.85, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = BIO.blood;
-          ctx.lineWidth = 1.8;
-          for (let i = 0; i < 6; i++) {
-            const ang = (i / 6) * Math.PI * 2 + time * 0.5;
-            ctx.beginPath();
-            ctx.moveTo(ex + Math.cos(ang) * er * 0.5, ey + Math.sin(ang) * er * 0.5);
-            ctx.lineTo(ex + Math.cos(ang) * er * 1.3, ey + Math.sin(ang) * er * 1.3);
-            ctx.stroke();
-          }
-          ctx.lineWidth = 1;
-        });
-        break;
-
-      case 'tendril':
-      case 'tendril-parasite': {
-        const whip = e.whip || 1;
-        withGlow(ctx, VIOLET, 6, () => {
-          ctx.strokeStyle = '#8a50c8';
-          ctx.lineWidth = 3;
-          const segments = 5;
-          let lx = ex - er;
-          let ly = ey;
-          ctx.beginPath();
-          ctx.moveTo(lx, ly);
-          for (let s = 1; s <= segments; s++) {
-            const t = s / segments;
-            const wx = ex - er + t * er * 2.2;
-            const wy = ey + Math.sin(time * 3 * whip + s * 1.2) * (12 + s * 3);
-            ctx.lineTo(wx, wy);
-            lx = wx; ly = wy;
-          }
-          ctx.stroke();
-          ctx.fillStyle = BIO.membrane;
-          ctx.beginPath();
-          ctx.ellipse(ex, ey, er * 0.9, er * 0.55, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = BIO.coral;
-          ctx.beginPath();
-          ctx.arc(ex + er * 0.3, ey, 3, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.lineWidth = 1;
-        });
-        break;
-      }
-
-      case 'parasite': {
-        const isQueen = e.isQueen;
-        const isSwarm = e.isSwarm;
-        const col = isQueen ? BIO.blood : (isSwarm ? '#ff7090' : '#c840ff');
-        withGlow(ctx, col, isQueen ? 10 : 5, () => {
-          const s = isQueen ? 1.3 : (isSwarm ? 0.75 : 1);
-          ctx.fillStyle = col;
-          ctx.beginPath();
-          ctx.ellipse(ex, ey, er * s, er * 0.8 * s, time * 2, 0, Math.PI * 2);
-          ctx.fill();
-          // Flagella
-          ctx.strokeStyle = `rgba(200, 64, 255, ${0.6})`;
-          ctx.lineWidth = 1;
-          for (let f = 0; f < (isQueen ? 5 : 3); f++) {
-            const ang = time * 4 + f * 2.1;
-            ctx.beginPath();
-            ctx.moveTo(ex - er * 0.3, ey);
-            ctx.quadraticCurveTo(
-              ex - er - 4, ey + Math.sin(ang) * 6,
-              ex - er - 10, ey + Math.sin(ang + 1) * 4
-            );
-            ctx.stroke();
-          }
-          ctx.lineWidth = 1;
-        });
-        break;
-      }
-
-      case 'swooper':
-        withGlow(ctx, '#7dd4ff', 6, () => {
-          ctx.fillStyle = '#4ab8e8';
-          ctx.beginPath();
-          ctx.moveTo(ex + er, ey);
-          ctx.lineTo(ex - er * 0.6, ey - er * 0.8);
-          ctx.lineTo(ex - er * 0.4, ey);
-          ctx.lineTo(ex - er * 0.6, ey + er * 0.8);
-          ctx.closePath();
-          ctx.fill();
-        });
-        break;
-
-      default: // drone
-        withGlow(ctx, BIO.glow, 5, () => {
-          ctx.fillStyle = `rgba(0, 200, 180, ${0.5 + pulse * 0.15})`;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = BIO.glow;
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.arc(ex, ey, er * 0.55, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.fillStyle = WHITE;
-          ctx.beginPath();
-          ctx.arc(ex + 2, ey - 1, 2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.lineWidth = 1;
-        });
-    }
-  };
-
-  drawType();
+  const pulse = Math.sin(time * 5.5 + (e.id || 0)) * 0.5 + 1;
+  drawEnemyBody(ctx, e, ex, ey, er, time, pulse);
 
   if (e.elite) {
     ctx.strokeStyle = `rgba(255, 140, 60, ${0.5 + Math.sin(time * 8) * 0.2})`;
@@ -487,8 +493,7 @@ export function drawEnemy(ctx, e, time) {
     ctx.lineWidth = 1;
   }
 
-  // Weakpoint marker on crit targets
-  if (['growth', 'tendril', 'parasite'].includes(e.type)) {
+  if (WEAKPOINT_TYPES.includes(e.type)) {
     const wr = 4 + Math.sin(time * 10) * 1;
     ctx.strokeStyle = `rgba(255, 230, 102, ${0.6 + Math.sin(time * 12) * 0.3})`;
     ctx.lineWidth = 1.2;
@@ -763,122 +768,129 @@ export function drawVortexField(ctx, player, time) {
   ctx.lineWidth = 1;
 }
 
-export function drawHud(ctx, state) {
-  const {
-    combo, comboTimer, highScore, gameOver, time, gameStartTime,
-    kills, maxCombo, perfectWaves, grazeCount, damageTakenThisWave,
-    runScoreMulti, pulseCharge, pulseStock, novaReady, wave,
-    waveBanner, timers, powerLevel, powerTimer,
-    computeGrade,
-  } = state;
+const METER = { x: 14, y: GAME_H - 14, w: 80, h: 6 };
 
-  // Pulse meter (signature mechanic HUD)
-  const meterX = 14;
-  const meterY = GAME_H - 14;
-  const meterW = 80;
-  const meterH = 6;
+// Short tags for each running power, in display order.
+const POWER_TAGS = [
+  ['laser', 'LSR'], ['homing', 'HOM'], ['overcharge', 'OVR'], ['focus', 'FOC'],
+  ['chain', 'CHN'], ['reflect', 'REF'], ['vortex', 'VTX'], ['surge', 'SURGE'],
+];
+
+/**
+ * The share of close calls that were grazes rather than hits. A run with
+ * no hits still divides by one, so a single graze reads 50%, not 100%.
+ */
+export function grazeAccuracy(grazeCount, damageTaken) {
+  if (grazeCount + damageTaken <= 0) return 100;
+  return Math.floor(grazeCount / (grazeCount + (damageTaken || 1)) * 100);
+}
+
+function drawPulseMeter(ctx, { pulseCharge, pulseStock, novaReady }) {
+  const { x, y, w, h } = METER;
   ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-  ctx.fillRect(meterX - 1, meterY - 1, meterW + 2, meterH + 2);
+  ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
   ctx.fillStyle = 'rgba(30, 25, 50, 0.8)';
-  ctx.fillRect(meterX, meterY, meterW, meterH);
-  const fillW = meterW * (pulseCharge / 100);
-  const meterGrad = ctx.createLinearGradient(meterX, 0, meterX + meterW, 0);
+  ctx.fillRect(x, y, w, h);
+  const meterGrad = ctx.createLinearGradient(x, 0, x + w, 0);
   meterGrad.addColorStop(0, BIO.glow);
   meterGrad.addColorStop(1, VIOLET);
   ctx.fillStyle = meterGrad;
-  ctx.fillRect(meterX, meterY, fillW, meterH);
+  ctx.fillRect(x, y, w * (pulseCharge / 100), h);
   ctx.fillStyle = MUTED;
   ctx.font = '8px "Inter", sans-serif';
-  ctx.fillText('PULSE', meterX, meterY - 3);
+  ctx.fillText('PULSE', x, y - 3);
   if (pulseStock > 0) {
     ctx.fillStyle = BIO.nucleus;
-    ctx.fillText(`x${pulseStock}`, meterX + meterW + 6, meterY + 5);
+    ctx.fillText(`x${pulseStock}`, x + w + 6, y + 5);
   }
   if (novaReady) {
     ctx.fillStyle = ORANGE;
     ctx.font = 'bold 8px "Space Grotesk", sans-serif';
-    ctx.fillText('NOVA', meterX + meterW + 6, meterY - 3);
+    ctx.fillText('NOVA', x + w + 6, y - 3);
   }
+}
 
-  // Active power indicators
+function drawActivePowers(ctx, { powerLevel, powerTimer, timers }) {
   const activePowers = [];
   if (powerLevel > 0 && powerTimer > 0) activePowers.push(`PWR${powerLevel}`);
-  if (timers.laser > 0) activePowers.push('LSR');
-  if (timers.homing > 0) activePowers.push('HOM');
-  if (timers.overcharge > 0) activePowers.push('OVR');
-  if (timers.focus > 0) activePowers.push('FOC');
-  if (timers.chain > 0) activePowers.push('CHN');
-  if (timers.reflect > 0) activePowers.push('REF');
-  if (timers.vortex > 0) activePowers.push('VTX');
-  if (timers.surge > 0) activePowers.push('SURGE');
-
-  if (activePowers.length > 0) {
-    ctx.fillStyle = 'rgba(160, 255, 240, 0.85)';
-    ctx.font = 'bold 8px "Space Grotesk", sans-serif';
-    ctx.fillText(activePowers.join(' '), meterX, meterY - 14);
+  for (const [timer, tag] of POWER_TAGS) {
+    if (timers[timer] > 0) activePowers.push(tag);
   }
+  if (activePowers.length === 0) return;
 
-  // Combo
-  if (combo > 1) {
-    const comboAlpha = Math.min(1, comboTimer / 0.6 + 0.3);
-    ctx.globalAlpha = comboAlpha;
-    ctx.fillStyle = combo > 6 ? VIOLET : ORANGE;
-    ctx.font = 'bold 12px "Space Grotesk", sans-serif';
-    ctx.fillText(`COMBO x${combo}`, 18, 24);
-    ctx.globalAlpha = 1;
-  }
+  ctx.fillStyle = 'rgba(160, 255, 240, 0.85)';
+  ctx.font = 'bold 8px "Space Grotesk", sans-serif';
+  ctx.fillText(activePowers.join(' '), METER.x, METER.y - 14);
+}
 
-  // Wave indicator
+function drawCombo(ctx, { combo, comboTimer }) {
+  if (combo <= 1) return;
+  ctx.globalAlpha = Math.min(1, comboTimer / 0.6 + 0.3);
+  ctx.fillStyle = combo > 6 ? VIOLET : ORANGE;
+  ctx.font = 'bold 12px "Space Grotesk", sans-serif';
+  ctx.fillText(`COMBO x${combo}`, 18, 24);
+  ctx.globalAlpha = 1;
+}
+
+function drawWaveAndHighScore(ctx, { wave, highScore }) {
   ctx.fillStyle = 'rgba(160, 158, 180, 0.6)';
   ctx.font = '9px "Inter", sans-serif';
   ctx.textAlign = 'right';
   ctx.fillText(`WAVE ${Math.floor(wave)}`, GAME_W - 10, GAME_H - 8);
 
-  // High score
   if (highScore > 0) {
     ctx.fillStyle = 'rgba(160, 158, 180, 0.7)';
     ctx.font = '10px "Inter", sans-serif';
     ctx.fillText(`HI ${highScore}`, GAME_W - 10, 16);
   }
   ctx.textAlign = 'left';
+}
 
-  // Wave clear banner
-  if (waveBanner > 0) {
-    const ba = Math.min(1, waveBanner / 0.4);
-    ctx.globalAlpha = ba;
-    ctx.fillStyle = BIO.glow;
-    ctx.font = 'bold 16px "Space Grotesk", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('WAVE CLEAR', GAME_W / 2, GAME_H * 0.35);
-    ctx.globalAlpha = 1;
-    ctx.textAlign = 'left';
-  }
+function drawWaveBanner(ctx, waveBanner) {
+  if (waveBanner <= 0) return;
+  ctx.globalAlpha = Math.min(1, waveBanner / 0.4);
+  ctx.fillStyle = BIO.glow;
+  ctx.font = 'bold 16px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('WAVE CLEAR', GAME_W / 2, GAME_H * 0.35);
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'left';
+}
 
-  // Game over stats
-  if (gameOver) {
-    const elapsed = Math.max(0, time - (gameStartTime || time));
-    ctx.fillStyle = 'rgba(200, 198, 220, 0.85)';
-    ctx.font = 'bold 9px "Inter", sans-serif';
-    ctx.textAlign = 'center';
-    const statsY = GAME_H - 28;
-    ctx.fillText(
-      `TIME ${elapsed.toFixed(0)}s  •  KILLS ${kills || 0}  •  MAX COMBO x${maxCombo || 0}`,
-      GAME_W / 2, statsY
-    );
-    const acc = (grazeCount || 0) + (damageTakenThisWave || 0) > 0
-      ? Math.floor((grazeCount || 0) / ((grazeCount || 0) + (damageTakenThisWave || 1)) * 100)
-      : 100;
-    ctx.font = '8px "Inter", sans-serif';
-    ctx.fillText(
-      `PERFECT WAVES ${perfectWaves || 0}  •  ACC ${acc}%  •  x${(runScoreMulti || 1).toFixed(2)}`,
-      GAME_W / 2, statsY + 10
-    );
-    const grade = computeGrade();
-    ctx.font = 'bold 14px "Space Grotesk", sans-serif';
-    ctx.fillStyle = grade === 'S' || grade === 'A' ? BIO.nucleus : (grade === 'B' ? '#a0fff4' : 'rgba(200,198,220,0.9)');
-    ctx.fillText(`RANK ${grade}`, GAME_W / 2, statsY - 16);
-    ctx.textAlign = 'left';
-  }
+function drawGameOverStats(ctx, state) {
+  const {
+    time, gameStartTime, kills, maxCombo, perfectWaves, grazeCount,
+    damageTakenThisWave, runScoreMulti, computeGrade,
+  } = state;
+  const elapsed = Math.max(0, time - (gameStartTime || 0));
+  ctx.fillStyle = 'rgba(200, 198, 220, 0.85)';
+  ctx.font = 'bold 9px "Inter", sans-serif';
+  ctx.textAlign = 'center';
+  const statsY = GAME_H - 28;
+  ctx.fillText(
+    `TIME ${elapsed.toFixed(0)}s  •  KILLS ${kills || 0}  •  MAX COMBO x${maxCombo || 0}`,
+    GAME_W / 2, statsY
+  );
+  const acc = grazeAccuracy(grazeCount || 0, damageTakenThisWave || 0);
+  ctx.font = '8px "Inter", sans-serif';
+  ctx.fillText(
+    `PERFECT WAVES ${perfectWaves || 0}  •  ACC ${acc}%  •  x${(runScoreMulti || 1).toFixed(2)}`,
+    GAME_W / 2, statsY + 10
+  );
+  const grade = computeGrade();
+  ctx.font = 'bold 14px "Space Grotesk", sans-serif';
+  ctx.fillStyle = grade === 'S' || grade === 'A' ? BIO.nucleus : (grade === 'B' ? '#a0fff4' : 'rgba(200,198,220,0.9)');
+  ctx.fillText(`RANK ${grade}`, GAME_W / 2, statsY - 16);
+  ctx.textAlign = 'left';
+}
+
+export function drawHud(ctx, state) {
+  drawPulseMeter(ctx, state);
+  drawActivePowers(ctx, state);
+  drawCombo(ctx, state);
+  drawWaveAndHighScore(ctx, state);
+  drawWaveBanner(ctx, state.waveBanner);
+  if (state.gameOver) drawGameOverStats(ctx, state);
 }
 
 export function drawScorePopups(ctx, popups) {

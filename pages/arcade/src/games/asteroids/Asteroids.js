@@ -1,5 +1,6 @@
 import { CYAN, VIOLET, ORANGE, BG } from '../palette';
 import { emitHud } from '../gameHud';
+import { distance } from '../geometry';
 
 const SHIP_ROTATION_SPEED = 4; // rad/s
 const SHIP_THRUST = 280; // pixels/s^2
@@ -33,6 +34,20 @@ const ASTEROID_SCORES = {
   large: 20,
   medium: 50,
   small: 100,
+};
+
+/** What a shot rock breaks into; a small one is simply destroyed. */
+const SPLITS_INTO = {
+  large: 'medium',
+  medium: 'small',
+};
+
+/** The keyboard key that drives each ship control, beside its touch action. */
+const CONTROL_KEYS = {
+  left: 'ArrowLeft',
+  right: 'ArrowRight',
+  thrust: 'ArrowUp',
+  fire: ' ',
 };
 
 export class Asteroids {
@@ -106,7 +121,6 @@ export class Asteroids {
   }
 
   render(ctx) {
-    // Clear
     ctx.fillStyle = BG;
     ctx.fillRect(0, 0, this.width, this.height);
 
@@ -151,19 +165,10 @@ export class Asteroids {
 
   // --- Input helpers ---
 
-  _isPressed(action) {
-    switch (action) {
-      case 'left':
-        return this.keys['ArrowLeft'] || this.touchActions['left'];
-      case 'right':
-        return this.keys['ArrowRight'] || this.touchActions['right'];
-      case 'thrust':
-        return this.keys['ArrowUp'] || this.touchActions['thrust'];
-      case 'fire':
-        return this.keys[' '] || this.touchActions['fire'];
-      default:
-        return false;
-    }
+  _isPressed(control) {
+    const key = CONTROL_KEYS[control];
+    if (!key) return false;
+    return Boolean(this.keys[key] || this.touchActions[control]);
   }
 
   // --- Spawn helpers ---
@@ -204,7 +209,7 @@ export class Asteroids {
         y = Math.random() * this.height;
       } while (
         this.ship &&
-        this._distance(x, y, this.ship.x, this.ship.y) < radius + SHIP_SIZE + margin
+        distance(x, y, this.ship.x, this.ship.y) < radius + SHIP_SIZE + margin
       );
     }
 
@@ -239,60 +244,64 @@ export class Asteroids {
   _updateShip(dt) {
     if (!this.ship) return;
 
-    // Rotation
-    if (this._isPressed('left')) {
-      this.ship.angle -= SHIP_ROTATION_SPEED * dt;
-    }
-    if (this._isPressed('right')) {
-      this.ship.angle += SHIP_ROTATION_SPEED * dt;
-    }
+    this._steerShip(dt);
+    this._moveShip(dt);
+    this._updateFiring(dt);
+    this._updateInvulnerability(dt);
+  }
 
-    // Thrust
-    this.ship.thrusting = this._isPressed('thrust');
-    if (this.ship.thrusting) {
-      this.ship.vx += Math.cos(this.ship.angle) * SHIP_THRUST * dt;
-      this.ship.vy += Math.sin(this.ship.angle) * SHIP_THRUST * dt;
-    }
+  _steerShip(dt) {
+    const ship = this.ship;
+    if (this._isPressed('left')) ship.angle -= SHIP_ROTATION_SPEED * dt;
+    if (this._isPressed('right')) ship.angle += SHIP_ROTATION_SPEED * dt;
 
-    // Friction (scale with dt, base rate at 60fps)
-    const frictionPerFrame = Math.pow(FRICTION, dt * 60);
-    this.ship.vx *= frictionPerFrame;
-    this.ship.vy *= frictionPerFrame;
+    ship.thrusting = this._isPressed('thrust');
+    if (!ship.thrusting) return;
+    ship.vx += Math.cos(ship.angle) * SHIP_THRUST * dt;
+    ship.vy += Math.sin(ship.angle) * SHIP_THRUST * dt;
+  }
 
-    // Cap speed
-    const speed = Math.sqrt(this.ship.vx * this.ship.vx + this.ship.vy * this.ship.vy);
+  _moveShip(dt) {
+    const ship = this.ship;
+
+    // FRICTION is a per-frame rate at 60fps, so it is raised to the number of
+    // 60fps frames this step spans.
+    const friction = Math.pow(FRICTION, dt * 60);
+    ship.vx *= friction;
+    ship.vy *= friction;
+
+    const speed = Math.sqrt(ship.vx * ship.vx + ship.vy * ship.vy);
     if (speed > SHIP_MAX_SPEED) {
-      const scale = SHIP_MAX_SPEED / speed;
-      this.ship.vx *= scale;
-      this.ship.vy *= scale;
+      const speedCap = SHIP_MAX_SPEED / speed;
+      ship.vx *= speedCap;
+      ship.vy *= speedCap;
     }
 
-    // Move
-    this.ship.x += this.ship.vx * dt;
-    this.ship.y += this.ship.vy * dt;
+    ship.x += ship.vx * dt;
+    ship.y += ship.vy * dt;
+    this._wrap(ship);
+  }
 
-    // Wrap
-    this._wrap(this.ship);
-
-    // Fire
+  _updateFiring(dt) {
     this.fireCooldown -= dt;
-    if (this._isPressed('fire') && this.fireCooldown <= 0) {
-      this._fireBullet();
-      this.fireCooldown = FIRE_COOLDOWN;
-    }
+    if (!this._isPressed('fire') || this.fireCooldown > 0) return;
+    this._fireBullet();
+    this.fireCooldown = FIRE_COOLDOWN;
+  }
 
-    // Invulnerability
-    if (this.ship.invulnerable) {
-      this.ship.invulnerableTimer -= dt;
-      this.ship.blinkTimer -= dt;
-      if (this.ship.blinkTimer <= 0) {
-        this.ship.visible = !this.ship.visible;
-        this.ship.blinkTimer = BLINK_RATE;
-      }
-      if (this.ship.invulnerableTimer <= 0) {
-        this.ship.invulnerable = false;
-        this.ship.visible = true;
-      }
+  _updateInvulnerability(dt) {
+    const ship = this.ship;
+    if (!ship.invulnerable) return;
+
+    ship.invulnerableTimer -= dt;
+    ship.blinkTimer -= dt;
+    if (ship.blinkTimer <= 0) {
+      ship.visible = !ship.visible;
+      ship.blinkTimer = BLINK_RATE;
+    }
+    if (ship.invulnerableTimer <= 0) {
+      ship.invulnerable = false;
+      ship.visible = true;
     }
   }
 
@@ -344,16 +353,10 @@ export class Asteroids {
       for (let ai = this.asteroids.length - 1; ai >= 0; ai--) {
         const a = this.asteroids[ai];
 
-        if (this._distance(b.x, b.y, a.x, a.y) < a.radius + BULLET_RADIUS) {
-          // Remove bullet
+        if (distance(b.x, b.y, a.x, a.y) < a.radius + BULLET_RADIUS) {
           this.bullets.splice(bi, 1);
-
-          // Score
           this.score += ASTEROID_SCORES[a.size];
-
-          // Split or destroy asteroid
           this._destroyAsteroid(ai);
-
           this._emitHud();
           break; // bullet is gone, move to next bullet
         }
@@ -367,7 +370,7 @@ export class Asteroids {
     for (let ai = this.asteroids.length - 1; ai >= 0; ai--) {
       const a = this.asteroids[ai];
 
-      if (this._distance(this.ship.x, this.ship.y, a.x, a.y) < a.radius + SHIP_SIZE * 0.6) {
+      if (distance(this.ship.x, this.ship.y, a.x, a.y) < a.radius + SHIP_SIZE * 0.6) {
         this._shipDeath();
         return;
       }
@@ -378,14 +381,11 @@ export class Asteroids {
     const a = this.asteroids[index];
     this.asteroids.splice(index, 1);
 
-    let nextSize = null;
-    if (a.size === 'large') nextSize = 'medium';
-    else if (a.size === 'medium') nextSize = 'small';
+    const fragmentSize = SPLITS_INTO[a.size];
+    if (!fragmentSize) return;
 
-    if (nextSize) {
-      this._spawnAsteroid(nextSize, { x: a.x, y: a.y });
-      this._spawnAsteroid(nextSize, { x: a.x, y: a.y });
-    }
+    this._spawnAsteroid(fragmentSize, { x: a.x, y: a.y });
+    this._spawnAsteroid(fragmentSize, { x: a.x, y: a.y });
   }
 
   _shipDeath() {
@@ -495,12 +495,6 @@ export class Asteroids {
     else if (obj.x > this.width + margin) obj.x = -margin;
     if (obj.y < -margin) obj.y = this.height + margin;
     else if (obj.y > this.height + margin) obj.y = -margin;
-  }
-
-  _distance(x1, y1, x2, y2) {
-    const dx = x1 - x2;
-    const dy = y1 - y2;
-    return Math.sqrt(dx * dx + dy * dy);
   }
 
   _emitHud() {

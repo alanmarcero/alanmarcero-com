@@ -1,5 +1,8 @@
-import { CYAN, VIOLET, ORANGE, BG, WHITE, MUTED } from '../palette';
+import { CYAN, VIOLET, ORANGE, WHITE, MUTED } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed } from '../frame';
+import { clamp } from '../geometry';
+import { actionForKey } from '../input';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -21,6 +24,8 @@ const AI_REACTION_DELAY = 0.08; // seconds
 const STARTING_LIVES = 3;
 const POINTS_PER_LEVEL = 5;
 const SERVE_DELAY = 0.8;
+const SCORE_FLASH_SECONDS = 0.3;
+const PADDLE_HIT_SPEEDUP = 1.02;
 
 export class Pong {
   onHudUpdate = null;
@@ -94,8 +99,7 @@ export class Pong {
     const p = this._player;
     if (this._keys.up) p.y -= PADDLE_SPEED * dt;
     if (this._keys.down) p.y += PADDLE_SPEED * dt;
-    if (p.y < 0) p.y = 0;
-    if (p.y + p.h > GAME_H) p.y = GAME_H - p.h;
+    p.y = clamp(p.y, 0, GAME_H - p.h);
   }
 
   _updateAI(dt) {
@@ -118,8 +122,7 @@ export class Pong {
       ai.y += move;
     }
 
-    if (ai.y < 0) ai.y = 0;
-    if (ai.y + ai.h > GAME_H) ai.y = GAME_H - ai.h;
+    ai.y = clamp(ai.y, 0, GAME_H - ai.h);
   }
 
   _updateBall(dt) {
@@ -167,7 +170,7 @@ export class Pong {
     // Ball past right (AI missed — player scores)
     if (b.x - b.size > GAME_W) {
       this.score++;
-      this._scoreFlash = 0.3;
+      this._scoreFlash = SCORE_FLASH_SECONDS;
       if (this.score % POINTS_PER_LEVEL === 0) {
         this.level++;
       }
@@ -181,29 +184,23 @@ export class Pong {
     const b = this._ball;
     const hitPos = (b.y - paddle.y) / paddle.h; // 0 to 1
     const angle = (hitPos - 0.5) * BALL_MAX_ANGLE * 2;
-    const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy) * 1.02; // slight speedup
+    const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy) * PADDLE_HIT_SPEEDUP;
     b.vx = Math.cos(angle) * speed * dirX;
     b.vy = Math.sin(angle) * speed;
     b.x = dirX > 0 ? paddle.x + paddle.w + b.size : paddle.x - b.size;
   }
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderCenterLine(ctx);
+      this._renderPaddle(ctx, this._player, CYAN);
+      this._renderPaddle(ctx, this._ai, VIOLET);
+      this._renderBall(ctx);
+    });
+  }
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
-
-    this._renderCenterLine(ctx);
-    this._renderPaddle(ctx, this._player, CYAN);
-    this._renderPaddle(ctx, this._ai, VIOLET);
-    this._renderBall(ctx);
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderCenterLine(ctx) {
@@ -248,16 +245,18 @@ export class Pong {
   }
 
   handleKeyDown(key) {
-    if (key === 'ArrowUp') this._keys.up = true;
-    if (key === 'ArrowDown') this._keys.down = true;
+    this._setControl(actionForKey(key), true);
   }
 
   handleKeyUp(key) {
-    if (key === 'ArrowUp') this._keys.up = false;
-    if (key === 'ArrowDown') this._keys.down = false;
+    this._setControl(actionForKey(key), false);
   }
 
   handleTouchAction(action, active) {
+    this._setControl(action, active);
+  }
+
+  _setControl(action, active) {
     if (action === 'up') this._keys.up = active;
     if (action === 'down') this._keys.down = active;
   }
@@ -265,17 +264,7 @@ export class Pong {
   destroy() {}
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {

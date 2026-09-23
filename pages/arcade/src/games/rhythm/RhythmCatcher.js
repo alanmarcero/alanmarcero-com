@@ -1,5 +1,6 @@
-import { CYAN, VIOLET, ORANGE, BG } from '../palette';
+import { CYAN, VIOLET, ORANGE } from '../palette';
 import { emitHud } from '../gameHud';
+import { letterbox, drawLetterboxed } from '../frame';
 
 const GAME_W = 480;
 const GAME_H = 360;
@@ -21,6 +22,7 @@ const NOTE_SPEED_INCREMENT = 15;
 
 const SPAWN_BASE_INTERVAL = 0.5;
 const SPAWN_MIN_INTERVAL = 0.2;
+const SPAWN_INTERVAL_DECREMENT = 0.03; // per level
 const NOTES_PER_LEVEL = 20;
 
 const STARTING_LIVES = 3;
@@ -29,9 +31,30 @@ const MISS_STREAK_LIMIT = 3;
 const SCORE_PERFECT = 100;
 const SCORE_GOOD = 50;
 
+const COMBO_PER_MULTIPLIER_STEP = 5;
+const MAX_MULTIPLIER = 4;
+
 const LANE_KEYS = ['ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight'];
 const LANE_TOUCH = ['left', 'down', 'up', 'right'];
 const LANE_COLORS = [CYAN, VIOLET, ORANGE, CYAN];
+
+const HIT_GRADES = {
+  perfect: { points: SCORE_PERFECT, effectSeconds: 0.5 },
+  good: { points: SCORE_GOOD, effectSeconds: 0.4 },
+};
+
+export function laneLeftX(lane) {
+  return LANES_X + lane * (LANE_W + LANE_GAP);
+}
+
+export function laneCenterX(lane) {
+  return laneLeftX(lane) + LANE_W / 2;
+}
+
+/** Every five-note streak raises the score multiplier by one, up to 4×. */
+export function comboMultiplier(combo) {
+  return Math.min(Math.floor(combo / COMBO_PER_MULTIPLIER_STEP) + 1, MAX_MULTIPLIER);
+}
 
 export class RhythmCatcher {
   onHudUpdate = null;
@@ -92,7 +115,7 @@ export class RhythmCatcher {
       this._spawnNote();
       this._spawnInterval = Math.max(
         SPAWN_MIN_INTERVAL,
-        SPAWN_BASE_INTERVAL - (this.level - 1) * 0.03
+        SPAWN_BASE_INTERVAL - (this.level - 1) * SPAWN_INTERVAL_DECREMENT
       );
       this._spawnTimer = this._spawnInterval;
     }
@@ -151,21 +174,12 @@ export class RhythmCatcher {
     bestNote.hit = true;
     this._notes = this._notes.filter((n) => n !== bestNote);
 
-    const laneX = LANES_X + lane * (LANE_W + LANE_GAP) + LANE_W / 2;
-
-    if (bestDist <= PERFECT_WINDOW) {
-      this._combo++;
-      this._missStreak = 0;
-      const multiplier = Math.min(Math.floor(this._combo / 5) + 1, 4);
-      this.score += SCORE_PERFECT * multiplier;
-      this._effects.push({ type: 'perfect', x: laneX, y: CATCH_ZONE_Y, timer: 0.5 });
-    } else {
-      this._combo++;
-      this._missStreak = 0;
-      const multiplier = Math.min(Math.floor(this._combo / 5) + 1, 4);
-      this.score += SCORE_GOOD * multiplier;
-      this._effects.push({ type: 'good', x: laneX, y: CATCH_ZONE_Y, timer: 0.4 });
-    }
+    const grade = bestDist <= PERFECT_WINDOW ? 'perfect' : 'good';
+    const { points, effectSeconds } = HIT_GRADES[grade];
+    this._combo++;
+    this._missStreak = 0;
+    this.score += points * comboMultiplier(this._combo);
+    this._effects.push({ type: grade, x: laneCenterX(lane), y: CATCH_ZONE_Y, timer: effectSeconds });
 
     this._notesCaught++;
     if (this._maxCombo < this._combo) this._maxCombo = this._combo;
@@ -182,8 +196,7 @@ export class RhythmCatcher {
   _onMiss(lane) {
     this._combo = 0;
     this._missStreak++;
-    const laneX = LANES_X + lane * (LANE_W + LANE_GAP) + LANE_W / 2;
-    this._effects.push({ type: 'miss', x: laneX, y: CATCH_ZONE_Y, timer: 0.4 });
+    this._effects.push({ type: 'miss', x: laneCenterX(lane), y: CATCH_ZONE_Y, timer: 0.4 });
 
     if (this._missStreak >= MISS_STREAK_LIMIT) {
       this.lives--;
@@ -198,28 +211,22 @@ export class RhythmCatcher {
   }
 
   render(ctx) {
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    drawLetterboxed(ctx, this._frame(), () => {
+      this._renderLanes(ctx);
+      this._renderCatchZone(ctx);
+      this._renderNotes(ctx);
+      this._renderEffects(ctx);
+      this._renderCombo(ctx);
+    });
+  }
 
-    ctx.save();
-    ctx.translate(this._offsetX, this._offsetY);
-    ctx.scale(this._scale, this._scale);
-    ctx.beginPath();
-    ctx.rect(0, 0, GAME_W, GAME_H);
-    ctx.clip();
-
-    this._renderLanes(ctx);
-    this._renderCatchZone(ctx);
-    this._renderNotes(ctx);
-    this._renderEffects(ctx);
-    this._renderCombo(ctx);
-
-    ctx.restore();
+  _frame() {
+    return { canvasW: this.canvasW, canvasH: this.canvasH, viewport: this._viewport, gameW: GAME_W, gameH: GAME_H };
   }
 
   _renderLanes(ctx) {
     for (let i = 0; i < LANES; i++) {
-      const x = LANES_X + i * (LANE_W + LANE_GAP);
+      const x = laneLeftX(i);
       ctx.fillStyle = 'rgba(255,255,255,0.02)';
       ctx.fillRect(x, 0, LANE_W, GAME_H);
 
@@ -239,7 +246,7 @@ export class RhythmCatcher {
     ctx.shadowBlur = 6;
 
     for (let i = 0; i < LANES; i++) {
-      const x = LANES_X + i * (LANE_W + LANE_GAP);
+      const x = laneLeftX(i);
       ctx.strokeStyle = LANE_COLORS[i];
       ctx.lineWidth = 2;
       ctx.strokeRect(x + 2, CATCH_ZONE_Y, LANE_W - 4, CATCH_ZONE_H);
@@ -249,7 +256,7 @@ export class RhythmCatcher {
 
   _renderNotes(ctx) {
     for (const note of this._notes) {
-      const x = LANES_X + note.lane * (LANE_W + LANE_GAP) + LANE_W / 2;
+      const x = laneCenterX(note.lane);
       const color = LANE_COLORS[note.lane];
 
       ctx.save();
@@ -323,17 +330,7 @@ export class RhythmCatcher {
   destroy() {}
 
   _computeTransform() {
-    const aspect = GAME_W / GAME_H;
-    let w = this.canvasW;
-    let h = this.canvasH;
-    if (w / h > aspect) {
-      w = h * aspect;
-    } else {
-      h = w / aspect;
-    }
-    this._scale = w / GAME_W;
-    this._offsetX = (this.canvasW - w) / 2;
-    this._offsetY = (this.canvasH - h) / 2;
+    this._viewport = letterbox(this.canvasW, this.canvasH, GAME_W, GAME_H);
   }
 
   _emitHud() {

@@ -556,9 +556,9 @@ describe('SpaceInvaders', () => {
     });
 
     test('resize recalculates transform', () => {
-      const initialScale = game._scale;
+      const initialScale = game._viewport.scale;
       game.resize(800, 600);
-      expect(game._scale).not.toBe(initialScale);
+      expect(game._viewport.scale).not.toBe(initialScale);
     });
   });
 
