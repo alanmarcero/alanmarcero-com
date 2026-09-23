@@ -33,6 +33,19 @@ export function yAt(value, domain, box) {
   return box.top + (1 - fraction) * box.height;
 }
 
+/**
+ * Where a tooltip goes for a cursor at `x` in a `width`-wide viewBox: beside
+ * the cursor line, never over it, on whichever side has more room — so the
+ * point being read stays visible. `left` is a percentage of the chart.
+ */
+export function tipPlacement(x, width) {
+  const percent = width > 0 ? (x / width) * 100 : 0;
+  return {
+    left: `${percent}%`,
+    side: percent < 50 ? 'right' : 'left',
+  };
+}
+
 /** Nearest data index for a pointer at `px`, clamped to the series. */
 export function indexAtX(px, count, box) {
   if (count <= 1) return 0;

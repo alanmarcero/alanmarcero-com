@@ -162,7 +162,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,667 tests across 107 suites**
+**Total: 1,674 tests across 107 suites**
 
 ## Key Files
 
@@ -613,6 +613,14 @@ one still open.
 - Drawn in `--tm-drawdown` (#5aa9ff, 7.8:1 on the well): a loss is not dressed
   in the reserved alarm red. Every bottom that passes the filter gets a dot, the
   open one a ring; only the deepest 4 (3 at phone width) are labelled.
+- Under each chart, **"Biggest drops, one per year"** (`BiggestDrops`,
+  `worstByYear`): each calendar year's deepest counted drawdown, **filed under
+  the year it bottomed** (2007's top that fell into March 2009 is 2009's drop),
+  deepest first, at most 10. It follows the top-held control.
+- **Tooltips sit beside the cursor line, never over it** (`tipPlacement`): right
+  of it in the chart's left half, left of it in the right half, capped at just
+  under half the chart's width so that side always fits. All four /tmobile
+  charts and every /stocks chart use it.
 
 ## Stocks page (`/stocks`)
 

@@ -2,7 +2,9 @@ import {
   useCallback, useId, useMemo, useRef, useState,
 } from 'react';
 import useMediaQuery from '../../../../src/hooks/useMediaQuery';
-import { indexAtX, plotBox, xAt, yearTicks } from '../chartGeometry';
+import {
+  indexAtX, plotBox, tipPlacement, xAt, yearTicks,
+} from '../chartGeometry';
 import {
   dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
 } from '../drawdownGeometry';
@@ -233,8 +235,8 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
 
       {hover && (
         <div
-          className="tm-tip"
-          style={{ left: `${(hover.x / view.w) * 100}%` }}
+          className={`tm-tip tm-tip--${tipPlacement(hover.x, view.w).side}`}
+          style={{ left: tipPlacement(hover.x, view.w).left }}
           role="status"
           aria-live="polite"
         >

@@ -96,6 +96,22 @@ export function deepest(episodes, count) {
   return [...episodes].sort((a, b) => a.depth - b.depth).slice(0, count);
 }
 
+/**
+ * The deepest drawdown to bottom in each calendar year, deepest first, at
+ * most `limit` of them. A drawdown is filed under the year it bottomed —
+ * 2007's top that fell until March 2009 is 2009's drop.
+ */
+export function worstByYear(episodes, limit = 10) {
+  const byYear = episodes.reduce((years, episode) => {
+    const year = episode.troughDate.slice(0, 4);
+    const held = years.get(year);
+    if (!held || episode.depth < held.depth) years.set(year, episode);
+    return years;
+  }, new Map());
+  return deepest([...byYear.values()], limit)
+    .map((episode) => ({ ...episode, year: episode.troughDate.slice(0, 4) }));
+}
+
 /** Headline figures for the caption; null when nothing qualifies. */
 export function summarizeDrawdowns(episodes) {
   if (!episodes.length) return null;
