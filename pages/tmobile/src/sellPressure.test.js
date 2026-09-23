@@ -1,7 +1,7 @@
 import {
-  biggestDay, change, currentGap, daysBetween, describeChange, dormantSellers, formatChange,
+  biggestDay, change, currentGap, daysBetween, describeChange,
   formatDays, gapRuns, gapSeries, isoBefore, longestClosedGap, medianGap,
-  peakGap, periodComparison, SPELL_BREAK, saleDates, selectDays, sellerRoll, spanLabel,
+  periodComparison, pressureReport, SPELL_BREAK, saleDates, selectDays, sellersOn, spanLabel,
   totalsBetween,
 } from './sellPressure';
 
@@ -217,35 +217,6 @@ describe('gapSeries', () => {
 
   it('draws nothing for a selection that never sold', () => {
     expect(gapSeries(weeks, [], '2025-01-27')).toEqual([]);
-    expect(peakGap([])).toBe(0);
-  });
-
-  it('peaks at the tallest tooth', () => {
-    expect(peakGap(gapSeries(weeks, ['2025-01-06'], '2025-01-27'))).toBe(21);
-  });
-});
-
-describe('sellerRoll', () => {
-  const roll = sellerRoll([
-    day('2025-01-06', 'others', 500, [{ name: 'Ada', shares: 5, value: 500 }]),
-    day('2025-03-06', 'others', 900, [
-      { name: 'Ada', shares: 4, value: 400 }, { name: 'Bo', shares: 5, value: 500 },
-    ]),
-  ]);
-
-  it('is one row per person, biggest seller first', () => {
-    expect(roll.map((r) => r.name)).toEqual(['Ada', 'Bo']);
-    expect(roll[0]).toMatchObject({ value: 900, shares: 9, txns: 2 });
-  });
-
-  it('keeps the first and last day each of them sold', () => {
-    expect(roll[0]).toMatchObject({ first: '2025-01-06', last: '2025-03-06' });
-    expect(roll[1]).toMatchObject({ first: '2025-03-06', last: '2025-03-06' });
-  });
-
-  it('finds who has gone quiet since a cutoff', () => {
-    expect(dormantSellers(roll, '2025-02-01').map((r) => r.name)).toEqual([]);
-    expect(dormantSellers(roll, '2025-04-01').map((r) => r.name)).toEqual(['Ada', 'Bo']);
   });
 });
 
@@ -266,16 +237,54 @@ describe('biggestDay', () => {
   });
 });
 
+describe('sellersOn', () => {
+  it('names everyone who sold that day, once each', () => {
+    const days = [
+      day('2025-03-03', 'sievert', 100, [{ name: 'Ada', shares: 1, value: 100 }]),
+      day('2025-03-03', 'others', 100, [
+        { name: 'Ada', shares: 1, value: 100 }, { name: 'Bo', shares: 1, value: 100 },
+      ]),
+      day('2025-03-04', 'others', 100, [{ name: 'Cy', shares: 1, value: 100 }]),
+    ];
+    expect(sellersOn(days, '2025-03-03')).toEqual(['Ada', 'Bo']);
+    expect(sellersOn(days, '2025-03-05')).toEqual([]);
+  });
+});
+
+describe('pressureReport', () => {
+  const weeks = ['2025-05-26', '2025-06-02', '2025-06-09'];
+
+  it('counts the open quiet to the read date, against the record before it', () => {
+    const report = pressureReport(DAYS, weeks, '2025-06-12');
+    expect(report.current).toMatchObject({ from: '2025-06-02', days: 10, open: true });
+    expect(report.record).toMatchObject({ from: '2025-02-10', to: '2025-06-02', days: 112 });
+    expect(report.lastSellers).toEqual(['Mike Sievert']);
+    expect(report.series[report.series.length - 1]).toMatchObject({ week: '2025-06-09', days: 10 });
+    expect(report.halfYear.span).toBe(182);
+    expect(report.year.span).toBe(365);
+    expect(report.topDay.date).toBe('2025-06-02');
+  });
+
+  it('leaves the pauses inside a spell of selling out of the median', () => {
+    // 2 days (inside a spell), then 33 and 112 between spells
+    expect(pressureReport(DAYS, weeks, '2025-06-12').median).toBe(73);
+  });
+
+  it('has nothing open and nobody to name for a selection that never sold', () => {
+    const report = pressureReport([], weeks, '2025-06-12');
+    expect(report.current).toBeNull();
+    expect(report.lastSellers).toEqual([]);
+    expect(report.series).toEqual([]);
+  });
+});
+
 describe('formatting', () => {
   it('does not write "1 days"', () => {
     expect(formatDays(1)).toBe('1 day');
     expect(formatDays(112)).toBe('112 days');
   });
 
-  it('signs a change and spells one out', () => {
-    expect(formatChange(-0.6444)).toBe('-64%');
-    expect(formatChange(0.12)).toBe('+12%');
-    expect(formatChange(null)).toBe('—');
+  it('spells a change out', () => {
     expect(describeChange(-0.6444)).toBe('down 64%');
     expect(describeChange(0.12)).toBe('up 12%');
     expect(describeChange(0)).toBe('unchanged');

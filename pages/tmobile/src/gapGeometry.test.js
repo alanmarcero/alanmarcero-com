@@ -1,5 +1,7 @@
-import { areaUnder, gapPlot, nearestIndex, openRun, polyline } from './gapGeometry';
-import { plotBox, weekIndexMap } from './chartGeometry';
+import { gapPlot, nearestIndex, openRun } from './gapGeometry';
+import {
+  areaUnder, plotBox, polyline, weekIndexMap,
+} from './chartGeometry';
 
 const WEEKS = ['2025-01-06', '2025-01-13', '2025-01-20', '2025-01-27', '2025-02-03'];
 const PRICES = WEEKS.map((week) => ({ week, close: 100 }));

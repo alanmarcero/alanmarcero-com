@@ -6,9 +6,8 @@
    zero-based domain the other charts use; only its direction is flipped.
    ========================================================================== */
 
-import { xAt } from './chartGeometry';
+import { areaUnder, polyline, xAt } from './chartGeometry';
 import { stackDomain, stackTicks } from './monthlyGeometry';
-import { areaUnder, polyline } from './gapGeometry';
 
 /** A loss (a negative depth) onto the plot: zero at the top, deeper lower. */
 export function depthY(depth, domain, box) {

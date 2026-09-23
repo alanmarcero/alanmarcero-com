@@ -66,22 +66,6 @@ export function summarize(rows) {
   return { weekCount: weeks.size, shares, value, txns };
 }
 
-/** Every distinct seller in a set of weeks, ordered by shares sold. */
-export function sellerTotals(rows) {
-  const totals = new Map();
-  rows.forEach((row) => {
-    row.people.forEach((p) => {
-      const prev = totals.get(p.name) || { name: p.name, shares: 0, value: 0 };
-      totals.set(p.name, {
-        name: p.name,
-        shares: prev.shares + p.shares,
-        value: prev.value + p.value,
-      });
-    });
-  });
-  return [...totals.values()].sort((a, b) => b.shares - a.shares);
-}
-
 /* -- formatting ---------------------------------------------------------- */
 
 /** Compact dollars: $4.2M, $912K, $840. */
@@ -103,13 +87,13 @@ export function formatExactUSD(value) {
   return `$${Math.round(value).toLocaleString('en-US')}`;
 }
 
-/** `2024-03-11` -> `Mar 11, 2024` without pulling in a date library. */
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+export const MONTH_ABBREVIATIONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export function formatWeek(iso) {
+/** `2024-03-11` -> `Mar 11, 2024` without pulling in a date library. */
+export function formatDate(iso) {
   const [y, m, d] = iso.split('-');
-  const month = MONTHS[Number(m) - 1];
+  const month = MONTH_ABBREVIATIONS[Number(m) - 1];
   if (!month) return iso;
   return `${month} ${Number(d)}, ${y}`;
 }

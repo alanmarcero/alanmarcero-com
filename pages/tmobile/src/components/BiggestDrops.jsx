@@ -1,5 +1,5 @@
 import { formatDepth, formatSpan, worstByYear } from '../drawdowns';
-import { formatWeek } from '../insiderFilters';
+import { formatDate } from '../insiderFilters';
 
 const LIMIT = 10;
 
@@ -22,7 +22,7 @@ function BiggestDrops({ episodes, id }) {
             <span className="tm-drops__year">{drop.year}</span>
             <strong className="tm-drops__depth">{formatDepth(drop.depth)}</strong>
             <span className="tm-drops__span">
-              {`${formatWeek(drop.peakDate)} → ${formatWeek(drop.troughDate)}`}
+              {`${formatDate(drop.peakDate)} → ${formatDate(drop.troughDate)}`}
               <span className="tm-drops__days">
                 {`${formatSpan(drop.toBottomDays)} peak to bottom`}
                 {drop.open ? ', still open' : ''}

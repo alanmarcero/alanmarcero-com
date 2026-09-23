@@ -1,7 +1,7 @@
 import {
   DEFAULT_MEASURE, MEASURES, compactShares, compactUSD, dominantSeller, formatAmount,
   formatMonth, formatPercent, formatTick, groupAmount, measureById, monthRows,
-  monthSellers, monthStack, monthStacks, monthTotals, shortMonth,
+  monthSellers, monthStack, monthStacks, monthTotals, peakSeller, shortMonth,
   summarizeMonths,
 } from './monthlySeries';
 
@@ -137,6 +137,18 @@ describe('monthSellers', () => {
   it('narrows with the filter', () => {
     expect(monthSellers(RECORDS[1], CEO_ONLY).map((s) => s.name))
       .toEqual(['Mike Sievert']);
+  });
+});
+
+describe('peakSeller', () => {
+  it('attributes the peak month the way dominantSeller would', () => {
+    expect(peakSeller(RECORDS, { month: '2025-03' }, ALL, 'value'))
+      .toEqual({ name: 'Srikant M. Datar', share: 1 });
+  });
+
+  it('is nothing without a peak, or for a month the records do not hold', () => {
+    expect(peakSeller(RECORDS, null, ALL, 'value')).toBeNull();
+    expect(peakSeller(RECORDS, { month: '2030-01' }, ALL, 'value')).toBeNull();
   });
 });
 

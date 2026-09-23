@@ -8,7 +8,7 @@
    or to the last close, for a drawdown nobody has climbed out of yet.
    ========================================================================== */
 
-import { daysBetween } from './sellPressure';
+import { daysBetween, formatDays } from './sellPressure';
 
 /** How long a top has to stand before its drawdown counts. */
 export const TOP_HOLDS = [
@@ -163,5 +163,5 @@ export function formatDepth(depth) {
 /** Long spans read in years, short ones in days. */
 export function formatSpan(days) {
   if (days >= 730) return `${(days / 365.25).toFixed(1)} years`;
-  return `${days} day${days === 1 ? '' : 's'}`;
+  return formatDays(days);
 }

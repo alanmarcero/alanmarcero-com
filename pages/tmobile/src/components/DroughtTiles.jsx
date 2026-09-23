@@ -1,4 +1,4 @@
-import { formatUSD, formatWeek } from '../insiderFilters';
+import { formatDate, formatUSD } from '../insiderFilters';
 import { describeChange, formatDays, spanLabel } from '../sellPressure';
 
 /**
@@ -32,7 +32,7 @@ function DroughtTiles({
         <p className="tm-tile__label">Days since the last sale</p>
         <p className="tm-tile__hero">{current.days}</p>
         <p className="tm-tile__sub">
-          {`Last sale ${formatWeek(current.from)}`}
+          {`Last sale ${formatDate(current.from)}`}
           {lastSellers.length ? ` · ${lastSellers.join(', ')}` : ''}
         </p>
       </div>
@@ -42,7 +42,7 @@ function DroughtTiles({
         <p className="tm-tile__value">{record ? formatDays(record.days) : '—'}</p>
         <p className="tm-tile__sub">
           {record
-            ? `${formatWeek(record.from)} → ${formatWeek(record.to)}`
+            ? `${formatDate(record.from)} → ${formatDate(record.to)}`
             : 'No earlier pause to measure against'}
           {median ? ` · ${formatDays(median)} is the usual pause between spells of selling` : ''}
           {beatsRecord ? '. The open one is longer.' : ''}
