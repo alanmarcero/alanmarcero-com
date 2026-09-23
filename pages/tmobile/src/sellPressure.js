@@ -156,31 +156,6 @@ export function gapSeries(weeks, dates, asOf) {
   }, []);
 }
 
-/** The tallest point a gap series reaches — what the y axis has to hold. */
-export function peakGap(series) {
-  return series.reduce((most, point) => Math.max(most, point.days), 0);
-}
-
-/** Who sold, biggest first, with the last date each of them sold on. */
-export function sellerRoll(days) {
-  const totals = new Map();
-  days.forEach((day) => {
-    day.people.forEach((person) => {
-      const prior = totals.get(person.name)
-        || { name: person.name, shares: 0, value: 0, txns: 0, last: day.date, first: day.date };
-      totals.set(person.name, {
-        name: person.name,
-        shares: prior.shares + person.shares,
-        value: prior.value + person.value,
-        txns: prior.txns + 1,
-        first: day.date < prior.first ? day.date : prior.first,
-        last: day.date > prior.last ? day.date : prior.last,
-      });
-    });
-  });
-  return [...totals.values()].sort((a, b) => b.value - a.value);
-}
-
 /**
  * The single biggest day of selling in a window, and how much of the window's
  * dollars it is. A share near 1 means the window's total is one trade wearing
@@ -195,9 +170,39 @@ export function biggestDay(days, start, end) {
   return { ...top, share: total ? top.value / total : 0 };
 }
 
-/** How many of the sellers have not sold since `cutoff`. */
-export function dormantSellers(roll, cutoff) {
-  return roll.filter((seller) => seller.last < cutoff);
+/** Everybody in the selection who sold on `date`, each named once. */
+export function sellersOn(days, date) {
+  const names = days
+    .filter((day) => day.date === date)
+    .flatMap((day) => day.people.map((person) => person.name));
+  return [...new Set(names)];
+}
+
+/** The two trailing windows the page compares selling across, in days. */
+export const HALF_YEAR = 182;
+export const YEAR = 365;
+
+/**
+ * Every figure the quiet-stretch panel shows for one selection of sale days,
+ * counted to `asOf` and plotted against the price chart's `weeks`.
+ */
+export function pressureReport(days, weeks, asOf) {
+  const dates = saleDates(days);
+  const runs = gapRuns(dates, asOf);
+  const current = currentGap(runs);
+  const year = periodComparison(days, asOf, YEAR);
+  return {
+    current,
+    record: longestClosedGap(runs),
+    // pauses inside one spell of selling are not pauses
+    median: medianGap(runs, { longerThan: SPELL_BREAK }),
+    series: gapSeries(weeks, dates, asOf),
+    halfYear: periodComparison(days, asOf, HALF_YEAR),
+    year,
+    lastSellers: current ? sellersOn(days, current.from) : [],
+    // the one trade the trailing year's dollar figure leans on, if it does
+    topDay: biggestDay(days, year.recentStart, asOf),
+  };
 }
 
 /* -- formatting ---------------------------------------------------------- */
@@ -205,13 +210,6 @@ export function dormantSellers(roll, cutoff) {
 /** `112` -> `112 days`, and a lone day is not "1 days". */
 export function formatDays(days) {
   return `${days} day${days === 1 ? '' : 's'}`;
-}
-
-/** A signed whole-percent change: `-64%`, `+12%`, or `—` when there is no base. */
-export function formatChange(fraction) {
-  if (fraction === null || !Number.isFinite(fraction)) return '—';
-  const percent = Math.round(fraction * 100);
-  return `${percent > 0 ? '+' : ''}${percent}%`;
 }
 
 /** How a change reads in a sentence: down 64%, up 12%, unchanged. */

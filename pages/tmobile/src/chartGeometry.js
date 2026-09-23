@@ -1,5 +1,6 @@
 /* ==========================================================================
-   chartGeometry.js — pure geometry for the TMUS price chart.
+   chartGeometry.js — pure geometry for the TMUS price chart, and the plot
+   box, traces and cursor arithmetic every chart on the page shares.
    No DOM, no React: every export takes plain values and returns plain values,
    so the chart's maths can be unit-tested without rendering anything.
    ========================================================================== */
@@ -26,7 +27,7 @@ export function xAt(index, count, box) {
 }
 
 /** Map a price onto the plot's y range (inverted: high prices sit up top). */
-export function yAt(value, domain, box) {
+export function priceY(value, domain, box) {
   const span = domain.max - domain.min;
   if (span <= 0) return box.top + box.height / 2;
   const fraction = (value - domain.min) / span;
@@ -44,6 +45,28 @@ export function tipPlacement(x, width) {
     left: `${percent}%`,
     side: percent < 50 ? 'right' : 'left',
   };
+}
+
+/** A pointer's client x in the chart's viewBox units. */
+export function viewBoxX(clientX, rect, viewWidth) {
+  return ((clientX - rect.left) / rect.width) * viewWidth;
+}
+
+/** -1, +1 or 0 for a key: only the left and right arrows move a cursor. */
+export function arrowStep(key) {
+  if (key === 'ArrowLeft') return -1;
+  if (key === 'ArrowRight') return 1;
+  return 0;
+}
+
+/** `from` moved by `step`, clamped to a series of `count`. */
+export function stepIndex(from, step, count) {
+  return Math.min(count - 1, Math.max(0, from + step));
+}
+
+/** An axis year, shortened to `’24` where the compact axis has no room for four digits. */
+export function yearLabel(year, compact) {
+  return compact ? `’${year.slice(2)}` : year;
 }
 
 /** Nearest data index for a pointer at `px`, clamped to the series. */
@@ -104,21 +127,38 @@ export function yearTicks(weeks, { minWeeks = 0 } = {}) {
   }, []);
 }
 
+/** Every weekly close as a plotted point. */
+export function priceCoords(prices, domain, box) {
+  return prices.map((p, i) => ({
+    x: xAt(i, prices.length, box),
+    y: priceY(p.close, domain, box),
+  }));
+}
+
+/** An SVG polyline `points` string through plotted points. */
+export function polyline(coords) {
+  return coords.map((c) => `${c.x.toFixed(2)},${c.y.toFixed(2)}`).join(' ');
+}
+
+/** The wash below a trace, closed along `box.bottom`. */
+export function areaUnder(coords, box) {
+  if (!coords.length) return '';
+  const top = coords
+    .map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x.toFixed(2)},${c.y.toFixed(2)}`)
+    .join('');
+  const first = coords[0].x.toFixed(2);
+  const last = coords[coords.length - 1].x.toFixed(2);
+  return `${top}L${last},${box.bottom.toFixed(2)}L${first},${box.bottom.toFixed(2)}Z`;
+}
+
 /** An SVG polyline `points` string for the price series. */
 export function linePoints(prices, domain, box) {
-  return prices
-    .map((p, i) => `${xAt(i, prices.length, box).toFixed(2)},${yAt(p.close, domain, box).toFixed(2)}`)
-    .join(' ');
+  return polyline(priceCoords(prices, domain, box));
 }
 
 /** A closed path for the soft wash under the price line. */
 export function areaPath(prices, domain, box) {
-  if (!prices.length) return '';
-  const top = prices
-    .map((p, i) => `${i === 0 ? 'M' : 'L'}${xAt(i, prices.length, box).toFixed(2)},${yAt(p.close, domain, box).toFixed(2)}`)
-    .join('');
-  const lastX = xAt(prices.length - 1, prices.length, box).toFixed(2);
-  return `${top}L${lastX},${box.bottom.toFixed(2)}L${box.left.toFixed(2)},${box.bottom.toFixed(2)}Z`;
+  return areaUnder(priceCoords(prices, domain, box), box);
 }
 
 /**
@@ -134,7 +174,7 @@ export function sellMarkers(sells, weekIndex, prices, domain, box, offset = 0) {
       ...sell,
       index,
       x: xAt(index, prices.length, box),
-      y: yAt(sell.close, domain, box) + offset,
+      y: priceY(sell.close, domain, box) + offset,
     });
     return acc;
   }, []);

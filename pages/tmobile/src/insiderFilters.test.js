@@ -1,6 +1,6 @@
 import {
   SELLER_FILTERS, DEFAULT_FILTER, filterById, visibleSeries, selectedWeeks, summarize,
-  sellerTotals, formatUSD, formatShares, formatExactUSD, formatWeek, formatPrice,
+  formatUSD, formatShares, formatExactUSD, formatDate, formatPrice,
 } from './insiderFilters';
 
 const sievertWeeks = [
@@ -117,18 +117,6 @@ describe('summarize', () => {
   });
 });
 
-describe('sellerTotals', () => {
-  it('adds a person up across weeks and sorts by shares', () => {
-    const totals = sellerTotals(selectedWeeks('all', sievertWeeks, otherWeeks));
-    expect(totals[0]).toEqual({ name: 'Mike Sievert', shares: 20000, value: 3200000 });
-    expect(totals.map((t) => t.name)).toContain('Jon Freier');
-  });
-
-  it('handles no rows', () => {
-    expect(sellerTotals([])).toEqual([]);
-  });
-});
-
 describe('formatUSD', () => {
   it('compacts billions, millions and thousands', () => {
     expect(formatUSD(2_500_000_000)).toBe('$2.50B');
@@ -153,17 +141,17 @@ describe('formatExactUSD', () => {
   });
 });
 
-describe('formatWeek', () => {
+describe('formatDate', () => {
   it('renders a readable date', () => {
-    expect(formatWeek('2024-02-19')).toBe('Feb 19, 2024');
+    expect(formatDate('2024-02-19')).toBe('Feb 19, 2024');
   });
 
   it('drops a leading zero from the day', () => {
-    expect(formatWeek('2021-08-02')).toBe('Aug 2, 2021');
+    expect(formatDate('2021-08-02')).toBe('Aug 2, 2021');
   });
 
   it('passes through anything it cannot parse', () => {
-    expect(formatWeek('not-a-date')).toBe('not-a-date');
+    expect(formatDate('not-a-date')).toBe('not-a-date');
   });
 });
 

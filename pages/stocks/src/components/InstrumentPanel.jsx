@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import useInViewport from '../../../../src/hooks/useInViewport';
 import DrawdownPanel from '../../../tmobile/src/components/DrawdownPanel';
 import { drawdownEpisodes, heldAtLeast, underwater } from '../../../tmobile/src/drawdowns';
-import { formatWeek } from '../../../tmobile/src/insiderFilters';
+import { formatDate } from '../../../tmobile/src/insiderFilters';
 import useCloses from '../useCloses';
 import { anchorOf, titleOf } from '../instruments';
 
@@ -23,8 +23,8 @@ function InstrumentPanel({ instrument, hold }) {
   );
 
   const id = anchorOf(instrument);
-  const kicker = `${instrument.name} · ${formatWeek(instrument.first)} to `
-    + `${formatWeek(instrument.last)} · ${instrument.sessions.toLocaleString('en-US')} closes`;
+  const kicker = `${instrument.name} · ${formatDate(instrument.first)} to `
+    + `${formatDate(instrument.last)} · ${instrument.sessions.toLocaleString('en-US')} closes`;
 
   if (!series) {
     return (

@@ -1,19 +1,19 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import useMediaQuery from '../../../../src/hooks/useMediaQuery';
-import { plotBox, tipPlacement } from '../chartGeometry';
+import { useCallback, useMemo } from 'react';
+import { plotBox, yearLabel } from '../chartGeometry';
 import {
-  bandScale, bandIndexAtX, columnPath, monthTicks, stackDomain, stackRects,
-  stackTicks, yAt,
+  amountY, bandScale, bandIndexAtX, columnPath, monthTicks, stackDomain, stackRects,
+  stackTicks,
 } from '../monthlyGeometry';
 import {
   GROUP_LABEL, formatAmount, formatMonth, formatTick, measureById, monthSellers,
   monthTotals, shortMonth,
 } from '../monthlySeries';
 import { formatShares, formatUSD } from '../insiderFilters';
+import useChartCursor from '../hooks/useChartCursor';
+import useChartView from '../hooks/useChartView';
+import { ChartSvg, ChartTip, ValueGrid } from './ChartParts';
 
-// Two fixed coordinate spaces, as on the price chart: a phone gets a narrower
-// box with larger type in user units, so the axis stays legible once the SVG
-// is scaled down into a ~330px column.
+// Two fixed coordinate spaces, as on the price chart.
 const WIDE = {
   w: 1000,
   h: 420,
@@ -21,6 +21,8 @@ const WIDE = {
   tick: 13,
   capLabel: 14,
   quarterly: true,
+  monthOffset: 22,
+  yearOffset: 42,
 };
 
 const COMPACT = {
@@ -30,16 +32,12 @@ const COMPACT = {
   tick: 19,
   capLabel: 17,
   quarterly: false,
+  monthOffset: 26,
+  yearOffset: 48,
 };
 
-const COMPACT_QUERY = '(max-width: 640px)';
-
 function MonthlySalesChart({ records, stacks, measure, summary, show }) {
-  const svgRef = useRef(null);
-  const [hover, setHover] = useState(null);
-
-  const compact = useMediaQuery(COMPACT_QUERY);
-  const view = compact ? COMPACT : WIDE;
+  const { compact, view } = useChartView(WIDE, COMPACT);
   const unit = measureById(measure);
 
   const geometry = useMemo(() => {
@@ -58,31 +56,13 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
 
   const { box, domain, band, ticks, months, columns } = geometry;
 
-  const moveTo = useCallback((index) => {
-    const stack = stacks[index];
-    if (!stack) return;
-    setHover({ index, stack, record: records[index] });
-  }, [records, stacks]);
-
-  const handlePointer = useCallback((event) => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const rect = svg.getBoundingClientRect();
-    if (!rect.width) return;
-    // client px -> viewBox units
-    const vx = ((event.clientX - rect.left) / rect.width) * view.w;
-    moveTo(bandIndexAtX(vx, stacks.length, box));
-  }, [box, moveTo, stacks.length, view.w]);
-
-  const handleKeyDown = useCallback((event) => {
-    const step = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
-    if (!step) return;
-    event.preventDefault();
-    const from = hover ? hover.index : stacks.length - 1;
-    moveTo(Math.min(stacks.length - 1, Math.max(0, from + step)));
-  }, [hover, moveTo, stacks.length]);
-
-  const clear = useCallback(() => setHover(null), []);
+  const yOf = useCallback((amount) => amountY(amount, domain, box), [box, domain]);
+  const formatAxis = useCallback((amount) => formatTick(measure, amount), [measure]);
+  const indexAtViewX = useCallback(
+    (vx) => bandIndexAtX(vx, stacks.length, box),
+    [box, stacks.length],
+  );
+  const cursor = useChartCursor({ count: stacks.length, viewWidth: view.w, indexAtViewX });
 
   const peakIndex = summary.peak
     ? stacks.findIndex((s) => s.month === summary.peak.month)
@@ -92,59 +72,22 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
     + `${formatMonth(stacks[0].month)} to ${formatMonth(stacks[stacks.length - 1].month)}, `
     + 'stacked by seller. Deutsche Telekom is excluded.';
 
-  const hoverSellers = hover ? monthSellers(hover.record, show) : [];
-  const hoverTotals = hover ? monthTotals(hover.record, show) : null;
+  const hoverIndex = cursor.index;
+  const hoverStack = hoverIndex === null ? null : stacks[hoverIndex];
+  const hoverRecord = hoverIndex === null ? null : records[hoverIndex];
+  const hoverSellers = hoverRecord ? monthSellers(hoverRecord, show) : [];
+  const hoverTotals = hoverRecord ? monthTotals(hoverRecord, show) : null;
 
   return (
     <div className="tm-chart">
-      <svg
-        ref={svgRef}
-        className="tm-chart__svg"
-        viewBox={`0 0 ${view.w} ${view.h}`}
-        preserveAspectRatio="xMidYMid meet"
-        style={{
-          '--tm-tick-size': `${view.tick}px`,
-          '--tm-endlabel-size': `${view.capLabel}px`,
-        }}
-        role="img"
-        aria-label={label}
-        tabIndex={0}
-        onPointerMove={handlePointer}
-        onPointerDown={handlePointer}
-        onPointerLeave={clear}
-        onBlur={clear}
-        onKeyDown={handleKeyDown}
-      >
-        {/* horizontal grid — solid hairlines, one step off the surface */}
-        {ticks.map((t) => (
-          <line
-            key={t}
-            className="tm-chart__grid"
-            x1={box.left}
-            x2={box.right}
-            y1={yAt(t, domain, box)}
-            y2={yAt(t, domain, box)}
-          />
-        ))}
-
-        {ticks.map((t) => (
-          <text
-            key={t}
-            className="tm-chart__tick"
-            x={box.left - 12}
-            y={yAt(t, domain, box)}
-            textAnchor="end"
-            dominantBaseline="middle"
-          >
-            {formatTick(measure, t)}
-          </text>
-        ))}
+      <ChartSvg cursor={cursor} view={view} labelSize={view.capLabel} label={label}>
+        <ValueGrid ticks={ticks} box={box} yOf={yOf} format={formatAxis} />
 
         {/* the band the pointer is reading, behind the columns */}
-        {hover && (
+        {hoverStack && (
           <rect
             className="tm-bars__band"
-            x={band.leftAt(hover.index)}
+            x={band.leftAt(hoverIndex)}
             y={box.top}
             width={band.step}
             height={box.height}
@@ -176,7 +119,7 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
             <text
               className="tm-chart__tick"
               x={band.centerAt(index)}
-              y={box.bottom + (compact ? 26 : 22)}
+              y={box.bottom + view.monthOffset}
               textAnchor="middle"
             >
               {shortMonth(month)}
@@ -185,10 +128,10 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
               <text
                 className="tm-chart__tick tm-chart__tick--year"
                 x={band.centerAt(index)}
-                y={box.bottom + (compact ? 48 : 42)}
+                y={box.bottom + view.yearOffset}
                 textAnchor="middle"
               >
-                {compact ? `’${year.slice(2)}` : year}
+                {yearLabel(year, compact)}
               </text>
             )}
           </g>
@@ -199,23 +142,18 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
           <text
             className="tm-chart__endlabel"
             x={band.centerAt(peakIndex)}
-            y={yAt(summary.peak.total, domain, box) - 12}
+            y={yOf(summary.peak.total) - 12}
             textAnchor="middle"
           >
             {formatTick(measure, summary.peak.total)}
           </text>
         )}
-      </svg>
+      </ChartSvg>
 
-      {hover && (
-        <div
-          className={`tm-tip tm-tip--${tipPlacement(band.centerAt(hover.index), view.w).side}`}
-          style={{ left: tipPlacement(band.centerAt(hover.index), view.w).left }}
-          role="status"
-          aria-live="polite"
-        >
-          <p className="tm-tip__week">{formatMonth(hover.stack.month)}</p>
-          {hover.stack.segments.map((segment) => (
+      {hoverStack && (
+        <ChartTip x={band.centerAt(hoverIndex)} viewWidth={view.w}>
+          <p className="tm-tip__week">{formatMonth(hoverStack.month)}</p>
+          {hoverStack.segments.map((segment) => (
             <p className="tm-tip__row" key={segment.group}>
               <span
                 className={`tm-tip__key tm-tip__key--${segment.group}`}
@@ -225,9 +163,9 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
               <span className="tm-tip__label">{GROUP_LABEL[segment.group]}</span>
             </p>
           ))}
-          {hover.stack.segments.length > 1 && (
+          {hoverStack.segments.length > 1 && (
             <p className="tm-tip__row tm-tip__row--total">
-              <strong>{formatAmount(measure, hover.stack.total)}</strong>
+              <strong>{formatAmount(measure, hoverStack.total)}</strong>
               <span className="tm-tip__label">the month</span>
             </p>
           )}
@@ -236,15 +174,15 @@ function MonthlySalesChart({ records, stacks, measure, summary, show }) {
               {hoverSellers.map((s) => s.name).join(', ')}
             </p>
           )}
-          {hover.stack.total > 0 && (
+          {hoverStack.total > 0 && (
             <p className="tm-tip__who">
               {measure === 'value'
                 ? `${formatShares(hoverTotals.shares)} shares`
                 : `${formatUSD(hoverTotals.value)} at the prices they sold for`}
             </p>
           )}
-          {hover.stack.total === 0 && <p className="tm-tip__none">No insider sales</p>}
-        </div>
+          {hoverStack.total === 0 && <p className="tm-tip__none">No insider sales</p>}
+        </ChartTip>
       )}
     </div>
   );

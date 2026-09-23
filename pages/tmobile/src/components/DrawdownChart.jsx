@@ -1,15 +1,15 @@
-import {
-  useCallback, useId, useMemo, useRef, useState,
-} from 'react';
-import useMediaQuery from '../../../../src/hooks/useMediaQuery';
-import {
-  indexAtX, plotBox, tipPlacement, xAt, yearTicks,
-} from '../chartGeometry';
+import { useCallback, useId, useMemo } from 'react';
+import { indexAtX, plotBox, yearTicks } from '../chartGeometry';
 import {
   dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
 } from '../drawdownGeometry';
 import { deepest, formatDepth, formatSpan } from '../drawdowns';
-import { formatPrice, formatWeek } from '../insiderFilters';
+import { formatDate, formatPrice } from '../insiderFilters';
+import useChartCursor from '../hooks/useChartCursor';
+import useChartView from '../hooks/useChartView';
+import {
+  ChartSvg, ChartTip, Crosshair, ValueGrid, YearTicks,
+} from './ChartParts';
 
 const WIDE = {
   w: 1000,
@@ -22,6 +22,7 @@ const WIDE = {
   labelled: 4,
   // a four-digit year at the tick size, plus air
   yearGap: 44,
+  yearOffset: 24,
 };
 
 const COMPACT = {
@@ -34,12 +35,16 @@ const COMPACT = {
   label: 17,
   labelled: 3,
   yearGap: 50,
+  yearOffset: 28,
 };
-
-const COMPACT_QUERY = '(max-width: 640px)';
 
 // a partial year needs this many of its own sessions beside it to be labelled
 const MIN_YEAR_SESSIONS = 200;
+
+// a keypress moves a trading week; five thousand sessions are too many to walk
+const KEY_STRIDE = 5;
+
+const depthTick = (t) => (t === 0 ? '0%' : `−${Math.round(t * 100)}%`);
 
 /**
  * Every daily close as a loss from the highest close before it — an
@@ -50,13 +55,9 @@ const MIN_YEAR_SESSIONS = 200;
  * deepest few are labelled.
  */
 function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
-  const svgRef = useRef(null);
   // several of these can share a page, and a gradient id has to be unique on it
   const washId = `tm-drawdown-wash-${useId().replace(/[^\w-]/g, '')}`;
-  const [hover, setHover] = useState(null);
-
-  const compact = useMediaQuery(COMPACT_QUERY);
-  const view = compact ? COMPACT : WIDE;
+  const { compact, view } = useChartView(WIDE, COMPACT);
 
   const geometry = useMemo(() => {
     const box = plotBox(view.w, view.h, view.margin);
@@ -74,7 +75,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
         view.yearGap,
       ),
     };
-  }, [points, view, compact]);
+  }, [points, view]);
 
   const { box, plot, dateIndex, years } = geometry;
   const { coords, domain, ticks } = plot;
@@ -88,38 +89,20 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
     [episodes, view.labelled],
   );
 
-  const moveTo = useCallback((index) => {
-    if (!coords[index]) return;
-    setHover(coords[index]);
-  }, [coords]);
-
-  const handlePointer = useCallback((event) => {
-    const svg = svgRef.current;
-    if (!svg) return;
-    const rect = svg.getBoundingClientRect();
-    if (!rect.width) return;
-    const vx = ((event.clientX - rect.left) / rect.width) * view.w;
-    moveTo(indexAtX(vx, coords.length, box));
-  }, [box, coords.length, moveTo, view.w]);
-
-  const handleKeyDown = useCallback((event) => {
-    const step = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
-    if (!step) return;
-    event.preventDefault();
-    // a keypress moves a trading week; five thousand sessions are too many to walk
-    const from = hover ? hover.index : coords.length - 1;
-    moveTo(Math.min(coords.length - 1, Math.max(0, from + step * 5)));
-  }, [coords.length, hover, moveTo]);
-
-  const clear = useCallback(() => setHover(null), []);
+  const yOf = useCallback((magnitude) => depthY(-magnitude, domain, box), [box, domain]);
+  const indexAtViewX = useCallback((vx) => indexAtX(vx, coords.length, box), [box, coords.length]);
+  const cursor = useChartCursor({
+    count: coords.length, viewWidth: view.w, indexAtViewX, stride: KEY_STRIDE,
+  });
 
   if (!coords.length) return null;
 
+  const hover = cursor.index === null ? null : coords[cursor.index];
   const first = points[0];
   const last = points[points.length - 1];
   const worst = deepest(episodes, 1)[0];
-  const label = `${subject} as a loss from its all-time high, ${formatWeek(first.date)} `
-    + `to ${formatWeek(last.date)}`
+  const label = `${subject} as a loss from its all-time high, ${formatDate(first.date)} `
+    + `to ${formatDate(last.date)}`
     + (worst ? `. The deepest drawdown shown is ${formatDepth(worst.depth)}.` : '.');
 
   // the drawdown the hovered day sits inside, if it is one being counted
@@ -129,21 +112,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
 
   return (
     <div className="tm-chart">
-      <svg
-        ref={svgRef}
-        className="tm-chart__svg"
-        viewBox={`0 0 ${view.w} ${view.h}`}
-        preserveAspectRatio="xMidYMid meet"
-        style={{ '--tm-tick-size': `${view.tick}px`, '--tm-endlabel-size': `${view.label}px` }}
-        role="img"
-        aria-label={label}
-        tabIndex={0}
-        onPointerMove={handlePointer}
-        onPointerDown={handlePointer}
-        onPointerLeave={clear}
-        onBlur={clear}
-        onKeyDown={handleKeyDown}
-      >
+      <ChartSvg cursor={cursor} view={view} labelSize={view.label} label={label}>
         <defs>
           <linearGradient id={washId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--tm-drawdown)" stopOpacity="0" />
@@ -151,41 +120,14 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           </linearGradient>
         </defs>
 
-        {ticks.map((t) => (
-          <line
-            key={t}
-            className="tm-chart__grid"
-            x1={box.left}
-            x2={box.right}
-            y1={depthY(-t, domain, box)}
-            y2={depthY(-t, domain, box)}
-          />
-        ))}
-
-        {ticks.map((t) => (
-          <text
-            key={t}
-            className="tm-chart__tick"
-            x={box.left - 12}
-            y={depthY(-t, domain, box)}
-            textAnchor="end"
-            dominantBaseline="middle"
-          >
-            {t === 0 ? '0%' : `−${Math.round(t * 100)}%`}
-          </text>
-        ))}
-
-        {years.map(({ index, year }) => (
-          <text
-            key={year}
-            className="tm-chart__tick"
-            x={xAt(index, points.length, box)}
-            y={box.bottom + (compact ? 28 : 24)}
-            textAnchor="middle"
-          >
-            {compact ? `’${year.slice(2)}` : year}
-          </text>
-        ))}
+        <ValueGrid ticks={ticks} box={box} yOf={yOf} format={depthTick} />
+        <YearTicks
+          years={years}
+          count={points.length}
+          box={box}
+          offset={view.yearOffset}
+          compact={compact}
+        />
 
         {/* zero — an all-time high — is the line everything hangs from */}
         <line
@@ -226,21 +168,18 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
         })}
 
         {hover && (
-          <g className="tm-chart__cursor">
-            <line x1={hover.x} x2={hover.x} y1={box.top} y2={box.bottom} />
-            <circle className="tm-chart__cursor-dot--drawdown" cx={hover.x} cy={hover.y} r={4.5} />
-          </g>
+          <Crosshair
+            x={hover.x}
+            y={hover.y}
+            box={box}
+            dotClassName="tm-chart__cursor-dot--drawdown"
+          />
         )}
-      </svg>
+      </ChartSvg>
 
       {hover && (
-        <div
-          className={`tm-tip tm-tip--${tipPlacement(hover.x, view.w).side}`}
-          style={{ left: tipPlacement(hover.x, view.w).left }}
-          role="status"
-          aria-live="polite"
-        >
-          <p className="tm-tip__week">{formatWeek(hover.date)}</p>
+        <ChartTip x={hover.x} viewWidth={view.w}>
+          <p className="tm-tip__week">{formatDate(hover.date)}</p>
           <p className="tm-tip__row">
             <span className="tm-tip__key tm-tip__key--drawdown" aria-hidden="true" />
             <strong>{hover.depth < 0 ? formatDepth(hover.depth) : 'All-time high'}</strong>
@@ -248,19 +187,19 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           </p>
           {hover.depth < 0 && (
             <p className="tm-tip__who">
-              {`From the ${formatPrice(hover.peak)} high of ${formatWeek(hover.peakDate)}`}
+              {`From the ${formatPrice(hover.peak)} high of ${formatDate(hover.peakDate)}`}
             </p>
           )}
           {within && (
             <p className="tm-tip__who">
               {`${within.open ? 'Bottom so far' : 'Bottomed at'} ${formatDepth(within.depth)} `}
-              {`on ${formatWeek(within.troughDate)}; `}
+              {`on ${formatDate(within.troughDate)}; `}
               {within.open
                 ? `top has stood ${formatSpan(within.topDays)}`
                 : `back above in ${formatSpan(within.topDays)}`}
             </p>
           )}
-        </div>
+        </ChartTip>
       )}
     </div>
   );

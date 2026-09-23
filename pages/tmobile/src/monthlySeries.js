@@ -4,7 +4,7 @@
    can disagree about a number.
    ========================================================================== */
 
-import { formatShares, formatUSD } from './insiderFilters';
+import { MONTH_ABBREVIATIONS, formatShares, formatUSD } from './insiderFilters';
 
 /**
  * The three ways to measure a month of selling. They are three different
@@ -99,6 +99,14 @@ export function dominantSeller(record, show, measureId) {
   return { name: top.name, share: top[measureId] / total };
 }
 
+/** Who the peak month can be attributed to, if anyone — see `dominantSeller`. */
+export function peakSeller(records, peak, show, measureId) {
+  if (!peak) return null;
+  const record = records.find((r) => r.month === peak.month);
+  if (!record) return null;
+  return dominantSeller(record, show, measureId);
+}
+
 /** Every seller in a month, both groups merged, biggest first. */
 export function monthSellers(record, show) {
   return GROUPS
@@ -165,19 +173,16 @@ export function formatAmount(measureId, amount) {
   return `${n} filing${n === 1 ? '' : 's'}`;
 }
 
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 /** `2025-02` -> `Feb 2025`. */
 export function formatMonth(iso) {
-  const name = MONTH_NAMES[Number(iso.slice(5, 7)) - 1];
+  const name = MONTH_ABBREVIATIONS[Number(iso.slice(5, 7)) - 1];
   if (!name) return iso;
   return `${name} ${iso.slice(0, 4)}`;
 }
 
 /** `2025-02` -> `Feb`. */
 export function shortMonth(iso) {
-  return MONTH_NAMES[Number(iso.slice(5, 7)) - 1] || iso;
+  return MONTH_ABBREVIATIONS[Number(iso.slice(5, 7)) - 1] || iso;
 }
 
 /** A whole-number percentage, for the one share figure the caption quotes. */

@@ -1,6 +1,7 @@
 import {
-  plotBox, xAt, yAt, indexAtX, priceDomain, priceTicks, yearTicks,
+  plotBox, xAt, priceY, indexAtX, priceDomain, priceTicks, yearTicks,
   linePoints, areaPath, sellMarkers, weekIndexMap, tipPlacement,
+  priceCoords, viewBoxX, arrowStep, stepIndex, yearLabel,
 } from './chartGeometry';
 
 const MARGIN = { top: 10, right: 20, bottom: 30, left: 40 };
@@ -49,21 +50,21 @@ describe('xAt', () => {
   });
 });
 
-describe('yAt', () => {
+describe('priceY', () => {
   const box = plotBox(200, 100, MARGIN);
   const domain = { min: 100, max: 200 };
 
   it('puts the domain max at the top and the min at the bottom', () => {
-    expect(yAt(200, domain, box)).toBe(10);
-    expect(yAt(100, domain, box)).toBe(70);
+    expect(priceY(200, domain, box)).toBe(10);
+    expect(priceY(100, domain, box)).toBe(70);
   });
 
   it('is linear in between', () => {
-    expect(yAt(150, domain, box)).toBe(40);
+    expect(priceY(150, domain, box)).toBe(40);
   });
 
   it('centres the value when the domain has no span', () => {
-    expect(yAt(5, { min: 5, max: 5 }, box)).toBe(40);
+    expect(priceY(5, { min: 5, max: 5 }, box)).toBe(40);
   });
 });
 
@@ -212,5 +213,43 @@ describe('sellMarkers', () => {
       [{ week: '2021-08-02', close: 150 }], weekIndex, prices, domain, box, -8,
     );
     expect(marker.y).toBe(32);
+  });
+});
+
+describe('priceCoords', () => {
+  it('places every close on the same x and y the line is drawn through', () => {
+    const box = plotBox(200, 100, MARGIN);
+    const domain = { min: 0, max: 100 };
+    const coords = priceCoords([{ close: 100 }, { close: 0 }], domain, box);
+    expect(coords).toEqual([
+      { x: box.left, y: box.top },
+      { x: box.right, y: box.bottom },
+    ]);
+  });
+});
+
+describe('cursor arithmetic', () => {
+  it('converts a client x into viewBox units', () => {
+    expect(viewBoxX(150, { left: 50, width: 500 }, 1000)).toBe(200);
+  });
+
+  it('moves only on the left and right arrows', () => {
+    expect(arrowStep('ArrowLeft')).toBe(-1);
+    expect(arrowStep('ArrowRight')).toBe(1);
+    expect(arrowStep('ArrowUp')).toBe(0);
+    expect(arrowStep('Enter')).toBe(0);
+  });
+
+  it('clamps a step to the series', () => {
+    expect(stepIndex(3, 1, 10)).toBe(4);
+    expect(stepIndex(0, -1, 10)).toBe(0);
+    expect(stepIndex(8, 5, 10)).toBe(9);
+  });
+});
+
+describe('yearLabel', () => {
+  it('shortens a year only on the compact axis', () => {
+    expect(yearLabel('2024', false)).toBe('2024');
+    expect(yearLabel('2024', true)).toBe('’24');
   });
 });
