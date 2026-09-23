@@ -1,9 +1,21 @@
 import {
   plotBox, xAt, yAt, indexAtX, priceDomain, priceTicks, yearTicks,
-  linePoints, areaPath, sellMarkers, weekIndexMap,
+  linePoints, areaPath, sellMarkers, weekIndexMap, tipPlacement,
 } from './chartGeometry';
 
 const MARGIN = { top: 10, right: 20, bottom: 30, left: 40 };
+
+describe('tipPlacement', () => {
+  it('sits right of a cursor in the left half and left of one in the right', () => {
+    expect(tipPlacement(100, 1000)).toEqual({ left: '10%', side: 'right' });
+    expect(tipPlacement(900, 1000)).toEqual({ left: '90%', side: 'left' });
+    expect(tipPlacement(500, 1000).side).toBe('left');
+  });
+
+  it('survives a zero-width chart', () => {
+    expect(tipPlacement(10, 0)).toEqual({ left: '0%', side: 'right' });
+  });
+});
 
 describe('plotBox', () => {
   it('subtracts the gutters from the outer size', () => {

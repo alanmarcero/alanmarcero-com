@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useMediaQuery from '../../../../src/hooks/useMediaQuery';
 import {
   plotBox, xAt, yAt, indexAtX, priceDomain, priceTicks, yearTicks,
-  linePoints, areaPath, sellMarkers, weekIndexMap,
+  linePoints, areaPath, sellMarkers, weekIndexMap, tipPlacement,
 } from '../chartGeometry';
 import { formatPrice, formatShares, formatUSD, formatWeek } from '../insiderFilters';
 
@@ -204,8 +204,8 @@ function PriceChart({ prices, sievertWeeks, otherWeeks, showSievert, showOthers 
 
       {hover && (
         <div
-          className="tm-tip"
-          style={{ left: `${(hoverX / view.w) * 100}%` }}
+          className={`tm-tip tm-tip--${tipPlacement(hoverX, view.w).side}`}
+          style={{ left: tipPlacement(hoverX, view.w).left }}
           role="status"
           aria-live="polite"
         >

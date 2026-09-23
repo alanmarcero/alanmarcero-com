@@ -1,7 +1,7 @@
 import {
   DEFAULT_TOP_HOLD, TOP_HOLDS, deepest, describeDrawdowns, describeHold, drawdownEpisodes,
   formatDepth, formatSpan,
-  heldAtLeast, summarizeDrawdowns, topHoldById, underwater,
+  heldAtLeast, summarizeDrawdowns, topHoldById, underwater, worstByYear,
 } from './drawdowns';
 
 // 100 → dip to 80 → new high 110 on day 5 → dip to 99 and never back
@@ -134,5 +134,35 @@ describe('captions', () => {
   it('says so when nothing qualifies', () => {
     expect(describeDrawdowns(null, 'at least 1 year', fmt))
       .toBe('No all-time high has stood for at least 1 year.');
+  });
+});
+
+describe('worstByYear', () => {
+  const at = (troughDate, depth) => ({ troughDate, depth, peakDate: `p-${troughDate}` });
+  const episodes = [
+    at('2020-03-23', -0.34), at('2020-09-23', -0.09),
+    at('2009-03-09', -0.56), at('2022-10-12', -0.25),
+    at('2018-12-24', -0.19),
+  ];
+
+  it('keeps only the deepest drop that bottomed in each year', () => {
+    const drops = worstByYear(episodes);
+    expect(drops.map((d) => d.year)).toEqual(['2009', '2020', '2022', '2018']);
+    expect(drops[1].depth).toBe(-0.34);
+  });
+
+  it('stops at the limit', () => {
+    expect(worstByYear(episodes, 2).map((d) => d.year)).toEqual(['2009', '2020']);
+  });
+
+  it('files a drawdown under the year it bottomed, not the year it topped', () => {
+    const [drop] = worstByYear(drawdownEpisodes(CLOSES).slice(0, 1));
+    expect(drop.year).toBe('2025');
+    expect(worstByYear([{ ...at('2009-03-09', -0.5), peakDate: '2007-10-09' }])[0].year)
+      .toBe('2009');
+  });
+
+  it('is empty for no episodes', () => {
+    expect(worstByYear([])).toEqual([]);
   });
 });

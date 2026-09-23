@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useMediaQuery from '../../../../src/hooks/useMediaQuery';
-import { plotBox, xAt, yearTicks, weekIndexMap } from '../chartGeometry';
+import {
+  plotBox, tipPlacement, xAt, yearTicks, weekIndexMap,
+} from '../chartGeometry';
 import { gapPlot, nearestIndex, openRun, polyline } from '../gapGeometry';
 import { yAt } from '../monthlyGeometry';
 import { formatWeek } from '../insiderFilters';
@@ -217,8 +219,8 @@ function QuietChart({
 
       {hover && (
         <div
-          className="tm-tip"
-          style={{ left: `${(hover.x / view.w) * 100}%` }}
+          className={`tm-tip tm-tip--${tipPlacement(hover.x, view.w).side}`}
+          style={{ left: tipPlacement(hover.x, view.w).left }}
           role="status"
           aria-live="polite"
         >
