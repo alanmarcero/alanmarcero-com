@@ -38,10 +38,10 @@ function MidiPlayer({ autoStart = false }) {
     if (player.playing) {
       player.stop();
       setPlaying(false);
-    } else {
-      player.play(TRACKS[index]);
-      setPlaying(player.playing);
+      return;
     }
+    player.play(TRACKS[index]);
+    setPlaying(player.playing);
   };
 
   const track = TRACKS[index];
