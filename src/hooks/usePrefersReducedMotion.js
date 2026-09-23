@@ -1,12 +1,6 @@
-import { useEffect, useState } from 'react';
+import useMediaQuery from './useMediaQuery';
 
-const QUERY = '(prefers-reduced-motion: reduce)';
-
-const supportsMatchMedia = () =>
-  typeof window !== 'undefined' && typeof window.matchMedia === 'function';
-
-const readPreference = () =>
-  supportsMatchMedia() ? window.matchMedia(QUERY).matches : false;
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 /**
  * Tracks the user's `prefers-reduced-motion` setting.
@@ -16,16 +10,5 @@ const readPreference = () =>
  * opt out of those explicitly.
  */
 export default function usePrefersReducedMotion() {
-  const [prefersReduced, setPrefersReduced] = useState(readPreference);
-
-  useEffect(() => {
-    if (!supportsMatchMedia()) return undefined;
-    const query = window.matchMedia(QUERY);
-    const onChange = () => setPrefersReduced(query.matches);
-    onChange();
-    query.addEventListener('change', onChange);
-    return () => query.removeEventListener('change', onChange);
-  }, []);
-
-  return prefersReduced;
+  return useMediaQuery(REDUCED_MOTION_QUERY);
 }

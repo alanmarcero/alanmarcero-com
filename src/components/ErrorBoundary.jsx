@@ -1,5 +1,43 @@
 import React from 'react';
 
+// Inline styles with fallbacks, because this renders on every page — each with
+// its own stylesheet and tokens — and must still look right if that CSS is
+// what failed.
+const STYLES = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    padding: '2rem',
+    textAlign: 'center',
+    color: 'var(--ink, #e8edee)',
+  },
+  kicker: {
+    fontFamily: "var(--font-mono, 'IBM Plex Mono', monospace)",
+    fontSize: 'var(--text-xs, 0.72rem)',
+    letterSpacing: '0.22em',
+    textTransform: 'uppercase',
+    color: 'var(--amber, #ffb454)',
+    marginBottom: '0.75rem',
+  },
+  heading: {
+    fontFamily: "var(--font-display, 'Archivo', sans-serif)",
+    fontSize: '2rem',
+    fontWeight: 800,
+    textTransform: 'uppercase',
+    letterSpacing: '0.02em',
+    color: 'var(--phosphor, #4af2a4)',
+    marginBottom: '1rem',
+  },
+  message: {
+    color: 'var(--ink-muted, #99a6ab)',
+    marginBottom: '2rem',
+    maxWidth: '400px',
+  },
+};
+
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -15,57 +53,23 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          padding: '2rem',
-          textAlign: 'center',
-          color: 'var(--ink, #e8edee)',
-        }}>
-          <p style={{
-            fontFamily: "var(--font-mono, 'IBM Plex Mono', monospace)",
-            fontSize: 'var(--text-xs, 0.72rem)',
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: 'var(--amber, #ffb454)',
-            marginBottom: '0.75rem',
-          }}>
-            Signal lost
-          </p>
-          <h1 style={{
-            fontFamily: "var(--font-display, 'Archivo', sans-serif)",
-            fontSize: '2rem',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.02em',
-            color: 'var(--phosphor, #4af2a4)',
-            marginBottom: '1rem',
-          }}>
-            Something went wrong
-          </h1>
-          <p style={{
-            color: 'var(--ink-muted, #99a6ab)',
-            marginBottom: '2rem',
-            maxWidth: '400px',
-          }}>
-            An unexpected error occurred. Please refresh the page to try again.
-          </p>
-          <button
-            className="btn"
-            onClick={() => window.location.reload()}
-          >
-            Refresh Page
-          </button>
-        </div>
-      );
-    }
+    if (!this.state.hasError) return this.props.children;
 
-    return this.props.children;
+    return (
+      <div style={STYLES.container}>
+        <p style={STYLES.kicker}>Signal lost</p>
+        <h1 style={STYLES.heading}>Something went wrong</h1>
+        <p style={STYLES.message}>
+          An unexpected error occurred. Please refresh the page to try again.
+        </p>
+        <button
+          className="btn"
+          onClick={() => window.location.reload()}
+        >
+          Refresh Page
+        </button>
+      </div>
+    );
   }
 }
 

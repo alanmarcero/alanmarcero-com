@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { writeQueryParam } from "./queryParam";
+import { readQueryParam, writeQueryParam } from "./queryParam";
 
 describe("writeQueryParam", () => {
   beforeEach(() => {
@@ -77,5 +77,19 @@ describe("writeQueryParam", () => {
     writeQueryParam("q", "prophet");
 
     expect(window.history.length).toBe(before);
+  });
+});
+
+describe("readQueryParam", () => {
+  it("returns the decoded value of a present param", () => {
+    window.history.replaceState(null, "", "/?q=hi%20mom&era=y2014");
+
+    expect(readQueryParam("q")).toBe("hi mom");
+  });
+
+  it("returns null for an absent param", () => {
+    window.history.replaceState(null, "", "/?era=y2014");
+
+    expect(readQueryParam("q")).toBeNull();
   });
 });

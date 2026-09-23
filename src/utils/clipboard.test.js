@@ -46,3 +46,20 @@ describe("copyToClipboard", () => {
     expect(ok).toBe(false);
   });
 });
+
+describe("copyToClipboard legacy path", () => {
+  afterEach(() => {
+    delete document.execCommand;
+  });
+
+  it("returns false and cleans up when execCommand throws", async () => {
+    document.execCommand = jest.fn(() => {
+      throw new Error("unsupported");
+    });
+
+    const ok = await copyToClipboard("text");
+
+    expect(ok).toBe(false);
+    expect(document.querySelector("textarea")).toBeNull();
+  });
+});

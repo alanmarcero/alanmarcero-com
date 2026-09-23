@@ -1,3 +1,9 @@
+/** Read one query param from the address bar; null when absent or off-browser. */
+export function readQueryParam(name) {
+  if (typeof window === 'undefined') return null;
+  return new URLSearchParams(window.location.search).get(name);
+}
+
 /**
  * Write a query param into the address bar without adding a history entry.
  *

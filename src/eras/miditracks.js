@@ -21,28 +21,22 @@ const sandstorm = () => {
   return notes;
 };
 
+// A run of straight eighth notes, one per pitch.
+const eighths = (pitches) => pitches.map((n) => ({ n, b: 0.5 }));
+
 // Zombie Nation — Kernkraft 400: the "oh-oh-oh" stadium chant riff.
-const zombieNation = () => {
-  const pitches = [69, 69, 69, 69, 76, 76, 74, 72, 74, 74, 72, 71, 69, 69];
-  return pitches.map((n) => ({ n, b: 0.5 }));
-};
+const zombieNation = () => eighths([69, 69, 69, 69, 76, 76, 74, 72, 74, 74, 72, 71, 69, 69]);
 
 // Alice DeeJay — Better Off Alone: the syncopated trance lead hook.
-const betterOffAlone = () => {
-  const pitches = [73, 73, 71, 73, 76, 73, 71, 69, 71, 71, 69, 71, 68, 66];
-  return pitches.map((n) => ({ n, b: 0.5 }));
-};
+const betterOffAlone = () => eighths([73, 73, 71, 73, 76, 73, 71, 69, 71, 71, 69, 71, 68, 66]);
 
 // Voodoo & Serano — Blood Is Pumping: hard-trance stabs.
-const bloodIsPumping = () => {
-  const seq = [
-    { n: 57, b: 0.5 }, { n: 57, b: 0.5 }, { n: 57, b: 0.5 }, { n: 60, b: 0.5 },
-    { n: 64, b: 1 }, { n: 62, b: 0.5 }, { n: 60, b: 0.5 },
-    { n: 57, b: 0.5 }, { n: 60, b: 0.5 }, { n: 64, b: 0.5 }, { n: 67, b: 0.5 },
-    { n: 69, b: 1 }, { n: null, b: 0.5 },
-  ];
-  return seq;
-};
+const bloodIsPumping = () => [
+  { n: 57, b: 0.5 }, { n: 57, b: 0.5 }, { n: 57, b: 0.5 }, { n: 60, b: 0.5 },
+  { n: 64, b: 1 }, { n: 62, b: 0.5 }, { n: 60, b: 0.5 },
+  { n: 57, b: 0.5 }, { n: 60, b: 0.5 }, { n: 64, b: 0.5 }, { n: 67, b: 0.5 },
+  { n: 69, b: 1 }, { n: null, b: 0.5 },
+];
 
 // Euphoric A-minor arpeggio, straight sixteenths — generic trance filler.
 const tranceArp = () => {

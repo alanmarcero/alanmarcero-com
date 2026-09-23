@@ -18,6 +18,11 @@ jest.mock("./data/patchBanks", () => ({
   ],
 }));
 
+// Mirrors the hook's gate: the page has left its loading state once the
+// skeleton cards are gone.
+const waitForMusicToSettle = () =>
+  waitFor(() => expect(document.querySelector(".skeleton-card")).toBeNull());
+
 const mockFetchSuccess = (items = []) => {
   global.fetch.mockResolvedValueOnce({
     ok: true,
@@ -309,6 +314,7 @@ describe("App", () => {
 
     expect(screen.queryByText("Downloading now...")).not.toBeInTheDocument();
     jest.useRealTimers();
+    await waitForMusicToSettle();
   });
 
   it("renders the parametric scope centered above the footer", () => {
@@ -329,6 +335,7 @@ describe("App", () => {
     const link = container.querySelector("a.skip-to-content");
     expect(link).toBeTruthy();
     expect(link.getAttribute("href")).toBe("#main-content");
+    await waitForMusicToSettle();
   });
 
   it("ESC key clears search and refocuses input", async () => {
@@ -342,6 +349,7 @@ describe("App", () => {
     fireEvent.keyDown(searchInput, { key: "Escape" });
     expect(searchInput.value).toBe("");
     expect(document.activeElement).toBe(searchInput);
+    await waitForMusicToSettle();
   });
 
   it("syncs ?q= query param when search changes", async () => {
@@ -367,6 +375,7 @@ describe("App", () => {
 
     const searchInput = screen.getByPlaceholderText("Search patches and music...");
     expect(searchInput.value).toBe("prophet");
+    await waitForMusicToSettle();
   });
 
   it("URL-decodes special characters in ?q= param", async () => {
@@ -376,6 +385,7 @@ describe("App", () => {
 
     const searchInput = screen.getByPlaceholderText("Search patches and music...");
     expect(searchInput.value).toBe("hi mom");
+    await waitForMusicToSettle();
   });
 
   it("preserves bare anchor (#section) alongside ?q= filtering", async () => {

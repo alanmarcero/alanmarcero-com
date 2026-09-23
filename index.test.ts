@@ -1,4 +1,4 @@
-import { handler } from "./index";
+import { handler, toMusicItems } from "./index";
 import type { APIGatewayEvent } from "aws-lambda";
 
 beforeAll(() => {
@@ -165,5 +165,37 @@ describe("handler", () => {
     expect(calledUrl).toContain("playlistId=PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c");
     expect(calledUrl).toContain("maxResults=50");
     expect(calledUrl).toContain("key=test-api-key");
+  });
+
+  it("returns 200 with an empty playlist when YouTube omits items", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: async () => ({}),
+    });
+
+    const result = await handler(mockEvent as APIGatewayEvent);
+
+    expect(result.statusCode).toBe(200);
+    expect(JSON.parse(result.body).items).toEqual([]);
+  });
+});
+
+describe("toMusicItems", () => {
+  it("keeps only the title and video id", () => {
+    const items = toMusicItems({
+      items: [
+        {
+          snippet: {
+            title: "Track",
+            publishedAt: "2025-01-01T00:00:00Z",
+            resourceId: { videoId: "xyz" },
+          },
+        },
+      ],
+    });
+
+    expect(items).toEqual([{ title: "Track", videoId: "xyz" }]);
   });
 });

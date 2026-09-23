@@ -80,8 +80,11 @@ export function createMidiPlayer() {
       // needs a user gesture — try to resume, and only start if it takes
       ctx.resume().then(
         () => {
-          if (ctx.state === 'running') begin();
-          else playing = false;
+          if (ctx.state === 'running') {
+            begin();
+            return;
+          }
+          playing = false;
         },
         () => {
           playing = false;
