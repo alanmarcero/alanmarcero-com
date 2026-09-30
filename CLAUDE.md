@@ -117,7 +117,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── neworleans/               # /neworleans & /neworleans-tours — Family itinerary & tour packages
 │   │   ├── index.html            # Main itinerary HTML entry
 │   │   ├── tours.html            # Tour packages HTML entry
-│   │   └── assets/               # Subsite photographs (eat, sip, do, hotels, jazz, kids, near, tattoo)
+│   │   ├── assets/               # Subsite photographs (eat, sip, do, hotels, jazz, kids, near, tattoo)
+│   │   └── scripts/              # sweep-msy-flights.py: BOS→MSY fares for the flights card (reuses the /flights sweep)
 │   ├── flights/                  # /flights — Boston nonstop fare board
 │   │   ├── index.html            # Flights board HTML entry
 │   │   └── scripts/              # sweep-flights.py generator script
