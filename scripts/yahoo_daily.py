@@ -1,15 +1,15 @@
 """
 Every daily close Yahoo Finance holds for one symbol — the library behind the
-drawdown generators (pages/tmobile/scripts/fetch-yahoo-daily-closes.py and
-pages/stocks/scripts/fetch-daily-closes.py). Not a script: import it.
+drawdown generator (pages/stocks/scripts/fetch-daily-closes.py). Not a
+script: import it.
 
 Three things that will bite whoever changes this next:
 
 1.  YAHOO RETURNS A NULL CLOSE FOR THE ODD SESSION. The bar is there, its
     timestamp is there, and every field in it is null — 2026-09-22 was one, in
-    TMUS, BRK-B and six of the sector funds at once. A skipped day is not
-    harmless on a drawdown chart: in TMUS that day was the lowest close of the
-    drawdown in progress, so skipping it understated the trough. The close is
+    BRK-B and six of the sector funds at once. A skipped day is not harmless
+    on a drawdown chart: it can be the lowest close of the drawdown in
+    progress, so skipping it understates the trough. The close is
     recovered from `chartPreviousClose` on a window opening the day AFTER the
     gap, which is that missing day's close by definition. Hourly bars are no
     substitute — their last print is not the closing auction.

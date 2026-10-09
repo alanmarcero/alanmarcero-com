@@ -1,6 +1,6 @@
 /* ==========================================================================
-   chartGeometry.js — pure geometry for the TMUS price chart, and the plot
-   box, traces and cursor arithmetic every chart on the page shares.
+   chartGeometry.js — the plot box, traces, axes and cursor arithmetic the
+   drawdown chart is built on.
    No DOM, no React: every export takes plain values and returns plain values,
    so the chart's maths can be unit-tested without rendering anything.
    ========================================================================== */
@@ -24,14 +24,6 @@ export function plotBox(width, height, margin) {
 export function xAt(index, count, box) {
   if (count <= 1) return box.left;
   return box.left + (index / (count - 1)) * box.width;
-}
-
-/** Map a price onto the plot's y range (inverted: high prices sit up top). */
-export function priceY(value, domain, box) {
-  const span = domain.max - domain.min;
-  if (span <= 0) return box.top + box.height / 2;
-  const fraction = (value - domain.min) / span;
-  return box.top + (1 - fraction) * box.height;
 }
 
 /**
@@ -78,30 +70,6 @@ export function indexAtX(px, count, box) {
 }
 
 /**
- * Price domain padded by `padFraction` of its span and snapped outward to
- * `step` so the axis lands on round numbers.
- */
-export function priceDomain(values, { padFraction = 0.08, step = 20 } = {}) {
-  const finite = values.filter((v) => Number.isFinite(v));
-  if (!finite.length) return { min: 0, max: 1 };
-  const lo = Math.min(...finite);
-  const hi = Math.max(...finite);
-  const pad = (hi - lo) * padFraction || Math.abs(hi) * 0.1 || 1;
-  return {
-    min: Math.max(0, Math.floor((lo - pad) / step) * step),
-    max: Math.ceil((hi + pad) / step) * step,
-  };
-}
-
-/** Round tick values across a domain at `step` intervals. */
-export function priceTicks(domain, step = 40) {
-  const ticks = [];
-  const first = Math.ceil(domain.min / step) * step;
-  for (let v = first; v <= domain.max; v += step) ticks.push(v);
-  return ticks;
-}
-
-/**
  * One tick per January in the series — the x axis reads as years, which is
  * what a five-year window is actually scanned by.
  *
@@ -127,14 +95,6 @@ export function yearTicks(weeks, { minWeeks = 0 } = {}) {
   }, []);
 }
 
-/** Every weekly close as a plotted point. */
-export function priceCoords(prices, domain, box) {
-  return prices.map((p, i) => ({
-    x: xAt(i, prices.length, box),
-    y: priceY(p.close, domain, box),
-  }));
-}
-
 /** An SVG polyline `points` string through plotted points. */
 export function polyline(coords) {
   return coords.map((c) => `${c.x.toFixed(2)},${c.y.toFixed(2)}`).join(' ');
@@ -151,36 +111,31 @@ export function areaUnder(coords, box) {
   return `${top}L${last},${box.bottom.toFixed(2)}L${first},${box.bottom.toFixed(2)}Z`;
 }
 
-/** An SVG polyline `points` string for the price series. */
-export function linePoints(prices, domain, box) {
-  return polyline(priceCoords(prices, domain, box));
-}
-
-/** A closed path for the soft wash under the price line. */
-export function areaPath(prices, domain, box) {
-  return areaUnder(priceCoords(prices, domain, box), box);
-}
-
 /**
- * Place a sell marker for every week in `sells` that exists in the price
- * series. `offset` nudges a group off the line so two groups that sold in the
- * same week stay separately readable.
+ * A round axis step: the smallest of 1/2/2.5/4/5/10 x 10^k that fits `max`
+ * inside `tickCount` steps. 4 is in the set so a peak of 15 lands on a 16
+ * axis instead of being padded out to 20.
  */
-export function sellMarkers(sells, weekIndex, prices, domain, box, offset = 0) {
-  return sells.reduce((acc, sell) => {
-    const index = weekIndex.get(sell.week);
-    if (index === undefined) return acc;
-    acc.push({
-      ...sell,
-      index,
-      x: xAt(index, prices.length, box),
-      y: priceY(sell.close, domain, box) + offset,
-    });
-    return acc;
-  }, []);
+export function niceStep(max, tickCount = 4) {
+  if (!(max > 0)) return 1;
+  const magnitude = 10 ** Math.floor(Math.log10(max / tickCount));
+  const candidates = [1, 2, 2.5, 4, 5, 10].map((m) => m * magnitude);
+  return candidates.find((c) => c * tickCount >= max) || candidates[candidates.length - 1];
 }
 
-/** week -> index lookup for the price series. */
-export function weekIndexMap(prices) {
-  return new Map(prices.map((p, i) => [p.week, i]));
+/** A zero-based domain snapped outward to a round step. */
+export function stackDomain(totals, tickCount = 4) {
+  const peak = Math.max(0, ...totals.filter((t) => Number.isFinite(t)));
+  if (peak <= 0) return { min: 0, max: 1, step: 1 };
+  const step = niceStep(peak, tickCount);
+  return { min: 0, max: Math.ceil(peak / step) * step, step };
+}
+
+/** Round tick values across a zero-based domain, the baseline included. */
+export function stackTicks(domain) {
+  const ticks = [];
+  for (let v = 0; v <= domain.max + domain.step / 2; v += domain.step) {
+    ticks.push(Math.round(v * 1e6) / 1e6);
+  }
+  return ticks;
 }

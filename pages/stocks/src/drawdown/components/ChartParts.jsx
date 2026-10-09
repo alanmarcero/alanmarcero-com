@@ -11,10 +11,10 @@ export function ChartSvg({
   return (
     <svg
       ref={cursor.svgRef}
-      className="tm-chart__svg"
+      className="dd-chart__svg"
       viewBox={`0 0 ${view.w} ${view.h}`}
       preserveAspectRatio="xMidYMid meet"
-      style={{ '--tm-tick-size': `${view.tick}px`, '--tm-endlabel-size': `${labelSize}px` }}
+      style={{ '--dd-tick-size': `${view.tick}px`, '--dd-endlabel-size': `${labelSize}px` }}
       role="img"
       aria-label={label}
       tabIndex={0}
@@ -34,7 +34,7 @@ export function ValueGrid({
       {ticks.map((t) => (
         <line
           key={t}
-          className="tm-chart__grid"
+          className="dd-chart__grid"
           x1={box.left}
           x2={box.right}
           y1={yOf(t)}
@@ -45,7 +45,7 @@ export function ValueGrid({
       {ticks.map((t) => (
         <text
           key={t}
-          className="tm-chart__tick"
+          className="dd-chart__tick"
           x={box.left - 12}
           y={yOf(t)}
           textAnchor="end"
@@ -65,7 +65,7 @@ export function YearTicks({
   return years.map(({ index, year }) => (
     <text
       key={year}
-      className="tm-chart__tick"
+      className="dd-chart__tick"
       x={xAt(index, count, box)}
       y={box.bottom + offset}
       textAnchor="middle"
@@ -80,7 +80,7 @@ export function Crosshair({
   x, y, box, dotClassName,
 }) {
   return (
-    <g className="tm-chart__cursor">
+    <g className="dd-chart__cursor">
       <line x1={x} x2={x} y1={box.top} y2={box.bottom} />
       <circle className={dotClassName} cx={x} cy={y} r={4.5} />
     </g>
@@ -91,7 +91,7 @@ export function Crosshair({
 export function ChartTip({ x, viewWidth, children }) {
   const { side, left } = tipPlacement(x, viewWidth);
   return (
-    <div className={`tm-tip tm-tip--${side}`} style={{ left }} role="status" aria-live="polite">
+    <div className={`dd-tip dd-tip--${side}`} style={{ left }} role="status" aria-live="polite">
       {children}
     </div>
   );
