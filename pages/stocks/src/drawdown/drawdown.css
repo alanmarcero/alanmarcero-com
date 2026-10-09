@@ -1,29 +1,19 @@
-@import '../../../src/shared/theme.css';
+@import '../../../../src/shared/theme.css';
 
 /* ==========================================================================
-   TMobileApp.css — the TMUS readout as an instrument panel ("signal path").
-   A recessed scope well holds the price trace; sale markers are the events
-   punched onto it. Consumes ONLY theme tokens, plus the three chart roles
-   below.
+   drawdown.css — the drawdown readout as an instrument panel ("signal path").
+   A recessed scope well holds the underwater trace. Consumes ONLY theme
+   tokens, plus the chart roles below.
    ========================================================================== */
 
-.tm-page {
+.dd-page {
   /* -- chart roles ------------------------------------------------------- */
-  /* The price trace wears the site's phosphor. The two sale series are
-     stepped for this dark surface and validated all-pairs for colour-vision
-     separation (CVD ΔE 26.0, normal-vision ΔE 27.0); marker SHAPE carries the
-     same distinction a second time, so neither leans on hue alone. */
-  --tm-price: var(--phosphor);
-  --tm-sievert: #d95926;
-  --tm-others: #9085e9;
-  /* The quiet-stretch trace is the only mark in its own plot, so it needs no
-     separation from the two sale hues — it never appears beside them. VU
-     amber, 11.4:1 on the well. */
-  --tm-quiet: var(--amber);
-  /* The drawdown trace is alone in its own plot too. A cool blue, so a loss
-     is not dressed in the reserved alarm red; 7.8:1 on the well. */
-  --tm-drawdown: #5aa9ff;
-  --tm-well: var(--panel-inset);
+  /* The default trace and cursor wear the site's phosphor. */
+  --dd-price: var(--phosphor);
+  /* A cool blue, so a loss is not dressed in the reserved alarm red; 7.8:1
+     on the well. */
+  --dd-drawdown: #5aa9ff;
+  --dd-well: var(--panel-inset);
 
   min-height: 100vh;
   display: flex;
@@ -35,14 +25,14 @@
 /* --------------------------------------------------------------------------
    HEADER
    -------------------------------------------------------------------------- */
-.tm-header {
+.dd-header {
   width: 100%;
   max-width: var(--content-max);
   text-align: center;
   margin-bottom: var(--space-6);
 }
 
-.tm-back {
+.dd-back {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -51,15 +41,15 @@
   margin-bottom: var(--space-4);
 }
 
-.tm-back:hover {
+.dd-back:hover {
   color: var(--phosphor);
 }
 
-.tm-kicker {
+.dd-kicker {
   margin-bottom: var(--space-2);
 }
 
-.tm-title {
+.dd-title {
   font-size: var(--text-hero);
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -69,14 +59,14 @@
   color: transparent;
 }
 
-.tm-sub {
+.dd-sub {
   max-width: 62ch;
   margin: var(--space-3) auto 0;
   color: var(--ink-muted);
   font-size: var(--text-base);
 }
 
-.tm-divider {
+.dd-divider {
   width: 100%;
   height: 32px;
   margin-top: var(--space-5);
@@ -86,7 +76,7 @@
 /* --------------------------------------------------------------------------
    LAYOUT
    -------------------------------------------------------------------------- */
-.tm-main {
+.dd-main {
   width: 100%;
   max-width: var(--content-max);
   display: flex;
@@ -97,17 +87,13 @@
 /* --------------------------------------------------------------------------
    CONTROL ROW — one row, above everything it scopes
    -------------------------------------------------------------------------- */
-.tm-controls {
+.dd-controls {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4) var(--space-6);
 }
 
-.tm-controls--inset {
-  margin-bottom: var(--space-3);
-}
-
-.tm-controls__label {
+.dd-controls__label {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.14em;
@@ -116,13 +102,13 @@
   margin-bottom: var(--space-2);
 }
 
-.tm-filters {
+.dd-filters {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
 }
 
-.tm-filter {
+.dd-filter {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   letter-spacing: 0.04em;
@@ -138,85 +124,26 @@
     background var(--dur-fast) var(--ease-out);
 }
 
-.tm-filter:hover {
+.dd-filter:hover {
   color: var(--ink);
   background: var(--panel-raised);
 }
 
-.tm-filter--on {
+.dd-filter--on {
   color: var(--bg);
   background: var(--phosphor);
   border-color: var(--phosphor);
 }
 
-.tm-filter:focus-visible {
+.dd-filter:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 /* --------------------------------------------------------------------------
-   STAT TILES
-   -------------------------------------------------------------------------- */
-.tm-tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-3);
-}
-
-.tm-tile {
-  background: var(--panel);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-module);
-  padding: var(--space-3) var(--space-4);
-}
-
-.tm-tile__label {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.tm-tile__value {
-  font-family: var(--font-display);
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: var(--ink);
-  margin-top: var(--space-1);
-}
-
-/* the figure a tile row leads with */
-.tm-tile--hero {
-  grid-column: span 2;
-  box-shadow: var(--shadow-module-raised);
-}
-
-.tm-tile__hero {
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 1.6rem + 3.2vw, 4rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--phosphor);
-  margin-top: var(--space-1);
-}
-
-.tm-tile--quiet .tm-tile__hero {
-  color: var(--tm-quiet);
-}
-
-.tm-tile__sub {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--ink-faint);
-  margin-top: var(--space-1);
-}
-
-/* --------------------------------------------------------------------------
    CHART PANEL — a machined faceplate around a recessed scope well
    -------------------------------------------------------------------------- */
-.tm-panel {
+.dd-panel {
   background: var(--panel);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-module);
@@ -224,14 +151,14 @@
 }
 
 /* a line under a panel title: what the series is and what it covers */
-.tm-panel__kicker {
+.dd-panel__kicker {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.06em;
   color: var(--ink-faint);
 }
 
-.tm-panel__head {
+.dd-panel__head {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -240,240 +167,116 @@
   margin-bottom: var(--space-3);
 }
 
-.tm-panel__title {
+.dd-panel__title {
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--ink);
 }
 
-/* -- legend -------------------------------------------------------------- */
-.tm-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.tm-legend__item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.06em;
-  color: var(--ink-muted);
-}
-
-.tm-legend__mark {
-  flex: none;
-  display: inline-block;
-}
-
-/* the legend mirrors the mark: a stroke for the line, the real dot shapes */
-.tm-legend__mark--price {
-  width: 18px;
-  height: 2px;
-  border-radius: 1px;
-  background: var(--tm-price);
-}
-
-.tm-legend__mark--sievert {
-  width: 11px;
-  height: 11px;
-  background: var(--tm-sievert);
-  transform: rotate(45deg);
-}
-
-.tm-legend__mark--others {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--tm-others);
-}
-
-/* the bar legend mirrors its mark: a column, capped the way the chart caps it */
-.tm-legend__mark--bar {
-  width: 9px;
-  height: 14px;
-  border-radius: 3px 3px 1px 1px;
-}
-
-.tm-legend__mark--bar-sievert {
-  background: var(--tm-sievert);
-}
-
-.tm-legend__mark--bar-others {
-  background: var(--tm-others);
-}
-
-/* -- monthly columns ---------------------------------------------------- */
-/* No stroke anywhere: touching segments are separated by a gap in the well
-   colour, which the geometry carves out of the lower segment. */
-.tm-bars__seg--sievert {
-  fill: var(--tm-sievert);
-}
-
-.tm-bars__seg--others {
-  fill: var(--tm-others);
-}
-
-/* the band being read — a hit target wider than the column it holds */
-.tm-bars__band {
-  fill: var(--ink-faint);
-  opacity: 0.08;
-}
-
-/* the year sits under the month name, so a two-year axis reads as time */
-.tm-chart__tick--year {
-  letter-spacing: 0.1em;
-}
-
 /* -- the scope well ----------------------------------------------------- */
-.tm-chart {
+.dd-chart {
   position: relative;
-  background: var(--tm-well);
+  background: var(--dd-well);
   border-radius: var(--radius);
   box-shadow: 0 0 0 1px var(--line) inset;
   padding: var(--space-2);
 }
 
-.tm-chart__svg {
+.dd-chart__svg {
   width: 100%;
   height: auto;
   display: block;
   touch-action: pan-y;
 }
 
-.tm-chart__svg:focus-visible {
+.dd-chart__svg:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 /* grid + axes: solid hairlines, one step off the surface, recessive */
-.tm-chart__grid,
-.tm-chart__axis {
+.dd-chart__grid,
+.dd-chart__axis {
   stroke: var(--line);
   stroke-width: 1;
 }
 
-.tm-chart__axis {
+.dd-chart__axis {
   stroke: var(--line-strong);
 }
 
 /* tick + end-label type is sized in SVG user units by the chart, so it stays
    legible once the viewBox is scaled down into a phone-width column */
-.tm-chart__tick {
+.dd-chart__tick {
   fill: var(--ink-faint);
   font-family: var(--font-mono);
-  font-size: var(--tm-tick-size, 13px);
+  font-size: var(--dd-tick-size, 13px);
   font-variant-numeric: tabular-nums;
 }
 
-.tm-chart__line {
+.dd-chart__line {
   fill: none;
-  stroke: var(--tm-price);
+  stroke: var(--dd-price);
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
 
-.tm-chart__line--quiet {
-  stroke: var(--tm-quiet);
-  stroke-opacity: 0.55;
-}
-
-.tm-chart__line--drawdown {
-  stroke: var(--tm-drawdown);
+.dd-chart__line--drawdown {
+  stroke: var(--dd-drawdown);
   stroke-width: 1.5;
 }
 
-.tm-chart__dot--drawdown {
-  fill: var(--tm-drawdown);
+.dd-chart__dot--drawdown {
+  fill: var(--dd-drawdown);
 }
 
 /* the drawdown still in progress: a ring, because its bottom may not be in */
-.tm-chart__dot--open {
-  fill: var(--tm-well);
-  stroke: var(--tm-drawdown);
+.dd-chart__dot--open {
+  fill: var(--dd-well);
+  stroke: var(--dd-drawdown);
 }
 
-.tm-chart__cursor .tm-chart__cursor-dot--drawdown {
-  fill: var(--tm-drawdown);
-}
-
-/* the run that has not ended yet, drawn at full strength over the rest */
-.tm-chart__line--open {
-  stroke: var(--tm-quiet);
-  stroke-width: 2.5;
-}
-
-/* a reference value, not a series: a dashed hairline with its own label */
-.tm-chart__rule {
-  stroke: var(--ink-faint);
-  stroke-width: 1;
-  stroke-dasharray: 5 5;
-}
-
-.tm-chart__rulelabel {
-  fill: var(--ink-faint);
-  font-family: var(--font-mono);
-  font-size: var(--tm-tick-size, 13px);
+.dd-chart__cursor .dd-chart__cursor-dot--drawdown {
+  fill: var(--dd-drawdown);
 }
 
 /* every marker carries a 2px ring in the well colour, so dots stay legible
    where they cross the trace or each other */
-.tm-chart__dot {
-  stroke: var(--tm-well);
+.dd-chart__dot {
+  stroke: var(--dd-well);
   stroke-width: 2;
 }
 
-.tm-chart__dot--sievert {
-  fill: var(--tm-sievert);
-}
-
-.tm-chart__dot--others {
-  fill: var(--tm-others);
-}
-
-.tm-chart__dot--quiet {
-  fill: var(--tm-quiet);
-}
-
-.tm-chart__cursor line {
+.dd-chart__cursor line {
   stroke: var(--ink-faint);
   stroke-width: 1;
 }
 
-.tm-chart__cursor circle {
-  fill: var(--tm-price);
-  stroke: var(--tm-well);
+.dd-chart__cursor circle {
+  fill: var(--dd-price);
+  stroke: var(--dd-well);
   stroke-width: 2;
 }
 
-.tm-chart__endlabel {
+.dd-chart__endlabel {
   fill: var(--ink);
   font-family: var(--font-mono);
-  font-size: var(--tm-endlabel-size, 14px);
+  font-size: var(--dd-endlabel-size, 14px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-}
-
-.tm-chart__endlabel--quiet {
-  fill: var(--tm-quiet);
 }
 
 /* -- tooltip: values lead, labels follow -------------------------------- */
 /* The tooltip sits BESIDE the cursor line, on the side with more room, so
    the point being read is never under it. Its width is capped at just under
    half the chart, which is what guarantees that side always fits. */
-.tm-tip {
-  --tm-tip-gap: 14px;
+.dd-tip {
+  --dd-tip-gap: 14px;
   position: absolute;
   top: var(--space-3);
-  min-width: min(190px, calc(50% - 2 * var(--tm-tip-gap)));
-  max-width: min(260px, calc(50% - 2 * var(--tm-tip-gap)));
+  min-width: min(190px, calc(50% - 2 * var(--dd-tip-gap)));
+  max-width: min(260px, calc(50% - 2 * var(--dd-tip-gap)));
   pointer-events: none;
   background: var(--panel-raised);
   border-radius: var(--radius-sm);
@@ -482,15 +285,15 @@
   z-index: 2;
 }
 
-.tm-tip--right {
-  transform: translateX(var(--tm-tip-gap));
+.dd-tip--right {
+  transform: translateX(var(--dd-tip-gap));
 }
 
-.tm-tip--left {
-  transform: translateX(calc(-100% - var(--tm-tip-gap)));
+.dd-tip--left {
+  transform: translateX(calc(-100% - var(--dd-tip-gap)));
 }
 
-.tm-tip__week {
+.dd-tip__week {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.1em;
@@ -499,7 +302,7 @@
   margin-bottom: var(--space-1);
 }
 
-.tm-tip__row {
+.dd-tip__row {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
@@ -507,17 +310,17 @@
   color: var(--ink-muted);
 }
 
-.tm-tip__row strong {
+.dd-tip__row strong {
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
-.tm-tip__label {
+.dd-tip__label {
   font-size: var(--text-xs);
 }
 
 /* line keys, not boxes — a short stroke of the series colour */
-.tm-tip__key {
+.dd-tip__key {
   flex: none;
   width: 12px;
   height: 2px;
@@ -525,31 +328,15 @@
   transform: translateY(-3px);
 }
 
-.tm-tip__key--price { background: var(--tm-price); }
-.tm-tip__key--sievert { background: var(--tm-sievert); }
-.tm-tip__key--others { background: var(--tm-others); }
-.tm-tip__key--quiet { background: var(--tm-quiet); }
-.tm-tip__key--drawdown { background: var(--tm-drawdown); }
+.dd-tip__key--drawdown { background: var(--dd-drawdown); }
 
-/* the month total, set off from the segments it sums */
-.tm-tip__row--total {
-  margin-top: var(--space-1);
-  padding-top: var(--space-1);
-  border-top: 1px solid var(--line);
-}
-
-.tm-tip__who {
+.dd-tip__who {
   font-size: var(--text-xs);
   color: var(--ink-faint);
   margin-top: var(--space-1);
 }
 
-.tm-tip__none {
-  font-size: var(--text-xs);
-  color: var(--ink-faint);
-}
-
-.tm-panel__note {
+.dd-panel__note {
   max-width: 68ch;
   margin-top: var(--space-3);
   font-size: var(--text-sm);
@@ -557,11 +344,11 @@
 }
 
 /* -- biggest drops: one per year, a compact ranked readout --------------- */
-.tm-drops {
+.dd-drops {
   margin-top: var(--space-4);
 }
 
-.tm-drops__title {
+.dd-drops__title {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 500;
@@ -571,7 +358,7 @@
   margin-bottom: var(--space-2);
 }
 
-.tm-drops__list {
+.dd-drops__list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -580,7 +367,7 @@
   column-gap: var(--space-5);
 }
 
-.tm-drops__row {
+.dd-drops__row {
   break-inside: avoid;
   display: grid;
   grid-template-columns: 3.2em 4.6em 1fr;
@@ -592,29 +379,29 @@
   color: var(--ink-muted);
 }
 
-.tm-drops__year,
-.tm-drops__depth {
+.dd-drops__year,
+.dd-drops__depth {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
-.tm-drops__year {
+.dd-drops__year {
   color: var(--ink-faint);
 }
 
-.tm-drops__depth {
+.dd-drops__depth {
   color: var(--ink);
   font-weight: 600;
   text-align: right;
 }
 
-.tm-drops__days {
+.dd-drops__days {
   display: block;
   font-size: var(--text-xs);
   color: var(--ink-faint);
 }
 
-.tm-hint {
+.dd-hint {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.06em;
@@ -626,7 +413,7 @@
 /* --------------------------------------------------------------------------
    TABLE VIEW — the chart's accessible twin
    -------------------------------------------------------------------------- */
-.tm-table-toggle {
+.dd-table-toggle {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--phosphor);
@@ -638,17 +425,17 @@
   transition: border-color var(--dur-fast) var(--ease-out);
 }
 
-.tm-table-toggle:hover {
+.dd-table-toggle:hover {
   border-color: var(--phosphor-dim);
 }
 
-.tm-table-toggle:focus-visible {
+.dd-table-toggle:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 /* wide content scrolls inside its own box — the page never scrolls sideways */
-.tm-table-scroll {
+.dd-table-scroll {
   overflow-x: auto;
   margin-top: var(--space-3);
   background: var(--panel);
@@ -656,13 +443,13 @@
   box-shadow: var(--shadow-module);
 }
 
-.tm-table {
+.dd-table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--text-sm);
 }
 
-.tm-table__caption {
+.dd-table__caption {
   caption-side: top;
   text-align: left;
   padding: var(--space-3) var(--space-4) 0;
@@ -670,15 +457,15 @@
   color: var(--ink-faint);
 }
 
-.tm-table th,
-.tm-table td {
+.dd-table th,
+.dd-table td {
   text-align: left;
   padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
 
-.tm-table th {
+.dd-table th {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.12em;
@@ -687,55 +474,24 @@
   font-weight: 500;
 }
 
-.tm-table td {
+.dd-table td {
   color: var(--ink-muted);
 }
 
-.tm-num {
+.dd-num {
   text-align: right;
   font-variant-numeric: tabular-nums;
-}
-
-.tm-table__key {
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  margin-right: var(--space-2);
-  vertical-align: baseline;
-}
-
-.tm-table__key--sievert {
-  background: var(--tm-sievert);
-  border-radius: 1px;
-  transform: rotate(45deg);
-}
-
-.tm-table__key--others {
-  background: var(--tm-others);
-}
-
-.tm-table__seller {
-  display: inline-block;
-  margin-right: var(--space-3);
-  white-space: nowrap;
-}
-
-.tm-table__people {
-  white-space: normal;
-  min-width: 220px;
-  color: var(--ink-faint);
 }
 
 /* --------------------------------------------------------------------------
    SOURCE NOTES
    -------------------------------------------------------------------------- */
-.tm-notes {
+.dd-notes {
   border-top: 1px solid var(--line);
   padding-top: var(--space-4);
 }
 
-.tm-notes__title {
+.dd-notes__title {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 500;
@@ -745,7 +501,7 @@
   margin-bottom: var(--space-2);
 }
 
-.tm-notes__list {
+.dd-notes__list {
   margin: 0;
   padding-left: 1.2em;
   color: var(--ink-faint);
@@ -759,35 +515,33 @@
    RESPONSIVE
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .tm-page {
+  .dd-page {
     padding: var(--space-5) var(--space-3);
   }
 
-  .tm-tile--hero {
-    grid-column: 1 / -1;
-  }
+  
 
-  .tm-panel {
+  .dd-panel {
     padding: var(--space-3);
   }
 
-  .tm-hint {
+  .dd-hint {
     text-align: left;
   }
 
-  .tm-controls {
+  .dd-controls {
     gap: var(--space-3);
   }
 
-  .tm-controls__group {
+  .dd-controls__group {
     width: 100%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tm-filter,
-  .tm-table-toggle,
-  .tm-back {
+  .dd-filter,
+  .dd-table-toggle,
+  .dd-back {
     transition: none;
   }
 }

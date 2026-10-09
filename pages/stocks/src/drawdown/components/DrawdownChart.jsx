@@ -4,7 +4,7 @@ import {
   dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
 } from '../drawdownGeometry';
 import { deepest, formatDepth, formatSpan } from '../drawdowns';
-import { formatDate, formatPrice } from '../insiderFilters';
+import { formatDate, formatPrice } from '../format';
 import useChartCursor from '../hooks/useChartCursor';
 import useChartView from '../hooks/useChartView';
 import {
@@ -56,7 +56,7 @@ const depthTick = (t) => (t === 0 ? '0%' : `−${Math.round(t * 100)}%`);
  */
 function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
   // several of these can share a page, and a gradient id has to be unique on it
-  const washId = `tm-drawdown-wash-${useId().replace(/[^\w-]/g, '')}`;
+  const washId = `dd-drawdown-wash-${useId().replace(/[^\w-]/g, '')}`;
   const { compact, view } = useChartView(WIDE, COMPACT);
 
   const geometry = useMemo(() => {
@@ -111,12 +111,12 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
     : null;
 
   return (
-    <div className="tm-chart">
+    <div className="dd-chart">
       <ChartSvg cursor={cursor} view={view} labelSize={view.label} label={label}>
         <defs>
           <linearGradient id={washId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--tm-drawdown)" stopOpacity="0" />
-            <stop offset="100%" stopColor="var(--tm-drawdown)" stopOpacity="0.22" />
+            <stop offset="0%" stopColor="var(--dd-drawdown)" stopOpacity="0" />
+            <stop offset="100%" stopColor="var(--dd-drawdown)" stopOpacity="0.22" />
           </linearGradient>
         </defs>
 
@@ -131,20 +131,20 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
 
         {/* zero — an all-time high — is the line everything hangs from */}
         <line
-          className="tm-chart__axis"
+          className="dd-chart__axis"
           x1={box.left}
           x2={box.right}
           y1={box.top}
           y2={box.top}
         />
 
-        <path className="tm-chart__area" d={plot.area} fill={`url(#${washId})`} />
-        <polyline className="tm-chart__line tm-chart__line--drawdown" points={plot.line} />
+        <path className="dd-chart__area" d={plot.area} fill={`url(#${washId})`} />
+        <polyline className="dd-chart__line dd-chart__line--drawdown" points={plot.line} />
 
         {markers.map((m) => (
           <circle
             key={m.peakDate}
-            className={`tm-chart__dot tm-chart__dot--drawdown${m.open ? ' tm-chart__dot--open' : ''}`}
+            className={`dd-chart__dot dd-chart__dot--drawdown${m.open ? ' dd-chart__dot--open' : ''}`}
             cx={m.x}
             cy={m.y}
             r={4.5}
@@ -156,7 +156,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           return (
             <text
               key={m.peakDate}
-              className="tm-chart__endlabel"
+              className="dd-chart__endlabel"
               x={at.x}
               y={at.y}
               textAnchor={at.anchor}
@@ -172,26 +172,26 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
             x={hover.x}
             y={hover.y}
             box={box}
-            dotClassName="tm-chart__cursor-dot--drawdown"
+            dotClassName="dd-chart__cursor-dot--drawdown"
           />
         )}
       </ChartSvg>
 
       {hover && (
         <ChartTip x={hover.x} viewWidth={view.w}>
-          <p className="tm-tip__week">{formatDate(hover.date)}</p>
-          <p className="tm-tip__row">
-            <span className="tm-tip__key tm-tip__key--drawdown" aria-hidden="true" />
+          <p className="dd-tip__week">{formatDate(hover.date)}</p>
+          <p className="dd-tip__row">
+            <span className="dd-tip__key dd-tip__key--drawdown" aria-hidden="true" />
             <strong>{hover.depth < 0 ? formatDepth(hover.depth) : 'All-time high'}</strong>
-            <span className="tm-tip__label">{`close ${formatPrice(hover.close)}`}</span>
+            <span className="dd-tip__label">{`close ${formatPrice(hover.close)}`}</span>
           </p>
           {hover.depth < 0 && (
-            <p className="tm-tip__who">
+            <p className="dd-tip__who">
               {`From the ${formatPrice(hover.peak)} high of ${formatDate(hover.peakDate)}`}
             </p>
           )}
           {within && (
-            <p className="tm-tip__who">
+            <p className="dd-tip__who">
               {`${within.open ? 'Bottom so far' : 'Bottomed at'} ${formatDepth(within.depth)} `}
               {`on ${formatDate(within.troughDate)}; `}
               {within.open

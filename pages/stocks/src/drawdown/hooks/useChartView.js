@@ -1,4 +1,4 @@
-import useMediaQuery from '../../../../src/hooks/useMediaQuery';
+import useMediaQuery from '../../../../../src/hooks/useMediaQuery';
 
 export const COMPACT_QUERY = '(max-width: 640px)';
 

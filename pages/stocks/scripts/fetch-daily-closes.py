@@ -8,9 +8,9 @@ loads one instrument's closes only as its chart nears the viewport, so the
 list module carries a loader per instrument rather than the data itself —
 the eighty-odd thousand sessions never land in the page's own bundle.
 
-The fetching lives in scripts/yahoo_daily.py, shared with /tmobile — read its
-docstring: null closes, mid-session runs and split adjustment each produce a
-chart that looks right and is not.
+The fetching lives in scripts/yahoo_daily.py. Read its docstring: null
+closes, mid-session runs and split adjustment each produce a chart that
+looks right and is not.
 
 Two things specific to this set:
 

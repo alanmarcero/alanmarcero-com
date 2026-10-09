@@ -6,14 +6,14 @@ function ToggleGroup({
   labelId, label, options, value, onChange,
 }) {
   return (
-    <div className="tm-controls__group" role="group" aria-labelledby={labelId}>
-      <p className="tm-controls__label" id={labelId}>{label}</p>
-      <div className="tm-filters">
+    <div className="dd-controls__group" role="group" aria-labelledby={labelId}>
+      <p className="dd-controls__label" id={labelId}>{label}</p>
+      <div className="dd-filters">
         {options.map((option) => (
           <button
             key={option.id}
             type="button"
-            className={`tm-filter${value === option.id ? ' tm-filter--on' : ''}`}
+            className={`dd-filter${value === option.id ? ' dd-filter--on' : ''}`}
             aria-pressed={value === option.id}
             title={option.hint}
             onClick={() => onChange(option.id)}

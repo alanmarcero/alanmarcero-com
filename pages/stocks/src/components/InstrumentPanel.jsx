@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import useInViewport from '../../../../src/hooks/useInViewport';
-import DrawdownPanel from '../../../tmobile/src/components/DrawdownPanel';
-import { drawdownEpisodes, heldAtLeast, underwater } from '../../../tmobile/src/drawdowns';
-import { formatDate } from '../../../tmobile/src/insiderFilters';
+import DrawdownPanel from '../drawdown/components/DrawdownPanel';
+import { drawdownEpisodes, heldAtLeast, underwater } from '../drawdown/drawdowns';
+import { formatDate } from '../drawdown/format';
 import useCloses from '../useCloses';
 import { anchorOf, titleOf } from '../instruments';
 
@@ -28,13 +28,13 @@ function InstrumentPanel({ instrument, hold }) {
 
   if (!series) {
     return (
-      <section ref={ref} className="tm-panel st-pending" id={id} aria-labelledby={`${id}-heading`}>
-        <div className="tm-panel__head">
-          <h2 className="tm-panel__title" id={`${id}-heading`}>{titleOf(instrument)}</h2>
-          <p className="tm-panel__kicker">{kicker}</p>
+      <section ref={ref} className="dd-panel st-pending" id={id} aria-labelledby={`${id}-heading`}>
+        <div className="dd-panel__head">
+          <h2 className="dd-panel__title" id={`${id}-heading`}>{titleOf(instrument)}</h2>
+          <p className="dd-panel__kicker">{kicker}</p>
         </div>
         <div className="st-placeholder" aria-hidden={status !== 'error'}>
-          {status === 'error' && <p className="tm-panel__note">This series did not load. Reload the page to try again.</p>}
+          {status === 'error' && <p className="dd-panel__note">This series did not load. Reload the page to try again.</p>}
         </div>
       </section>
     );

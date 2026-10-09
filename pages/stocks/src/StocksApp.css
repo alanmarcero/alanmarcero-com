@@ -1,6 +1,6 @@
-/* The drawdown panels are the /tmobile page's, so this page wears its
-   stylesheet and adds only what a page of fourteen of them needs. */
-@import '../../tmobile/src/TMobileApp.css';
+/* The drawdown panels bring their own stylesheet; this adds only what a page
+   of fourteen of them needs. */
+@import './drawdown/drawdown.css';
 
 .st-index {
   display: flex;
@@ -10,7 +10,7 @@
   margin-top: var(--space-4);
 }
 
-.st-index .tm-filter {
+.st-index .dd-filter {
   text-decoration: none;
 }
 
@@ -26,10 +26,10 @@
 .st-placeholder {
   aspect-ratio: 1000 / 300;
   border-radius: var(--radius-sm);
-  background: var(--tm-well);
+  background: var(--dd-well);
 }
 
-.tm-panel {
+.dd-panel {
   scroll-margin-top: 110px;
 }
 

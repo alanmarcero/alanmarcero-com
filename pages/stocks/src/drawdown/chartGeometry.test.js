@@ -1,7 +1,6 @@
 import {
-  plotBox, xAt, priceY, indexAtX, priceDomain, priceTicks, yearTicks,
-  linePoints, areaPath, sellMarkers, weekIndexMap, tipPlacement,
-  priceCoords, viewBoxX, arrowStep, stepIndex, yearLabel,
+  plotBox, xAt, indexAtX, yearTicks, polyline, areaUnder, tipPlacement,
+  viewBoxX, arrowStep, stepIndex, yearLabel, niceStep, stackDomain, stackTicks,
 } from './chartGeometry';
 
 const MARGIN = { top: 10, right: 20, bottom: 30, left: 40 };
@@ -50,24 +49,6 @@ describe('xAt', () => {
   });
 });
 
-describe('priceY', () => {
-  const box = plotBox(200, 100, MARGIN);
-  const domain = { min: 100, max: 200 };
-
-  it('puts the domain max at the top and the min at the bottom', () => {
-    expect(priceY(200, domain, box)).toBe(10);
-    expect(priceY(100, domain, box)).toBe(70);
-  });
-
-  it('is linear in between', () => {
-    expect(priceY(150, domain, box)).toBe(40);
-  });
-
-  it('centres the value when the domain has no span', () => {
-    expect(priceY(5, { min: 5, max: 5 }, box)).toBe(40);
-  });
-});
-
 describe('indexAtX', () => {
   const box = plotBox(200, 100, MARGIN);
 
@@ -84,40 +65,6 @@ describe('indexAtX', () => {
 
   it('returns 0 for a single-point series', () => {
     expect(indexAtX(150, 1, box)).toBe(0);
-  });
-});
-
-describe('priceDomain', () => {
-  it('pads the extremes and snaps outward to the step', () => {
-    const domain = priceDomain([120, 180], { padFraction: 0.1, step: 20 });
-    expect(domain.min).toBeLessThanOrEqual(120);
-    expect(domain.max).toBeGreaterThanOrEqual(180);
-    expect(domain.min % 20).toBe(0);
-    expect(domain.max % 20).toBe(0);
-  });
-
-  it('never goes below zero', () => {
-    expect(priceDomain([1, 2], { step: 20 }).min).toBe(0);
-  });
-
-  it('ignores non-finite values', () => {
-    const domain = priceDomain([100, NaN, undefined, 200], { step: 20 });
-    expect(Number.isFinite(domain.min)).toBe(true);
-    expect(Number.isFinite(domain.max)).toBe(true);
-  });
-
-  it('falls back to a usable domain when there is no data', () => {
-    expect(priceDomain([])).toEqual({ min: 0, max: 1 });
-  });
-});
-
-describe('priceTicks', () => {
-  it('emits round steps inside the domain', () => {
-    expect(priceTicks({ min: 80, max: 200 }, 40)).toEqual([80, 120, 160, 200]);
-  });
-
-  it('starts at the first step at or above the minimum', () => {
-    expect(priceTicks({ min: 90, max: 200 }, 40)).toEqual([120, 160, 200]);
   });
 });
 
@@ -145,89 +92,6 @@ describe('yearTicks', () => {
   });
 });
 
-describe('linePoints', () => {
-  it('emits one x,y pair per price', () => {
-    const box = plotBox(200, 100, MARGIN);
-    const points = linePoints(
-      [{ week: 'a', close: 100 }, { week: 'b', close: 200 }],
-      { min: 100, max: 200 },
-      box,
-    );
-    expect(points).toBe('40.00,70.00 180.00,10.00');
-  });
-});
-
-describe('areaPath', () => {
-  it('closes the path down to the baseline', () => {
-    const box = plotBox(200, 100, MARGIN);
-    const path = areaPath(
-      [{ week: 'a', close: 100 }, { week: 'b', close: 200 }],
-      { min: 100, max: 200 },
-      box,
-    );
-    expect(path.startsWith('M40.00,70.00')).toBe(true);
-    expect(path.endsWith('L180.00,70.00L40.00,70.00Z')).toBe(true);
-  });
-
-  it('returns an empty path with no data', () => {
-    expect(areaPath([], { min: 0, max: 1 }, plotBox(200, 100, MARGIN))).toBe('');
-  });
-});
-
-describe('weekIndexMap', () => {
-  it('maps each week to its position', () => {
-    const map = weekIndexMap([{ week: 'a' }, { week: 'b' }]);
-    expect(map.get('a')).toBe(0);
-    expect(map.get('b')).toBe(1);
-  });
-});
-
-describe('sellMarkers', () => {
-  const prices = [
-    { week: '2021-07-26', close: 100 },
-    { week: '2021-08-02', close: 150 },
-    { week: '2021-08-09', close: 200 },
-  ];
-  const box = plotBox(200, 100, MARGIN);
-  const domain = { min: 100, max: 200 };
-  const weekIndex = weekIndexMap(prices);
-
-  it('positions a marker at its week and price', () => {
-    const [marker] = sellMarkers(
-      [{ week: '2021-08-02', close: 150, shares: 10 }], weekIndex, prices, domain, box,
-    );
-    expect(marker.index).toBe(1);
-    expect(marker.x).toBe(110);
-    expect(marker.y).toBe(40);
-    expect(marker.shares).toBe(10);
-  });
-
-  it('drops sell weeks that are not in the price series', () => {
-    expect(sellMarkers(
-      [{ week: '1999-01-04', close: 1 }], weekIndex, prices, domain, box,
-    )).toEqual([]);
-  });
-
-  it('applies a vertical offset when asked', () => {
-    const [marker] = sellMarkers(
-      [{ week: '2021-08-02', close: 150 }], weekIndex, prices, domain, box, -8,
-    );
-    expect(marker.y).toBe(32);
-  });
-});
-
-describe('priceCoords', () => {
-  it('places every close on the same x and y the line is drawn through', () => {
-    const box = plotBox(200, 100, MARGIN);
-    const domain = { min: 0, max: 100 };
-    const coords = priceCoords([{ close: 100 }, { close: 0 }], domain, box);
-    expect(coords).toEqual([
-      { x: box.left, y: box.top },
-      { x: box.right, y: box.bottom },
-    ]);
-  });
-});
-
 describe('cursor arithmetic', () => {
   it('converts a client x into viewBox units', () => {
     expect(viewBoxX(150, { left: 50, width: 500 }, 1000)).toBe(200);
@@ -251,5 +115,67 @@ describe('yearLabel', () => {
   it('shortens a year only on the compact axis', () => {
     expect(yearLabel('2024', false)).toBe('2024');
     expect(yearLabel('2024', true)).toBe('’24');
+  });
+});
+
+describe('polyline', () => {
+  it('emits one x,y pair per point', () => {
+    expect(polyline([{ x: 40, y: 70 }, { x: 180, y: 10 }])).toBe('40.00,70.00 180.00,10.00');
+  });
+});
+
+describe('areaUnder', () => {
+  it('closes the path down to the baseline', () => {
+    const box = plotBox(200, 100, MARGIN);
+    const path = areaUnder([{ x: 40, y: 70 }, { x: 180, y: 10 }], box);
+    expect(path.startsWith('M40.00,70.00')).toBe(true);
+    expect(path.endsWith('L180.00,70.00L40.00,70.00Z')).toBe(true);
+  });
+
+  it('returns an empty path with no data', () => {
+    expect(areaUnder([], plotBox(200, 100, MARGIN))).toBe('');
+  });
+});
+
+describe('niceStep', () => {
+  it('keeps a $150M peak on a $160M axis rather than padding to $200M', () => {
+    expect(niceStep(150_120_159, 4)).toBe(40_000_000);
+  });
+
+  it('picks round steps on the other measures', () => {
+    expect(niceStep(690_843, 4)).toBe(200_000);
+    expect(niceStep(16, 4)).toBe(4);
+    expect(niceStep(1, 4)).toBe(0.25);
+  });
+
+  it('does not divide by a zero or negative peak', () => {
+    expect(niceStep(0)).toBe(1);
+    expect(niceStep(-5)).toBe(1);
+  });
+});
+
+describe('stackDomain', () => {
+  it('is always zero-based and snapped outward to the step', () => {
+    const domain = stackDomain([150_120_159, 47_787_578, 0]);
+    expect(domain).toEqual({ min: 0, max: 160_000_000, step: 40_000_000 });
+  });
+
+  it('falls back to a unit domain when nothing sold', () => {
+    expect(stackDomain([0, 0])).toEqual({ min: 0, max: 1, step: 1 });
+  });
+
+  it('ignores values that are not finite', () => {
+    expect(stackDomain([16, NaN, undefined]).max).toBe(16);
+  });
+});
+
+describe('stackTicks', () => {
+  it('includes the baseline and the top of the domain', () => {
+    expect(stackTicks({ min: 0, max: 16, step: 4 })).toEqual([0, 4, 8, 12, 16]);
+  });
+
+  it('does not drop the top tick to floating-point drift', () => {
+    const ticks = stackTicks({ min: 0, max: 800_000, step: 200_000 });
+    expect(ticks[ticks.length - 1]).toBe(800_000);
   });
 });

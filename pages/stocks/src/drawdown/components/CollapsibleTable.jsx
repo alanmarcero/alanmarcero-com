@@ -10,10 +10,10 @@ function CollapsibleTable({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="tm-table-wrap">
+    <div className="dd-table-wrap">
       <button
         type="button"
-        className="tm-table-toggle"
+        className="dd-table-toggle"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
@@ -21,9 +21,9 @@ function CollapsibleTable({
       </button>
 
       {open && (
-        <div className="tm-table-scroll">
-          <table className="tm-table">
-            <caption className="tm-table__caption">{caption}</caption>
+        <div className="dd-table-scroll">
+          <table className="dd-table">
+            <caption className="dd-table__caption">{caption}</caption>
             {children}
           </table>
         </div>

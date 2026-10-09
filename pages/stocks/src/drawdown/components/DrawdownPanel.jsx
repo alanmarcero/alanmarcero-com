@@ -2,7 +2,7 @@ import BiggestDrops from './BiggestDrops';
 import DrawdownChart from './DrawdownChart';
 import DrawdownTable from './DrawdownTable';
 import { describeDrawdowns, describeHold, summarizeDrawdowns } from '../drawdowns';
-import { formatDate, formatPrice } from '../insiderFilters';
+import { formatDate, formatPrice } from '../format';
 
 /**
  * One instrument's drawdowns: the underwater chart, the caption derived from
@@ -20,21 +20,21 @@ function DrawdownPanel({
 
   return (
     <>
-      <section className="tm-panel" id={id} aria-labelledby={`${id}-heading`}>
-        <div className="tm-panel__head">
-          <h2 className="tm-panel__title" id={`${id}-heading`}>{title}</h2>
-          {kicker && <p className="tm-panel__kicker">{kicker}</p>}
+      <section className="dd-panel" id={id} aria-labelledby={`${id}-heading`}>
+        <div className="dd-panel__head">
+          <h2 className="dd-panel__title" id={`${id}-heading`}>{title}</h2>
+          {kicker && <p className="dd-panel__kicker">{kicker}</p>}
         </div>
 
         {children}
 
         <DrawdownChart points={points} episodes={episodes} subject={subject} />
 
-        <p className="tm-panel__note">{caption}</p>
+        <p className="dd-panel__note">{caption}</p>
 
         <BiggestDrops episodes={episodes} id={id} />
 
-        <p className="tm-hint">
+        <p className="dd-hint">
           Hover or focus the chart and use &larr; &rarr; to step a week at a time.
         </p>
       </section>

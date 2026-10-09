@@ -1,17 +1,17 @@
-import { WaveformDivider } from '../../../../src/components/graphics';
+import { WaveformDivider } from '../../../../../src/components/graphics';
 
-/** The readout masthead both chart pages open with. `children` sit under the standfirst. */
+/** The readout masthead the page opens with. `children` sit under the standfirst. */
 function PageHeader({
   kicker, title, intro, children,
 }) {
   return (
-    <header className="tm-header">
-      <a href="/" className="tm-back">&larr; Back to console</a>
-      <p className="kicker tm-kicker">{kicker}</p>
-      <h1 className="tm-title">{title}</h1>
-      <p className="tm-sub">{intro}</p>
+    <header className="dd-header">
+      <a href="/" className="dd-back">&larr; Back to console</a>
+      <p className="kicker dd-kicker">{kicker}</p>
+      <h1 className="dd-title">{title}</h1>
+      <p className="dd-sub">{intro}</p>
       {children}
-      <WaveformDivider variant="saw" className="tm-divider" />
+      <WaveformDivider variant="saw" className="dd-divider" />
     </header>
   );
 }

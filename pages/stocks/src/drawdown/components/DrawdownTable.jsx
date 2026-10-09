@@ -1,5 +1,5 @@
 import { deepest, formatDepth, formatSpan } from '../drawdowns';
-import { formatDate, formatPrice } from '../insiderFilters';
+import { formatDate, formatPrice } from '../format';
 import CollapsibleTable from './CollapsibleTable';
 
 /**
@@ -24,24 +24,24 @@ function DrawdownTable({ episodes, holdLabel }) {
       <thead>
         <tr>
           <th scope="col">Peak</th>
-          <th scope="col" className="tm-num">High</th>
+          <th scope="col" className="dd-num">High</th>
           <th scope="col">Bottom</th>
-          <th scope="col" className="tm-num">Low</th>
-          <th scope="col" className="tm-num">Drawdown</th>
-          <th scope="col" className="tm-num">Peak to bottom</th>
-          <th scope="col" className="tm-num">Top stood</th>
+          <th scope="col" className="dd-num">Low</th>
+          <th scope="col" className="dd-num">Drawdown</th>
+          <th scope="col" className="dd-num">Peak to bottom</th>
+          <th scope="col" className="dd-num">Top stood</th>
         </tr>
       </thead>
       <tbody>
         {rows.map((e) => (
           <tr key={e.peakDate}>
             <td>{formatDate(e.peakDate)}</td>
-            <td className="tm-num">{formatPrice(e.peak)}</td>
+            <td className="dd-num">{formatPrice(e.peak)}</td>
             <td>{formatDate(e.troughDate)}</td>
-            <td className="tm-num">{formatPrice(e.trough)}</td>
-            <td className="tm-num">{formatDepth(e.depth)}</td>
-            <td className="tm-num">{formatSpan(e.toBottomDays)}</td>
-            <td className="tm-num">
+            <td className="dd-num">{formatPrice(e.trough)}</td>
+            <td className="dd-num">{formatDepth(e.depth)}</td>
+            <td className="dd-num">{formatSpan(e.toBottomDays)}</td>
+            <td className="dd-num">
               {e.open ? `${formatSpan(e.topDays)}, still open` : formatSpan(e.topDays)}
             </td>
           </tr>

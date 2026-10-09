@@ -1,6 +1,6 @@
 import {
-  DEFAULT_TOP_HOLD, TOP_HOLDS, deepest, describeDrawdowns, describeHold, drawdownEpisodes,
-  formatDepth, formatSpan,
+  DEFAULT_TOP_HOLD, TOP_HOLDS, daysBetween, deepest, describeDrawdowns, describeHold,
+  drawdownEpisodes, formatDays, formatDepth, formatSpan,
   heldAtLeast, summarizeDrawdowns, topHoldById, underwater, worstByYear,
 } from './drawdowns';
 
@@ -163,5 +163,25 @@ describe('worstByYear', () => {
 
   it('is empty for no episodes', () => {
     expect(worstByYear([])).toEqual([]);
+  });
+});
+
+describe('daysBetween', () => {
+  it('counts whole days between two dates', () => {
+    expect(daysBetween('2025-01-01', '2025-01-08')).toBe(7);
+    expect(daysBetween('2025-01-08', '2025-01-01')).toBe(-7);
+    expect(daysBetween('2025-01-01', '2025-01-01')).toBe(0);
+  });
+
+  it('counts across a month, a year and a leap day', () => {
+    expect(daysBetween('2025-12-30', '2026-01-02')).toBe(3);
+    expect(daysBetween('2024-02-28', '2024-03-01')).toBe(2);
+  });
+});
+
+describe('formatDays', () => {
+  it('does not write "1 days"', () => {
+    expect(formatDays(1)).toBe('1 day');
+    expect(formatDays(112)).toBe('112 days');
   });
 });
