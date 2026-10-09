@@ -1,5 +1,5 @@
 import { formatDepth, formatSpan, worstByYear } from '../drawdowns';
-import { formatDate } from '../insiderFilters';
+import { formatDate } from '../format';
 
 const LIMIT = 10;
 
@@ -12,18 +12,18 @@ function BiggestDrops({ episodes, id }) {
   if (!drops.length) return null;
 
   return (
-    <div className="tm-drops">
-      <h3 className="tm-drops__title" id={`${id}-drops`}>
+    <div className="dd-drops">
+      <h3 className="dd-drops__title" id={`${id}-drops`}>
         {`Biggest drops, one per year${drops.length === LIMIT ? ` — the deepest ${LIMIT}` : ''}`}
       </h3>
-      <ol className="tm-drops__list" aria-labelledby={`${id}-drops`}>
+      <ol className="dd-drops__list" aria-labelledby={`${id}-drops`}>
         {drops.map((drop) => (
-          <li className="tm-drops__row" key={drop.peakDate}>
-            <span className="tm-drops__year">{drop.year}</span>
-            <strong className="tm-drops__depth">{formatDepth(drop.depth)}</strong>
-            <span className="tm-drops__span">
+          <li className="dd-drops__row" key={drop.peakDate}>
+            <span className="dd-drops__year">{drop.year}</span>
+            <strong className="dd-drops__depth">{formatDepth(drop.depth)}</strong>
+            <span className="dd-drops__span">
               {`${formatDate(drop.peakDate)} → ${formatDate(drop.troughDate)}`}
-              <span className="tm-drops__days">
+              <span className="dd-drops__days">
                 {`${formatSpan(drop.toBottomDays)} peak to bottom`}
                 {drop.open ? ', still open' : ''}
               </span>

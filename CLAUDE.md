@@ -122,13 +122,9 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── flights/                  # /flights — Boston nonstop fare board
 │   │   ├── index.html            # Flights board HTML entry
 │   │   └── scripts/              # sweep-flights.py generator script
-│   ├── tmobile/                  # /tmobile — TMUS price + insider-selling charts
-│   │   ├── index.html            # TMUS page HTML entry
-│   │   ├── src/                  # TMobileApp, chart + gap geometry, filters, sell pressure, data
-│   │   └── scripts/              # fetch-edgar-form4-prices.py + fetch-nasdaq-insider-sales.py + fetch-yahoo-daily-closes.py; tmus_insiders.py holds the shared exclusions, held-out trades and display names
 │   ├── stocks/                   # /stocks — drawdown charts for 14 stocks, funds and coins
 │   │   ├── index.html            # Stocks page HTML entry
-│   │   ├── src/                  # StocksApp, InstrumentPanel, useCloses, data/instruments.js + data/closes/*.js
+│   │   ├── src/                  # StocksApp, InstrumentPanel, useCloses, drawdown/ (charts, geometry, styles), data/instruments.js + data/closes/*.js
 │   │   └── scripts/              # fetch-daily-closes.py generator
 │   ├── matrix/                   # /matrix & /matrix-arcade — Matrix theme redesign & arcade
 │   │   ├── index.html            # Matrix main HTML entry
@@ -158,7 +154,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.html                    # Main page HTML entry with Google Fonts, meta description, canonical URL
 ├── scripts/
 │   ├── fetch-synth-images.py     # GENERATOR: homepage synth photographs
-│   ├── yahoo_daily.py            # Library: every daily close Yahoo holds (shared by /tmobile + /stocks generators)
+│   ├── yahoo_daily.py            # Library: every daily close Yahoo holds (used by the /stocks generator)
 │   ├── commons_images.py         # Library: Wikimedia Commons fetch, licence check + attribution (shared by the 3 image generators)
 │   └── check-nola-tours.mjs      # Validator for pages/neworleans/tours.html (anchors, chips, ids, tag balance)
 ├── index.ts                      # AWS Lambda handler
@@ -171,7 +167,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,701 tests across 128 suites**
+**Total: 1,474 tests across 119 suites**
 
 ## Key Files
 
@@ -337,7 +333,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,701 tests, 128 suites)
+npm test                       # Jest (1,474 tests, 119 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -441,207 +437,36 @@ uses the site palette so the arcade index stays consistent.):
 
 **CRT overlay on games:** CSS div with scanline `repeating-linear-gradient` positioned over the canvas + `crtFlicker` animation, `pointer-events: none`.
 
-## TMUS Page (`/tmobile`)
+## Stocks page (`/stocks`)
 
-**URL:** `/tmobile` — served by the same generic CloudFront clean-URL rewrite as
-`/arcade`, so adding it was a pure-git change (no AWS calls). Separate Vite entry
-point; zero impact on the main-page bundle.
+Underwater charts, fourteen of them: Bitcoin, BRK-B, Ethereum, QQQ, SMH, SPY
+and the SPDR sector funds XLB/XLE/XLF/XLK/XLP/XLRE/XLU/XLY, **alphabetical by
+label, case-insensitive** (`byLabel` — so Bitcoin sits before BRK-B). Same
+generic CloudFront clean-URL rewrite, separate Vite entry. Each chart plots
+every daily close as a loss from the highest close before it, zero along the
+top edge.
 
-**Three charts of the same subject.** Five years of T-Mobile US weekly closes with
-a marker on every week a company insider sold their own stock, then **how long
-they have gone without selling**, then the last two years again as **monthly
-columns**. One control row scopes all three: the seller filter (Mike Sievert /
-everyone else / both) narrows every chart, tile and table, and a measure switch
-picks which of three scales the monthly chart plots.
-
-**Data is baked in, not fetched** (`pages/tmobile/src/data/`), which
-keeps the page instant and matches the site's no-database posture. **Refresh both
-halves by running the two generators** —
-`pages/tmobile/scripts/fetch-edgar-form4-prices.py` (five-year series) and
-`pages/tmobile/scripts/fetch-nasdaq-insider-sales.py` (monthly columns) — then
-`npx jest pages/tmobile`, which is what catches a reshaped feed. Read both
-docstrings first; between them they hold six traps that each produce a page that
-looks right.
-
-- **Prices** — Yahoo Finance chart API, `interval=1wk&range=5y`. 262 weekly
-  closes, each anchored to its Monday. Yahoo appends the **week in progress** as
-  its own bar sharing a Monday with the completed one, so bars are folded onto
-  their Monday and the later close wins: the series always ends at the latest
-  price, and its last point is a week to date.
-- **Sales** — every TMUS Form 4 from SEC EDGAR (`data.sec.gov/submissions/
-  CIK0001283699.json` → the raw ownership XML per accession), parsed for
-  transaction code **`S`** only. Nasdaq's own insider-activity API caps out at
-  250 records (~2 years), so it cannot cover a 5-year window; EDGAR is the source
-  Nasdaq mirrors, and `tmusMonthlySales.test.js` asserts the two agree where they
-  overlap.
-- **EDGAR wants an email in the `User-Agent`.** A descriptive string without an
-  `@` address gets a blanket 403 on every Archives path, including ones a browser
-  loads fine. It rate-limits hard as well, answering 403/429/503 and sometimes
-  resetting the connection: three workers, a short pause each, and a backoff on
-  all four is what gets 350-odd filings without a refusal. Do not advertise gzip
-  either — urllib will not decompress it.
-- **The raw XML is not the `primaryDocument`.** The submissions index points at
-  `xslF345X06/…`, EDGAR's own rendering; strip that prefix for the machine copy.
-- **Excluded: Deutsche Telekom AG**, everywhere on the page. The majority owner
-  files 753 of the 900 five-year sale lines and 30.3M shares; leaving it in would
-  swamp every executive trade on the chart. 17 individual insiders and 146 sale
-  transactions remain.
-- **One individual trade is held out too, by name** — `OUTLIER_TRADES` in
-  `pages/tmobile/scripts/tmus_insiders.py`, which both generators import, keyed on `(date, filer)` so it can only ever remove the trade it
-  names: Raul Marcelo Claure's 550,000-share block on 2026-02-12, $119.7M in a
-  single indirect open-market trade. Same reasoning as Deutsche Telekom at a
-  smaller scale — a holder unwinding a position, and big enough on its own to set
-  the axis on every chart. Removing it dropped the monthly axis from $160M to
-  $60M and moved the peak month off Feb 2026. **The two generators must hold out
-  the same trades** or the cross-source test fails, and each **exits non-zero if
-  a named trade stops arriving**, so the hold-out can never silently become a
-  no-op. The page prints the trade and its figures from
-  `TMUS_META.outliers` at the foot of the source notes — never as prose, which
-  would go stale. Claure's other sales (including ~$549M over three days in June
-  2024) are still counted.
-- **Code F is not a sale.** Shares withheld to cover taxes on a vest are
-  dispositions, not sales, and are excluded — as are grants (A), option exercises
-  (M) and non-open-market dispositions.
-
-**The monthly columns come from Nasdaq**, not EDGAR
-(`tmusMonthlySales.js`, regenerate with
-`pages/tmobile/scripts/fetch-nasdaq-insider-sales.py`). Read that script's
-docstring before touching it — three traps live there, and each produces a chart
-that looks right:
-
-- **The feed caps at 250 rows and the cap is silent.** `totalRecords` does not
-  move with what you ask for (it has read 250 and 251 while the body held exactly
-  250 rows), and `offset=250` returns an empty row list with that same count, so
-  a paging loop looks like it reached the end of the data when it reached the end
-  of the window. The generated metadata records the rows that ARRIVED, not the
-  total the feed claims. Every trade type shares the 250, so the
-  ~40% of rows that are grants and withholdings eat into the sale history. Two
-  years is all this feed can honestly chart, which is why the five-year series
-  next to it stays on EDGAR. **The window is bounded at about two years as well
-  as at 250 rows**, so once old rows age out the count can arrive under the cap
-  (249 on 2026-09-16, and asking for 500 returns the same 249). `feedCapped`
-  records which bound bit; the source notes and the tests read it rather than
-  asserting the cap.
-- **A disposition is not a sale.** Only `Sell` and `Automatic Sell` are kept;
-  `Disposition (Non Open Market)` is overwhelmingly code-F tax withholding.
-- **Deutsche Telekom is most of the feed** — 97 of the 152 sale rows and 6.4M of
-  the shares. Excluded, same call the five-year chart makes. With the one
-  held-out block trade also gone, 54 sales by 14 people remain, and
-  `excludedRows + outliers + txnCount === saleRows` is asserted so no row can go
-  missing unaccounted for.
-
-Names are display-only: the feed sets them `LAST FIRST MIDDLE` in caps, which no
-algorithm reliably unpicks ("SIEVERT G MICHAEL" is G. Michael Sievert), so the 14
-are spelled out in a map and the spellings **match the five-year series** so one
-person can be followed across both charts. `tmusMonthlySales.test.js` asserts the
-two sources agree over the overlapping window — share for share, seller for
-seller, and dollars to within rounding — because the page says in print that they
-do.
-
-**Chart construction** follows the `dataviz` skill: one y-axis (never dual),
-2px trace, ≥8px markers each with a 2px surface ring, solid hairline grid, one
-selective direct label parked in the right gutter (where it cannot collide with
-its own trace), crosshair + tooltip listing every series at that X, a legend that
-mirrors each mark, and a table view as the accessible twin. The two sale colours
-(`#d95926`, `#9085e9`) were validated all-pairs against this dark surface with
-`validate_palette.js` (CVD ΔE 26.0, normal-vision ΔE 27.0); **marker shape**
-carries the same distinction a second time so neither series leans on hue alone.
-The price trace keeps the site's phosphor. `PriceChart` swaps to a narrower,
-taller viewBox with larger user-unit type below 640px (via `useMediaQuery`), so
-the axes stay legible in a phone-width column.
-
-**The quiet-stretch chart is the answer to "has insider selling dried up?"** —
-`QuietChart`, plotting days since the previous sale at every week, so each tooth
-falls to the floor on a sale and climbs while nobody sells and a wide tooth IS a
-quiet stretch. It shares the price chart's x axis week for week (same
-`weekIndex`, same margins), so the two can be read against each other. One
-series, so no legend: the title names it, the record it is up against is a
-**dashed rule with its own label** rather than a second trace, and the open run
-is redrawn over the trace at full strength. `sellPressure.js` holds the
-arithmetic and `gapGeometry.js` the geometry, both pure, both tested.
-
-- **Gaps are measured between trade dates, never between Mondays**, or a Friday
-  sale and the Monday sale after it would read as a three-day pause. The chart's
-  final point is read at the fetch date rather than at its own Monday, so the
-  tooth on screen is the same number the tile quotes.
-- **A pause shorter than a week is inside a spell of selling, not between two**
-  (`SPELL_BREAK`). Insiders file over consecutive days for what is one decision,
-  so an unfiltered median reports the CEO — who sells one quarter in four — as
-  selling every four days. With the filter he reads 90 days, which is his plan.
-- **Everything is counted to `TMUS_META.fetched`, never to `new Date()`.** The
-  data is static, so a live clock would inflate the quiet stretch by however long
-  it had been since the last deploy.
-- **Dollars and filings sit side by side in the tiles**, because a single block
-  trade can hold a year's dollars up while the cadence collapses. The caption
-  names the day whenever one is ≥40% of the trailing year (`biggestDay`), and
-  says nothing when none is — which is the state after the Feb 2026 block came
-  out.
-- The trace is **VU amber**; it needs no separation from the two sale hues
-  because it never appears in the same plot as them.
-
-**The monthly chart is a stacked column chart** — magnitude across discrete time
-buckets — with the CEO's segment at the bottom and everyone else's above, the two
-separated by a 2px gap in the well colour rather than a stroke, and only the top
-segment carrying the 4px rounded data-end. Its geometry lives in
-`monthlyGeometry.js` and its selection and formatting in `monthlySeries.js`, both
-pure and both tested apart from any rendering.
-
-- **A month with no sale keeps its slot.** The axis spans the feed's own
-  coverage, not just the months that contain a sale, or a quiet run at either end
-  would read as missing data.
-- **Three measures, three views, never two y-axes.** Dollars, shares and filings
-  are different scales, so the switch swaps what the one axis plots. Dollars is
-  the default and the most skewed: Feb 2026 is 42% of the window, so a non-zero
-  column is floored at a 3px hairline (`MIN_BAR`) and the caption says so.
-- **The caption is derived, never written down.** Peak month, its share, the
-  quiet-month count and the "mostly <person>" attribution all come from the
-  current selection — and that attribution only appears when one seller is over
-  half the month, and never on the filings measure, where the roll-up counts per
-  month rather than per person.
-- `niceStep` includes 4 in its 1/2/2.5/4/5/10 ladder so a $150.1M peak lands on a
-  $160M axis instead of being padded out to $200M.
-
-**The drawdown chart is an underwater chart** — every daily close since the
-first trade (2007-04-19, as MetroPCS) plotted as a loss from the highest close
-before it, zero along the top edge. Data is `tmusDailyCloses.js`, regenerated by
-`pages/tmobile/scripts/fetch-yahoo-daily-closes.py` (the fetching itself is
-`scripts/yahoo_daily.py`, shared with `/stocks`); the arithmetic is
-`drawdowns.js` and the geometry `drawdownGeometry.js`, both pure and tested. It
-is not scoped by the seller filter; it has its own control, **how long a top
-must stand to count** (any / 1 month / 3 / 6 / 12), measured in calendar days
-from the peak close to the first close above it, or to the last close for the
-one still open.
-
-- **Yahoo returns the odd session as a bar full of nulls** (2026-09-22 was one,
-  and it was the lowest close of the open drawdown). The generator recovers it
-  from `chartPreviousClose` on a window opening the next day, records it in
-  `TMUS_DAILY_META.repaired`, and refuses to write a series with a hole in it.
-- **A bar dated today is dropped until the session has closed**, so a
-  mid-session run never plots a price that is not a close.
-- Closes are **split-adjusted (the 2013 1-for-2), not dividend-adjusted**.
-- Drawn in `--tm-drawdown` (#5aa9ff, 7.8:1 on the well): a loss is not dressed
+- **The chart code lives in `pages/stocks/src/drawdown/`**: `DrawdownPanel`,
+  `DrawdownChart`, `DrawdownTable`, `TopHoldControl`, `drawdowns.js` (the
+  arithmetic), `drawdownGeometry.js` and `chartGeometry.js` (the geometry, all
+  pure and tested) and `drawdown.css` (classes prefixed `dd-`).
+- **How long a top must stand to count** (any / 1 month / 3 / 6 / 12) is
+  measured in calendar days from the peak close to the first close above it,
+  or to the last close for the one still open.
+- **Yahoo returns the odd session as a bar full of nulls** (2026-09-22 was
+  one). The generator recovers it from `chartPreviousClose` on a window opening
+  the next day and refuses to write a series with a hole in it. **A bar dated
+  today is dropped until the session has closed.** Closes are split-adjusted,
+  not dividend-adjusted.
+- Drawn in `--dd-drawdown` (#5aa9ff, 7.8:1 on the well): a loss is not dressed
   in the reserved alarm red. Every bottom that passes the filter gets a dot, the
   open one a ring; only the deepest 4 (3 at phone width) are labelled.
 - Under each chart, **"Biggest drops, one per year"** (`BiggestDrops`,
   `worstByYear`): each calendar year's deepest counted drawdown, **filed under
-  the year it bottomed** (2007's top that fell into March 2009 is 2009's drop),
-  deepest first, at most 10. It follows the top-held control.
+  the year it bottomed**, deepest first, at most 10.
 - **Tooltips sit beside the cursor line, never over it** (`tipPlacement`): right
   of it in the chart's left half, left of it in the right half, capped at just
-  under half the chart's width so that side always fits. All four /tmobile
-  charts and every /stocks chart use it.
-
-## Stocks page (`/stocks`)
-
-The TMUS drawdown chart, fourteen times: Bitcoin, BRK-B, Ethereum, QQQ, SMH, SPY
-and the SPDR sector funds XLB/XLE/XLF/XLK/XLP/XLRE/XLU/XLY, **alphabetical by
-label, case-insensitive** (`byLabel` — so Bitcoin sits before BRK-B). Same
-generic CloudFront clean-URL rewrite, separate Vite entry.
-
-- **It shares, rather than copies, the /tmobile drawdown code** —
-  `DrawdownPanel`, `DrawdownChart`, `DrawdownTable`, `TopHoldControl`,
-  `drawdowns.js`, `drawdownGeometry.js` and the stylesheet are imported from
-  `pages/tmobile/src/`. A change there changes both pages.
+  under half the chart's width so that side always fits.
 - **One top-held control scopes every chart**, sticky at the top of the page.
 - **Data is lazy.** `data/instruments.js` (generated) carries each instrument's
   label, name and date range plus a `load: () => import('./closes/<sym>.js')`;

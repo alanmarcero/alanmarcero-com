@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import './StocksApp.css';
-import PageHeader from '../../tmobile/src/components/PageHeader';
-import TopHoldControl from '../../tmobile/src/components/TopHoldControl';
-import { DEFAULT_TOP_HOLD, topHoldById } from '../../tmobile/src/drawdowns';
+import PageHeader from './drawdown/components/PageHeader';
+import TopHoldControl from './drawdown/components/TopHoldControl';
+import { DEFAULT_TOP_HOLD, topHoldById } from './drawdown/drawdowns';
 import InstrumentPanel from './components/InstrumentPanel';
 import { INSTRUMENTS } from './data/instruments';
 import { anchorOf, byLabel } from './instruments';
@@ -14,7 +14,7 @@ function StocksApp() {
   const hold = topHoldById(topHold);
 
   return (
-    <div className="tm-page">
+    <div className="dd-page">
       <PageHeader
         kicker="// drawdown readout"
         title="Drawdowns"
@@ -29,15 +29,15 @@ function StocksApp() {
       >
         <nav className="st-index" aria-label="Instruments">
           {ORDERED.map((instrument) => (
-            <a key={instrument.symbol} className="tm-filter" href={`#${anchorOf(instrument)}`}>
+            <a key={instrument.symbol} className="dd-filter" href={`#${anchorOf(instrument)}`}>
               {instrument.label}
             </a>
           ))}
         </nav>
       </PageHeader>
 
-      <main className="tm-main">
-        <div className="tm-controls st-controls">
+      <main className="dd-main">
+        <div className="dd-controls st-controls">
           <TopHoldControl value={topHold} onChange={setTopHold} />
         </div>
 
@@ -45,9 +45,9 @@ function StocksApp() {
           <InstrumentPanel key={instrument.symbol} instrument={instrument} hold={hold} />
         ))}
 
-        <footer className="tm-notes">
-          <h2 className="tm-notes__title">Where this comes from</h2>
-          <ul className="tm-notes__list">
+        <footer className="dd-notes">
+          <h2 className="dd-notes__title">Where this comes from</h2>
+          <ul className="dd-notes__list">
             <li>
               Daily closes from Yahoo Finance, read {INSTRUMENTS[0].fetched}, from each
               instrument&rsquo;s first session to the last one that had closed. Closes

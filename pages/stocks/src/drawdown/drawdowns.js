@@ -8,7 +8,17 @@
    or to the last close, for a drawdown nobody has climbed out of yet.
    ========================================================================== */
 
-import { daysBetween, formatDays } from './sellPressure';
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Whole days from one ISO date to another; negative if `to` is earlier. */
+export function daysBetween(from, to) {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / DAY_MS);
+}
+
+/** `112` -> `112 days`, and a lone day is not "1 days". */
+export function formatDays(days) {
+  return `${days} day${days === 1 ? '' : 's'}`;
+}
 
 /** How long a top has to stand before its drawdown counts. */
 export const TOP_HOLDS = [
