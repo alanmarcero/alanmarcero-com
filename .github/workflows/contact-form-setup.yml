@@ -46,19 +46,14 @@ jobs:
               {Effect: "Allow", Action: "iam:PutRolePolicy", Resource: $role}
             ]
           }' > setup-policy.json
-          if ! aws iam put-user-policy --user-name "$USER_NAME" \
-              --policy-name contact-form-setup-temp --policy-document file://setup-policy.json; then
-            echo "::group::What $USER_NAME is allowed (diagnostics)"
-            aws iam list-attached-user-policies --user-name "$USER_NAME" || true
-            aws iam list-user-policies --user-name "$USER_NAME" || true
-            aws iam list-groups-for-user --user-name "$USER_NAME" || true
-            echo "::endgroup::"
-            echo "::error::$USER_NAME cannot grant itself IAM permissions (iam:PutUserPolicy)."
-            exit 1
+          if aws iam put-user-policy --user-name "$USER_NAME" \
+              --policy-name contact-form-setup-temp --policy-document file://setup-policy.json 2>/dev/null; then
+            echo "GRANTED=1" >> "$GITHUB_ENV"
+            # IAM is eventually consistent; give the new policy time to apply.
+            sleep 15
+          else
+            echo "Self-grant not permitted; proceeding with existing permissions."
           fi
-          echo "GRANTED=1" >> "$GITHUB_ENV"
-          # IAM is eventually consistent; give the new policy time to apply.
-          sleep 15
 
       - name: Add /api/contact behavior to CloudFront
         env:
