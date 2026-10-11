@@ -1,13 +1,13 @@
 import { handler } from "./index";
-import type { APIGatewayEvent } from "aws-lambda";
+import type { LambdaEvent } from "./index";
 
 async function main() {
-  const event: Partial<APIGatewayEvent> = {
+  const event: LambdaEvent = {
     httpMethod: "GET",
     path: "/",
   };
 
-  const result = await handler(event as APIGatewayEvent);
+  const result = await handler(event);
   console.log(result);
 }
 

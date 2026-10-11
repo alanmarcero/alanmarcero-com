@@ -43,6 +43,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   ├── components/
 │   │   ├── ErrorBoundary.jsx      # Class error boundary: catches render errors, shows a retry fallback
 │   │   ├── ErrorBoundary.test.jsx # ErrorBoundary tests
+│   │   ├── ContactForm.jsx        # Contact section form: honeypot, proof-of-work stamp, POSTs to /api/contact
+│   │   ├── ContactForm.test.jsx   # ContactForm tests
 │   │   ├── Footer.jsx             # Footer with nav links + dynamic year
 │   │   ├── Footer.test.jsx        # Footer tests
 │   │   ├── Hero.jsx               # Hero section: image, name, bio, CTA, search + clear, useRandomGlitch hook
@@ -89,6 +91,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 │   │   ├── search.test.js         # search tests
 │   │   ├── trackMeta.js           # isRemix: does a track title denote a remix
 │   │   ├── trackMeta.test.js      # trackMeta tests
+│   │   ├── contactStamp.js        # Contact proof of work (SHA-256 leading zero bits) + body hash for OAC POSTs
+│   │   ├── contactStamp.test.js   # contactStamp tests
 │   │   ├── cardGlow.js            # Mouse-tracking glow effect handlers for cards
 │   │   └── cardGlow.test.js       # cardGlow tests
 │   ├── components/graphics/       # Decorative SVG/canvas graphics (all aria-hidden, reduced-motion aware)
@@ -160,6 +164,8 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 ├── index.ts                      # AWS Lambda handler
 ├── index.local.ts                # Local Lambda dev runner
 ├── index.test.ts                 # Lambda tests
+├── contact.ts                    # Lambda: POST /api/contact — spam checks, then SES to CONTACT_EMAIL
+├── contact.test.ts               # Contact handler tests
 ├── infrastructure/
 │   ├── cloudfront-add-api-origin.yml  # Archived: one-time CloudFront /api origin setup
 │   └── cloudfront-add-oac.yml        # Archived: one-time Lambda URL lockdown (OAC + IAM auth)
@@ -167,7 +173,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,474 tests across 119 suites**
+**Total: 1,512 tests across 122 suites**
 
 ## Key Files
 
@@ -333,7 +339,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,474 tests, 119 suites)
+npm test                       # Jest (1,512 tests, 122 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
@@ -348,6 +354,8 @@ npx ts-node index.local.ts     # Run Lambda locally
 | Variable | Description | Where |
 |----------|-------------|-------|
 | `YOUTUBE_API_KEY` | YouTube Data API v3 key | Lambda environment |
+| `CONTACT_EMAIL` | Contact form recipient — set by the deploy workflow from the `CONTACT_EMAIL` secret, never in the repo or bundle | Lambda environment |
+| `CONTACT_FROM_EMAIL` | Optional sender override (default `contact@alanmarcero.com`, a verified SES domain identity) | Lambda environment |
 
 ## Lambda Details
 
@@ -360,6 +368,28 @@ npx ts-node index.local.ts     # Run Lambda locally
 - **Playlist ID:** `PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c`
 - **Max Results:** 50 items per request
 - **Dev proxy:** Vite proxies `/api` through CloudFront (`https://alanmarcero.com`)
+
+### Contact form (`POST /api/contact`)
+
+`contact.ts`, routed from `index.ts` on a POST to `/api/contact`. Sends through
+SES (`@aws-sdk/client-sesv2`, provided by the Lambda runtime, loaded on first
+send) from `contact@alanmarcero.com` to `CONTACT_EMAIL`, Reply-To the sender.
+Responses are `Cache-Control: no-store`; the CloudFront behavior is CachingDisabled.
+
+- **OAC and POST:** CloudFront signs the request but cannot hash a body, so the
+  browser sends the body's SHA-256 in `x-amz-content-sha256`. Without it the
+  Lambda URL rejects the POST.
+- **Spam defences:** Origin allowlist · honeypot `website` field · minimum 3s
+  fill time · proof-of-work stamp (16 leading zero bits of SHA-256 over
+  ts/name/email/message/nonce — `POW_BITS` in `contact.ts` must equal
+  `CONTACT_POW_BITS` in `src/config.js`, a test checks) · stamp ≤15 min old ·
+  replayed stamps dropped · 3 messages per IP per 10 min (IP from
+  `CloudFront-Viewer-Address`) · length caps, ≤2 links. Honeypot, fill-time and
+  replay hits get a fake 200. Replay and rate limits are per warm container.
+- **One-time setup:** `.github/workflows/contact-form-setup.yml` adds the
+  CloudFront behavior, verifies the domain (DKIM in Route 53) and the recipient
+  in SES, and grants the Lambda role `ses:SendEmail`. Sandbox SES is enough —
+  the only recipient is verified.
 
 ## Deployment
 
@@ -374,6 +404,7 @@ npx ts-node index.local.ts     # Run Lambda locally
 | `S3_BUCKET_NAME` | S3 bucket for frontend |
 | `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront distribution ID |
 | `LAMBDA_FUNCTION_NAME` | Lambda function name |
+| `CONTACT_EMAIL` | Contact form recipient; merged into the Lambda environment on every deploy |
 
 ### Manual Deployment
 
@@ -791,6 +822,7 @@ rm input.png
 
 - **Lambda Function URL lockdown:** CloudFront Origin Access Control (OAC) with IAM auth. The Lambda Function URL auth type is `AWS_IAM` — direct access returns 403. Only CloudFront can invoke it via SigV4-signed requests, scoped to the specific distribution. Setup workflow: `infrastructure/cloudfront-add-oac.yml`
 - **Lambda error responses:** Generic `{ error: "YouTube Fetch Failed" }` — no internal error messages leaked
+- **Contact recipient:** only in the `CONTACT_EMAIL` GitHub secret → Lambda environment; never in the repo, the bundle, or any response
 - **External links:** All external links use `target="_blank" rel="noopener noreferrer"`
 - **YouTube iframes:** Every player on every page takes `YOUTUBE_EMBED_SANDBOX` / `YOUTUBE_EMBED_ALLOW` from `src/config.js`; `src/youtubeEmbedPolicy.test.js` scans the source and fails on any `<iframe>` that does not
 - **Environment files:** `.env*` in `.gitignore`
