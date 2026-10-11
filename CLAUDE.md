@@ -173,7 +173,7 @@ Personal website for a music producer showcasing synthesizer patch banks and You
 └── .github/workflows/deploy.yml  # GitHub Actions CI/CD
 ```
 
-**Total: 1,512 tests across 122 suites**
+**Total: 1,513 tests across 122 suites**
 
 ## Key Files
 
@@ -288,7 +288,8 @@ App
 │   ├── Bio paragraph
 │   ├── CTA row (.hero-cta-row flex container)
 │   │   ├── YouTube CTA (gradient pill button with CRT overlay)
-│   │   └── Arcade link (outlined secondary CTA → /arcade)
+│   │   ├── Arcade link (outlined secondary CTA → /arcade)
+│   │   └── Get in Touch link (outlined secondary CTA → #contact)
 │   └── Search input (pill-shaped, cyan focus ring) + clear button
 ├── SkeletonCard[] (×3, shown during loading)
 ├── NoResults (query) — shown when search yields no matches
@@ -339,7 +340,7 @@ ArcadeApp
 ```bash
 npm install                    # Install dependencies
 npm run dev                    # Vite dev server (requires Node.js 20.19+), serves both / and /arcade.html
-npm test                       # Jest (1,512 tests, 122 suites)
+npm test                       # Jest (1,513 tests, 122 suites)
 npm run build                  # Vite production build (outputs both index.html and arcade.html)
 npm run build:ts               # Compile Lambda TypeScript
 npx ts-node index.local.ts     # Run Lambda locally
