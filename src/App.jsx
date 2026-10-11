@@ -8,6 +8,7 @@ import SkeletonCard from './components/SkeletonCard';
 import NoResults from './components/NoResults';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
+import ContactForm from './components/ContactForm';
 import { LissajousHalo } from './components/graphics';
 import EraChrome from './eras/EraChrome';
 import useEra from './eras/useEra';
@@ -123,6 +124,13 @@ function App() {
               <MusicItem key={item.videoId} item={item} style={{ '--card-index': index }} />
             ))}
           </div>
+        </section>
+
+        <section id="contact" aria-labelledby="contact-heading">
+          <div className="section-head">
+            <h2 id="contact-heading" className="section-title" data-kicker="03 — Contact">Get in Touch</h2>
+          </div>
+          <ContactForm />
         </section>
       </main>
 

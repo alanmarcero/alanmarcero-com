@@ -1,4 +1,5 @@
-import type { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
+import type { APIGatewayProxyResult } from "aws-lambda";
+import { handleContact, type ContactEvent } from "./contact";
 
 const YOUTUBE_PLAYLIST_ID = "PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c";
 const MAX_PLAYLIST_RESULTS = 50;
@@ -57,7 +58,24 @@ export const toMusicItems = (playList: YouTubeRes): MusicItem[] =>
     videoId: item.snippet.resourceId.videoId,
   }));
 
-export const handler = async (_event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+// A Function URL delivers the v2 shape (requestContext.http, rawPath); the
+// local runner and older tests use the v1 shape (httpMethod, path).
+export type LambdaEvent = ContactEvent & {
+  httpMethod?: string;
+  path?: string;
+  rawPath?: string;
+  requestContext?: { http?: { method?: string; sourceIp?: string } };
+};
+
+const isContactRequest = (event: LambdaEvent): boolean => {
+  const method = event.requestContext?.http?.method ?? event.httpMethod;
+  const path = event.rawPath ?? event.path ?? "";
+  return method === "POST" && path.replace(/\/+$/, "").endsWith("/api/contact");
+};
+
+export const handler = async (event: LambdaEvent): Promise<APIGatewayProxyResult> => {
+  if (isContactRequest(event)) return handleContact(event);
+
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) return jsonResponse(500, { error: "Missing YOUTUBE_API_KEY" });
 

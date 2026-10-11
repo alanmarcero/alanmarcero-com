@@ -60,7 +60,7 @@ jobs:
       - name: Package Lambda
         run: |
           cd dist
-          zip -r ../lambda.zip index.js
+          zip -r ../lambda.zip index.js contact.js
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -74,3 +74,27 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
             --zip-file fileb://lambda.zip
+
+      # The contact form's recipient lives only in the CONTACT_EMAIL secret.
+      # update-function-configuration replaces the whole environment, so the
+      # existing variables (YOUTUBE_API_KEY) are read back and merged, never
+      # echoed. Skipped with a warning until the secret exists.
+      - name: Set contact form recipient
+        env:
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+          FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+        run: |
+          if [ -z "$CONTACT_EMAIL" ]; then
+            echo "::warning::CONTACT_EMAIL secret is not set; the contact form will answer 503."
+            exit 0
+          fi
+          umask 077
+          aws lambda wait function-updated --function-name "$FUNCTION_NAME"
+          aws lambda get-function-configuration --function-name "$FUNCTION_NAME" \
+            --query 'Environment.Variables' --output json > env-current.json
+          jq --arg email "$CONTACT_EMAIL" '{Variables: ((. // {}) + {CONTACT_EMAIL: $email})}' \
+            env-current.json > env-next.json
+          aws lambda update-function-configuration --function-name "$FUNCTION_NAME" \
+            --environment file://env-next.json > /dev/null
+          rm -f env-current.json env-next.json
+          echo "Contact recipient set."

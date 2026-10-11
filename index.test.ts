@@ -1,12 +1,12 @@
 import { handler, toMusicItems } from "./index";
-import type { APIGatewayEvent } from "aws-lambda";
+import type { LambdaEvent } from "./index";
 
 beforeAll(() => {
   process.env.YOUTUBE_API_KEY = 'test-api-key';
   global.fetch = jest.fn();
 });
 
-const mockEvent: Partial<APIGatewayEvent> = {
+const mockEvent: LambdaEvent = {
   httpMethod: "GET",
   path: "/",
 };
@@ -20,7 +20,7 @@ describe("handler", () => {
     const originalKey = process.env.YOUTUBE_API_KEY;
     delete process.env.YOUTUBE_API_KEY;
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
 
     expect(result.statusCode).toBe(500);
     expect(result.body).toContain("Missing YOUTUBE_API_KEY");
@@ -31,7 +31,7 @@ describe("handler", () => {
   it("returns 500 on fetch error", async () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error("network down"));
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
 
     expect(result.statusCode).toBe(500);
     expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
@@ -48,7 +48,7 @@ describe("handler", () => {
     };
     (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
 
     expect(result.statusCode).toBe(500);
     expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
@@ -66,7 +66,7 @@ describe("handler", () => {
     };
     (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
 
     expect(result.statusCode).toBe(500);
     expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
@@ -93,7 +93,7 @@ describe("handler", () => {
       }),
     });
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
     expect(result.statusCode).toBe(200);
     expect(result.headers).toEqual({ "Content-Type": "application/json", "Cache-Control": "public, max-age=300" });
 
@@ -113,7 +113,7 @@ describe("handler", () => {
       json: async () => ({ items: [] }),
     });
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
     expect(result.statusCode).toBe(200);
 
     const body = JSON.parse(result.body);
@@ -147,7 +147,7 @@ describe("handler", () => {
       }),
     });
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
     const body = JSON.parse(result.body);
 
     expect(body.items).toHaveLength(2);
@@ -158,7 +158,7 @@ describe("handler", () => {
   it("constructs API URL with playlist ID and API key", async () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error("irrelevant"));
 
-    await handler(mockEvent as APIGatewayEvent);
+    await handler(mockEvent);
 
     const calledUrl = (global.fetch as jest.Mock).mock.calls[0][0] as string;
     expect(calledUrl).toContain("googleapis.com/youtube/v3/playlistItems");
@@ -175,7 +175,7 @@ describe("handler", () => {
       json: async () => ({}),
     });
 
-    const result = await handler(mockEvent as APIGatewayEvent);
+    const result = await handler(mockEvent);
 
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body).items).toEqual([]);
