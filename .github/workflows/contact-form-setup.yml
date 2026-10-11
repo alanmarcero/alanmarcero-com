@@ -1,0 +1,107 @@
+name: Contact Form Setup (one-time)
+
+# Run once, by hand, after adding the CONTACT_EMAIL secret. Safe to re-run:
+# every step checks before it creates.
+#   1. CloudFront: route POST /api/contact to the Lambda, uncached.
+#   2. SES: verify alanmarcero.com (DKIM records in Route 53) as the sender,
+#      and the recipient address (SES emails it a link to click). With both
+#      verified the SES sandbox is enough: the form only ever sends to you.
+#   3. IAM: let the Lambda's role send through SES.
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  DOMAIN: alanmarcero.com
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Add /api/contact behavior to CloudFront
+        env:
+          DIST_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront get-distribution-config --id "$DIST_ID" --output json > cf.json
+          if jq -e '.DistributionConfig.CacheBehaviors.Items // [] | any(.PathPattern == "/api/contact")' cf.json > /dev/null; then
+            echo "/api/contact behavior already present"
+            exit 0
+          fi
+          # CachingDisabled + AllViewerExceptHostHeader (which also forwards
+          # CloudFront-Viewer-Address, the rate limiter's client IP).
+          jq '.DistributionConfig | .CacheBehaviors.Items = [{
+            "PathPattern": "/api/contact",
+            "TargetOriginId": "lambda-api",
+            "ViewerProtocolPolicy": "https-only",
+            "AllowedMethods": {
+              "Quantity": 7,
+              "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"],
+              "CachedMethods": { "Quantity": 2, "Items": ["HEAD", "GET"] }
+            },
+            "Compress": true,
+            "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+            "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+            "SmoothStreaming": false,
+            "FieldLevelEncryptionId": "",
+            "LambdaFunctionAssociations": { "Quantity": 0, "Items": [] },
+            "FunctionAssociations": { "Quantity": 0, "Items": [] }
+          }] + (.CacheBehaviors.Items // []) | .CacheBehaviors.Quantity = (.CacheBehaviors.Items | length)' \
+            cf.json > cf-next.json
+          aws cloudfront update-distribution --id "$DIST_ID" \
+            --if-match "$(jq -r '.ETag' cf.json)" \
+            --distribution-config file://cf-next.json > /dev/null
+          echo "CloudFront updating (5-15 minutes)"
+
+      - name: Verify sender domain in SES (DKIM via Route 53)
+        run: |
+          if ! aws sesv2 get-email-identity --email-identity "$DOMAIN" > /dev/null 2>&1; then
+            aws sesv2 create-email-identity --email-identity "$DOMAIN" > /dev/null
+          fi
+          ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name "$DOMAIN." \
+            --query "HostedZones[?Name=='$DOMAIN.'].Id | [0]" --output text | sed 's#/hostedzone/##')
+          aws sesv2 get-email-identity --email-identity "$DOMAIN" \
+            --query 'DkimAttributes.Tokens' --output json \
+          | jq --arg d "$DOMAIN" '{Changes: map({Action: "UPSERT", ResourceRecordSet: {
+              Name: "\(.)._domainkey.\($d)", Type: "CNAME", TTL: 1800,
+              ResourceRecords: [{Value: "\(.).dkim.amazonses.com"}]}})}' > dkim.json
+          aws route53 change-resource-record-sets --hosted-zone-id "$ZONE_ID" \
+            --change-batch file://dkim.json > /dev/null
+          echo "DKIM records upserted; SES verifies the domain within about an hour"
+
+      - name: Verify recipient address in SES
+        env:
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+        run: |
+          if [ -z "$CONTACT_EMAIL" ]; then
+            echo "::error::Add the CONTACT_EMAIL repository secret first."
+            exit 1
+          fi
+          if aws sesv2 get-email-identity --email-identity "$CONTACT_EMAIL" > /dev/null 2>&1; then
+            echo "Recipient identity already exists"
+          else
+            aws sesv2 create-email-identity --email-identity "$CONTACT_EMAIL" > /dev/null
+            echo "SES has emailed the recipient a verification link; click it."
+          fi
+
+      - name: Allow the Lambda role to send via SES
+        env:
+          FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          ROLE_NAME=$(aws lambda get-function-configuration --function-name "$FUNCTION_NAME" \
+            --query Role --output text | awk -F/ '{print $NF}')
+          jq -n --arg arn "arn:aws:ses:$AWS_REGION:$ACCOUNT_ID:identity/*" '{
+            Version: "2012-10-17",
+            Statement: [{Effect: "Allow", Action: ["ses:SendEmail"], Resource: $arn}]
+          }' > ses-policy.json
+          aws iam put-role-policy --role-name "$ROLE_NAME" \
+            --policy-name contact-form-ses-send --policy-document file://ses-policy.json
+          echo "Attached contact-form-ses-send to $ROLE_NAME"
