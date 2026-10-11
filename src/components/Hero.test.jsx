@@ -41,6 +41,11 @@ describe("Hero", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
+  it("links to the contact section", () => {
+    render(<Hero {...defaultProps} />);
+    expect(screen.getByRole("link", { name: "Get in Touch" })).toHaveAttribute("href", "#contact");
+  });
+
   it("renders search input with placeholder", () => {
     render(<Hero {...defaultProps} />);
 

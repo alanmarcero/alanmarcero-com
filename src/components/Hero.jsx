@@ -85,6 +85,9 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
           <a className="btn btn--ghost" href="/arcade">
             Arcade
           </a>
+          <a className="btn btn--ghost" href="#contact">
+            Get in Touch
+          </a>
           <TakeMeBack onSelect={onTravel} />
         </div>
         <div className="hero-search">
