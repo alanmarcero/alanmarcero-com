@@ -656,6 +656,11 @@ main {
    CONTACT — one wide module with recessed input wells
    -------------------------------------------------------------------------- */
 
+/* the hero's "Get in Touch" link lands here; leave room for the kicker above the title */
+#contact {
+  scroll-margin-top: var(--space-5);
+}
+
 .contact {
   max-width: 48rem;
 }
