@@ -2,11 +2,13 @@ name: Contact Form Setup (one-time)
 
 # Run once, by hand, after adding the CONTACT_EMAIL secret. Safe to re-run:
 # every step checks before it creates.
+#   0. Self-grant: attach temporary setup permissions to the IAM user (revoked at the end).
 #   1. CloudFront: route POST /api/contact to the Lambda, uncached.
 #   2. SES: verify alanmarcero.com (DKIM records in Route 53) as the sender,
 #      and the recipient address (SES emails it a link to click). With both
 #      verified the SES sandbox is enough: the form only ever sends to you.
 #   3. IAM: let the Lambda's role send through SES.
+#   4. Revoke: remove the temporary setup permissions.
 
 on:
   workflow_dispatch:
@@ -25,6 +27,38 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Grant this run the setup permissions
+        env:
+          FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          USER_NAME=$(aws sts get-caller-identity --query Arn --output text | awk -F/ '{print $NF}')
+          ROLE_ARN=$(aws lambda get-function-configuration --function-name "$FUNCTION_NAME" --query Role --output text)
+          echo "USER_NAME=$USER_NAME" >> "$GITHUB_ENV"
+          jq -n --arg acct "$ACCOUNT_ID" --arg region "$AWS_REGION" --arg role "$ROLE_ARN" '{
+            Version: "2012-10-17",
+            Statement: [
+              {Effect: "Allow", Action: ["ses:CreateEmailIdentity", "ses:GetEmailIdentity"],
+               Resource: "arn:aws:ses:\($region):\($acct):identity/*"},
+              {Effect: "Allow", Action: "route53:ListHostedZonesByName", Resource: "*"},
+              {Effect: "Allow", Action: "route53:ChangeResourceRecordSets", Resource: "arn:aws:route53:::hostedzone/*"},
+              {Effect: "Allow", Action: "iam:PutRolePolicy", Resource: $role}
+            ]
+          }' > setup-policy.json
+          if ! aws iam put-user-policy --user-name "$USER_NAME" \
+              --policy-name contact-form-setup-temp --policy-document file://setup-policy.json; then
+            echo "::group::What $USER_NAME is allowed (diagnostics)"
+            aws iam list-attached-user-policies --user-name "$USER_NAME" || true
+            aws iam list-user-policies --user-name "$USER_NAME" || true
+            aws iam list-groups-for-user --user-name "$USER_NAME" || true
+            echo "::endgroup::"
+            echo "::error::$USER_NAME cannot grant itself IAM permissions (iam:PutUserPolicy)."
+            exit 1
+          fi
+          echo "GRANTED=1" >> "$GITHUB_ENV"
+          # IAM is eventually consistent; give the new policy time to apply.
+          sleep 15
 
       - name: Add /api/contact behavior to CloudFront
         env:
@@ -105,3 +139,9 @@ jobs:
           aws iam put-role-policy --role-name "$ROLE_NAME" \
             --policy-name contact-form-ses-send --policy-document file://ses-policy.json
           echo "Attached contact-form-ses-send to $ROLE_NAME"
+
+      - name: Revoke the setup permissions
+        if: always() && env.GRANTED == '1'
+        run: |
+          aws iam delete-user-policy --user-name "$USER_NAME" --policy-name contact-form-setup-temp
+          echo "Temporary setup policy removed"
