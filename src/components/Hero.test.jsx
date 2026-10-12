@@ -32,18 +32,22 @@ describe("Hero", () => {
     expect(mark).toBeInTheDocument();
   });
 
-  it("renders YouTube subscribe link with security attributes", () => {
+  it("renders YouTube subscribe link with security attributes and ghost styling", () => {
     render(<Hero {...defaultProps} />);
 
     const link = screen.getByText("Subscribe on YouTube");
     expect(link).toHaveAttribute("href", YOUTUBE_CHANNEL_URL);
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(link).toHaveClass("btn--ghost");
   });
 
-  it("links to the contact section", () => {
+  it("links to the contact section with primary styling", () => {
     render(<Hero {...defaultProps} />);
-    expect(screen.getByRole("link", { name: "Get in Touch" })).toHaveAttribute("href", "#contact");
+    const link = screen.getByRole("link", { name: "Get in Touch" });
+    expect(link).toHaveAttribute("href", "#contact");
+    expect(link).toHaveClass("btn");
+    expect(link).not.toHaveClass("btn--ghost");
   });
 
   it("renders search input with placeholder", () => {
