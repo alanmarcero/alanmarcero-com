@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
-import { SynthesistMark, HeroScopeTrace } from './graphics';
+import { SynthesistMark } from './graphics';
 import TakeMeBack from './TakeMeBack';
 import { getEraHero } from '../eras/eraHero';
 
@@ -38,7 +38,6 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
 
   return (
     <section className="hero">
-      <HeroScopeTrace className="hero-scope" />
       <div className="hero-content">
         <div className="hero-mark">
           <SynthesistMark size={180} />
