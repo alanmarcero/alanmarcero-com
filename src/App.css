@@ -177,12 +177,19 @@
   line-height: 1.7;
 }
 
+.hero-cta-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
 .hero-cta-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-3);
-  margin-top: var(--space-2);
 }
 
 /* --------------------------------------------------------------------------

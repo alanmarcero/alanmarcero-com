@@ -72,22 +72,24 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
             <img src="/eras/img/blog-feed.gif" width="75" height="17" alt="" /> Subscribe to my blog
           </p>
         )}
-        <div className="hero-cta-row">
-          <a
-            className="btn"
-            href={YOUTUBE_CHANNEL_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Subscribe on YouTube
-          </a>
-          <a className="btn btn--ghost" href="/arcade">
-            Arcade
-          </a>
-          <a className="btn btn--ghost" href="#contact">
+        <div className="hero-cta-group">
+          <a className="btn" href="#contact">
             Get in Touch
           </a>
-          <TakeMeBack onSelect={onTravel} />
+          <div className="hero-cta-row">
+            <a
+              className="btn btn--ghost"
+              href={YOUTUBE_CHANNEL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Subscribe on YouTube
+            </a>
+            <a className="btn btn--ghost" href="/arcade">
+              Arcade
+            </a>
+            <TakeMeBack onSelect={onTravel} />
+          </div>
         </div>
         <div className="hero-search">
           <input
