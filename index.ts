@@ -22,6 +22,10 @@ interface YouTubeRes {
       };
       resourceId: { videoId: string };
     };
+    contentDetails?: {
+      videoId?: string;
+      videoPublishedAt?: string;
+    };
   }[];
 }
 
@@ -48,15 +52,25 @@ const jsonResponse = (statusCode: number, body: unknown): APIGatewayProxyResult 
 });
 
 export const buildPlaylistUrl = (apiKey: string): string =>
-  `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${MAX_PLAYLIST_RESULTS}&playlistId=${YOUTUBE_PLAYLIST_ID}&key=${apiKey}`;
+  `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=${MAX_PLAYLIST_RESULTS}&playlistId=${YOUTUBE_PLAYLIST_ID}&key=${apiKey}`;
 
 // A 200 body without `items` would otherwise throw here and escape as an
 // uncached Lambda error, so it is read as an empty playlist instead.
-export const toMusicItems = (playList: YouTubeRes): MusicItem[] =>
-  (playList.items ?? []).map(item => ({
+// Releases are sorted by upload date (newest first). YouTube's
+// contentDetails.videoPublishedAt reflects the video's actual upload date,
+// falling back to playlist snippet.publishedAt.
+export const toMusicItems = (playList: YouTubeRes): MusicItem[] => {
+  const items = [...(playList.items ?? [])];
+  items.sort((a, b) => {
+    const timeA = Date.parse(a.contentDetails?.videoPublishedAt ?? a.snippet?.publishedAt ?? "") || 0;
+    const timeB = Date.parse(b.contentDetails?.videoPublishedAt ?? b.snippet?.publishedAt ?? "") || 0;
+    return timeB - timeA;
+  });
+  return items.map(item => ({
     title: item.snippet.title,
     videoId: item.snippet.resourceId.videoId,
   }));
+};
 
 // A Function URL delivers the v2 shape (requestContext.http, rawPath); the
 // local runner and older tests use the v1 shape (httpMethod, path).

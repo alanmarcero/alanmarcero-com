@@ -151,8 +151,8 @@ describe("handler", () => {
     const body = JSON.parse(result.body);
 
     expect(body.items).toHaveLength(2);
-    expect(body.items[0].videoId).toBe("vidA");
-    expect(body.items[1].videoId).toBe("vidB");
+    expect(body.items[0].videoId).toBe("vidB");
+    expect(body.items[1].videoId).toBe("vidA");
   });
 
   it("constructs API URL with playlist ID and API key", async () => {
@@ -162,6 +162,7 @@ describe("handler", () => {
 
     const calledUrl = (global.fetch as jest.Mock).mock.calls[0][0] as string;
     expect(calledUrl).toContain("googleapis.com/youtube/v3/playlistItems");
+    expect(calledUrl).toContain("part=snippet,contentDetails");
     expect(calledUrl).toContain("playlistId=PLjHbhxiY56y28ezRPYzMi3lzV3nMQt-1c");
     expect(calledUrl).toContain("maxResults=50");
     expect(calledUrl).toContain("key=test-api-key");
@@ -197,5 +198,69 @@ describe("toMusicItems", () => {
     });
 
     expect(items).toEqual([{ title: "Track", videoId: "xyz" }]);
+  });
+
+  it("sorts items by upload date descending (newest first)", () => {
+    const items = toMusicItems({
+      items: [
+        {
+          snippet: {
+            title: "Older Track",
+            publishedAt: "2020-01-01T00:00:00Z",
+            resourceId: { videoId: "old" },
+          },
+          contentDetails: {
+            videoPublishedAt: "2020-01-01T00:00:00Z",
+          },
+        },
+        {
+          snippet: {
+            title: "Newer Track",
+            publishedAt: "2025-01-01T00:00:00Z",
+            resourceId: { videoId: "new" },
+          },
+          contentDetails: {
+            videoPublishedAt: "2025-01-01T00:00:00Z",
+          },
+        },
+      ],
+    });
+
+    expect(items).toEqual([
+      { title: "Newer Track", videoId: "new" },
+      { title: "Older Track", videoId: "old" },
+    ]);
+  });
+
+  it("prefers contentDetails.videoPublishedAt over snippet.publishedAt for sorting", () => {
+    const items = toMusicItems({
+      items: [
+        {
+          snippet: {
+            title: "Track A",
+            publishedAt: "2025-06-01T00:00:00Z",
+            resourceId: { videoId: "a" },
+          },
+          contentDetails: {
+            videoPublishedAt: "2010-01-01T00:00:00Z",
+          },
+        },
+        {
+          snippet: {
+            title: "Track B",
+            publishedAt: "2024-01-01T00:00:00Z",
+            resourceId: { videoId: "b" },
+          },
+          contentDetails: {
+            videoPublishedAt: "2024-01-01T00:00:00Z",
+          },
+        },
+      ],
+    });
+
+    expect(items).toEqual([
+      { title: "Track B", videoId: "b" },
+      { title: "Track A", videoId: "a" },
+    ]);
   });
 });
