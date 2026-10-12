@@ -131,7 +131,7 @@ function ContactForm() {
             {sending ? 'Sending…' : 'Send message'}
           </button>
           <p className="contact-form__status" role="status" aria-live="polite">
-            {status === 'sent' && 'Thanks — your message is on its way.'}
+            {status === 'sent' && 'Thanks, your message is on its way.'}
             {status === 'error' && <span className="contact-form__error">{error}</span>}
           </p>
         </div>

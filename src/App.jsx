@@ -91,7 +91,7 @@ function App() {
           {!searchQuery && (
             <p className="section-stat">
               <span className="section-stat__value">{TOTAL_PATCHES.toLocaleString()}</span> patches across{' '}
-              <span className="section-stat__value">{PATCH_BANK_COUNT}</span> instruments — free to download
+              <span className="section-stat__value">{PATCH_BANK_COUNT}</span> instruments, free to download
             </p>
           )}
           <div className="module-grid">
@@ -112,7 +112,7 @@ function App() {
           </div>
           {!searchQuery && !musicLoading && !musicError && filteredMusicItems.length > 0 && (
             <p className="section-stat">
-              <span className="section-stat__value">{filteredMusicItems.length}</span> releases &amp; remixes — streaming on YouTube, Spotify, Pandora
+              <span className="section-stat__value">{filteredMusicItems.length}</span> releases and remixes, streaming on YouTube, Spotify, and Pandora
             </p>
           )}
           <div className="module-grid">
