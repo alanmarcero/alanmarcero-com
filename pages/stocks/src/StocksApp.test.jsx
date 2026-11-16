@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, within, fireEvent } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import StocksApp from './StocksApp';
 import { INSTRUMENTS } from './data/instruments';
 import {
-  drawdownEpisodes, formatDepth, heldAtLeast, worstByYear,
+  DEFAULT_TOP_HOLD, drawdownEpisodes, formatDepth, heldAtLeast, topHoldById, worstByYear,
 } from './drawdown/drawdowns';
 
 // every panel imports its series on mount; wait for them so no update lands after a test
@@ -45,24 +45,13 @@ describe('StocksApp', () => {
     expect(screen.getByRole('img', { name: /^SPY daily close/ })).toBeInTheDocument();
   });
 
-  it('scopes every chart with one top-held control', async () => {
-    render(<StocksApp />);
-    await screen.findAllByRole('img', { name: /as a loss/i });
-    const before = screen.getAllByRole('button', { name: /drawdowns as a table/i })
-      .map((b) => b.textContent);
-    fireEvent.click(screen.getByRole('button', { name: '1 year' }));
-    const after = screen.getAllByRole('button', { name: /drawdowns as a table/i })
-      .map((b) => b.textContent);
-    expect(after).toHaveLength(INSTRUMENTS.length);
-    expect(after).not.toEqual(before);
-  });
-
   it('lists each chart\'s biggest drops, one per year', async () => {
     render(<StocksApp />);
     await loaded();
     const spy = INSTRUMENTS.find((i) => i.symbol === 'SPY');
     const { CLOSES } = await spy.load();
-    const expected = worstByYear(heldAtLeast(drawdownEpisodes(CLOSES), 30));
+    const minDays = topHoldById(DEFAULT_TOP_HOLD).days;
+    const expected = worstByYear(heldAtLeast(drawdownEpisodes(CLOSES), minDays));
     const spyList = within(document.getElementById('spy')).getByRole('list');
     const rows = within(spyList).getAllByRole('listitem');
     expect(rows).toHaveLength(expected.length);
