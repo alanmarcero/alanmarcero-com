@@ -23,6 +23,10 @@ function Footer() {
             GitHub
           </a>
           <a href="/arcade">Arcade</a>
+          <a href="/codex">Codex</a>
+          <a href="/stocks">Stocks</a>
+          <a href="/flights">Flights</a>
+          <a href="/neworleans">New Orleans</a>
         </nav>
       </div>
     </footer>

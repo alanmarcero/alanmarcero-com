@@ -119,6 +119,11 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
             {countLabel(resultsCount.music, 'music item', 'music items')}
           </p>
         )}
+        <nav className="hero-nav" aria-label="Sections">
+          <a href="#store">Patch Banks</a>
+          <a href="#music-remixes">Music</a>
+          <a href="#contact">Contact</a>
+        </nav>
       </div>
     </section>
   );
