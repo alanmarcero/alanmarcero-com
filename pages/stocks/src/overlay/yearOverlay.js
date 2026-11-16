@@ -174,3 +174,47 @@ export function buildDayLookup(baseSeries, currentSeries) {
 
   return days;
 }
+
+/**
+ * Pearson correlation coefficient `r` between `baseSeries` and `currentSeries`
+ * relative-percentage curves over their overlapping calendar days.
+ * Returns `null` when fewer than 2 overlapping days exist or variance is zero.
+ */
+export function overlayCorrelation(baseSeries, currentSeries) {
+  const pairs = buildDayLookup(baseSeries, currentSeries)
+    .filter((d) => d.base && d.current);
+  const n = pairs.length;
+  if (n < 2) return null;
+
+  let sumX = 0;
+  let sumY = 0;
+  for (const { base, current } of pairs) {
+    sumX += base.pct;
+    sumY += current.pct;
+  }
+  const meanX = sumX / n;
+  const meanY = sumY / n;
+
+  let num = 0;
+  let denX = 0;
+  let denY = 0;
+  for (const { base, current } of pairs) {
+    const dx = base.pct - meanX;
+    const dy = current.pct - meanY;
+    num += dx * dy;
+    denX += dx * dx;
+    denY += dy * dy;
+  }
+
+  const denom = Math.sqrt(denX * denY);
+  if (denom === 0) return null;
+  return Math.max(-1, Math.min(1, num / denom));
+}
+
+/** Format a Pearson correlation coefficient `r`, e.g. `+0.84`, `−0.42`, `0.00`. */
+export function formatCorrelation(r) {
+  if (r === null || !Number.isFinite(r)) return 'n/a';
+  const abs = Math.abs(r);
+  if (abs < 0.005) return '0.00';
+  return `${r > 0 ? '+' : '−'}${abs.toFixed(2)}`;
+}
