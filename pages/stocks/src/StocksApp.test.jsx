@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import StocksApp from './StocksApp';
 import { INSTRUMENTS } from './data/instruments';
 import {
@@ -20,7 +20,7 @@ describe('StocksApp', () => {
     await loaded();
     const titles = screen.getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent)
-      .filter((t) => t !== 'Data and methodology');
+      .filter((t) => t !== 'Data and methodology' && t !== '2018 vs 2026');
     expect(titles).toHaveLength(INSTRUMENTS.length);
     expect(titles[0]).toBe('Bitcoin (BTC-USD)');
     expect(titles[1]).toMatch(/^BRK-B/);
@@ -59,5 +59,19 @@ describe('StocksApp', () => {
     expect(rows[0]).toHaveTextContent(formatDepth(expected[0].depth));
     const years = rows.map((r) => r.textContent.slice(0, 4));
     expect(new Set(years).size).toBe(years.length);
+  });
+
+  it('renders the 2018 vs 2026 overlay chart and switches instruments', async () => {
+    render(<StocksApp />);
+    await loaded();
+    expect(
+      await screen.findByRole('img', { name: /SPY 2018 vs 2026 relative percentage performance/i }),
+    ).toBeInTheDocument();
+
+    const picker = screen.getByRole('group', { name: /Select instrument for 2018 vs 2026 overlay/i });
+    fireEvent.click(within(picker).getByRole('button', { name: 'QQQ' }));
+    expect(
+      await screen.findByRole('img', { name: /QQQ 2018 vs 2026 relative percentage performance/i }),
+    ).toBeInTheDocument();
   });
 });
