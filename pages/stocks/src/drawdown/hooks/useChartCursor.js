@@ -9,7 +9,7 @@ import { arrowStep, stepIndex, viewBoxX } from '../chartGeometry';
  * `stride` is how many points one arrow press moves.
  */
 export default function useChartCursor({
-  count, viewWidth, indexAtViewX, stride = 1,
+  count, viewWidth, indexAtViewX, stride = 1, snapIndices = null,
 }) {
   const svgRef = useRef(null);
   const [index, setIndex] = useState(null);
@@ -29,8 +29,14 @@ export default function useChartCursor({
     const step = arrowStep(event.key);
     if (!step) return;
     event.preventDefault();
+    if (snapIndices?.length) {
+      const pos = index === null ? -1 : snapIndices.indexOf(index);
+      const from = pos === -1 ? snapIndices.length - 1 : pos;
+      moveTo(snapIndices[stepIndex(from, step, snapIndices.length)]);
+      return;
+    }
     moveTo(stepIndex(index ?? count - 1, step * stride, count));
-  }, [count, index, moveTo, stride]);
+  }, [count, index, moveTo, snapIndices, stride]);
 
   const clear = useCallback(() => setIndex(null), []);
 

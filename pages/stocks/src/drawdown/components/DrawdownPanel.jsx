@@ -35,7 +35,7 @@ function DrawdownPanel({
         <BiggestDrops episodes={episodes} id={id} />
 
         <p className="dd-hint">
-          Hover or focus the chart and use &larr; &rarr; to step a week at a time.
+          Hover or focus the chart and use &larr; &rarr; to step between marked drops.
         </p>
       </section>
 

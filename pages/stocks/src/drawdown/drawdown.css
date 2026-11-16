@@ -231,6 +231,11 @@
   fill: var(--dd-drawdown);
 }
 
+.dd-chart__dot--drop {
+  fill: var(--dd-drawdown);
+  opacity: 0.78;
+}
+
 /* the drawdown still in progress: a ring, because its bottom may not be in */
 .dd-chart__dot--open {
   fill: var(--dd-well);

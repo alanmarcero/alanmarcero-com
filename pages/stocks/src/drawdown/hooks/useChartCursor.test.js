@@ -81,4 +81,16 @@ describe('useChartCursor', () => {
     rerender({ count: 4 });
     expect(result.current.index).toBeNull();
   });
+
+  it('steps only through snapIndices when provided', () => {
+    const { result } = setup({ snapIndices: [1, 4, 8] });
+    act(() => result.current.handlers.onKeyDown(key('ArrowRight')));
+    expect(result.current.index).toBe(8);
+    act(() => result.current.handlers.onKeyDown(key('ArrowLeft')));
+    expect(result.current.index).toBe(4);
+    act(() => result.current.handlers.onKeyDown(key('ArrowLeft')));
+    expect(result.current.index).toBe(1);
+    act(() => result.current.handlers.onKeyDown(key('ArrowLeft')));
+    expect(result.current.index).toBe(1);
+  });
 });

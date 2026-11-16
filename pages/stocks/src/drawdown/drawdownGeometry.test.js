@@ -1,5 +1,6 @@
 import {
-  dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
+  dateIndexMap, depthY, labelPlacement, nearestSnapIndex,
+  significantDropIndices, thinYears, troughMarkers, underwaterPlot,
 } from './drawdownGeometry';
 import { plotBox } from './chartGeometry';
 import { drawdownEpisodes, underwater } from './drawdowns';
@@ -100,5 +101,29 @@ describe('thinYears', () => {
 
   it('leaves a lone tick alone', () => {
     expect(thinYears(ticks(1, 252), 252, BOX, 44)).toHaveLength(1);
+  });
+});
+
+describe('significantDropIndices', () => {
+  it('marks swing troughs for significant drops and ignores tiny wiggles', () => {
+    const points = [
+      { close: 100 },
+      { close: 98 },
+      { close: 99 }, // tiny wiggle, <5%
+      { close: 88 }, // -12% drop
+      { close: 95 }, // rebound
+      { close: 80 }, // -15.8% drop
+      { close: 90 }, // rebound
+    ];
+    expect(significantDropIndices(points, 0.2)).toEqual([3, 5]);
+  });
+});
+
+describe('nearestSnapIndex', () => {
+  it('snaps to the closest coordinate in snapIndices', () => {
+    const coords = [{ x: 100 }, { x: 200 }, { x: 300 }, { x: 400 }];
+    expect(nearestSnapIndex(140, [0, 2, 3], coords)).toBe(0);
+    expect(nearestSnapIndex(260, [0, 2, 3], coords)).toBe(2);
+    expect(nearestSnapIndex(390, [0, 2, 3], coords)).toBe(3);
   });
 });
