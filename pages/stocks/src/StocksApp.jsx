@@ -21,7 +21,7 @@ function StocksApp() {
         intro={(
           <>
             How far each all-time high fell before it was beaten. Every daily close
-            Yahoo Finance holds for fourteen stocks, funds and coins, each plotted as a
+            Yahoo Finance holds for fifteen stocks, funds and coins, each plotted as a
             loss from the highest close before it &mdash; so the line sits on the top
             edge at a record and hangs below it for as long as the record stands.
           </>

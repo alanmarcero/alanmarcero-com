@@ -45,6 +45,7 @@ INSTRUMENTS = [
     ('BRK-B', 'BRK-B', 'Berkshire Hathaway, class B'),
     ('BTC-USD', 'Bitcoin', 'Bitcoin in US dollars'),
     ('ETH-USD', 'Ethereum', 'Ethereum in US dollars'),
+    ('NVDA', 'NVDA', 'NVIDIA'),
     ('QQQ', 'QQQ', 'Nasdaq-100'),
     ('SMH', 'SMH', 'Semiconductors'),
     ('SPY', 'SPY', 'S&P 500'),
