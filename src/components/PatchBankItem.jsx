@@ -15,6 +15,13 @@ function PatchBankItem({ bank, style, onDownload }) {
       {/* archived synth photo — only shown in the Take Me Back eras (see eras.css) */}
       {thumb ? <img className="module__era-thumb" src={thumb} alt="" aria-hidden="true" /> : null}
       <p className="module__desc">{bank.description}</p>
+      {bank.instruments?.length > 0 && (
+        <ul className="module__tags" aria-label="Compatible instruments">
+          {bank.instruments.map((instrument) => (
+            <li key={instrument} className="module__tag">{instrument}</li>
+          ))}
+        </ul>
+      )}
 
       {bank.audioDemo?.filter(Boolean).map((videoId) => (
         <div key={videoId} className="module__media">
