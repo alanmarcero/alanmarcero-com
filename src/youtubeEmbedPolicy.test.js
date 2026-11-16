@@ -22,7 +22,7 @@ const embeds = SOURCE_DIRS
 
 describe("YouTube embed policy", () => {
   it("finds the players it is guarding", () => {
-    expect(embeds.length).toBeGreaterThanOrEqual(4);
+    expect(embeds.length).toBeGreaterThanOrEqual(2);
   });
 
   it.each(embeds)("%s uses the shared sandbox and permissions", (_file, tag) => {

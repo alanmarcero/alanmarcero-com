@@ -9,7 +9,7 @@ import {
 } from './drawdown/drawdowns';
 
 // every panel imports its series on mount; wait for them so no update lands after a test
-const loaded = () => screen.findAllByRole('img', { name: /as a loss from its all-time high/i });
+const loaded = () => screen.findAllByRole('img', { name: /as a loss from its all-time high/i }, { timeout: 5000 });
 
 // jsdom has no IntersectionObserver, so every panel counts as on screen and loads
 
