@@ -5,6 +5,7 @@ import useChartCursor from '../drawdown/hooks/useChartCursor';
 import useChartView from '../drawdown/hooks/useChartView';
 import { ChartSvg, ChartTip, ValueGrid } from '../drawdown/components/ChartParts';
 import {
+  CURRENT_YEAR,
   DAYS_IN_YEAR,
   MONTH_STARTS,
   buildDayLookup,
@@ -36,23 +37,29 @@ const COMPACT = {
 };
 
 /**
- * 2018 vs 2026 overlay chart, aligned by calendar day of year and normalized
+ * Year-vs-year overlay chart, aligned by calendar day of year and normalized
  * to 0% at each year's first close.
  */
-function YearOverlayChart({ series2018, series2026, subject }) {
+function YearOverlayChart({
+  baseYear,
+  currentYear = CURRENT_YEAR,
+  baseSeries,
+  currentSeries,
+  subject,
+}) {
   const { compact, view } = useChartView(WIDE, COMPACT);
 
   const geometry = useMemo(() => {
     const box = plotBox(view.w, view.h, view.margin);
-    const plot = overlayPlot(series2018, series2026, box, 5);
-    const lookup = buildDayLookup(series2018, series2026);
+    const plot = overlayPlot(baseSeries, currentSeries, box, 5);
+    const lookup = buildDayLookup(baseSeries, currentSeries);
     const months = compact
       ? MONTH_STARTS.filter((_, i) => i % 2 === 0)
       : MONTH_STARTS;
     return {
       box, plot, lookup, months,
     };
-  }, [compact, series2018, series2026, view]);
+  }, [baseSeries, compact, currentSeries, view]);
 
   const {
     box, plot, lookup, months,
@@ -69,18 +76,18 @@ function YearOverlayChart({ series2018, series2026, subject }) {
     stride: 7,
   });
 
-  if (!series2018.length && !series2026.length) return null;
+  if (!baseSeries.length && !currentSeries.length) return null;
 
-  const last18 = plot.coords2018[plot.coords2018.length - 1];
-  const last26 = plot.coords2026[plot.coords2026.length - 1];
+  const lastBase = plot.coordsBase[plot.coordsBase.length - 1];
+  const lastCurrent = plot.coordsCurrent[plot.coordsCurrent.length - 1];
   const yZero = plot.yOf(0);
 
   const hover = cursor.index === null ? null : lookup[cursor.index];
   const hoverX = hover ? xAt(hover.day, DAYS_IN_YEAR, box) : null;
 
-  const ariaLabel = `${subject} 2018 vs 2026 relative percentage performance`
-    + (last18 ? `. 2018 finished at ${formatSignedPct(last18.pct)}` : '')
-    + (last26 ? `. 2026 is at ${formatSignedPct(last26.pct)} as of ${formatDate(last26.date)}` : '')
+  const ariaLabel = `${subject} ${baseYear} vs ${currentYear} relative percentage performance`
+    + (lastBase ? `. ${baseYear} finished at ${formatSignedPct(lastBase.pct)}` : '')
+    + (lastCurrent ? `. ${currentYear} is at ${formatSignedPct(lastCurrent.pct)} as of ${formatDate(lastCurrent.date)}` : '')
     + '.';
 
   return (
@@ -109,49 +116,49 @@ function YearOverlayChart({ series2018, series2026, subject }) {
           y2={yZero}
         />
 
-        {plot.line2018 && (
-          <polyline className="dd-chart__line st-overlay__line--2018" points={plot.line2018} />
+        {plot.lineBase && (
+          <polyline className="dd-chart__line st-overlay__line--base" points={plot.lineBase} />
         )}
-        {plot.line2026 && (
-          <polyline className="dd-chart__line st-overlay__line--2026" points={plot.line2026} />
+        {plot.lineCurrent && (
+          <polyline className="dd-chart__line st-overlay__line--current" points={plot.lineCurrent} />
         )}
 
-        {last18 && (
+        {lastBase && (
           <>
             <circle
-              className="dd-chart__dot st-overlay__dot--2018"
-              cx={last18.x}
-              cy={last18.y}
+              className="dd-chart__dot st-overlay__dot--base"
+              cx={lastBase.x}
+              cy={lastBase.y}
               r={4.5}
             />
             <text
-              className="dd-chart__endlabel st-overlay__endlabel--2018"
-              x={last18.x + 8}
-              y={last18.y}
+              className="dd-chart__endlabel st-overlay__endlabel--base"
+              x={lastBase.x + 8}
+              y={lastBase.y}
               textAnchor="start"
               dominantBaseline="middle"
             >
-              {formatSignedPct(last18.pct)}
+              {formatSignedPct(lastBase.pct)}
             </text>
           </>
         )}
 
-        {last26 && (
+        {lastCurrent && (
           <>
             <circle
               className="dd-chart__dot dd-chart__dot--current"
-              cx={last26.x}
-              cy={last26.y}
+              cx={lastCurrent.x}
+              cy={lastCurrent.y}
               r={4.5}
             />
             <text
               className="dd-chart__endlabel dd-chart__endlabel--current"
-              x={last26.x + 8}
-              y={last26.y}
+              x={lastCurrent.x + 8}
+              y={lastCurrent.y}
               textAnchor="start"
               dominantBaseline="middle"
             >
-              {formatSignedPct(last26.pct)}
+              {formatSignedPct(lastCurrent.pct)}
             </text>
           </>
         )}
@@ -159,19 +166,19 @@ function YearOverlayChart({ series2018, series2026, subject }) {
         {hover && (
           <g className="dd-chart__cursor">
             <line x1={hoverX} x2={hoverX} y1={box.top} y2={box.bottom} />
-            {hover.p2018 && (
+            {hover.base && (
               <circle
-                className="st-overlay__cursor-dot--2018"
+                className="st-overlay__cursor-dot--base"
                 cx={hoverX}
-                cy={plot.yOf(hover.p2018.pct)}
+                cy={plot.yOf(hover.base.pct)}
                 r={4.5}
               />
             )}
-            {hover.p2026 && (
+            {hover.current && (
               <circle
-                className="st-overlay__cursor-dot--2026"
+                className="st-overlay__cursor-dot--current"
                 cx={hoverX}
-                cy={plot.yOf(hover.p2026.pct)}
+                cy={plot.yOf(hover.current.pct)}
                 r={4.5}
               />
             )}
@@ -182,21 +189,21 @@ function YearOverlayChart({ series2018, series2026, subject }) {
       {hover && (
         <ChartTip x={hoverX} viewWidth={view.w}>
           <p className="dd-tip__week">{hover.label}</p>
-          {hover.p2026 && (
+          {hover.current && (
             <p className="dd-tip__row">
-              <span className="dd-tip__key st-overlay__key--2026" aria-hidden="true" />
-              <strong>{formatSignedPct(hover.p2026.pct)}</strong>
+              <span className="dd-tip__key st-overlay__key--current" aria-hidden="true" />
+              <strong>{formatSignedPct(hover.current.pct)}</strong>
               <span className="dd-tip__label">
-                {`2026 · ${formatPrice(hover.p2026.close)}`}
+                {`${currentYear} · ${formatPrice(hover.current.close)}`}
               </span>
             </p>
           )}
-          {hover.p2018 && (
+          {hover.base && (
             <p className="dd-tip__row">
-              <span className="dd-tip__key st-overlay__key--2018" aria-hidden="true" />
-              <strong>{formatSignedPct(hover.p2018.pct)}</strong>
+              <span className="dd-tip__key st-overlay__key--base" aria-hidden="true" />
+              <strong>{formatSignedPct(hover.base.pct)}</strong>
               <span className="dd-tip__label">
-                {`2018 · ${formatPrice(hover.p2018.close)}`}
+                {`${baseYear} · ${formatPrice(hover.base.close)}`}
               </span>
             </p>
           )}

@@ -20,7 +20,7 @@ describe('StocksApp', () => {
     await loaded();
     const titles = screen.getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent)
-      .filter((t) => t !== 'Data and methodology' && t !== '2018 vs 2026');
+      .filter((t) => t !== 'Data and methodology' && !/^\d{4} vs 2026$/.test(t));
     expect(titles).toHaveLength(INSTRUMENTS.length);
     expect(titles[0]).toBe('Bitcoin (BTC-USD)');
     expect(titles[1]).toMatch(/^BRK-B/);
@@ -61,17 +61,24 @@ describe('StocksApp', () => {
     expect(new Set(years).size).toBe(years.length);
   });
 
-  it('renders the 2018 vs 2026 overlay chart and switches instruments', async () => {
+  it('renders the year overlay chart and switches instruments and comparison years', async () => {
     render(<StocksApp />);
     await loaded();
     expect(
       await screen.findByRole('img', { name: /SPY 2018 vs 2026 relative percentage performance/i }),
     ).toBeInTheDocument();
 
-    const picker = screen.getByRole('group', { name: /Select instrument for 2018 vs 2026 overlay/i });
-    fireEvent.click(within(picker).getByRole('button', { name: 'QQQ' }));
+    const instrumentPicker = screen.getByRole('group', { name: /Select instrument for year overlay/i });
+    fireEvent.click(within(instrumentPicker).getByRole('button', { name: 'QQQ' }));
     expect(
       await screen.findByRole('img', { name: /QQQ 2018 vs 2026 relative percentage performance/i }),
+    ).toBeInTheDocument();
+
+    const yearPicker = screen.getByRole('group', { name: /Select comparison year/i });
+    expect(within(yearPicker).getAllByRole('button')).toHaveLength(10);
+    fireEvent.click(within(yearPicker).getByRole('button', { name: '2016' }));
+    expect(
+      await screen.findByRole('img', { name: /QQQ 2016 vs 2026 relative percentage performance/i }),
     ).toBeInTheDocument();
   });
 });

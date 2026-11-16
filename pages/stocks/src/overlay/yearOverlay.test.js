@@ -13,9 +13,13 @@ import {
 } from './yearOverlay';
 
 describe('dayOfYear and formatDayOfYear', () => {
-  it('maps Jan 1 to 0 and Dec 31 to 364 in non-leap years', () => {
+  it('maps Jan 1 to 0 and Dec 31 to 364 across both leap and non-leap years', () => {
     expect(dayOfYear('2018-01-01')).toBe(0);
     expect(dayOfYear('2018-12-31')).toBe(364);
+    expect(dayOfYear('2020-02-28')).toBe(58);
+    expect(dayOfYear('2020-02-29')).toBe(58);
+    expect(dayOfYear('2020-03-01')).toBe(59);
+    expect(dayOfYear('2020-12-31')).toBe(364);
     expect(dayOfYear('2026-01-02')).toBe(1);
     expect(dayOfYear('2026-11-13')).toBe(316);
   });
@@ -120,22 +124,22 @@ describe('overlayPlot and buildDayLookup', () => {
 
   it('produces polylines and coordinates aligned by calendar day', () => {
     const plot = overlayPlot(s18, s26, box, 4);
-    expect(plot.coords2018).toHaveLength(2);
-    expect(plot.coords2026).toHaveLength(2);
-    expect(plot.coords2018[0].x).toBeCloseTo(plot.coords2026[0].x);
-    expect(plot.coords2018[1].x).toBeCloseTo(box.right);
-    expect(plot.line2018).toContain(',');
-    expect(plot.line2026).toContain(',');
+    expect(plot.coordsBase).toHaveLength(2);
+    expect(plot.coordsCurrent).toHaveLength(2);
+    expect(plot.coordsBase[0].x).toBeCloseTo(plot.coordsCurrent[0].x);
+    expect(plot.coordsBase[1].x).toBeCloseTo(box.right);
+    expect(plot.lineBase).toContain(',');
+    expect(plot.lineCurrent).toContain(',');
   });
 
-  it('builds a 365-day lookup carrying forward prior sessions and stopping 2026 at its last day', () => {
+  it('builds a 365-day lookup carrying forward prior sessions and stopping current at its last day', () => {
     const lookup = buildDayLookup(s18, s26);
     expect(lookup).toHaveLength(DAYS_IN_YEAR);
-    expect(lookup[0].p2018).toBeNull();
-    expect(lookup[1].p2018.pct).toBe(0);
-    expect(lookup[100].p2018.pct).toBe(0);
-    expect(lookup[181].p2026.pct).toBeCloseTo(0.1);
-    expect(lookup[200].p2026).toBeNull();
-    expect(lookup[364].p2018.pct).toBeCloseTo(-0.1);
+    expect(lookup[0].base).toBeNull();
+    expect(lookup[1].base.pct).toBe(0);
+    expect(lookup[100].base.pct).toBe(0);
+    expect(lookup[181].current.pct).toBeCloseTo(0.1);
+    expect(lookup[200].current).toBeNull();
+    expect(lookup[364].base.pct).toBeCloseTo(-0.1);
   });
 });

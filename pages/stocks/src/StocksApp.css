@@ -76,37 +76,37 @@
   margin-bottom: var(--space-3);
 }
 
-.st-overlay__line--2018 {
+.st-overlay__line--base {
   stroke: var(--amber);
   stroke-width: 1.6;
   opacity: 0.9;
 }
 
-.st-overlay__line--2026 {
+.st-overlay__line--current {
   stroke: var(--phosphor);
   stroke-width: 2;
 }
 
-.st-overlay__dot--2018 {
+.st-overlay__dot--base {
   fill: var(--amber);
 }
 
-.st-overlay__endlabel--2018 {
+.st-overlay__endlabel--base {
   fill: var(--amber);
 }
 
-.dd-chart__cursor .st-overlay__cursor-dot--2018 {
+.dd-chart__cursor .st-overlay__cursor-dot--base {
   fill: var(--amber);
 }
 
-.dd-chart__cursor .st-overlay__cursor-dot--2026 {
+.dd-chart__cursor .st-overlay__cursor-dot--current {
   fill: var(--phosphor);
 }
 
-.st-overlay__key--2018 {
+.st-overlay__key--base {
   background: var(--amber);
 }
 
-.st-overlay__key--2026 {
+.st-overlay__key--current {
   background: var(--phosphor);
 }

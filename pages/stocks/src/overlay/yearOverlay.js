@@ -1,5 +1,5 @@
 /* ==========================================================================
-   yearOverlay.js — 2018 vs 2026 relative percentage series & chart geometry.
+   yearOverlay.js — year-vs-year relative percentage series & chart geometry.
    No DOM, no React: every export takes plain values and returns plain values.
    ========================================================================== */
 
@@ -7,8 +7,14 @@ import { niceStep, polyline, xAt } from '../drawdown/chartGeometry';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Both 2018 and 2026 are non-leap years of 365 calendar days. */
+/** Calendar slots in a non-leap reference year (`0` = Jan 1 .. `364` = Dec 31). */
 export const DAYS_IN_YEAR = 365;
+
+export const CURRENT_YEAR = 2026;
+
+export const OVERLAY_YEARS = [
+  2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025,
+];
 
 const MONTH_ABBREVIATIONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -28,10 +34,18 @@ export const MONTH_STARTS = [
   { label: 'Dec', day: 334 },
 ];
 
-/** Zero-based calendar day of year (`0` for Jan 1, `364` for Dec 31 in non-leap years). */
+const REF_JAN1 = Date.UTC(2026, 0, 1);
+
+/**
+ * Zero-based calendar day in a 365-day reference year (`0` for Jan 1, `364`
+ * for Dec 31). Leap-day Feb 29 maps onto Feb 28 (`58`) so Mar 1–Dec 31 align
+ * across leap and non-leap years.
+ */
 export function dayOfYear(isoDate) {
-  const jan1 = Date.parse(`${isoDate.slice(0, 4)}-01-01T00:00:00Z`);
-  return Math.round((Date.parse(`${isoDate}T00:00:00Z`) - jan1) / DAY_MS);
+  const month = Number(isoDate.slice(5, 7));
+  const day = Number(isoDate.slice(8, 10));
+  if (month === 2 && day === 29) return 58;
+  return Math.round((Date.UTC(2026, month - 1, day) - REF_JAN1) / DAY_MS);
 }
 
 /** Calendar label for a 0-based day of a non-leap year, e.g. `0` -> `Jan 1`. */
@@ -101,10 +115,10 @@ export function percentY(pct, domain, box) {
 }
 
 /** Compute coordinates, SVG polylines, and y-axis geometry for both years. */
-export function overlayPlot(series2018, series2026, box, tickCount = 5) {
+export function overlayPlot(baseSeries, currentSeries, box, tickCount = 5) {
   const allPcts = [
-    ...series2018.map((p) => p.pct),
-    ...series2026.map((p) => p.pct),
+    ...baseSeries.map((p) => p.pct),
+    ...currentSeries.map((p) => p.pct),
   ];
   const domain = percentDomain(allPcts, tickCount);
   const yOf = (pct) => percentY(pct, domain, box);
@@ -115,42 +129,46 @@ export function overlayPlot(series2018, series2026, box, tickCount = 5) {
     y: yOf(p.pct),
   }));
 
-  const coords2018 = mapCoords(series2018);
-  const coords2026 = mapCoords(series2026);
+  const coordsBase = mapCoords(baseSeries);
+  const coordsCurrent = mapCoords(currentSeries);
 
   return {
     domain,
     ticks: domain.ticks,
     yOf,
-    coords2018,
-    coords2026,
-    line2018: polyline(coords2018),
-    line2026: polyline(coords2026),
+    coordsBase,
+    coordsCurrent,
+    lineBase: polyline(coordsBase),
+    lineCurrent: polyline(coordsCurrent),
   };
 }
 
 /**
- * Build a 365-day lookup table aligning 2018 and 2026 by calendar day of year.
- * Each day carries the latest session on or before that day for 2018, and for
- * 2026 up through 2026's final recorded day.
+ * Build a 365-day lookup table aligning `baseSeries` and `currentSeries` by
+ * calendar day of year. Each day carries the latest session on or before that
+ * day for `baseSeries`, and for `currentSeries` up through its final day.
  */
-export function buildDayLookup(series2018, series2026) {
-  const byDay18 = new Map(series2018.map((p) => [p.day, p]));
-  const byDay26 = new Map(series2026.map((p) => [p.day, p]));
-  const lastDay26 = series2026.length ? series2026[series2026.length - 1].day : -1;
+export function buildDayLookup(baseSeries, currentSeries) {
+  const byDayBase = new Map();
+  for (const p of baseSeries) byDayBase.set(p.day, p);
 
-  let latest18 = null;
-  let latest26 = null;
+  const byDayCurrent = new Map();
+  for (const p of currentSeries) byDayCurrent.set(p.day, p);
+
+  const lastDayCurrent = currentSeries.length ? currentSeries[currentSeries.length - 1].day : -1;
+
+  let latestBase = null;
+  let latestCurrent = null;
   const days = [];
 
   for (let d = 0; d < DAYS_IN_YEAR; d += 1) {
-    if (byDay18.has(d)) latest18 = byDay18.get(d);
-    if (byDay26.has(d)) latest26 = byDay26.get(d);
+    if (byDayBase.has(d)) latestBase = byDayBase.get(d);
+    if (byDayCurrent.has(d)) latestCurrent = byDayCurrent.get(d);
     days.push({
       day: d,
       label: formatDayOfYear(d),
-      p2018: latest18,
-      p2026: d <= lastDay26 ? latest26 : null,
+      base: latestBase,
+      current: d <= lastDayCurrent ? latestCurrent : null,
     });
   }
 
