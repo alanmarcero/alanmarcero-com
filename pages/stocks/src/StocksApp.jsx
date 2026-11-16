@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './StocksApp.css';
 import PageHeader from './drawdown/components/PageHeader';
 import TopHoldControl from './drawdown/components/TopHoldControl';
-import { DEFAULT_TOP_HOLD, topHoldById } from './drawdown/drawdowns';
+import { DEFAULT_TOP_HOLD, formatDepth, topHoldById } from './drawdown/drawdowns';
 import InstrumentPanel from './components/InstrumentPanel';
 import { INSTRUMENTS } from './data/instruments';
 import { anchorOf, byLabel } from './instruments';
@@ -31,6 +31,9 @@ function StocksApp() {
           {ORDERED.map((instrument) => (
             <a key={instrument.symbol} className="dd-filter" href={`#${anchorOf(instrument)}`}>
               {instrument.label}
+              <span className={`st-index__dd${instrument.drawdown < 0 ? '' : ' st-index__dd--ath'}`}>
+                {formatDepth(instrument.drawdown)}
+              </span>
             </a>
           ))}
         </nav>

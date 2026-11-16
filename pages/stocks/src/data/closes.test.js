@@ -18,6 +18,9 @@ describe.each(INSTRUMENTS.map((i) => [i.symbol, i]))('%s closes', (symbol, instr
     expect(CLOSES).toHaveLength(instrument.sessions);
     expect(CLOSES[0][0]).toBe(instrument.first);
     expect(CLOSES[CLOSES.length - 1][0]).toBe(instrument.last);
+    const peak = Math.max(...CLOSES.map(([, close]) => close));
+    const current = CLOSES[CLOSES.length - 1][1] / peak - 1;
+    expect(instrument.drawdown).toBeCloseTo(current, 4);
   });
 
   it('is strictly date-ordered with a positive close every session', () => {

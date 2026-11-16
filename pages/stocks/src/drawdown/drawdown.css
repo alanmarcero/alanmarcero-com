@@ -259,12 +259,20 @@
   stroke-width: 2;
 }
 
+.dd-chart__dot--current {
+  fill: var(--phosphor);
+}
+
 .dd-chart__endlabel {
   fill: var(--ink);
   font-family: var(--font-mono);
   font-size: var(--dd-endlabel-size, 14px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+}
+
+.dd-chart__endlabel--current {
+  fill: var(--phosphor);
 }
 
 /* -- tooltip: values lead, labels follow -------------------------------- */

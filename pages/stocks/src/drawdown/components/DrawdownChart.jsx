@@ -167,6 +167,30 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           );
         })}
 
+        {(() => {
+          const latest = coords[coords.length - 1];
+          const nearTop = latest.y < box.top + view.label + 8;
+          return (
+            <>
+              <circle
+                className="dd-chart__dot dd-chart__dot--current"
+                cx={latest.x}
+                cy={latest.y}
+                r={4.5}
+              />
+              <text
+                className="dd-chart__endlabel dd-chart__endlabel--current"
+                x={latest.x - 8}
+                y={nearTop ? latest.y + view.label + 4 : latest.y - 10}
+                textAnchor="end"
+                dominantBaseline="middle"
+              >
+                {formatDepth(last.depth)}
+              </text>
+            </>
+          );
+        })()}
+
         {hover && (
           <Crosshair
             x={hover.x}

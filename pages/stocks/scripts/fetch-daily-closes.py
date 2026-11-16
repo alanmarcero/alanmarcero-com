@@ -66,6 +66,11 @@ def slug(symbol):
     return symbol.lower()
 
 
+def current_drawdown(rows):
+    peak = max(close for _, close in rows)
+    return round(rows[-1][1] / peak - 1, 4)
+
+
 def closes_module(rows, info):
     return '\n'.join([
         HEADER,
@@ -95,7 +100,7 @@ def instruments_module(infos):
         entry = {
             'symbol': symbol, 'label': label, 'blurb': blurb, 'name': info['name'],
             'first': info['first'], 'last': info['last'], 'sessions': info['sessions'],
-            'fetched': info['fetched'],
+            'fetched': info['fetched'], 'drawdown': info['drawdown'],
         }
         body = json.dumps(entry, separators=(', ', ': '))[1:-1]
         lines.append(f"  {{ {body}, load: () => import('./closes/{slug(symbol)}.js') }},")
@@ -128,6 +133,7 @@ def main():
             rows, info = fetch_daily_closes(symbol, log=lambda m: print(m, file=sys.stderr))
         except HoleInSeries as error:
             sys.exit(f'{error}; refusing to write a series with a hole in it.')
+        info['drawdown'] = current_drawdown(rows)
         (DATA / 'closes' / f'{slug(symbol)}.js').write_text(closes_module(rows, info))
         infos[symbol] = info
         print(f'{symbol}: {info["sessions"]} sessions, {info["first"]} to {info["last"]}',
