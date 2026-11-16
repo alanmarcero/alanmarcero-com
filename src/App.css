@@ -953,6 +953,80 @@ footer {
   padding: 2px 8px;
 }
 
+.compat-wrap {
+  margin-top: var(--space-6);
+}
+
+.compat-head {
+  margin-bottom: var(--space-4);
+}
+
+.compat-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.compat-panel {
+  padding: var(--space-3) var(--space-4);
+}
+
+.compat-panel:hover {
+  transform: none;
+}
+
+.compat-scroll {
+  overflow-x: auto;
+}
+
+.compat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+.compat-table th,
+.compat-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.compat-table th {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--phosphor-dim);
+  white-space: nowrap;
+}
+
+.compat-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.compat-bank a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.compat-bank a:hover {
+  color: var(--phosphor);
+  text-decoration: underline;
+}
+
+.compat-formats {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
 /* --------------------------------------------------------------------------
    SIGNAL ANIMATIONS — the page reads as a live instrument
    -------------------------------------------------------------------------- */
