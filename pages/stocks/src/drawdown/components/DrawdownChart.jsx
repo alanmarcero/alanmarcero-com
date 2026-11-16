@@ -1,7 +1,8 @@
 import { useCallback, useId, useMemo } from 'react';
-import { indexAtX, plotBox, yearTicks } from '../chartGeometry';
+import { plotBox, yearTicks } from '../chartGeometry';
 import {
-  dateIndexMap, depthY, labelPlacement, thinYears, troughMarkers, underwaterPlot,
+  dateIndexMap, depthY, labelPlacement, nearestSnapIndex,
+  significantDropIndices, thinYears, troughMarkers, underwaterPlot,
 } from '../drawdownGeometry';
 import { deepest, formatDepth, formatSpan } from '../drawdowns';
 import { formatDate, formatPrice } from '../format';
@@ -40,9 +41,6 @@ const COMPACT = {
 
 // a partial year needs this many of its own sessions beside it to be labelled
 const MIN_YEAR_SESSIONS = 200;
-
-// a keypress moves a trading week; five thousand sessions are too many to walk
-const KEY_STRIDE = 5;
 
 const depthTick = (t) => (t === 0 ? '0%' : `−${Math.round(t * 100)}%`);
 
@@ -84,15 +82,33 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
     () => troughMarkers(episodes, dateIndex, coords),
     [episodes, dateIndex, coords],
   );
+  const dropIndices = useMemo(() => {
+    const episodeSet = new Set(markers.map((m) => m.index));
+    const lastIndex = coords.length - 1;
+    return significantDropIndices(points, domain.max)
+      .filter((idx) => !episodeSet.has(idx) && idx !== lastIndex);
+  }, [coords.length, domain.max, markers, points]);
+  const snapIndices = useMemo(() => {
+    if (!coords.length) return [];
+    const unique = new Set([
+      ...markers.map((m) => m.index),
+      ...dropIndices,
+      coords.length - 1,
+    ]);
+    return [...unique].sort((a, b) => a - b);
+  }, [coords.length, dropIndices, markers]);
   const labelled = useMemo(
     () => new Set(deepest(episodes, view.labelled).map((e) => e.peakDate)),
     [episodes, view.labelled],
   );
 
   const yOf = useCallback((magnitude) => depthY(-magnitude, domain, box), [box, domain]);
-  const indexAtViewX = useCallback((vx) => indexAtX(vx, coords.length, box), [box, coords.length]);
+  const indexAtViewX = useCallback(
+    (vx) => nearestSnapIndex(vx, snapIndices, coords),
+    [coords, snapIndices],
+  );
   const cursor = useChartCursor({
-    count: coords.length, viewWidth: view.w, indexAtViewX, stride: KEY_STRIDE,
+    count: coords.length, viewWidth: view.w, indexAtViewX, snapIndices,
   });
 
   if (!coords.length) return null;
@@ -140,6 +156,16 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
 
         <path className="dd-chart__area" d={plot.area} fill={`url(#${washId})`} />
         <polyline className="dd-chart__line dd-chart__line--drawdown" points={plot.line} />
+
+        {dropIndices.map((idx) => (
+          <circle
+            key={`drop-${points[idx].date}`}
+            className="dd-chart__dot dd-chart__dot--drop"
+            cx={coords[idx].x}
+            cy={coords[idx].y}
+            r={3.5}
+          />
+        ))}
 
         {markers.map((m) => (
           <circle

@@ -50,9 +50,68 @@ export function troughMarkers(episodes, dateIndex, coords) {
   return episodes.reduce((markers, episode) => {
     const index = dateIndex.get(episode.troughDate);
     if (index === undefined) return markers;
-    markers.push({ ...episode, x: coords[index].x, y: coords[index].y });
+    markers.push({
+      ...episode, index, x: coords[index].x, y: coords[index].y,
+    });
     return markers;
   }, []);
+}
+
+/**
+ * Session indices of local swing troughs where the price fell at least
+ * `threshold` from a local peak and then bounced at least `rebound`.
+ */
+export function significantDropIndices(points, maxDepth) {
+  if (points.length < 2) return [];
+  const threshold = Math.max(0.05, maxDepth * 0.12);
+  const rebound = threshold * 0.6;
+  const indices = [];
+  let peak = points[0].close;
+  let trough = peak;
+  let troughIdx = 0;
+  let inDrop = false;
+
+  for (let i = 1; i < points.length; i += 1) {
+    const { close } = points[i];
+    if (inDrop) {
+      if (close < trough) {
+        trough = close;
+        troughIdx = i;
+      } else if (close >= trough * (1 + rebound)) {
+        indices.push(troughIdx);
+        peak = close;
+        trough = close;
+        troughIdx = i;
+        inDrop = false;
+      }
+    } else if (close > peak) {
+      peak = close;
+      trough = close;
+      troughIdx = i;
+    } else if (close <= peak * (1 - threshold)) {
+      trough = close;
+      troughIdx = i;
+      inDrop = true;
+    }
+  }
+  if (inDrop) indices.push(troughIdx);
+  return indices;
+}
+
+/** Nearest index in `snapIndices` to viewBox x `vx`. */
+export function nearestSnapIndex(vx, snapIndices, coords) {
+  if (!Number.isFinite(vx) || !snapIndices.length) return null;
+  let best = snapIndices[0];
+  let bestDist = Math.abs(coords[best].x - vx);
+  for (let i = 1; i < snapIndices.length; i += 1) {
+    const idx = snapIndices[i];
+    const dist = Math.abs(coords[idx].x - vx);
+    if (dist < bestDist) {
+      best = idx;
+      bestDist = dist;
+    }
+  }
+  return best;
 }
 
 /**
