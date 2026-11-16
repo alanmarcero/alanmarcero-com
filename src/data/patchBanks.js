@@ -17,8 +17,8 @@ export const patchBanks = [
   },
   {
     name: 'Access Virus TI and TI2, OsTIrus, Adam Szabo Viper',
-    instruments: ['Virus TI', 'Virus TI2', 'OsTIrus', 'Adam Szabo Viper'],
-    description: '128 Anjunabeats- and Armada-style patches for Virus TI hardware, the OsTIrus emulator, and Adam Szabo\'s Viper VSTi.',
+    instruments: ['Virus TI', 'Virus TI2', 'OsTIrus', 'Adam Szabo Viper', 'discoDSP Retromulator'],
+    description: '128 Anjunabeats- and Armada-style patches for Virus TI hardware, the OsTIrus emulator, Adam Szabo\'s Viper VSTi, and discoDSP Retromulator.',
     count: 128,
     audioDemo: ['rUif508d-gM'],
     downloadLink: '/banks/Alan-M_Virus_TI_Patches.zip'
@@ -41,8 +41,8 @@ export const patchBanks = [
   },
   {
     name: 'Roland JP-8000, JP-8080, JE-8086, and Airwave',
-    instruments: ['Roland JP-8000', 'Roland JP-8080', 'JE-8086', 'Adam Szabo Airwave'],
-    description: '128 supersaw patches for JP-8000 and JP-8080 hardware, the free JE-8086 emulator, and Adam Szabo\'s Airwave VSTi.',
+    instruments: ['Roland JP-8000', 'Roland JP-8080', 'JE-8086', 'Adam Szabo Airwave', 'discoDSP Retromulator', 'discoDSP Corona'],
+    description: '128 supersaw patches for JP-8000 and JP-8080 hardware, the free JE-8086 emulator, Adam Szabo\'s Airwave VSTi, discoDSP Retromulator, and discoDSP Corona.',
     count: 128,
     audioDemo: ['HLFXwiBmuwc', 'hM7FGL3AJfI'],
     downloadLink: '/banks/Alan_M_JP80x0.zip'
@@ -57,8 +57,8 @@ export const patchBanks = [
   },
   {
     name: 'Nord Lead 2X, Nord Lead 2, DiscoDSP Discovery Pro',
-    instruments: ['Nord Lead 2X', 'Nord Lead 2', 'DiscoDSP Discovery Pro', 'The Usual Suspects Nodal Red 2x'],
-    description: '128 trance patches for Nord Lead 2/2X hardware, DiscoDSP Discovery Pro, and The Usual Suspects Nodal Red 2x.',
+    instruments: ['Nord Lead 2X', 'Nord Lead 2', 'DiscoDSP Discovery Pro', 'The Usual Suspects Nodal Red 2x', 'discoDSP Retromulator'],
+    description: '128 trance patches for Nord Lead 2/2X hardware, DiscoDSP Discovery Pro, The Usual Suspects Nodal Red 2x, and discoDSP Retromulator.',
     count: 128,
     audioDemo: ['821zcTGdt1c', 'fLQ8gW8Op-Q'],
     downloadLink: '/banks/Alan_M_Nord_Lead_2x.zip'
