@@ -15,7 +15,7 @@ const WIDE = {
   w: 1000,
   h: 300,
   margin: {
-    top: 18, right: 24, bottom: 40, left: 66,
+    top: 18, right: 68, bottom: 40, left: 66,
   },
   tick: 13,
   label: 13,
@@ -29,7 +29,7 @@ const COMPACT = {
   w: 520,
   h: 320,
   margin: {
-    top: 16, right: 16, bottom: 38, left: 76,
+    top: 16, right: 84, bottom: 38, left: 76,
   },
   tick: 19,
   label: 17,
@@ -169,7 +169,6 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
 
         {(() => {
           const latest = coords[coords.length - 1];
-          const nearTop = latest.y < box.top + view.label + 8;
           return (
             <>
               <circle
@@ -180,9 +179,9 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
               />
               <text
                 className="dd-chart__endlabel dd-chart__endlabel--current"
-                x={latest.x - 8}
-                y={nearTop ? latest.y + view.label + 4 : latest.y - 10}
-                textAnchor="end"
+                x={latest.x + 8}
+                y={latest.y}
+                textAnchor="start"
                 dominantBaseline="middle"
               >
                 {formatDepth(last.depth)}
