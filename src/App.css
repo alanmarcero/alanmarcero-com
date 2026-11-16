@@ -1020,6 +1020,18 @@ footer {
   text-decoration: underline;
 }
 
+.compat-table td a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 2px;
+}
+
+.compat-table td a:hover {
+  color: var(--phosphor);
+  text-decoration-color: var(--phosphor);
+}
+
 .compat-formats {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
