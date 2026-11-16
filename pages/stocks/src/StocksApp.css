@@ -50,3 +50,63 @@
     aspect-ratio: 520 / 320;
   }
 }
+
+/* -- 2018 vs 2026 relative overlay -------------------------------------- */
+.st-overlay__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+
+.st-overlay__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.st-overlay__legend-item .dd-tip__key {
+  transform: none;
+}
+
+.st-overlay__picker {
+  margin-bottom: var(--space-3);
+}
+
+.st-overlay__line--2018 {
+  stroke: var(--amber);
+  stroke-width: 1.6;
+  opacity: 0.9;
+}
+
+.st-overlay__line--2026 {
+  stroke: var(--phosphor);
+  stroke-width: 2;
+}
+
+.st-overlay__dot--2018 {
+  fill: var(--amber);
+}
+
+.st-overlay__endlabel--2018 {
+  fill: var(--amber);
+}
+
+.dd-chart__cursor .st-overlay__cursor-dot--2018 {
+  fill: var(--amber);
+}
+
+.dd-chart__cursor .st-overlay__cursor-dot--2026 {
+  fill: var(--phosphor);
+}
+
+.st-overlay__key--2018 {
+  background: var(--amber);
+}
+
+.st-overlay__key--2026 {
+  background: var(--phosphor);
+}

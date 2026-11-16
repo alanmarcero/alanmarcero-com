@@ -4,6 +4,7 @@ import { DEFAULT_TOP_HOLD, formatDepth, topHoldById } from './drawdown/drawdowns
 import InstrumentPanel from './components/InstrumentPanel';
 import { INSTRUMENTS } from './data/instruments';
 import { anchorOf, byLabel } from './instruments';
+import YearOverlayPanel from './overlay/YearOverlayPanel';
 
 const ORDERED = byLabel(INSTRUMENTS);
 const HOLD = topHoldById(DEFAULT_TOP_HOLD);
@@ -37,6 +38,8 @@ function StocksApp() {
       </PageHeader>
 
       <main className="dd-main">
+        <YearOverlayPanel instruments={ORDERED} />
+
         {ORDERED.map((instrument) => (
           <InstrumentPanel key={instrument.symbol} instrument={instrument} hold={HOLD} />
         ))}
