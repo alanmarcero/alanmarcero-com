@@ -18,7 +18,7 @@ function Releases({ items, loading, error, query }) {
         )}
         {!loading && !error && items.length === 0 && (
           <p className="codex-state" role="status">
-            {query ? `No releases match “${query}”.` : 'No releases are listed just now.'}
+            {query ? `No releases match "${query}".` : 'No releases are listed just now.'}
           </p>
         )}
 

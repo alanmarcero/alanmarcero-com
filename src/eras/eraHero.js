@@ -18,21 +18,21 @@ export const ERA_HERO = {
     writeup: [
       'Greetings and salutations. My name is Alan Marcero and I am a web developer and electronic music producer hailing from Burlington, Vermont, USA.',
       'Below you will find my personal blog, but the other sections are more interesting and pertain mostly to my hobby as an electronic music producer. Enjoy your stay.',
-      'I am always available for remixes or web development / design work — feel free to email me to talk business, or just to chat.',
+      'I am always available for remixes or web development / design work, so feel free to email me to talk business or just to chat.',
     ],
   },
   y2014: {
     tagline: 'Web Programmer · Music Producer',
     writeup: [
       'A new approach to synthesizer patch bank design and distribution: every bank is offered on a "name your own price" basis. Try one out before laying down your hard-earned cash.',
-      "Sounds inspired by Anjunabeats, Armada, and the artists they've influenced — for the Access Virus, Nord Lead, Prophet '08, Andromeda, and more.",
+      "Sounds inspired by Anjunabeats, Armada, and the artists they've influenced, for the Access Virus, Nord Lead, Prophet '08, Andromeda, and more.",
       '2,805 people have purchased 3,634 patch banks :: last purchase 5 hours ago.',
     ],
   },
   y2020: {
     tagline: 'AM Sounds · EDM Synth Patches',
     writeup: [
-      'Trance, EDM, and synthwave patches for classic hardware and modern emulations — still name-your-price, still made with love.',
+      'Trance, EDM, and synthwave patches for classic hardware and modern emulations. Still name-your-price, still made with love.',
       'New this era: the Roland SH-01A and Moog Slim / Little Phatty banks join the lineup, each with an HTML5 audio demo.',
       '4,014 people have purchased 5,319 patch banks :: last purchase 1 day ago.',
     ],

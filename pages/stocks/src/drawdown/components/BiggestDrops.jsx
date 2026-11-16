@@ -14,7 +14,7 @@ function BiggestDrops({ episodes, id }) {
   return (
     <div className="dd-drops">
       <h3 className="dd-drops__title" id={`${id}-drops`}>
-        {`Biggest drops, one per year${drops.length === LIMIT ? ` — the deepest ${LIMIT}` : ''}`}
+        {`Biggest drops, one per year${drops.length === LIMIT ? `, the deepest ${LIMIT}` : ''}`}
       </h3>
       <ol className="dd-drops__list" aria-labelledby={`${id}-drops`}>
         {drops.map((drop) => (
@@ -22,7 +22,7 @@ function BiggestDrops({ episodes, id }) {
             <span className="dd-drops__year">{drop.year}</span>
             <strong className="dd-drops__depth">{formatDepth(drop.depth)}</strong>
             <span className="dd-drops__span">
-              {`${formatDate(drop.peakDate)} → ${formatDate(drop.troughDate)}`}
+              {`${formatDate(drop.peakDate)} -> ${formatDate(drop.troughDate)}`}
               <span className="dd-drops__days">
                 {`${formatSpan(drop.toBottomDays)} peak to bottom`}
                 {drop.open ? ', still open' : ''}

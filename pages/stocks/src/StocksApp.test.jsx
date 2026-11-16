@@ -20,7 +20,7 @@ describe('StocksApp', () => {
     await loaded();
     const titles = screen.getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent)
-      .filter((t) => t !== 'Where this comes from');
+      .filter((t) => t !== 'Data and methodology');
     expect(titles).toHaveLength(INSTRUMENTS.length);
     expect(titles[0]).toBe('Bitcoin (BTC-USD)');
     expect(titles[1]).toMatch(/^BRK-B/);

@@ -33,8 +33,8 @@ export const patchBanks = [
   },
   {
     name: 'Alesis A6 Andromeda',
-    instruments: ['Alesis A6 Andromeda'],
-    description: '128 patches for the Andromeda\'s 16-voice analog engine. Raw, FX-free trance sounds.',
+    instruments: ['Alesis A6 Andromeda', 'Isla Electronics ASYX'],
+    description: '128 patches for the Andromeda\'s 16-voice analog engine and the Isla Electronics ASYX plugin. Raw, FX-free trance sounds.',
     count: 128,
     audioDemo: ['MmfoYC0mxqQ', '1I_zLE2L1fQ'],
     downloadLink: '/banks/Alan_M_Andromeda_A6.zip'
