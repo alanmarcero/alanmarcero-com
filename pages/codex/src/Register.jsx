@@ -1,7 +1,7 @@
-import EnvelopeField from '../../matrix/src/graphics/EnvelopeField';
-import WaveTrace from '../../opus5ios/src/graphics/WaveTrace.jsx';
-import Demo from '../../opus5ios/src/Demo';
-import { demoCopy, ordinal } from '../../matrix/src/lib/format';
+import EnvelopeField from './shared/graphics/EnvelopeField';
+import WaveTrace from './shared/graphics/WaveTrace.jsx';
+import Demo from './shared/Demo';
+import { demoCopy, ordinal } from './shared/lib/format';
 import { BankFigure, BankThumbnail } from './BankFigure';
 import { bankSizeLabel } from './lib/catalog';
 

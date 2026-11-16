@@ -3,7 +3,7 @@ import './codex.css';
 import { patchBanks } from '../../../src/data/patchBanks';
 import useMusicItems from '../../../src/hooks/useMusicItems';
 import useScrollProgress from '../../../src/hooks/useScrollProgress';
-import useNearestRow from '../../opus-max-mac/src/hooks/useNearestRow';
+import useNearestRow from './shared/hooks/useNearestRow';
 import NoResults from '../../../src/components/NoResults';
 import Hero from './Hero';
 import Finder from './Finder';

@@ -1,6 +1,6 @@
 import { YOUTUBE_CHANNEL_URL, GITHUB_URL } from '../../../src/config';
 import SignalMeter from '../../../src/components/SignalMeter';
-import Line from '../../opus-max-mac/src/Line';
+import Line from './shared/Line';
 import { credits } from './lib/catalog';
 
 function Colophon() {

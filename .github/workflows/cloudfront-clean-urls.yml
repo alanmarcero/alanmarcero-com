@@ -70,18 +70,6 @@ jobs:
                 request.uri = '/pages/neworleans/tours.html';
                 return request;
               }
-              if (stripped === '/matrix-arcade' || stripped === '/matrix/arcade') {
-                request.uri = '/pages/matrix/arcade.html';
-                return request;
-              }
-              if (stripped === '/opus5ios-arcade' || stripped === '/opus5ios/arcade') {
-                request.uri = '/pages/opus5ios/arcade.html';
-                return request;
-              }
-              if (stripped === '/opus-max-mac-arcade' || stripped === '/opus-max-mac/arcade') {
-                request.uri = '/pages/opus-max-mac/arcade.html';
-                return request;
-              }
 
               var pathPart = stripped.indexOf('/') === 0 ? stripped.slice(1) : stripped;
               if (pathPart.indexOf('/') === -1) {

@@ -1,9 +1,9 @@
 import { YOUTUBE_CHANNEL_URL } from '../../../src/config';
 import { patchBanks } from '../../../src/data/patchBanks';
-import EnvelopeField from '../../matrix/src/graphics/EnvelopeField';
-import { totalPatches } from '../../matrix/src/lib/catalog';
-import WaveTrace from '../../opus5ios/src/graphics/WaveTrace.jsx';
-import Line from '../../opus-max-mac/src/Line';
+import EnvelopeField from './shared/graphics/EnvelopeField';
+import { totalPatches } from './shared/lib/catalog';
+import WaveTrace from './shared/graphics/WaveTrace.jsx';
+import Line from './shared/Line';
 import SynthesistMark from '../../../src/components/graphics/SynthesistMark';
 
 const TOTAL_PATCHES = totalPatches(patchBanks);
