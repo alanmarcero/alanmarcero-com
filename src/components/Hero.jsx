@@ -121,6 +121,7 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
         )}
         <nav className="hero-nav" aria-label="Sections">
           <a href="#store">Patch Banks</a>
+          <a href="#compatible-instruments">Compatibility</a>
           <a href="#music-remixes">Music</a>
           <a href="#contact">Contact</a>
         </nav>
