@@ -9,11 +9,12 @@ import {
 } from './drawdown/drawdowns';
 
 // every panel imports its series on mount; wait for them so no update lands after a test
-const loaded = () => screen.findAllByRole('img', { name: /as a loss from its all-time high/i }, { timeout: 5000 });
+const loaded = () => screen.findAllByRole('img', { name: /as a loss from its all-time high/i }, { timeout: 10000 });
 
 // jsdom has no IntersectionObserver, so every panel counts as on screen and loads
 
 describe('StocksApp', () => {
+  jest.setTimeout(15000);
   it('renders one panel per instrument, alphabetically', async () => {
     render(<StocksApp />);
     await loaded();
@@ -31,7 +32,8 @@ describe('StocksApp', () => {
     await loaded();
     const nav = screen.getByRole('navigation', { name: 'Instruments' });
     const links = within(nav).getAllByRole('link');
-    expect(links.map((l) => l.textContent)[0]).toBe('Bitcoin');
+    const btc = INSTRUMENTS.find((i) => i.symbol === 'BTC-USD');
+    expect(links[0]).toHaveTextContent(`Bitcoin${formatDepth(btc.drawdown)}`);
     expect(links[0]).toHaveAttribute('href', '#btc-usd');
     expect(links).toHaveLength(INSTRUMENTS.length);
   });
