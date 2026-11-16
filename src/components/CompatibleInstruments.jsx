@@ -1,6 +1,24 @@
 import ModulePanel from './ModulePanel';
 
-const joinOrDash = (items) => (items && items.length > 0 ? items.join(', ') : '-');
+function renderInstrumentList(items) {
+  if (!items || items.length === 0) return '-';
+  return items.map((item, idx) => {
+    const label = typeof item === 'string' ? item : item.name;
+    const url = typeof item === 'string' ? null : item.url;
+    return (
+      <span key={label}>
+        {idx > 0 ? ', ' : null}
+        {url ? (
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            {label}
+          </a>
+        ) : (
+          label
+        )}
+      </span>
+    );
+  });
+}
 
 function CompatibleInstruments({ banks }) {
   const synthBanks = banks.filter((bank) => bank.count);
@@ -28,9 +46,11 @@ function CompatibleInstruments({ banks }) {
                   <td className="compat-bank">
                     <a href={bank.downloadLink} download>{bank.name}</a>
                   </td>
-                  <td className="compat-formats">{joinOrDash(bank.formats)}</td>
-                  <td>{joinOrDash(bank.hardware || bank.instruments)}</td>
-                  <td>{joinOrDash(bank.software)}</td>
+                  <td className="compat-formats">
+                    {bank.formats && bank.formats.length > 0 ? bank.formats.join(', ') : '-'}
+                  </td>
+                  <td>{renderInstrumentList(bank.hardware || bank.instruments)}</td>
+                  <td>{renderInstrumentList(bank.software)}</td>
                 </tr>
               ))}
             </tbody>

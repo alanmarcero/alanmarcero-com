@@ -10,12 +10,21 @@ describe('CompatibleInstruments', () => {
     render(<CompatibleInstruments banks={patchBanks} />);
 
     expect(screen.getByRole('heading', { name: 'Compatible Instruments' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Alesis A6 Andromeda' })).toHaveAttribute(
+    const andromedaLinks = screen.getAllByRole('link', { name: 'Alesis A6 Andromeda' });
+    expect(andromedaLinks[0]).toHaveAttribute('href', '/banks/Alan_M_Andromeda_A6.zip');
+    expect(andromedaLinks[1]).toHaveAttribute('href', 'https://www.alesis.com/');
+    expect(screen.getByRole('link', { name: 'Isla Electronics ASYX' })).toHaveAttribute(
       'href',
-      '/banks/Alan_M_Andromeda_A6.zip'
+      'https://islaelectronics.com/'
     );
-    expect(screen.getByText(/Isla Electronics ASYX/)).toBeInTheDocument();
-    expect(screen.getByText(/Profit-08 \(mpc-vst-profit8, GitHub\)/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Profit-08 (mpc-vst-profit8, GitHub)' })).toHaveAttribute(
+      'href',
+      'https://github.com/sd88me/mpc-vst-profit8'
+    );
+    expect(screen.getByRole('link', { name: 'The Usual Suspects OsTIrus (GitHub)' })).toHaveAttribute(
+      'href',
+      'https://github.com/dsp56300/gearmulator'
+    );
     expect(screen.queryByText('Audio Demo MIDIs')).not.toBeInTheDocument();
   });
 
