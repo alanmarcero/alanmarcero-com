@@ -3,6 +3,7 @@ import './App.css';
 import './eras/eras.css';
 import Hero from './components/Hero';
 import PatchBankItem from './components/PatchBankItem';
+import CompatibleInstruments from './components/CompatibleInstruments';
 import MusicItem from './components/MusicItem';
 import SkeletonCard from './components/SkeletonCard';
 import NoResults from './components/NoResults';
@@ -53,7 +54,9 @@ function App() {
   // A pending dismissal must not fire into an unmounted App.
   useEffect(() => () => clearTimeout(toastTimerRef.current), []);
 
-  const filteredPatchBanks = patchBanksData.filter(createSearchFilter(searchQuery, 'name', 'description'));
+  const filteredPatchBanks = patchBanksData.filter(
+    createSearchFilter(searchQuery, 'name', 'description', 'instruments', 'hardware', 'software', 'formats')
+  );
   const filteredMusicItems = musicItems.filter(createSearchFilter(searchQuery, 'title', 'description'));
 
   const hasNoResults = searchQuery
@@ -104,6 +107,7 @@ function App() {
               />
             ))}
           </div>
+          <CompatibleInstruments banks={filteredPatchBanks} />
         </section>
 
         <section id="music-remixes" aria-labelledby="music-heading">
