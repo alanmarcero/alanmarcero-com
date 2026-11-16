@@ -37,7 +37,7 @@ function Colophon() {
             <ul className="codex-credits">
               {credits.map((item) => (
                 <li key={item.slug}>
-                  <span>{item.bank}</span> — {item.author}, {' '}
+                  <span>{item.bank}</span> - {item.author}, {' '}
                   {item.licenceUrl ? (
                     <a href={item.licenceUrl} rel="license noopener noreferrer" target="_blank">
                       {item.licence}

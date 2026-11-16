@@ -19,7 +19,7 @@ function StocksApp() {
           <>
             How far each all-time high fell before it was beaten. Every daily close
             Yahoo Finance holds for fifteen stocks, funds and coins, each plotted as a
-            loss from the highest close before it &mdash; so the line sits on the top
+            loss from the highest close before it, so the line sits on the top
             edge at a record and hangs below it for as long as the record stands.
           </>
         )}
@@ -42,35 +42,35 @@ function StocksApp() {
         ))}
 
         <footer className="dd-notes">
-          <h2 className="dd-notes__title">Where this comes from</h2>
+          <h2 className="dd-notes__title">Data and methodology</h2>
           <ul className="dd-notes__list">
             <li>
               Daily closes from Yahoo Finance, read {INSTRUMENTS[0].fetched}, from each
-              instrument&rsquo;s first session to the last one that had closed. Closes
+              instrument's first session to the last one that had closed. Closes
               are adjusted for splits and not for dividends, so a fund that pays out
               reads a little deeper here than its total return did.
             </li>
             <li>
               A drawdown runs from an all-time closing high to the first close above
-              it, and its depth is the lowest close in between. A top &ldquo;stands&rdquo;
+              it, and its depth is the lowest close in between. A top "stands"
               for the calendar days from its peak to that recovery, or to the last
               close for the one still open; only tops that stood at least six
               months (180 days) are counted.
             </li>
             <li>
-              Bitcoin and Ethereum trade around the clock, so their &ldquo;close&rdquo;
+              Bitcoin and Ethereum trade around the clock, so their "close"
               is the price at midnight UTC, every day of the week.
             </li>
             <li>
-              SMH before 2011 is Merrill Lynch&rsquo;s Semiconductor HOLDRS, whose
-              ticker VanEck&rsquo;s fund took over; Yahoo splices the two, and so does
-              the chart. XLF&rsquo;s 2016 &ldquo;split&rdquo; is the spin-off of its
+              SMH before 2011 is Merrill Lynch's Semiconductor HOLDRS, whose
+              ticker VanEck's fund took over; Yahoo splices the two, and so does
+              the chart. XLF's 2016 "split" is the spin-off of its
               real-estate names into XLRE.
             </li>
             <li>
               Yahoo now and then carries a session with no close at all. Rather than
-              skip it &mdash; which can hide the bottom of a drawdown &mdash; each one is
-              read back from the following session&rsquo;s previous close.
+              skip it (which can hide the bottom of a drawdown), each one is
+              read back from the following session's previous close.
             </li>
           </ul>
         </footer>

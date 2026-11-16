@@ -59,7 +59,7 @@ function BankEntry({ bank, index, isCurrent, rowRef, onPreview }) {
             className="codex-action"
             href={bank.downloadLink}
             download
-            aria-label={`Download the bank — ${bank.name}`}
+            aria-label={`Download the bank - ${bank.name}`}
           >
             Download the bank
           </a>
@@ -87,7 +87,7 @@ function Register({ banks, query, rowRef, activeIndex, onPreview }) {
 
         {banks.length === 0 ? (
           <p className="codex-state">
-            Nothing in the catalogue matches &ldquo;{query}&rdquo;. Try another
+            Nothing in the catalogue matches "{query}". Try another
             instrument or track name.
           </p>
         ) : (

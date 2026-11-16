@@ -38,11 +38,11 @@ function Hero() {
         <div className="codex-hero__deck">
           <div className="codex-hero__copy">
             <p className="codex-hero__lead">
-              Trance and electronic music producer from Boston, USA. Crafting
-              original tracks, remixes, and synthesizer sound design since the
-              early 2000s. Supported by Ferry Corsten, Paul van Dyk, Sean Tyas,
-              and Daniel Kandi. Featured on A State of Trance and BBC Radio 1&rsquo;s
-              Essential Mix. Released on Armada, Bonzai, and Ministry of Sound.
+              Trance and electronic music producer from Boston, USA. I've produced
+              original tracks, remixes, and synthesizer sound banks since the
+              early 2000s. My music has been supported by Ferry Corsten, Paul van Dyk,
+              Sean Tyas, and Daniel Kandi, featured on A State of Trance and BBC Radio 1's
+              Essential Mix, and released on Armada, Bonzai, and Ministry of Sound.
             </p>
 
             <div className="codex-hero__actions">

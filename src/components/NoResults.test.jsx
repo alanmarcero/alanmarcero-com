@@ -21,7 +21,6 @@ describe("NoResults", () => {
     render(<NoResults query="synth bass" />);
 
     const message = screen.getByText(/synth bass/);
-    expect(message.textContent).toContain("\u201C");
-    expect(message.textContent).toContain("\u201D");
+    expect(message.textContent).toContain('"synth bass"');
   });
 });

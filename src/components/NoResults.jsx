@@ -17,7 +17,7 @@ function NoResults({ query }) {
         />
       </svg>
       <p className="no-results__message">
-        No signal for <span className="no-results__query">&ldquo;{query}&rdquo;</span>
+        No signal for <span className="no-results__query">"{query}"</span>
       </p>
       <p className="no-results__hint">Try different keywords, or clear the search.</p>
     </div>
