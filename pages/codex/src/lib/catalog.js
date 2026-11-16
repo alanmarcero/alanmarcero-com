@@ -1,10 +1,10 @@
-import { matchesQuery } from '../../../matrix/src/lib/catalog';
-import { count } from '../../../matrix/src/lib/format';
+import { matchesQuery } from '../shared/lib/catalog';
+import { count } from '../shared/lib/format';
 import {
   codexImages,
   credits as opusCredits,
   imageFor as opusImageFor,
-} from '../../../opus5ios/src/data/synthImages';
+} from '../shared/data/synthImages';
 
 /** This route's own photograph where it has one, the /opus5ios one otherwise. */
 export const imageFor = (bankName) => codexImages[bankName] || opusImageFor(bankName);

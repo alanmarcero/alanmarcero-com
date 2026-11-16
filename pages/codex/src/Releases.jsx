@@ -1,6 +1,6 @@
-import WaveTrace from '../../opus5ios/src/graphics/WaveTrace.jsx';
-import Demo from '../../opus5ios/src/Demo';
-import { ordinal } from '../../matrix/src/lib/format';
+import WaveTrace from './shared/graphics/WaveTrace.jsx';
+import Demo from './shared/Demo';
+import { ordinal } from './shared/lib/format';
 
 function Releases({ items, loading, error, query }) {
   return (

@@ -8,7 +8,7 @@ import {
   isTypingTarget,
 } from './catalog';
 import { patchBanks } from '../../../../src/data/patchBanks';
-import { codexImages, imageFor as opusImageFor } from '../../../opus5ios/src/data/synthImages';
+import { codexImages, imageFor as opusImageFor } from '../shared/data/synthImages';
 
 describe('imageFor', () => {
   it('prefers this route\'s own photograph', () => {

@@ -1,7 +1,7 @@
-import FaceplatePlan from '../../opus5ios/src/graphics/FaceplatePlan';
-import WaveTrace from '../../opus5ios/src/graphics/WaveTrace.jsx';
-import Line from '../../opus-max-mac/src/Line';
-import { sourceFor, srcSetFor } from '../../opus5ios/src/data/synthImages';
+import FaceplatePlan from './shared/graphics/FaceplatePlan';
+import WaveTrace from './shared/graphics/WaveTrace.jsx';
+import Line from './shared/Line';
+import { sourceFor, srcSetFor } from './shared/data/synthImages';
 import { bankSizeLabel, imageFor } from './lib/catalog';
 
 function BankPhoto({ image, sizes, lazy = false }) {
