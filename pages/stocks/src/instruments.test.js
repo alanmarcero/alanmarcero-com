@@ -4,7 +4,7 @@ import { INSTRUMENTS } from './data/instruments';
 describe('byLabel', () => {
   it('orders the page alphabetically, ignoring case', () => {
     expect(byLabel(INSTRUMENTS).map((i) => i.label)).toEqual([
-      'Bitcoin', 'BRK-B', 'Ethereum', 'QQQ', 'SMH', 'SPY',
+      'Bitcoin', 'BRK-B', 'Ethereum', 'NVDA', 'QQQ', 'SMH', 'SPY',
       'XLB', 'XLE', 'XLF', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLY',
     ]);
   });
