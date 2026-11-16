@@ -29,7 +29,7 @@ export const TOP_HOLDS = [
   { id: '1y', days: 365, label: '1 year' },
 ];
 
-export const DEFAULT_TOP_HOLD = '1m';
+export const DEFAULT_TOP_HOLD = '6m';
 
 export function topHoldById(id) {
   return TOP_HOLDS.find((h) => h.id === id) || TOP_HOLDS[0];

@@ -1,17 +1,14 @@
-import { useState } from 'react';
 import './StocksApp.css';
 import PageHeader from './drawdown/components/PageHeader';
-import TopHoldControl from './drawdown/components/TopHoldControl';
 import { DEFAULT_TOP_HOLD, formatDepth, topHoldById } from './drawdown/drawdowns';
 import InstrumentPanel from './components/InstrumentPanel';
 import { INSTRUMENTS } from './data/instruments';
 import { anchorOf, byLabel } from './instruments';
 
 const ORDERED = byLabel(INSTRUMENTS);
+const HOLD = topHoldById(DEFAULT_TOP_HOLD);
 
 function StocksApp() {
-  const [topHold, setTopHold] = useState(DEFAULT_TOP_HOLD);
-  const hold = topHoldById(topHold);
 
   return (
     <div className="dd-page">
@@ -40,12 +37,8 @@ function StocksApp() {
       </PageHeader>
 
       <main className="dd-main">
-        <div className="dd-controls st-controls">
-          <TopHoldControl value={topHold} onChange={setTopHold} />
-        </div>
-
         {ORDERED.map((instrument) => (
-          <InstrumentPanel key={instrument.symbol} instrument={instrument} hold={hold} />
+          <InstrumentPanel key={instrument.symbol} instrument={instrument} hold={HOLD} />
         ))}
 
         <footer className="dd-notes">
@@ -61,8 +54,8 @@ function StocksApp() {
               A drawdown runs from an all-time closing high to the first close above
               it, and its depth is the lowest close in between. A top &ldquo;stands&rdquo;
               for the calendar days from its peak to that recovery, or to the last
-              close for the one still open; the control at the top counts only the
-              tops that stood at least that long, on every chart at once.
+              close for the one still open; only tops that stood at least six
+              months (180 days) are counted.
             </li>
             <li>
               Bitcoin and Ethereum trade around the clock, so their &ldquo;close&rdquo;
