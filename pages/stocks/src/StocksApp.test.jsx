@@ -75,8 +75,10 @@ describe('StocksApp', () => {
     ).toBeInTheDocument();
 
     const yearPicker = screen.getByRole('group', { name: /Select comparison year/i });
-    expect(within(yearPicker).getAllByRole('button')).toHaveLength(10);
-    fireEvent.click(within(yearPicker).getByRole('button', { name: '2016' }));
+    const yearButtons = within(yearPicker).getAllByRole('button');
+    expect(yearButtons).toHaveLength(10);
+    expect(yearButtons[0]).toHaveTextContent(/^2016[+\u2212]?\d\.\d{2}$/);
+    fireEvent.click(within(yearPicker).getByRole('button', { name: /^2016/ }));
     expect(
       await screen.findByRole('img', { name: /QQQ 2016 vs 2026 relative percentage performance/i }),
     ).toBeInTheDocument();

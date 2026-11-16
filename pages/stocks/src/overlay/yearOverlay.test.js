@@ -5,8 +5,10 @@ import {
   dayOfYear,
   extractYearRelative,
   formatAxisPct,
+  formatCorrelation,
   formatDayOfYear,
   formatSignedPct,
+  overlayCorrelation,
   overlayPlot,
   percentDomain,
   percentY,
@@ -141,5 +143,43 @@ describe('overlayPlot and buildDayLookup', () => {
     expect(lookup[181].current.pct).toBeCloseTo(0.1);
     expect(lookup[200].current).toBeNull();
     expect(lookup[364].base.pct).toBeCloseTo(-0.1);
+  });
+});
+
+describe('overlayCorrelation and formatCorrelation', () => {
+  it('computes +1 for identical trajectories and -1 for opposite trajectories', () => {
+    const a = [
+      { day: 0, pct: 0 },
+      { day: 1, pct: 0.05 },
+      { day: 2, pct: 0.1 },
+    ];
+    const b = [
+      { day: 0, pct: 0 },
+      { day: 1, pct: 0.1 },
+      { day: 2, pct: 0.2 },
+    ];
+    const c = [
+      { day: 0, pct: 0 },
+      { day: 1, pct: -0.05 },
+      { day: 2, pct: -0.1 },
+    ];
+    expect(overlayCorrelation(a, b)).toBeCloseTo(1);
+    expect(overlayCorrelation(a, c)).toBeCloseTo(-1);
+  });
+
+  it('returns null when overlap has fewer than 2 days or zero variance', () => {
+    expect(overlayCorrelation([], [{ day: 0, pct: 0 }])).toBeNull();
+    expect(overlayCorrelation([{ day: 0, pct: 0 }], [{ day: 0, pct: 0 }])).toBeNull();
+    expect(overlayCorrelation(
+      [{ day: 0, pct: 0 }, { day: 1, pct: 0 }],
+      [{ day: 0, pct: 0 }, { day: 1, pct: 0.1 }],
+    )).toBeNull();
+  });
+
+  it('formats correlation coefficients with sign and two decimals', () => {
+    expect(formatCorrelation(0.842)).toBe('+0.84');
+    expect(formatCorrelation(-0.419)).toBe('−0.42');
+    expect(formatCorrelation(0.001)).toBe('0.00');
+    expect(formatCorrelation(null)).toBe('n/a');
   });
 });

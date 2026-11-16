@@ -34,6 +34,7 @@ describe('YearOverlayChart', () => {
     expect(container.querySelector('.st-overlay__line--current')).not.toBeNull();
     expect(container.querySelector('.st-overlay__endlabel--base')).toHaveTextContent('−10.0%');
     expect(container.querySelector('.dd-chart__endlabel--current')).toHaveTextContent('+10.0%');
+    expect(container.querySelector('.st-overlay__chart-corr')).toHaveTextContent(/^r = [+\u2212]?\d\.\d{2}$/);
   });
 
   it('shows the comparison year in the tooltip when stepped with arrow keys', () => {

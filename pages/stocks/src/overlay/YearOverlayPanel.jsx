@@ -7,29 +7,78 @@ import {
   CURRENT_YEAR,
   OVERLAY_YEARS,
   extractYearRelative,
+  formatCorrelation,
   formatSignedPct,
+  overlayCorrelation,
 } from './yearOverlay';
 
-function YearOverlayContent({ instrument, baseYear }) {
+function YearPicker({ baseYear, onSelectYear, correlations }) {
+  return (
+    <div className="st-overlay__picker">
+      <p className="dd-controls__label">Compare year</p>
+      <div className="dd-filters" role="group" aria-label="Select comparison year">
+        {OVERLAY_YEARS.map((year) => {
+          const active = year === baseYear;
+          const r = correlations ? correlations.get(year) : undefined;
+          const signClass = r > 0
+            ? ' st-overlay__year-corr--pos'
+            : r < 0
+              ? ' st-overlay__year-corr--neg'
+              : '';
+          return (
+            <button
+              key={year}
+              type="button"
+              className={`dd-filter st-overlay__year-btn${active ? ' dd-filter--on' : ''}`}
+              aria-pressed={active}
+              onClick={() => onSelectYear(year)}
+            >
+              {year}
+              {r !== undefined && (
+                <span className={`st-overlay__year-corr${signClass}`}>
+                  {formatCorrelation(r)}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function YearOverlayContent({ instrument, baseYear, onSelectYear }) {
   const { status, closes } = useCloses(instrument.load, true);
 
-  const { baseSeries, currentSeries } = useMemo(() => {
-    if (!closes) return { baseSeries: [], currentSeries: [] };
-    return {
-      baseSeries: extractYearRelative(closes, baseYear),
-      currentSeries: extractYearRelative(closes, CURRENT_YEAR),
-    };
-  }, [baseYear, closes]);
+  const computed = useMemo(() => {
+    if (!closes) return null;
+    const currentSeries = extractYearRelative(closes, CURRENT_YEAR);
+    const seriesByYear = new Map();
+    const correlations = new Map();
+    for (const year of OVERLAY_YEARS) {
+      const series = extractYearRelative(closes, year);
+      seriesByYear.set(year, series);
+      correlations.set(year, overlayCorrelation(series, currentSeries));
+    }
+    return { currentSeries, seriesByYear, correlations };
+  }, [closes]);
 
-  if (!closes) {
+  if (!computed) {
     return (
-      <div className="st-placeholder" aria-hidden={status !== 'error'}>
-        {status === 'error' && (
-          <p className="dd-panel__note">This series did not load. Reload the page to try again.</p>
-        )}
-      </div>
+      <>
+        <YearPicker baseYear={baseYear} onSelectYear={onSelectYear} correlations={null} />
+        <div className="st-placeholder" aria-hidden={status !== 'error'}>
+          {status === 'error' && (
+            <p className="dd-panel__note">This series did not load. Reload the page to try again.</p>
+          )}
+        </div>
+      </>
     );
   }
+
+  const { currentSeries, seriesByYear, correlations } = computed;
+  const baseSeries = seriesByYear.get(baseYear) || [];
+  const correlation = correlations.get(baseYear) ?? null;
 
   const firstBase = baseSeries[0];
   const lastBase = baseSeries[baseSeries.length - 1];
@@ -38,12 +87,15 @@ function YearOverlayContent({ instrument, baseYear }) {
 
   return (
     <>
+      <YearPicker baseYear={baseYear} onSelectYear={onSelectYear} correlations={correlations} />
+
       <YearOverlayChart
         baseYear={baseYear}
         currentYear={CURRENT_YEAR}
         baseSeries={baseSeries}
         currentSeries={currentSeries}
         subject={instrument.label}
+        correlation={correlation}
       />
 
       <p className="dd-panel__note">
@@ -64,6 +116,7 @@ function YearOverlayContent({ instrument, baseYear }) {
             {`(${formatPrice(firstCurrent.close)} → ${formatPrice(lastCurrent.close)})`}
           </>
         )}
+        {correlation !== null && ` · Pearson r = ${formatCorrelation(correlation)}`}
         .
       </p>
 
@@ -130,29 +183,14 @@ function YearOverlayPanel({ instruments, defaultSymbol = 'SPY', defaultYear = 20
             })}
           </div>
         </div>
-
-        <div>
-          <p className="dd-controls__label">Compare year</p>
-          <div className="dd-filters" role="group" aria-label="Select comparison year">
-            {OVERLAY_YEARS.map((year) => {
-              const active = year === baseYear;
-              return (
-                <button
-                  key={year}
-                  type="button"
-                  className={`dd-filter${active ? ' dd-filter--on' : ''}`}
-                  aria-pressed={active}
-                  onClick={() => setBaseYear(year)}
-                >
-                  {year}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
-      <YearOverlayContent key={selected.symbol} instrument={selected} baseYear={baseYear} />
+      <YearOverlayContent
+        key={selected.symbol}
+        instrument={selected}
+        baseYear={baseYear}
+        onSelectYear={setBaseYear}
+      />
     </section>
   );
 }

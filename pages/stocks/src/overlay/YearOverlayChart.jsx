@@ -10,7 +10,9 @@ import {
   MONTH_STARTS,
   buildDayLookup,
   formatAxisPct,
+  formatCorrelation,
   formatSignedPct,
+  overlayCorrelation,
   overlayPlot,
 } from './yearOverlay';
 
@@ -46,6 +48,7 @@ function YearOverlayChart({
   baseSeries,
   currentSeries,
   subject,
+  correlation: correlationProp,
 }) {
   const { compact, view } = useChartView(WIDE, COMPACT);
 
@@ -53,16 +56,19 @@ function YearOverlayChart({
     const box = plotBox(view.w, view.h, view.margin);
     const plot = overlayPlot(baseSeries, currentSeries, box, 5);
     const lookup = buildDayLookup(baseSeries, currentSeries);
+    const correlation = correlationProp !== undefined
+      ? correlationProp
+      : overlayCorrelation(baseSeries, currentSeries);
     const months = compact
       ? MONTH_STARTS.filter((_, i) => i % 2 === 0)
       : MONTH_STARTS;
     return {
-      box, plot, lookup, months,
+      box, plot, lookup, correlation, months,
     };
-  }, [baseSeries, compact, currentSeries, view]);
+  }, [baseSeries, compact, correlationProp, currentSeries, view]);
 
   const {
-    box, plot, lookup, months,
+    box, plot, lookup, correlation, months,
   } = geometry;
 
   const indexAtViewX = useCallback(
@@ -88,12 +94,24 @@ function YearOverlayChart({
   const ariaLabel = `${subject} ${baseYear} vs ${currentYear} relative percentage performance`
     + (lastBase ? `. ${baseYear} finished at ${formatSignedPct(lastBase.pct)}` : '')
     + (lastCurrent ? `. ${currentYear} is at ${formatSignedPct(lastCurrent.pct)} as of ${formatDate(lastCurrent.date)}` : '')
+    + (correlation !== null ? `. Correlation r = ${formatCorrelation(correlation)}` : '')
     + '.';
 
   return (
     <div className="dd-chart">
       <ChartSvg cursor={cursor} view={view} labelSize={view.label} label={ariaLabel}>
         <ValueGrid ticks={plot.ticks} box={box} yOf={plot.yOf} format={formatAxisPct} />
+
+        {correlation !== null && (
+          <text
+            className="st-overlay__chart-corr"
+            x={box.left + 10}
+            y={box.top + 14}
+            textAnchor="start"
+          >
+            {`r = ${formatCorrelation(correlation)}`}
+          </text>
+        )}
 
         {months.map(({ label, day }) => (
           <text
