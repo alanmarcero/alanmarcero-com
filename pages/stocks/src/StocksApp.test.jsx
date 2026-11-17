@@ -22,9 +22,9 @@ describe('StocksApp', () => {
       .map((h) => h.textContent)
       .filter((t) => t !== 'Data and methodology' && !/^\d{4} vs 2026$/.test(t));
     expect(titles).toHaveLength(INSTRUMENTS.length);
-    expect(titles[0]).toBe('Bitcoin (BTC-USD)');
-    expect(titles[1]).toMatch(/^BRK-B/);
-    expect(titles[titles.length - 1]).toMatch(/^XLY/);
+    expect(titles[0]).toBe('AAPL — Apple');
+    expect(titles[1]).toBe('ABBV — AbbVie');
+    expect(titles[titles.length - 1]).toMatch(/^XOM/);
   });
 
   it('indexes every instrument at the top, in the same order', async () => {
@@ -32,9 +32,9 @@ describe('StocksApp', () => {
     await loaded();
     const nav = screen.getByRole('navigation', { name: 'Instruments' });
     const links = within(nav).getAllByRole('link');
-    const btc = INSTRUMENTS.find((i) => i.symbol === 'BTC-USD');
-    expect(links[0]).toHaveTextContent(`Bitcoin${formatDepth(btc.drawdown)}`);
-    expect(links[0]).toHaveAttribute('href', '#btc-usd');
+    const aapl = INSTRUMENTS.find((i) => i.symbol === 'AAPL');
+    expect(links[0]).toHaveTextContent(`AAPL${formatDepth(aapl.drawdown)}`);
+    expect(links[0]).toHaveAttribute('href', '#aapl');
     expect(links).toHaveLength(INSTRUMENTS.length);
   });
 
