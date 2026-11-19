@@ -154,6 +154,9 @@ body:has(.site-header) {
 }
 
 .site-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -163,6 +166,12 @@ body:has(.site-header) {
   text-decoration: none;
   padding: 0.4rem 0.15rem;
   box-shadow: inset 0 -2px 0 transparent;
+}
+
+.site-nav__mark {
+  width: 0.95em;
+  height: 0.72em;
+  flex: none;
 }
 
 .site-nav a:hover,

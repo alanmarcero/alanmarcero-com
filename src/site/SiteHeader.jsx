@@ -1,16 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
 import useMediaQuery from '../hooks/useMediaQuery';
-import { PRIMARY_NAV, SECONDARY_NAV } from './pages';
+import { EXTERNAL_NAV, PRIMARY_NAV, SECONDARY_NAV } from './pages';
 
 const DESKTOP_QUERY = '(min-width: 68rem)';
+
+function YouTubeMark() {
+  return (
+    <svg className="site-nav__mark" viewBox="0 0 16 12" aria-hidden="true">
+      <rect x="0.7" y="0.7" width="14.6" height="10.6" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M6.4 3.5v5l4.2-2.5-4.2-2.5z" fill="currentColor" />
+    </svg>
+  );
+}
 
 function NavLinks({ items, page }) {
   return items.map((item) => (
     <a
       key={item.id}
       href={item.href}
-      aria-current={item.id === page ? 'page' : undefined}
+      aria-current={!item.external && item.id === page ? 'page' : undefined}
+      target={item.external ? '_blank' : undefined}
+      rel={item.external ? 'noopener noreferrer' : undefined}
     >
+      {item.id === 'youtube' && <YouTubeMark />}
       {item.label}
     </a>
   ));
@@ -70,7 +82,7 @@ export default function SiteHeader({ page }) {
           aria-label="Site"
         >
           <div className="site-nav__group">
-            <NavLinks items={PRIMARY_NAV} page={page} />
+            <NavLinks items={[...PRIMARY_NAV, ...EXTERNAL_NAV]} page={page} />
           </div>
           {SECONDARY_NAV.length > 0 && (
             <div className="site-nav__group">
