@@ -1,151 +1,48 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import './App.css';
+import './plugins/plugins.css';
 import './eras/eras.css';
 import Hero from './components/Hero';
-import PatchBankItem from './components/PatchBankItem';
-import CompatibleInstruments from './components/CompatibleInstruments';
-import MusicItem from './components/MusicItem';
-import SkeletonCard from './components/SkeletonCard';
-import NoResults from './components/NoResults';
-import Footer from './components/Footer';
-import Toast from './components/Toast';
-import ContactForm from './components/ContactForm';
 import { LissajousHalo } from './components/graphics';
 import EraChrome from './eras/EraChrome';
 import useEra from './eras/useEra';
-import useMusicItems from './hooks/useMusicItems';
-import useScrollProgress from './hooks/useScrollProgress';
-import usePopstate from './hooks/usePopstate';
-import { patchBanks as patchBanksData } from './data/patchBanks';
-import { readQueryParam, writeQueryParam } from './utils/queryParam';
-import { createSearchFilter } from './utils/search';
-import { TOAST_DISMISS_MS } from './config';
-
-const SKELETON_COUNT = 3;
-
-// Catalog totals for the patch-bank value-prop stat (counted once).
-const TOTAL_PATCHES = patchBanksData.reduce((sum, bank) => sum + (bank.count || 0), 0);
-const PATCH_BANK_COUNT = patchBanksData.filter((bank) => bank.count).length;
-
-const readSearchFromUrl = () => readQueryParam('q') || '';
+import SiteChrome from './site/SiteChrome';
+import { HOME_LINKS } from './site/pages';
+import { legacyRedirectFromLocation } from './site/legacyRoutes';
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState(readSearchFromUrl);
-  const [toast, setToast] = useState(null);
-  const toastTimerRef = useRef(null);
-  const { musicItems, musicLoading, musicError } = useMusicItems();
-
-  const scrollProgressRef = useScrollProgress();
   const [era, setEra] = useEra();
-  const showToast = useCallback((message) => {
-    clearTimeout(toastTimerRef.current);
-    setToast(message);
-    toastTimerRef.current = setTimeout(() => setToast(null), TOAST_DISMISS_MS);
+
+  useEffect(() => {
+    const target = legacyRedirectFromLocation(window.location);
+    if (target) window.location.replace(target);
   }, []);
 
-  // Sync ?q= query param with searchQuery state (preserves anchors).
-  useEffect(() => {
-    if (searchQuery === readSearchFromUrl()) return;
-    writeQueryParam('q', searchQuery);
-  }, [searchQuery]);
-
-  usePopstate(() => setSearchQuery(readSearchFromUrl()));
-
-  // A pending dismissal must not fire into an unmounted App.
-  useEffect(() => () => clearTimeout(toastTimerRef.current), []);
-
-  const filteredPatchBanks = patchBanksData.filter(
-    createSearchFilter(searchQuery, 'name', 'description', 'instruments', 'hardware', 'software', 'formats')
-  );
-  const filteredMusicItems = musicItems.filter(createSearchFilter(searchQuery, 'title', 'description'));
-
-  const hasNoResults = searchQuery
-    && filteredPatchBanks.length === 0
-    && filteredMusicItems.length === 0
-    && !musicLoading;
-
-  const resultsCount = searchQuery
-    ? { patches: filteredPatchBanks.length, music: filteredMusicItems.length }
-    : null;
-
   return (
-    <>
-      <a href="#main-content" className="skip-to-content">Skip to main content</a>
-      <div
-        ref={scrollProgressRef}
-        className="scroll-progress"
-        aria-hidden="true"
-      />
-      <Hero
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        resultsCount={resultsCount}
-        onTravel={setEra}
-        era={era}
-      />
-
+    <SiteChrome page="home">
+      <Hero onTravel={setEra} era={era} />
       <main id="main-content">
-        {hasNoResults && <NoResults query={searchQuery} />}
-
-        <section id="store" aria-labelledby="store-heading">
+        <section aria-labelledby="directory-heading">
           <div className="section-head">
-            <h2 id="store-heading" className="section-title" data-kicker="01 — Sound Design">Patch Banks</h2>
+            <h2 id="directory-heading" className="section-title" data-kicker="Directory">Sections</h2>
           </div>
-          {!searchQuery && (
-            <p className="section-stat">
-              <span className="section-stat__value">{TOTAL_PATCHES.toLocaleString()}</span> patches across{' '}
-              <span className="section-stat__value">{PATCH_BANK_COUNT}</span> instruments, free to download
-            </p>
-          )}
-          <div className="module-grid">
-            {filteredPatchBanks.map((bank, index) => (
-              <PatchBankItem
-                key={bank.downloadLink}
-                bank={bank}
-                style={{ '--card-index': index }}
-                onDownload={() => showToast('Downloading now...')}
-              />
+          <ul className="home-directory">
+            {HOME_LINKS.map((item) => (
+              <li key={item.id}>
+                <a href={item.href}>
+                  <strong>{item.label}</strong>
+                  <span>{item.blurb}</span>
+                </a>
+              </li>
             ))}
-          </div>
-          <CompatibleInstruments banks={filteredPatchBanks} />
-        </section>
-
-        <section id="music-remixes" aria-labelledby="music-heading">
-          <div className="section-head">
-            <h2 id="music-heading" className="section-title" data-kicker="02 — Releases">Music and Remixes</h2>
-          </div>
-          {!searchQuery && !musicLoading && !musicError && filteredMusicItems.length > 0 && (
-            <p className="section-stat">
-              <span className="section-stat__value">{filteredMusicItems.length}</span> releases and remixes, streaming on YouTube, Spotify, and Pandora
-            </p>
-          )}
-          <div className="module-grid">
-            {musicLoading && Array.from({ length: SKELETON_COUNT }, (_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-            {musicError && <p className="error-message">Unable to load music. Please try again later.</p>}
-            {!musicLoading && !musicError && filteredMusicItems.map((item, index) => (
-              <MusicItem key={item.videoId} item={item} style={{ '--card-index': index }} />
-            ))}
-          </div>
-        </section>
-
-        <section id="contact" aria-labelledby="contact-heading">
-          <div className="section-head">
-            <h2 id="contact-heading" className="section-title" data-kicker="03 — Contact">Get in Touch</h2>
-          </div>
-          <ContactForm />
+          </ul>
         </section>
       </main>
-
       <div className="page-scope">
         <LissajousHalo className="page-scope__trace" />
       </div>
-
-      <Footer />
-      <Toast message={toast} visible={!!toast} />
       <EraChrome era={era} onSetEra={setEra} />
-    </>
+    </SiteChrome>
   );
 }
 

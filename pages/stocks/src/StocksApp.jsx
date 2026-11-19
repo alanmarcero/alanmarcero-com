@@ -37,7 +37,7 @@ function StocksApp() {
         </nav>
       </PageHeader>
 
-      <main className="dd-main">
+      <main id="main-content" className="dd-main">
         <YearOverlayPanel instruments={ORDERED} />
 
         {ORDERED.map((instrument) => (

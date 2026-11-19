@@ -1,107 +1,47 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Hero from "./Hero";
 import { YOUTUBE_CHANNEL_URL } from "../config";
 
 describe("Hero", () => {
-  const defaultProps = {
-    searchQuery: "",
-    onSearchChange: jest.fn(),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders name and tagline", () => {
-    render(<Hero {...defaultProps} />);
-
-    // name is split into a base + accented span, so match the heading's text
+    render(<Hero />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Alan Marcero");
     expect(screen.getByText("Synthesizer Sound Designer & Producer")).toBeInTheDocument();
   });
 
   it("renders the synthesist mark in place of a photo", () => {
-    render(<Hero {...defaultProps} />);
-
-    const mark = screen.getByRole("img", {
+    render(<Hero />);
+    expect(screen.getByRole("img", {
       name: "Alan Marcero — synthesist at the console",
-    });
-    expect(mark).toBeInTheDocument();
+    })).toBeInTheDocument();
   });
 
-  it("renders YouTube subscribe link with security attributes and ghost styling", () => {
-    render(<Hero {...defaultProps} />);
+  it("links to contact, plugins, and YouTube", () => {
+    render(<Hero />);
 
-    const link = screen.getByText("Subscribe on YouTube");
-    expect(link).toHaveAttribute("href", YOUTUBE_CHANNEL_URL);
-    expect(link).toHaveAttribute("target", "_blank");
-    expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    expect(link).toHaveClass("btn--ghost");
-  });
+    const contact = screen.getByRole("link", { name: "Get in Touch" });
+    expect(contact).toHaveAttribute("href", "/contact");
+    expect(contact).toHaveClass("btn");
+    expect(contact).not.toHaveClass("btn--ghost");
 
-  it("links to the contact section with primary styling", () => {
-    render(<Hero {...defaultProps} />);
-    const link = screen.getByRole("link", { name: "Get in Touch" });
-    expect(link).toHaveAttribute("href", "#contact");
-    expect(link).toHaveClass("btn");
-    expect(link).not.toHaveClass("btn--ghost");
-  });
+    expect(screen.getByRole("link", { name: "Plugins" })).toHaveAttribute("href", "/plugins");
 
-  it("renders search input with placeholder", () => {
-    render(<Hero {...defaultProps} />);
-
-    expect(screen.getByPlaceholderText("Search patches and music...")).toBeInTheDocument();
-  });
-
-  it("calls onSearchChange when input changes", () => {
-    render(<Hero {...defaultProps} />);
-
-    const input = screen.getByPlaceholderText("Search patches and music...");
-    fireEvent.change(input, { target: { value: "trance" } });
-
-    expect(defaultProps.onSearchChange).toHaveBeenCalledWith("trance");
-  });
-
-  it("displays current searchQuery value", () => {
-    render(<Hero {...defaultProps} searchQuery="prophet" />);
-
-    const input = screen.getByPlaceholderText("Search patches and music...");
-    expect(input).toHaveValue("prophet");
+    const youtube = screen.getByRole("link", { name: "Subscribe on YouTube" });
+    expect(youtube).toHaveAttribute("href", YOUTUBE_CHANNEL_URL);
+    expect(youtube).toHaveAttribute("target", "_blank");
+    expect(youtube).toHaveAttribute("rel", "noopener noreferrer");
+    expect(youtube).toHaveClass("btn--ghost");
   });
 
   it("renders bio text", () => {
-    render(<Hero {...defaultProps} />);
-
+    render(<Hero />);
     expect(screen.getByText(/Trance and electronic music producer from Boston/)).toBeInTheDocument();
-  });
-
-  it("search input has accessible aria-label", () => {
-    render(<Hero {...defaultProps} />);
-
-    const input = screen.getByLabelText("Search patches and music");
-    expect(input).toBeInTheDocument();
-  });
-
-  it("does not show clear button when search is empty", () => {
-    render(<Hero {...defaultProps} />);
-
-    expect(screen.queryByLabelText("Clear search")).not.toBeInTheDocument();
-  });
-
-  it("shows clear button when search has value", () => {
-    render(<Hero {...defaultProps} searchQuery="trance" />);
-
-    expect(screen.getByLabelText("Clear search")).toBeInTheDocument();
-  });
-
-  it("clears search when clear button is clicked", () => {
-    render(<Hero {...defaultProps} searchQuery="trance" />);
-
-    fireEvent.click(screen.getByLabelText("Clear search"));
-
-    expect(defaultProps.onSearchChange).toHaveBeenCalledWith("");
   });
 });

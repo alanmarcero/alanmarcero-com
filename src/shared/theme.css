@@ -15,6 +15,7 @@
 
   /* -- signal (accents) -------------------------------------------------- */
   --phosphor: #4af2a4;           /* scope-green: primary signal */
+  --phosphor-bright: #b6ffd8;
   --phosphor-dim: #2c9a68;
   --phosphor-glow: rgba(74, 242, 164, 0.16);
   --amber: #ffb454;              /* VU amber: secondary signal */
@@ -40,12 +41,12 @@
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
   --font-body: 'Archivo', system-ui, sans-serif;
 
-  --text-xs: 0.72rem;
-  --text-sm: 0.86rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.9rem;
   --text-base: 1rem;
-  --text-lg: 1.18rem;
-  --text-xl: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
-  --text-hero: clamp(2.6rem, 1.8rem + 4vw, 4.6rem);
+  --text-lg: 1.125rem;
+  --text-xl: clamp(1.4rem, 1.1rem + 1.1vw, 1.9rem);
+  --text-hero: clamp(2.35rem, 1.5rem + 3.2vw, 4.2rem);
 
   /* -- rhythm ------------------------------------------------------------- */
   --space-1: 0.25rem;
@@ -53,8 +54,8 @@
   --space-3: 1rem;
   --space-4: 1.5rem;
   --space-5: 2.5rem;
-  --space-6: 4rem;
-  --space-7: 6.5rem;
+  --space-6: 3.5rem;
+  --space-7: 5.5rem;
 
   --radius-sm: 4px;
   --radius: 8px;
@@ -110,7 +111,7 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--text-base);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -132,8 +133,9 @@ a {
   transition: color var(--dur-fast) var(--ease-out);
 }
 
-a:hover {
-  color: var(--ink);
+a:hover,
+a:focus-visible {
+  color: var(--phosphor-bright);
 }
 
 img, svg {

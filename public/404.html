@@ -62,7 +62,10 @@
         text-transform: uppercase;
         transition: box-shadow 160ms ease;
       }
-      a.home:hover { box-shadow: 0 0 24px rgba(74, 242, 164, 0.45); }
+      a.home:hover, a.home:focus-visible { box-shadow: 0 0 24px rgba(74, 242, 164, 0.45); color: var(--bg); }
+      nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem 1rem; margin-top: 1.4rem; }
+      nav a { color: var(--phosphor); font-size: 0.82rem; min-height: 2.75rem; display: inline-flex; align-items: center; }
+      nav a:hover, nav a:focus-visible { color: var(--ink); }
       @media (prefers-reduced-motion: reduce) {
         .scope path { animation: none; stroke-dasharray: none; }
       }
@@ -77,6 +80,12 @@
       <h1>Signal Lost</h1>
       <p>That patch isn't on the rack — the cable came loose somewhere. Let's route you back to the console.</p>
       <a class="home" href="/">Back to console</a>
+      <nav aria-label="Site">
+        <a href="/plugins">Plugins</a>
+        <a href="/patches">Patches</a>
+        <a href="/music">Music</a>
+        <a href="/contact">Contact</a>
+      </nav>
     </div>
   </body>
 </html>
