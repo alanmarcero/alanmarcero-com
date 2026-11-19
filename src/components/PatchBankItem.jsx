@@ -1,19 +1,31 @@
 import YouTubeEmbed from './YouTubeEmbed';
 import ModulePanel from './ModulePanel';
-import { bankThumb } from '../eras/bankThumbs';
 
-function PatchBankItem({ bank, style, onDownload }) {
-  const thumb = bankThumb(bank.name);
+const HERO_WIDTH = 1600;
+const HERO_HEIGHT = 900;
+
+function PatchBankItem({ bank, style, onDownload, eager = false }) {
   return (
     <ModulePanel style={style}>
+      {bank.image && (
+        <img
+          className="module__hero"
+          src={bank.image}
+          srcSet={`${bank.image} ${HERO_WIDTH}w`}
+          sizes="(max-width: 40rem) calc(100vw - 2.5rem), 28rem"
+          alt={bank.imageAlt}
+          width={HERO_WIDTH}
+          height={HERO_HEIGHT}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      )}
       <div className="module__head">
         <h3 className="module__title">{bank.name}</h3>
         {bank.count ? (
           <span className="module__badge">{bank.count} patches</span>
         ) : null}
       </div>
-      {/* archived synth photo — only shown in the Take Me Back eras (see eras.css) */}
-      {thumb ? <img className="module__era-thumb" src={thumb} alt="" aria-hidden="true" /> : null}
       <p className="module__desc">{bank.description}</p>
       {bank.instruments?.length > 0 && (
         <ul className="module__tags" aria-label="Compatible instruments">

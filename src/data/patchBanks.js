@@ -16,7 +16,9 @@ export const patchBanks = [
     description: '128 trance and synthwave patches for Prophet 08, Rev2, Mopho, Mopho SE, Tetra, Mopho x4, and the open-source Profit-08 (mpc-vst-profit8) VST.',
     count: 128,
     audioDemo: ['senhvxSN3PU', 'QIDyiavaK2M'],
-    downloadLink: '/banks/Alan-M_Prophet_08_Patches.zip'
+    downloadLink: '/banks/Alan-M_Prophet_08_Patches.zip',
+    image: '/img/patch-banks/prophet08-rev2.webp',
+    imageAlt: 'Sequential Prophet 08 and Rev2 synthesizers, 128-patch free bank',
   },
   {
     name: 'Nord Lead 3 and Nord Rack 3',
@@ -30,7 +32,9 @@ export const patchBanks = [
     description: '128 uplifting and progressive trance patches for the Nord Lead 3 and Nord Rack 3 FM engine.',
     count: 128,
     audioDemo: ['4KB7t5v5jJc'],
-    downloadLink: '/banks/Alan-M_Nord_Lead_3.zip'
+    downloadLink: '/banks/Alan-M_Nord_Lead_3.zip',
+    image: '/img/patch-banks/nordlead3.webp',
+    imageAlt: 'Nord Lead 3 synthesizer, 128-patch free bank',
   },
   {
     name: 'Access Virus TI and TI2, OsTIrus, Adam Szabo Viper',
@@ -51,7 +55,9 @@ export const patchBanks = [
     description: '128 Anjunabeats- and Armada-style patches for Virus TI, TI2, Polar, Snow, PowerCore/TDM, OsTIrus, Adam Szabo Viper, and discoDSP Retromulator.',
     count: 128,
     audioDemo: ['rUif508d-gM'],
-    downloadLink: '/banks/Alan-M_Virus_TI_Patches.zip'
+    downloadLink: '/banks/Alan-M_Virus_TI_Patches.zip',
+    image: '/img/patch-banks/virus-ti.webp',
+    imageAlt: 'Access Virus TI synthesizer, 128-patch free bank',
   },
   {
     name: 'Roland SH-01A',
@@ -64,7 +70,9 @@ export const patchBanks = [
     description: '64 trance, EDM, and synthwave patches. Basses, leads, pads, and plucks for Roland\'s SH-101 Boutique.',
     count: 64,
     audioDemo: ['wgnuQIXI3mo'],
-    downloadLink: '/banks/Alan-M_SH-01A.zip'
+    downloadLink: '/banks/Alan-M_SH-01A.zip',
+    image: '/img/patch-banks/sh01a.webp',
+    imageAlt: 'Roland SH-01A synthesizer, 64-patch free bank',
   },
   {
     name: 'Alesis A6 Andromeda',
@@ -79,7 +87,9 @@ export const patchBanks = [
     description: '128 patches for the Andromeda\'s 16-voice analog engine and the Isla Electronics ASYX plugin. Raw, FX-free trance sounds.',
     count: 128,
     audioDemo: ['MmfoYC0mxqQ', '1I_zLE2L1fQ'],
-    downloadLink: '/banks/Alan_M_Andromeda_A6.zip'
+    downloadLink: '/banks/Alan_M_Andromeda_A6.zip',
+    image: '/img/patch-banks/andromeda-a6.webp',
+    imageAlt: 'Alesis Andromeda A6 synthesizer, 128-patch free bank',
   },
   {
     name: 'Roland JP-8000, JP-8080, JE-8086, and Airwave',
@@ -98,7 +108,9 @@ export const patchBanks = [
     description: '128 supersaw patches for JP-8000 and JP-8080 hardware, JE-8086, Adam Szabo Airwave, discoDSP Retromulator, and discoDSP Corona.',
     count: 128,
     audioDemo: ['HLFXwiBmuwc', 'hM7FGL3AJfI'],
-    downloadLink: '/banks/Alan_M_JP80x0.zip'
+    downloadLink: '/banks/Alan_M_JP80x0.zip',
+    image: '/img/patch-banks/jp8000.webp',
+    imageAlt: 'Roland JP-8000 synthesizer, 128-patch free bank',
   },
   {
     name: 'Moog Slim Phatty and Little Phatty',
@@ -112,7 +124,9 @@ export const patchBanks = [
     description: '100 trance patches: 45 basses, 45 leads, and 10 plucks for Moog Slim Phatty and Little Phatty (Tribute, Stage, Stage II) hardware.',
     count: 100,
     audioDemo: ['Naz0NJVPkpc'],
-    downloadLink: '/banks/Alan-M_Moog_Phatty_Rev1.zip'
+    downloadLink: '/banks/Alan-M_Moog_Phatty_Rev1.zip',
+    image: '/img/patch-banks/moog-phatty.webp',
+    imageAlt: 'Moog Phatty synthesizer, 100-patch free bank',
   },
   {
     name: 'Nord Lead 2X, Nord Lead 2, DiscoDSP Discovery Pro',
@@ -132,7 +146,9 @@ export const patchBanks = [
     description: '128 trance patches for Nord Lead 2/2X and Nord Rack 2/2X hardware, discoDSP Discovery and Discovery Pro, The Usual Suspects Nodal Red 2x, and discoDSP Retromulator.',
     count: 128,
     audioDemo: ['821zcTGdt1c', 'fLQ8gW8Op-Q'],
-    downloadLink: '/banks/Alan_M_Nord_Lead_2x.zip'
+    downloadLink: '/banks/Alan_M_Nord_Lead_2x.zip',
+    image: '/img/patch-banks/nordlead2x.webp',
+    imageAlt: 'Nord Lead 2X synthesizer, 128-patch free bank',
   },
   {
     name: 'Roland JP-08',
@@ -145,7 +161,9 @@ export const patchBanks = [
     description: '88 trance and synthwave patches for Roland\'s Jupiter-8 Boutique module. Basses, leads, pads, and plucks.',
     count: 88,
     audioDemo: [],
-    downloadLink: '/banks/Alan-M_JP08.zip'
+    downloadLink: '/banks/Alan-M_JP08.zip',
+    image: '/img/patch-banks/jp08.webp',
+    imageAlt: 'Roland JP-08 synthesizer, 88-patch free bank',
   },
   {
     name: 'Waves CODEX',
@@ -158,7 +176,9 @@ export const patchBanks = [
     description: '128 wavetable patches originally commissioned by Waves: pads, leads, basses, and textures.',
     count: 128,
     audioDemo: [],
-    downloadLink: '/banks/Alan-M_CODEX.zip'
+    downloadLink: '/banks/Alan-M_CODEX.zip',
+    image: '/img/patch-banks/waves-codex.webp',
+    imageAlt: 'Waves CODEX synthesizer, 128-patch free bank',
   },
   {
     name: 'Audio Demo MIDIs',

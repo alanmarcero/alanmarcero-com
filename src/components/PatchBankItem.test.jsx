@@ -73,6 +73,37 @@ describe("PatchBankItem", () => {
     expect(onDownload).toHaveBeenCalledTimes(1);
   });
 
+  it("renders a 16:9 hero when the bank has an image", () => {
+    render(<PatchBankItem bank={{
+      ...mockBank,
+      image: "/img/patch-banks/jp08.webp",
+      imageAlt: "Roland JP-08 synthesizer, 88-patch free bank",
+    }} />);
+
+    const hero = screen.getByRole("img", { name: "Roland JP-08 synthesizer, 88-patch free bank" });
+    expect(hero).toHaveAttribute("src", "/img/patch-banks/jp08.webp");
+    expect(hero).toHaveAttribute("srcset", "/img/patch-banks/jp08.webp 1600w");
+    expect(hero).toHaveAttribute("width", "1600");
+    expect(hero).toHaveAttribute("height", "900");
+    expect(hero).toHaveAttribute("loading", "lazy");
+    expect(hero).toHaveClass("module__hero");
+  });
+
+  it("loads the first heroes eagerly", () => {
+    render(<PatchBankItem eager bank={{
+      ...mockBank,
+      image: "/img/patch-banks/prophet08-rev2.webp",
+      imageAlt: "Sequential Prophet 08 and Rev2 synthesizers, 128-patch free bank",
+    }} />);
+
+    expect(screen.getByRole("img", { name: /Prophet 08/ })).toHaveAttribute("loading", "eager");
+  });
+
+  it("renders no hero for a bank without an image", () => {
+    const { container } = render(<PatchBankItem bank={mockBank} />);
+    expect(container.querySelector(".module__hero")).not.toBeInTheDocument();
+  });
+
   it("renders a patch-count badge when count is present", () => {
     render(<PatchBankItem bank={{ ...mockBank, count: 128 }} />);
 

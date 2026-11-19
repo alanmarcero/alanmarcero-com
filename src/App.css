@@ -462,6 +462,16 @@ main {
   box-shadow: 0 0 10px var(--phosphor);
 }
 
+.module__hero {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--panel-inset);
+}
+
 .module__head {
   display: flex;
   flex-direction: column;

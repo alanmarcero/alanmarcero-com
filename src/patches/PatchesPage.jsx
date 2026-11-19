@@ -62,6 +62,7 @@ export default function PatchesPage() {
                 key={bank.downloadLink}
                 bank={bank}
                 style={{ '--card-index': index }}
+                eager={index < 2}
                 onDownload={() => showToast('Downloading now...')}
               />
             ))}
