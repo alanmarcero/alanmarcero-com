@@ -1,11 +1,9 @@
-import { YOUTUBE_CHANNEL_URL } from '../config';
 import { SynthesistMark } from './graphics';
-import TakeMeBack from './TakeMeBack';
 import { getEraHero } from '../eras/eraHero';
 
 const NAME_BANNER_ERAS = new Set(['y2007', 'y2014', 'y2020']);
 
-function Hero({ onTravel, era = 'present' }) {
+function Hero({ era = 'present' }) {
   const eraHero = getEraHero(era);
   const showNameBanner = NAME_BANNER_ERAS.has(era);
 
@@ -45,25 +43,6 @@ function Hero({ onTravel, era = 'present' }) {
             <img src="/eras/img/blog-feed.gif" width="75" height="17" alt="" /> Subscribe to my blog
           </p>
         )}
-        <div className="hero-cta-group">
-          <a className="btn" href="/contact">
-            Get in Touch
-          </a>
-          <div className="hero-cta-row">
-            <a className="btn btn--ghost" href="/plugins">
-              Plugins
-            </a>
-            <a
-              className="btn btn--ghost"
-              href={YOUTUBE_CHANNEL_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Subscribe on YouTube
-            </a>
-            <TakeMeBack onSelect={onTravel} />
-          </div>
-        </div>
       </div>
     </section>
   );

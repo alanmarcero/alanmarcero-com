@@ -20,7 +20,7 @@ function App() {
 
   return (
     <SiteChrome page="home">
-      <Hero onTravel={setEra} era={era} />
+      <Hero era={era} />
       <main id="main-content">
         <section aria-labelledby="directory-heading">
           <div className="section-head">
