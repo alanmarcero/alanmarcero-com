@@ -177,21 +177,6 @@
   line-height: 1.7;
 }
 
-.hero-cta-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
-.hero-cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-}
-
 /* --------------------------------------------------------------------------
    BUTTONS — machined panel switches
    -------------------------------------------------------------------------- */
@@ -667,7 +652,7 @@ main {
    CONTACT — one wide module with recessed input wells
    -------------------------------------------------------------------------- */
 
-/* the hero's "Get in Touch" link lands here; leave room for the kicker above the title */
+/* leave room for the kicker above the title when the section is scrolled into view */
 #contact {
   scroll-margin-top: var(--space-5);
 }

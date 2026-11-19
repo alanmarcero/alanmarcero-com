@@ -3,7 +3,6 @@
  */
 import { render, screen } from "@testing-library/react";
 import Hero from "./Hero";
-import { YOUTUBE_CHANNEL_URL } from "../config";
 
 describe("Hero", () => {
   beforeEach(() => {
@@ -23,21 +22,13 @@ describe("Hero", () => {
     })).toBeInTheDocument();
   });
 
-  it("links to contact, plugins, and YouTube", () => {
+  it("does not render the removed hero call-to-action buttons", () => {
     render(<Hero />);
 
-    const contact = screen.getByRole("link", { name: "Get in Touch" });
-    expect(contact).toHaveAttribute("href", "/contact");
-    expect(contact).toHaveClass("btn");
-    expect(contact).not.toHaveClass("btn--ghost");
-
-    expect(screen.getByRole("link", { name: "Plugins" })).toHaveAttribute("href", "/plugins");
-
-    const youtube = screen.getByRole("link", { name: "Subscribe on YouTube" });
-    expect(youtube).toHaveAttribute("href", YOUTUBE_CHANNEL_URL);
-    expect(youtube).toHaveAttribute("target", "_blank");
-    expect(youtube).toHaveAttribute("rel", "noopener noreferrer");
-    expect(youtube).toHaveClass("btn--ghost");
+    expect(screen.queryByRole("link", { name: "Get in Touch" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Plugins" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Subscribe on YouTube" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Take Me Back" })).not.toBeInTheDocument();
   });
 
   it("renders bio text", () => {

@@ -5,73 +5,6 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Present-theme control: the hero "Take Me Back" button + year picker
-   -------------------------------------------------------------------------- */
-.take-me-back {
-  position: relative;
-  display: inline-block;
-}
-
-.take-me-back__menu {
-  /* portaled to <body> and fixed above everything (CRT scanlines are z-index
-     9999) so it is never clipped by the hero's overflow or hidden behind chrome */
-  position: fixed;
-  transform: translateX(-50%);
-  z-index: 10001;
-  min-width: 15rem;
-  padding: var(--space-2);
-  display: grid;
-  gap: 4px;
-  background: var(--panel-inset, #0f1417);
-  border: 1px solid var(--phosphor, #4af2a4);
-  border-radius: var(--radius-sm, 6px);
-  box-shadow: 0 0 24px var(--phosphor-glow, rgba(74, 242, 164, 0.25));
-}
-
-.take-me-back__hint {
-  margin: 0 0 2px;
-  font-family: var(--font-mono, monospace);
-  font-size: var(--text-xs, 0.72rem);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-secondary, #8fb0a6);
-}
-
-.take-me-back__year {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: 0.5rem 0.7rem;
-  border: 1px solid var(--line, rgba(74, 242, 164, 0.18));
-  border-radius: var(--radius-sm, 6px);
-  background: transparent;
-  color: var(--text-primary, #e8edee);
-  font-family: var(--font-mono, monospace);
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.take-me-back__year:hover,
-.take-me-back__year:focus-visible {
-  background: var(--phosphor-glow, rgba(74, 242, 164, 0.14));
-  border-color: var(--phosphor, #4af2a4);
-}
-
-.take-me-back__year-num {
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--phosphor, #4af2a4);
-}
-
-.take-me-back__year-label {
-  font-size: var(--text-xs, 0.72rem);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-secondary, #8fb0a6);
-}
-
-/* --------------------------------------------------------------------------
    Time-travel bar — persistent control shown in every past era
    -------------------------------------------------------------------------- */
 .time-travel-bar {
@@ -269,7 +202,6 @@
 
 /* classic 3D buttons everywhere */
 :root[data-era="y2001"] .btn,
-:root[data-era="y2001"] .take-me-back__trigger,
 :root[data-era="y2001"] .module__badge {
   background: #c0c0c0 !important;
   color: #000 !important;
@@ -578,8 +510,7 @@
 :root[data-era="y2007"] .module__title { color: #fff !important; }
 :root[data-era="y2007"] a,
 :root[data-era="y2007"] .footer-links a { color: #ffcd27; }
-:root[data-era="y2007"] .btn,
-:root[data-era="y2007"] .take-me-back__trigger {
+:root[data-era="y2007"] .btn {
   background: #333 !important; color: #ffcd27 !important; border: 1px solid #ffcd27 !important;
   border-radius: 3px !important; box-shadow: none !important; background-image: none !important;
 }
@@ -658,9 +589,7 @@
 }
 :root[data-era="y2014"] a, :root[data-era="y2020"] a { color: #438391; text-decoration: underline; font-weight: bold; }
 :root[data-era="y2014"] .btn,
-:root[data-era="y2020"] .btn,
-:root[data-era="y2014"] .take-me-back__trigger,
-:root[data-era="y2020"] .take-me-back__trigger {
+:root[data-era="y2020"] .btn {
   background: #438391 url(/eras/img/button.gif) repeat !important; color: #fff !important;
   border: 1px solid #438391 !important; border-radius: 0 !important; box-shadow: none !important;
   font-family: "Lucida Grande", Arial, sans-serif !important;
