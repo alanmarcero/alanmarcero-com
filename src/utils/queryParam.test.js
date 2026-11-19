@@ -47,11 +47,11 @@ describe("writeQueryParam", () => {
   });
 
   it("preserves the pathname and hash", () => {
-    window.history.replaceState(null, "", "/arcade.html#store");
+    window.history.replaceState(null, "", "/patches.html#store");
 
     writeQueryParam("q", "saw");
 
-    expect(window.location.pathname).toBe("/arcade.html");
+    expect(window.location.pathname).toBe("/patches.html");
     expect(window.location.hash).toBe("#store");
     expect(window.location.search).toBe("?q=saw");
   });

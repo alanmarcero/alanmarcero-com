@@ -28,7 +28,7 @@ function Colophon() {
               <Line as="a" value="Source" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
                 GitHub
               </Line>
-              <Line as="a" value="12 machines" href="/arcade">Arcade</Line>
+              <Line as="a" value="OpenVST" href="/plugins">Plugins</Line>
             </div>
           </nav>
 

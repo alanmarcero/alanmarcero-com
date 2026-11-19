@@ -1,40 +1,13 @@
-import { useRef, useEffect } from 'react';
 import { YOUTUBE_CHANNEL_URL } from '../config';
 import { SynthesistMark } from './graphics';
 import TakeMeBack from './TakeMeBack';
 import { getEraHero } from '../eras/eraHero';
 
-const isTypingTarget = (el) =>
-  el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
-
-// 2007–2020 used the "Alan Marcero" name graphic (me.png) as the banner.
 const NAME_BANNER_ERAS = new Set(['y2007', 'y2014', 'y2020']);
 
-const countLabel = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`;
-
-function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'present' }) {
-  const inputRef = useRef(null);
+function Hero({ onTravel, era = 'present' }) {
   const eraHero = getEraHero(era);
   const showNameBanner = NAME_BANNER_ERAS.has(era);
-
-  const handleKeyDown = (event) => {
-    if (event.key !== 'Escape' || !searchQuery) return;
-    event.preventDefault();
-    onSearchChange('');
-    inputRef.current?.focus();
-  };
-
-  // Press "/" anywhere (when not already typing) to jump to search.
-  useEffect(() => {
-    const onKeyDown = (event) => {
-      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
-      if (isTypingTarget(document.activeElement)) return;
-      event.preventDefault();
-      inputRef.current?.focus();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
 
   return (
     <section className="hero">
@@ -73,10 +46,13 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
           </p>
         )}
         <div className="hero-cta-group">
-          <a className="btn" href="#contact">
+          <a className="btn" href="/contact">
             Get in Touch
           </a>
           <div className="hero-cta-row">
+            <a className="btn btn--ghost" href="/plugins">
+              Plugins
+            </a>
             <a
               className="btn btn--ghost"
               href={YOUTUBE_CHANNEL_URL}
@@ -85,46 +61,9 @@ function Hero({ searchQuery, onSearchChange, resultsCount, onTravel, era = 'pres
             >
               Subscribe on YouTube
             </a>
-            <a className="btn btn--ghost" href="/arcade">
-              Arcade
-            </a>
             <TakeMeBack onSelect={onTravel} />
           </div>
         </div>
-        <div className="hero-search">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Search patches and music..."
-            aria-label="Search patches and music"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          {searchQuery ? (
-            <button
-              className="search-clear"
-              onClick={() => onSearchChange('')}
-              aria-label="Clear search"
-            >
-              &times;
-            </button>
-          ) : (
-            <kbd className="search-hint" aria-hidden="true">/</kbd>
-          )}
-        </div>
-        {resultsCount && (
-          <p className="hero-results-count" role="status" aria-live="polite">
-            {countLabel(resultsCount.patches, 'patch bank', 'patch banks')},{' '}
-            {countLabel(resultsCount.music, 'music item', 'music items')}
-          </p>
-        )}
-        <nav className="hero-nav" aria-label="Sections">
-          <a href="#store">Patch Banks</a>
-          <a href="#compatible-instruments">Compatibility</a>
-          <a href="#music-remixes">Music</a>
-          <a href="#contact">Contact</a>
-        </nav>
       </div>
     </section>
   );

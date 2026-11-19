@@ -19,7 +19,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-7) var(--space-4);
+  padding: var(--space-5) var(--space-4) var(--space-6);
 }
 
 /* --------------------------------------------------------------------------
@@ -124,12 +124,15 @@
     background var(--dur-fast) var(--ease-out);
 }
 
-.dd-filter:hover {
+.dd-filter:hover,
+.dd-filter:focus-visible {
   color: var(--ink);
   background: var(--panel-raised);
 }
 
-.dd-filter--on {
+.dd-filter--on,
+.dd-filter--on:hover,
+.dd-filter--on:focus-visible {
   color: var(--bg);
   background: var(--phosphor);
   border-color: var(--phosphor);
@@ -529,7 +532,11 @@
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
   .dd-page {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-4) var(--space-3) var(--space-5);
+  }
+
+  .dd-filter {
+    min-height: 2.75rem;
   }
 
   

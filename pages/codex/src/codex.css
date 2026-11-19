@@ -1380,7 +1380,7 @@ body {
   }
 
   .codex-section-head h2 {
-    font-size: clamp(2.75rem, 14vw, 3.75rem);
+    font-size: clamp(2rem, 8vw, 3rem);
   }
 
   .codex-entry {

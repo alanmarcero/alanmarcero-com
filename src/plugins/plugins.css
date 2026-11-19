@@ -1,0 +1,159 @@
+.page-intro .section-head {
+  margin-bottom: var(--space-3);
+}
+
+.section-lead {
+  max-width: 40rem;
+  margin: 0 0 var(--space-4);
+  color: var(--ink-muted);
+  font-size: var(--text-lg);
+  line-height: 1.6;
+}
+
+.section-lead + .section-stat {
+  margin-top: 0;
+}
+
+.manager-lead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 42%),
+    var(--panel);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--phosphor);
+  box-shadow: var(--shadow-module);
+}
+
+.manager-lead h2 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.manager-lead p {
+  max-width: 38rem;
+  color: var(--ink-muted);
+}
+
+.manager-lead .btn {
+  min-height: 2.75rem;
+}
+
+.beta-note {
+  max-width: 42rem;
+  margin-bottom: var(--space-5);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel-inset);
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.plugin-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--panel-inset);
+}
+
+.plugin-shot--fallback {
+  display: grid;
+  place-items: center;
+  min-height: 8rem;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: var(--space-3);
+}
+
+.plugin-why {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.plugin-why__label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-directory {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-directory a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 2.75rem;
+  height: 100%;
+  padding: var(--space-3);
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-module);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
+}
+
+.home-directory a:hover,
+.home-directory a:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-module-raised);
+  color: inherit;
+}
+
+.home-directory strong {
+  color: var(--phosphor);
+  font-size: var(--text-lg);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.home-directory span {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.catalog-search {
+  margin: 0 0 var(--space-4);
+}
+
+.catalog-search .hero-search {
+  margin-top: 0;
+}
+
+#store,
+#compatible-instruments,
+#contact,
+#music-remixes {
+  scroll-margin-top: 4.5rem;
+}

@@ -56,8 +56,8 @@ function Hero() {
               >
                 Subscribe on YouTube
               </Line>
-              <Line as="a" value="12 machines" href="/arcade">
-                Enter the arcade
+              <Line as="a" value="OpenVST" href="/plugins">
+                Plugins
               </Line>
             </div>
           </div>

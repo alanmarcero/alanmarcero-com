@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-page="flights">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="site-header"></div>
 <style>
   :root{
     --bg:#e8ebee; --card:#ffffff; --board:#0e1317; --board-ink:#f2ede0;
@@ -256,10 +257,11 @@
     .chart{height:150px}
     .xaxis span b{display:none}
   }
+  .fbtn:focus-visible,.theme-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="wrap">
+<div class="wrap" id="main-content">
   <header class="board">
     <div class="board-top">
       <div>
@@ -666,5 +668,7 @@ function setMode(m){
   select(cheapestKeyFor());
 })();
 </script>
+<div id="site-footer"></div>
+<script type="module" src="/src/site/mountChrome.jsx"></script>
 </body>
 </html>

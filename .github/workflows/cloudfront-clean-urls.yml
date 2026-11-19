@@ -150,7 +150,7 @@ jobs:
         run: |
           echo "=== Clean URLs enabled (generic) ==="
           echo "Wait ~5-15 min for CloudFront propagation, then:"
-          echo "  https://alanmarcero.com/arcade       -> serves arcade.html (200)"
+          echo "  https://alanmarcero.com/plugins      -> serves plugins/index.html (200)"
           echo "  https://alanmarcero.com/neworleans   -> serves neworleans.html (200)"
           echo "  https://alanmarcero.com/<anything>   -> serves <anything>.html if it exists, else 404"
           echo "  https://alanmarcero.com/<anything>.html -> 301 to /<anything>"

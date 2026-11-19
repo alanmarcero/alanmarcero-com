@@ -1,0 +1,308 @@
+/* Shared header, mobile menu, and footer.
+   Tokens are restated on the chrome so pages with their own palettes
+   (flights, New Orleans) don't recolor it. */
+
+.site-header,
+.site-footer {
+  --bg: #0a0c0d;
+  --panel: #14181a;
+  --panel-inset: #0c0f10;
+  --ink: #e8edee;
+  --ink-muted: #99a6ab;
+  --ink-faint: #5c686d;
+  --line: #232a2e;
+  --line-strong: #2f383d;
+  --phosphor: #4af2a4;
+  --phosphor-bright: #b6ffd8;
+  --phosphor-glow: rgba(74, 242, 164, 0.16);
+  --font-display: 'Archivo', 'Helvetica Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+  color: var(--ink);
+  font-family: var(--font-display);
+  line-height: 1.4;
+}
+
+.site-header :focus-visible,
+.site-footer :focus-visible,
+.skip-to-content:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 3px;
+}
+
+html:has(.site-header) {
+  scroll-padding-top: 4rem;
+}
+
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 80;
+  padding: 0.5rem 1rem;
+  background: var(--panel, #14181a);
+  border: 1px solid var(--phosphor, #4af2a4);
+  border-radius: 4px;
+  color: var(--ink, #e8edee);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  top: 0.75rem;
+}
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #0e1112;
+  border-bottom: 1px solid var(--line);
+}
+
+/* The bar is fixed, so the page starts below it. */
+body:has(.site-header) {
+  padding-top: 3.25rem;
+}
+
+.site-header__bar {
+  position: relative;
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  min-height: 3.25rem;
+  padding: 0.4rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+
+.site-wordmark {
+  margin-right: auto;
+  color: var(--ink);
+  font-weight: 750;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-wordmark span {
+  color: var(--phosphor);
+}
+
+.site-wordmark:hover,
+.site-wordmark:focus-visible {
+  color: var(--phosphor-bright);
+}
+
+.site-wordmark:hover span,
+.site-wordmark:focus-visible span {
+  color: var(--phosphor-bright);
+}
+
+.site-nav-toggle {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.site-nav-toggle:hover,
+.site-nav-toggle:focus-visible {
+  color: var(--phosphor);
+  border-color: var(--phosphor);
+}
+
+.site-nav-toggle__bars {
+  width: 0.9rem;
+  height: 0.65rem;
+  background:
+    linear-gradient(var(--ink-muted), var(--ink-muted)) 0 0 / 100% 2px no-repeat,
+    linear-gradient(var(--ink-muted), var(--ink-muted)) 0 50% / 100% 2px no-repeat,
+    linear-gradient(var(--ink-muted), var(--ink-muted)) 0 100% / 100% 2px no-repeat;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem 0.15rem;
+}
+
+.site-nav__group {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem 0.85rem;
+}
+
+.site-nav__group + .site-nav__group {
+  margin-left: 0.85rem;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--line-strong);
+}
+
+.site-nav a {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.4rem 0.15rem;
+  box-shadow: inset 0 -2px 0 transparent;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--phosphor);
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--phosphor);
+  box-shadow: inset 0 -2px 0 var(--phosphor);
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--panel-inset);
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.site-footer .footer-inner {
+  max-width: var(--content-max, 72rem);
+  margin: 0 auto;
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.site-footer .footer-copyright {
+  justify-self: start;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.site-footer .footer-meter {
+  justify-self: center;
+}
+
+.site-footer .footer-links {
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.site-footer .footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.site-footer .footer-links a:hover,
+.site-footer .footer-links a:focus-visible {
+  color: var(--phosphor);
+}
+
+.signal-meter {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* The New Orleans section jump sits under the sticky header. */
+body:has(.site-header) .jump {
+  top: 3.25rem;
+}
+
+@media (max-width: 67.99rem) {
+  .site-nav-toggle {
+    display: inline-flex;
+  }
+
+  .site-nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 60;
+    max-height: calc(100dvh - 3.25rem);
+    overflow: auto;
+    padding: 0.4rem 1rem 0.9rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    background: #14181a;
+    border-bottom: 1px solid var(--line-strong);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .site-nav.is-open {
+    display: flex;
+  }
+
+  .site-nav__group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .site-nav__group + .site-nav__group {
+    margin: 0.35rem 0 0;
+    padding: 0.35rem 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .site-nav a {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 2.75rem;
+    padding: 0.35rem 0.25rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .site-header__bar {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .site-footer .footer-inner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .site-footer .footer-copyright,
+  .site-footer .footer-links {
+    justify-self: center;
+    justify-content: center;
+  }
+}
