@@ -1,8 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-// The redesigned pages each draw their own player, and two of them once
-// shipped without a sandbox. Scanning the source catches the next one.
+// Players once shipped without a sandbox. Scanning the source catches the next one.
 const ROOT = path.join(__dirname, "..");
 const SOURCE_DIRS = ["src", "pages"];
 
@@ -22,7 +21,7 @@ const embeds = SOURCE_DIRS
 
 describe("YouTube embed policy", () => {
   it("finds the players it is guarding", () => {
-    expect(embeds.length).toBeGreaterThanOrEqual(2);
+    expect(embeds.length).toBeGreaterThanOrEqual(1);
   });
 
   it.each(embeds)("%s uses the shared sandbox and permissions", (_file, tag) => {

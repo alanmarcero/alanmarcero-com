@@ -72,9 +72,11 @@ export default function SiteHeader({ page }) {
           <div className="site-nav__group">
             <NavLinks items={PRIMARY_NAV} page={page} />
           </div>
-          <div className="site-nav__group">
-            <NavLinks items={SECONDARY_NAV} page={page} />
-          </div>
+          {SECONDARY_NAV.length > 0 && (
+            <div className="site-nav__group">
+              <NavLinks items={SECONDARY_NAV} page={page} />
+            </div>
+          )}
         </nav>
       </div>
     </header>

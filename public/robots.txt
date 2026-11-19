@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /neworleans
+Disallow: /flights
+Disallow: /stocks
 
 Sitemap: https://alanmarcero.com/sitemap.xml
