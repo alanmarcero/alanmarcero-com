@@ -19,7 +19,7 @@ jest.mock("../data/patchBanks", () => ({
 
 describe("PatchesPage", () => {
   beforeEach(() => {
-    window.history.replaceState(null, "", "/patches");
+    window.history.replaceState(null, "", "/");
   });
 
   it("renders patch banks from data", () => {
@@ -73,7 +73,7 @@ describe("PatchesPage", () => {
   });
 
   it("hydrates ?q= and clears it with Escape", () => {
-    window.history.replaceState(null, "", "/patches?q=prophet");
+    window.history.replaceState(null, "", "/?q=prophet");
     render(<PatchesPage />);
 
     const search = screen.getByLabelText("Search patch banks");

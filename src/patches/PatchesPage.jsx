@@ -35,7 +35,7 @@ export default function PatchesPage() {
   );
 
   return (
-    <SiteChrome page="patches">
+    <SiteChrome page="home">
       <main id="main-content">
         <section id="store" aria-labelledby="store-heading">
           <div className="section-head">

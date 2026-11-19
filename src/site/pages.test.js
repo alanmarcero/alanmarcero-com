@@ -19,7 +19,6 @@ describe('unlisted pages', () => {
     expect(SITE_NAV.map((page) => page.label)).toEqual([
       'Home',
       'Plugins',
-      'Patches',
       'Music',
       'Contact',
     ]);

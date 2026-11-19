@@ -1,13 +1,7 @@
 import { HASH_ROUTES, legacyRedirectFromLocation } from './legacyRoutes';
 
 describe('legacyRedirectFromLocation', () => {
-  it('sends the old section anchors to their pages', () => {
-    expect(legacyRedirectFromLocation({ pathname: '/', search: '', hash: '#store' })).toBe('/patches');
-    expect(legacyRedirectFromLocation({
-      pathname: '/',
-      search: '',
-      hash: '#compatible-instruments',
-    })).toBe('/patches#compatible-instruments');
+  it('sends the old section anchors that moved to their pages', () => {
     expect(legacyRedirectFromLocation({ pathname: '/', search: '', hash: '#music-remixes' })).toBe('/music');
     expect(legacyRedirectFromLocation({ pathname: '/', search: '', hash: '#contact' })).toBe('/contact');
   });
@@ -16,13 +10,18 @@ describe('legacyRedirectFromLocation', () => {
     expect(legacyRedirectFromLocation({
       pathname: '/',
       search: '?q=prophet',
-      hash: '#store',
-    })).toBe('/patches?q=prophet');
+      hash: '#contact',
+    })).toBe('/contact?q=prophet');
   });
 
-  it('sends a bare home search to the patch banks', () => {
-    expect(legacyRedirectFromLocation({ pathname: '/', search: '?q=hi%20mom', hash: '' }))
-      .toBe('/patches?q=hi%20mom');
+  it('leaves the patch banks on the home page', () => {
+    expect(legacyRedirectFromLocation({ pathname: '/', search: '', hash: '#store' })).toBeNull();
+    expect(legacyRedirectFromLocation({
+      pathname: '/',
+      search: '',
+      hash: '#compatible-instruments',
+    })).toBeNull();
+    expect(legacyRedirectFromLocation({ pathname: '/', search: '?q=hi%20mom', hash: '' })).toBeNull();
   });
 
   it('leaves the home page alone when nothing old is in the URL', () => {
@@ -39,12 +38,10 @@ describe('legacyRedirectFromLocation', () => {
       .toBe('/contact');
   });
 
-  it('covers the anchors the old nav used', () => {
+  it('covers the anchors that still leave the home page', () => {
     expect(Object.keys(HASH_ROUTES).sort()).toEqual([
-      'compatible-instruments',
       'contact',
       'music-remixes',
-      'store',
     ]);
   });
 });
