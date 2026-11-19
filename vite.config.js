@@ -15,13 +15,11 @@ const DEV_ROUTES = {
   '/neworleans/tours': '/pages/neworleans/tours.html',
   '/flights': '/pages/flights/index.html',
   '/stocks': '/pages/stocks/index.html',
-  '/codex': '/pages/codex/index.html',
 };
 
 // Subsite asset folders that live outside public/, so Vite does not copy them.
 const SUBSITE_ASSET_DIRS = [
   'pages/neworleans/assets',
-  'pages/codex/assets',
 ];
 
 function subsitePlugin() {
@@ -59,7 +57,6 @@ export default defineConfig({
         neworleansTours: resolve(__dirname, 'pages/neworleans/tours.html'),
         flights: resolve(__dirname, 'pages/flights/index.html'),
         stocks: resolve(__dirname, 'pages/stocks/index.html'),
-        codex: resolve(__dirname, 'pages/codex/index.html'),
       },
     },
   },
