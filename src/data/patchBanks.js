@@ -184,6 +184,8 @@ export const patchBanks = [
     name: 'Audio Demo MIDIs',
     description: 'MIDI files from the patch demos above, containing the chord progressions, arpeggios, and sequences.',
     audioDemo: [],
-    downloadLink: '/banks/audio-demo-midis.zip'
+    downloadLink: '/banks/audio-demo-midis.zip',
+    image: '/img/patch-banks/audio-demo-midis.webp',
+    imageAlt: 'Audio Demo MIDIs: synthesizer beside a laptop showing a piano roll',
   }
 ];

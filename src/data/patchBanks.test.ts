@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { patchBanks } from './patchBanks';
 
 describe('patchBanks', () => {
@@ -19,6 +21,21 @@ describe('patchBanks', () => {
         expect(Number.isInteger(bank.count)).toBe(true);
         expect(bank.count).toBeGreaterThan(0);
       }
+    });
+  });
+
+  it('gives every bank a marketing hero, including Audio Demo MIDIs', () => {
+    const midi = patchBanks.find((bank) => bank.name === 'Audio Demo MIDIs');
+
+    expect(midi).toMatchObject({
+      image: '/img/patch-banks/audio-demo-midis.webp',
+      imageAlt: 'Audio Demo MIDIs: synthesizer beside a laptop showing a piano roll',
+    });
+
+    patchBanks.forEach((bank) => {
+      expect(bank.image).toMatch(/^\/img\/patch-banks\/.+\.webp$/);
+      expect(bank.imageAlt.length).toBeGreaterThan(0);
+      expect(fs.existsSync(path.join(__dirname, '../../public', bank.image))).toBe(true);
     });
   });
 
