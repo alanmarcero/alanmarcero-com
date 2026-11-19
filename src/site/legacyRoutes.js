@@ -1,8 +1,7 @@
-// Old single-page anchors and the home search query. Keep the inline script in
+// Old single-page anchors. The patch banks now live on `/`, so `#store`,
+// `#compatible-instruments`, and `?q=` stay there. Keep the inline script in
 // index.html in step with HASH_ROUTES.
 export const HASH_ROUTES = {
-  store: '/patches',
-  'compatible-instruments': '/patches#compatible-instruments',
   'music-remixes': '/music',
   contact: '/contact',
 };
@@ -29,6 +28,5 @@ export function legacyRedirectFromLocation(loc) {
     return `${path}${search}${frag ? `#${frag}` : ''}`;
   }
 
-  if (q) return `/patches?q=${encodeURIComponent(q)}`;
   return null;
 }

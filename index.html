@@ -4,22 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0a0c0d" />
-    <meta name="description" content="Synthesizer patch banks, beta audio plugins, and electronic music by Alan Marcero." />
+    <meta name="description" content="Free synthesizer patch banks by Alan Marcero. Downloads for Prophet 08, Virus TI, Nord Lead, Moog, Roland JP-8000, and more." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href="https://alanmarcero.com/" />
 
     <!-- Open Graph / social sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Alan Marcero" />
-    <meta property="og:title" content="Alan Marcero — Synthesizer Sound Designer & Producer" />
-    <meta property="og:description" content="Synthesizer patch banks, beta audio plugins, and electronic music by Alan Marcero." />
+    <meta property="og:title" content="Patch Banks — Alan Marcero" />
+    <meta property="og:description" content="Free synthesizer patch banks by Alan Marcero." />
     <meta property="og:url" content="https://alanmarcero.com/" />
     <meta property="og:image" content="https://alanmarcero.com/hero-bg.webp" />
     <meta property="og:image:width" content="3168" />
     <meta property="og:image:height" content="1344" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Alan Marcero — Synthesizer Sound Designer & Producer" />
-    <meta name="twitter:description" content="Synthesizer patch banks, beta audio plugins, and electronic music by Alan Marcero." />
+    <meta name="twitter:title" content="Patch Banks — Alan Marcero" />
+    <meta name="twitter:description" content="Free synthesizer patch banks by Alan Marcero." />
     <meta name="twitter:image" content="https://alanmarcero.com/hero-bg.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,17 +27,16 @@
     <link rel="preconnect" href="https://i.ytimg.com">
     <link rel="dns-prefetch" href="https://www.youtube.com">
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <title>Alan Marcero — Synthesizer Sound Designer &amp; Producer</title>
+    <title>Patch Banks — Alan Marcero</title>
   </head>
   <body>
     <div id="root"></div>
     <noscript>
       <div style="max-width:42rem;margin:4rem auto;padding:0 1.5rem;font-family:system-ui,sans-serif;color:#e8edee;text-align:center;line-height:1.6;">
-        <h1 style="color:#4af2a4;">Alan Marcero</h1>
-        <p>Synthesizer sound designer and producer. Patch banks, beta audio plugins, and music.</p>
+        <h1 style="color:#4af2a4;">Patch Banks</h1>
+        <p>Free synthesizer patch banks by Alan Marcero. This page needs JavaScript to show the banks.</p>
         <p>
           <a href="/plugins" style="color:#4af2a4;">Plugins</a> &nbsp;·&nbsp;
-          <a href="/patches" style="color:#4af2a4;">Patch banks</a> &nbsp;·&nbsp;
           <a href="/music" style="color:#4af2a4;">Music</a> &nbsp;·&nbsp;
           <a href="/contact" style="color:#4af2a4;">Contact</a>
         </p>
@@ -51,8 +50,6 @@
     <script>
       (function () {
         var routes = {
-          store: "/patches",
-          "compatible-instruments": "/patches#compatible-instruments",
           "music-remixes": "/music",
           contact: "/contact"
         };
@@ -61,15 +58,12 @@
         var hash = location.hash.replace(/^#/, "");
         var q = new URLSearchParams(location.search).get("q");
         var dest = routes[hash];
-        if (dest) {
-          var parts = dest.split("#");
-          var next = parts[0];
-          if (q) next += "?q=" + encodeURIComponent(q);
-          if (parts[1]) next += "#" + parts[1];
-          location.replace(next);
-          return;
-        }
-        if (q) location.replace("/patches?q=" + encodeURIComponent(q));
+        if (!dest) return;
+        var parts = dest.split("#");
+        var next = parts[0];
+        if (q) next += "?q=" + encodeURIComponent(q);
+        if (parts[1]) next += "#" + parts[1];
+        location.replace(next);
       })();
     </script>
     <script type="module" src="/src/main.jsx"></script>

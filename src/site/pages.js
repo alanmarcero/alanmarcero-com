@@ -12,12 +12,6 @@ export const PAGES = [
     blurb: 'Beta audio plugins. OpenVST Manager installs and updates them.',
   },
   {
-    id: 'patches',
-    href: '/patches',
-    label: 'Patches',
-    blurb: 'Free synthesizer patch banks.',
-  },
-  {
     id: 'music',
     href: '/music',
     label: 'Music',
