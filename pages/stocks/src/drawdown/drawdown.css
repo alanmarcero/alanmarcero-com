@@ -176,6 +176,44 @@
   color: var(--ink);
 }
 
+.dd-panel__stats {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.dd-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.dd-stat__label {
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dd-stat__val {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.dd-stat__val--max {
+  color: var(--amber);
+}
+
+.dd-stat__val--dd {
+  color: var(--dd-drawdown);
+}
+
+.dd-stat__val--ath {
+  color: var(--phosphor);
+}
+
 /* -- the scope well ----------------------------------------------------- */
 .dd-chart {
   position: relative;
@@ -202,6 +240,28 @@
 .dd-chart__axis {
   stroke: var(--line);
   stroke-width: 1;
+}
+
+.dd-chart__grid--v {
+  opacity: 0.45;
+  stroke-dasharray: 2 4;
+}
+
+.dd-chart__maxline {
+  stroke: var(--amber);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  opacity: 0.55;
+}
+
+.dd-chart__maxspan {
+  fill: var(--amber);
+  opacity: 0.06;
+}
+
+.dd-chart__activespan {
+  fill: var(--dd-drawdown);
+  opacity: 0.08;
 }
 
 .dd-chart__axis {
@@ -232,6 +292,10 @@
 
 .dd-chart__dot--drawdown {
   fill: var(--dd-drawdown);
+}
+
+.dd-chart__dot--max {
+  fill: var(--amber);
 }
 
 .dd-chart__dot--drop {
@@ -281,6 +345,11 @@
 
 .dd-chart__endlabel--current {
   fill: var(--phosphor);
+}
+
+.dd-chart__endlabel--max {
+  fill: var(--amber);
+  font-weight: 600;
 }
 
 /* -- tooltip: values lead, labels follow -------------------------------- */

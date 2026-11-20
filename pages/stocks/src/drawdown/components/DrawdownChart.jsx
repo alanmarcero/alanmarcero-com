@@ -1,8 +1,8 @@
 import { useCallback, useId, useMemo } from 'react';
-import { plotBox, yearTicks } from '../chartGeometry';
+import { indexAtX, plotBox, yearTicks } from '../chartGeometry';
 import {
-  dateIndexMap, depthY, labelPlacement, nearestSnapIndex,
-  significantDropIndices, thinYears, troughMarkers, underwaterPlot,
+  dateIndexMap, depthY, placeTroughLabels, thinYears, troughMarkers,
+  underwaterPlot,
 } from '../drawdownGeometry';
 import { deepest, formatDepth, formatSpan } from '../drawdowns';
 import { formatDate, formatPrice } from '../format';
@@ -21,7 +21,6 @@ const WIDE = {
   tick: 13,
   label: 13,
   labelled: 4,
-  // a four-digit year at the tick size, plus air
   yearGap: 44,
   yearOffset: 24,
 };
@@ -39,35 +38,42 @@ const COMPACT = {
   yearOffset: 28,
 };
 
-// a partial year needs this many of its own sessions beside it to be labelled
 const MIN_YEAR_SESSIONS = 200;
 
 const depthTick = (t) => (t === 0 ? '0%' : `−${Math.round(t * 100)}%`);
 
+function episodeSpan(episode, dateIndex, coords, box) {
+  if (!episode) return null;
+  const startIdx = dateIndex.get(episode.peakDate);
+  const endIdx = episode.recoveryDate
+    ? dateIndex.get(episode.recoveryDate)
+    : coords.length - 1;
+  if (startIdx === undefined || endIdx === undefined || endIdx <= startIdx) return null;
+  const x1 = coords[startIdx].x;
+  const x2 = coords[endIdx].x;
+  return { x: x1, width: Math.max(2, x2 - x1), top: box.top, height: box.height };
+}
+
 /**
  * Every daily close as a loss from the highest close before it — an
- * underwater chart. The line sits on the top edge while the stock is at a
- * record and hangs below it for as long as it is not, so each dip is a
- * drawdown and its deepest point is how much the top gave back. The bottoms
- * of the drawdowns that pass the top-held filter are marked, and only the
- * deepest few are labelled.
+ * underwater chart. Highlights the deepest (max) drawdown's depth and span,
+ * marks every counted drawdown trough, and avoids overlapping labels.
  */
 function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
-  // several of these can share a page, and a gradient id has to be unique on it
   const washId = `dd-drawdown-wash-${useId().replace(/[^\w-]/g, '')}`;
   const { compact, view } = useChartView(WIDE, COMPACT);
 
   const geometry = useMemo(() => {
     const box = plotBox(view.w, view.h, view.margin);
     const plot = underwaterPlot(points, box, 4);
+    const minSessions = points.length > 400 ? MIN_YEAR_SESSIONS : 40;
     return {
       box,
       plot,
       dateIndex: dateIndexMap(points),
       years: thinYears(
         yearTicks(points.map((p) => p.date))
-          // a partial first year sits on top of the next
-          .filter((t, i, all) => !all[i + 1] || all[i + 1].index - t.index >= MIN_YEAR_SESSIONS),
+          .filter((t, i, all) => !all[i + 1] || all[i + 1].index - t.index >= minSessions),
         points.length,
         box,
         view.yearGap,
@@ -82,30 +88,29 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
     () => troughMarkers(episodes, dateIndex, coords),
     [episodes, dateIndex, coords],
   );
-  const dropIndices = useMemo(() => {
-    const episodeSet = new Set(markers.map((m) => m.index));
-    const lastIndex = coords.length - 1;
-    return significantDropIndices(points, domain.max)
-      .filter((idx) => !episodeSet.has(idx) && idx !== lastIndex);
-  }, [coords.length, domain.max, markers, points]);
+  const worst = useMemo(() => deepest(episodes, 1)[0] || null, [episodes]);
   const snapIndices = useMemo(() => {
     if (!coords.length) return [];
     const unique = new Set([
       ...markers.map((m) => m.index),
-      ...dropIndices,
       coords.length - 1,
     ]);
     return [...unique].sort((a, b) => a - b);
-  }, [coords.length, dropIndices, markers]);
-  const labelled = useMemo(
-    () => new Set(deepest(episodes, view.labelled).map((e) => e.peakDate)),
-    [episodes, view.labelled],
-  );
+  }, [coords.length, markers]);
+
+  const placedLabels = useMemo(() => {
+    const topMarkers = deepest(markers, view.labelled);
+    return placeTroughLabels(topMarkers, box, {
+      gap: view.label + 4,
+      halfWidth: view.label * 2.6,
+      labelHeight: view.label + 4,
+    });
+  }, [box, markers, view.label, view.labelled]);
 
   const yOf = useCallback((magnitude) => depthY(-magnitude, domain, box), [box, domain]);
   const indexAtViewX = useCallback(
-    (vx) => nearestSnapIndex(vx, snapIndices, coords),
-    [coords, snapIndices],
+    (vx) => indexAtX(vx, coords.length, box),
+    [box, coords.length],
   );
   const cursor = useChartCursor({
     count: coords.length, viewWidth: view.w, indexAtViewX, snapIndices,
@@ -116,25 +121,50 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
   const hover = cursor.index === null ? null : coords[cursor.index];
   const first = points[0];
   const last = points[points.length - 1];
-  const worst = deepest(episodes, 1)[0];
   const label = `${subject} as a loss from its all-time high, ${formatDate(first.date)} `
     + `to ${formatDate(last.date)}`
     + (worst ? `. The deepest drawdown shown is ${formatDepth(worst.depth)}.` : '.');
 
-  // the drawdown the hovered day sits inside, if it is one being counted
   const within = hover
     ? episodes.find((e) => e.peakDate === hover.peakDate && hover.depth < 0)
     : null;
+
+  const maxSpan = episodeSpan(worst, dateIndex, coords, box);
+  const activeSpan = within && within.peakDate !== worst?.peakDate
+    ? episodeSpan(within, dateIndex, coords, box)
+    : null;
+  const maxY = worst ? depthY(worst.depth, domain, box) : null;
+  const latest = coords[coords.length - 1];
 
   return (
     <div className="dd-chart">
       <ChartSvg cursor={cursor} view={view} labelSize={view.label} label={label}>
         <defs>
           <linearGradient id={washId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--dd-drawdown)" stopOpacity="0" />
-            <stop offset="100%" stopColor="var(--dd-drawdown)" stopOpacity="0.22" />
+            <stop offset="0%" stopColor="var(--dd-drawdown)" stopOpacity="0.02" />
+            <stop offset="100%" stopColor="var(--dd-drawdown)" stopOpacity="0.28" />
           </linearGradient>
         </defs>
+
+        {maxSpan && (
+          <rect
+            className="dd-chart__maxspan"
+            x={maxSpan.x}
+            y={maxSpan.top}
+            width={maxSpan.width}
+            height={maxSpan.height}
+          />
+        )}
+
+        {activeSpan && (
+          <rect
+            className="dd-chart__activespan"
+            x={activeSpan.x}
+            y={activeSpan.top}
+            width={activeSpan.width}
+            height={activeSpan.height}
+          />
+        )}
 
         <ValueGrid ticks={ticks} box={box} yOf={yOf} format={depthTick} />
         <YearTicks
@@ -143,6 +173,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           box={box}
           offset={view.yearOffset}
           compact={compact}
+          grid
         />
 
         {/* zero — an all-time high — is the line everything hangs from */}
@@ -154,67 +185,63 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           y2={box.top}
         />
 
+        {maxY !== null && (
+          <line
+            className="dd-chart__maxline"
+            x1={box.left}
+            x2={box.right}
+            y1={maxY}
+            y2={maxY}
+          />
+        )}
+
         <path className="dd-chart__area" d={plot.area} fill={`url(#${washId})`} />
         <polyline className="dd-chart__line dd-chart__line--drawdown" points={plot.line} />
 
-        {dropIndices.map((idx) => (
-          <circle
-            key={`drop-${points[idx].date}`}
-            className="dd-chart__dot dd-chart__dot--drop"
-            cx={coords[idx].x}
-            cy={coords[idx].y}
-            r={3.5}
-          />
-        ))}
+        {markers.map((m) => {
+          const isMax = worst && m.peakDate === worst.peakDate;
+          return (
+            <circle
+              key={m.peakDate}
+              className={`dd-chart__dot dd-chart__dot--drawdown${isMax ? ' dd-chart__dot--max' : ''}${m.open ? ' dd-chart__dot--open' : ''}`}
+              cx={m.x}
+              cy={m.y}
+              r={isMax ? 5.5 : 4}
+            />
+          );
+        })}
 
-        {markers.map((m) => (
-          <circle
-            key={m.peakDate}
-            className={`dd-chart__dot dd-chart__dot--drawdown${m.open ? ' dd-chart__dot--open' : ''}`}
-            cx={m.x}
-            cy={m.y}
-            r={4.5}
-          />
-        ))}
-
-        {markers.filter((m) => labelled.has(m.peakDate)).map((m) => {
-          const at = labelPlacement(m, box, { gap: view.label + 4, halfWidth: view.label * 2.4 });
+        {placedLabels.map(({ marker, at }) => {
+          const isMax = worst && marker.peakDate === worst.peakDate;
           return (
             <text
-              key={m.peakDate}
-              className="dd-chart__endlabel"
+              key={marker.peakDate}
+              className={`dd-chart__endlabel${isMax ? ' dd-chart__endlabel--max' : ''}`}
               x={at.x}
               y={at.y}
               textAnchor={at.anchor}
               dominantBaseline="middle"
             >
-              {formatDepth(m.depth)}
+              {isMax && !compact ? `MAX ${formatDepth(marker.depth)}` : formatDepth(marker.depth)}
             </text>
           );
         })}
 
-        {(() => {
-          const latest = coords[coords.length - 1];
-          return (
-            <>
-              <circle
-                className="dd-chart__dot dd-chart__dot--current"
-                cx={latest.x}
-                cy={latest.y}
-                r={4.5}
-              />
-              <text
-                className="dd-chart__endlabel dd-chart__endlabel--current"
-                x={latest.x + 8}
-                y={latest.y}
-                textAnchor="start"
-                dominantBaseline="middle"
-              >
-                {formatDepth(last.depth)}
-              </text>
-            </>
-          );
-        })()}
+        <circle
+          className="dd-chart__dot dd-chart__dot--current"
+          cx={latest.x}
+          cy={latest.y}
+          r={4.5}
+        />
+        <text
+          className="dd-chart__endlabel dd-chart__endlabel--current"
+          x={latest.x + 8}
+          y={latest.y}
+          textAnchor="start"
+          dominantBaseline="middle"
+        >
+          {formatDepth(last.depth)}
+        </text>
 
         {hover && (
           <Crosshair

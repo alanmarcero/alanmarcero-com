@@ -1,6 +1,7 @@
 import {
-  dateIndexMap, depthY, labelPlacement, nearestSnapIndex,
-  significantDropIndices, thinYears, troughMarkers, underwaterPlot,
+  dateIndexMap, depthY, downsampleCoords, labelPlacement, nearestSnapIndex,
+  placeTroughLabels, significantDropIndices, sliceWindow, thinYears, troughMarkers,
+  underwaterPlot,
 } from './drawdownGeometry';
 import { plotBox } from './chartGeometry';
 import { drawdownEpisodes, underwater } from './drawdowns';
@@ -125,5 +126,44 @@ describe('nearestSnapIndex', () => {
     expect(nearestSnapIndex(140, [0, 2, 3], coords)).toBe(0);
     expect(nearestSnapIndex(260, [0, 2, 3], coords)).toBe(2);
     expect(nearestSnapIndex(390, [0, 2, 3], coords)).toBe(3);
+  });
+});
+
+describe('downsampleCoords', () => {
+  it('preserves endpoints and extreme points when downsampling', () => {
+    const coords = Array.from({ length: 100 }, (_, i) => ({
+      x: i,
+      y: i === 42 ? 250 : 10,
+    }));
+    const sampled = downsampleCoords(coords, 10);
+    expect(sampled.length).toBeLessThan(coords.length);
+    expect(sampled[0]).toBe(coords[0]);
+    expect(sampled[sampled.length - 1]).toBe(coords[coords.length - 1]);
+    expect(sampled.some((c) => c.y === 250)).toBe(true);
+  });
+});
+
+describe('placeTroughLabels', () => {
+  it('keeps the deepest label and skips or flips overlapping ones', () => {
+    const markers = [
+      { peakDate: '2020-01-01', x: 200, y: 120, depth: -0.5 },
+      { peakDate: '2020-06-01', x: 205, y: 122, depth: -0.3 },
+      { peakDate: '2024-01-01', x: 400, y: 120, depth: -0.2 },
+    ];
+    const placed = placeTroughLabels(markers, BOX, { gap: 16, halfWidth: 30, labelHeight: 16 });
+    expect(placed[0].marker.peakDate).toBe('2020-01-01');
+    expect(placed.some((p) => p.marker.peakDate === '2024-01-01')).toBe(true);
+  });
+});
+
+describe('sliceWindow', () => {
+  it('slices trailing years from the last close date', () => {
+    const series = [
+      ['2020-01-01', 100],
+      ['2023-06-01', 120],
+      ['2025-11-14', 150],
+    ];
+    expect(sliceWindow(series, 'all')).toHaveLength(3);
+    expect(sliceWindow(series, '3y').map((r) => r[0])).toEqual(['2023-06-01', '2025-11-14']);
   });
 });

@@ -1,5 +1,9 @@
+import { useState } from 'react';
 import './StocksApp.css';
 import PageHeader from './drawdown/components/PageHeader';
+import ToggleGroup from './drawdown/components/ToggleGroup';
+import TopHoldControl from './drawdown/components/TopHoldControl';
+import { DEFAULT_WINDOW, WINDOWS } from './drawdown/drawdownGeometry';
 import { DEFAULT_TOP_HOLD, formatDepth, topHoldById } from './drawdown/drawdowns';
 import InstrumentPanel from './components/InstrumentPanel';
 import { INSTRUMENTS } from './data/instruments';
@@ -7,9 +11,11 @@ import { anchorOf, byLabel } from './instruments';
 import YearOverlayPanel from './overlay/YearOverlayPanel';
 
 const ORDERED = byLabel(INSTRUMENTS);
-const HOLD = topHoldById(DEFAULT_TOP_HOLD);
 
 function StocksApp() {
+  const [windowId, setWindowId] = useState(DEFAULT_WINDOW);
+  const [holdId, setHoldId] = useState(DEFAULT_TOP_HOLD);
+  const hold = topHoldById(holdId);
 
   return (
     <div className="dd-page">
@@ -40,8 +46,26 @@ function StocksApp() {
       <main id="main-content" className="dd-main">
         <YearOverlayPanel instruments={ORDERED} />
 
+        <div className="st-controls">
+          <div className="dd-controls">
+            <ToggleGroup
+              labelId="st-window-label"
+              label="Timeframe"
+              options={WINDOWS}
+              value={windowId}
+              onChange={setWindowId}
+            />
+            <TopHoldControl value={holdId} onChange={setHoldId} />
+          </div>
+        </div>
+
         {ORDERED.map((instrument) => (
-          <InstrumentPanel key={instrument.symbol} instrument={instrument} hold={HOLD} />
+          <InstrumentPanel
+            key={instrument.symbol}
+            instrument={instrument}
+            hold={hold}
+            windowId={windowId}
+          />
         ))}
 
         <footer className="dd-notes">

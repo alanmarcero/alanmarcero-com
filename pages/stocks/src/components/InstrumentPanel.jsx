@@ -1,30 +1,52 @@
 import { useMemo } from 'react';
 import useInViewport from '../../../../src/hooks/useInViewport';
 import DrawdownPanel from '../drawdown/components/DrawdownPanel';
+import { DEFAULT_WINDOW, sliceWindow } from '../drawdown/drawdownGeometry';
 import { drawdownEpisodes, heldAtLeast, underwater } from '../drawdown/drawdowns';
 import { formatDate } from '../drawdown/format';
 import useCloses from '../useCloses';
 import { anchorOf, titleOf } from '../instruments';
 
+const WINDOW_HOLD_CAP = {
+  all: Infinity,
+  '10y': Infinity,
+  '5y': 90,
+  '3y': 60,
+  '1y': 14,
+};
+
 /**
  * One instrument's drawdown panel. Its closes are imported only as the panel
- * nears the viewport, so the page never downloads fourteen series to show two.
+ * nears the viewport, so the page never downloads dozens of series upfront.
  */
-function InstrumentPanel({ instrument, hold }) {
+function InstrumentPanel({ instrument, hold, windowId = DEFAULT_WINDOW }) {
   const [ref, near] = useInViewport({ rootMargin: '800px 0px' });
   const { status, closes } = useCloses(instrument.load, near);
 
-  const series = useMemo(() => (closes
-    ? { points: underwater(closes), episodes: drawdownEpisodes(closes) }
-    : null), [closes]);
+  const windowCloses = useMemo(
+    () => (closes ? sliceWindow(closes, windowId) : null),
+    [closes, windowId],
+  );
+  const effectiveHold = useMemo(() => {
+    const cap = WINDOW_HOLD_CAP[windowId] ?? Infinity;
+    if (hold.days <= cap) return hold;
+    return { ...hold, days: cap };
+  }, [hold, windowId]);
+
+  const series = useMemo(() => (windowCloses
+    ? { points: underwater(windowCloses), episodes: drawdownEpisodes(windowCloses) }
+    : null), [windowCloses]);
   const episodes = useMemo(
-    () => (series ? heldAtLeast(series.episodes, hold.days) : []),
-    [series, hold.days],
+    () => (series ? heldAtLeast(series.episodes, effectiveHold.days) : []),
+    [series, effectiveHold.days],
   );
 
   const id = anchorOf(instrument);
-  const kicker = `${instrument.name} · ${formatDate(instrument.first)} to `
-    + `${formatDate(instrument.last)} · ${instrument.sessions.toLocaleString('en-US')} closes`;
+  const firstDate = windowCloses?.length ? windowCloses[0][0] : instrument.first;
+  const lastDate = windowCloses?.length ? windowCloses[windowCloses.length - 1][0] : instrument.last;
+  const sessionCount = windowCloses?.length ?? instrument.sessions;
+  const kicker = `${instrument.name} · ${formatDate(firstDate)} to `
+    + `${formatDate(lastDate)} · ${sessionCount.toLocaleString('en-US')} closes`;
 
   if (!series) {
     return (
@@ -47,7 +69,7 @@ function InstrumentPanel({ instrument, hold }) {
       kicker={kicker}
       points={series.points}
       episodes={episodes}
-      hold={hold}
+      hold={effectiveHold}
       subject={`${instrument.label} daily close`}
     />
   );

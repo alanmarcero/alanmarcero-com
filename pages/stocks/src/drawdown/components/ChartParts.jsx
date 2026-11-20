@@ -58,21 +58,34 @@ export function ValueGrid({
   );
 }
 
-/** Year labels under an x axis of `count` evenly spaced points. */
+/** Year labels and subtle vertical gridlines under an x axis of `count` evenly spaced points. */
 export function YearTicks({
-  years, count, box, offset, compact,
+  years, count, box, offset, compact, grid = false,
 }) {
-  return years.map(({ index, year }) => (
-    <text
-      key={year}
-      className="dd-chart__tick"
-      x={xAt(index, count, box)}
-      y={box.bottom + offset}
-      textAnchor="middle"
-    >
-      {yearLabel(year, compact)}
-    </text>
-  ));
+  return years.map(({ index, year }) => {
+    const x = xAt(index, count, box);
+    return (
+      <g key={year}>
+        {grid && (
+          <line
+            className="dd-chart__grid dd-chart__grid--v"
+            x1={x}
+            x2={x}
+            y1={box.top}
+            y2={box.bottom}
+          />
+        )}
+        <text
+          className="dd-chart__tick"
+          x={x}
+          y={box.bottom + offset}
+          textAnchor="middle"
+        >
+          {yearLabel(year, compact)}
+        </text>
+      </g>
+    );
+  });
 }
 
 /** The cursor's vertical rule and the dot where it meets the trace. */
