@@ -21,8 +21,6 @@ function Shot({ plugin }) {
       className="plugin-shot"
       src={plugin.shotUrl}
       alt={`${plugin.name} editor`}
-      width="1200"
-      height="750"
       loading="lazy"
       decoding="async"
       onError={() => setFailed(true)}

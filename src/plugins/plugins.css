@@ -61,9 +61,12 @@
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  background: var(--panel-inset);
+  /* Tallest editor shot is about 1060×904. A slightly taller frame plus
+     contain shows every screenshot in full; the media well fills the bars. */
+  aspect-ratio: 1060 / 910;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
 }
 
 .plugin-shot--fallback {
