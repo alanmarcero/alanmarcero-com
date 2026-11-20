@@ -12,9 +12,6 @@ import { patchBanks as patchBanksData } from '../data/patchBanks';
 import { createSearchFilter } from '../utils/search';
 import { TOAST_DISMISS_MS } from '../config';
 
-const TOTAL_PATCHES = patchBanksData.reduce((sum, bank) => sum + (bank.count || 0), 0);
-const PATCH_BANK_COUNT = patchBanksData.filter((bank) => bank.count).length;
-
 const countLabel = (count) => `${count} ${count === 1 ? 'patch bank' : 'patch banks'}`;
 
 export default function PatchesPage() {
@@ -42,12 +39,6 @@ export default function PatchesPage() {
             <h1 id="store-heading" className="section-title" data-kicker="Sound design">Patch Banks</h1>
           </div>
           <p className="section-lead">Free synthesizer patch banks.</p>
-          {!searchQuery && (
-            <p className="section-stat">
-              <span className="section-stat__value">{TOTAL_PATCHES.toLocaleString()}</span> patches across{' '}
-              <span className="section-stat__value">{PATCH_BANK_COUNT}</span> instruments, free to download
-            </p>
-          )}
           <CatalogSearch
             value={searchQuery}
             onChange={setSearchQuery}
