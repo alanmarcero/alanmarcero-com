@@ -27,6 +27,12 @@ describe("PatchesPage", () => {
     expect(screen.getByRole("heading", { name: "Test Synth" })).toBeInTheDocument();
   });
 
+  it("does not show the patch-count header line", () => {
+    render(<PatchesPage />);
+    expect(screen.queryByText(/patches across/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/free to download/)).not.toBeInTheDocument();
+  });
+
   it("filters by name and description, then clears", () => {
     render(<PatchesPage />);
     const search = screen.getByPlaceholderText("Search patch banks...");
