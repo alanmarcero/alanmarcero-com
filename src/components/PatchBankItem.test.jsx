@@ -123,4 +123,16 @@ describe("PatchBankItem", () => {
     expect(container.querySelector(".module__led")).toHaveAttribute("aria-hidden", "true");
     expect(container.querySelector(".module__title")).toHaveTextContent("Test Synth Patches");
   });
+
+  it("does not render instrument tag chips", () => {
+    const { container } = render(<PatchBankItem bank={{
+      ...mockBank,
+      instruments: ["Prophet 08", "Prophet Rev2", "Mopho"],
+    }} />);
+
+    expect(screen.queryByText("Prophet 08")).not.toBeInTheDocument();
+    expect(screen.queryByRole("list", { name: "Compatible instruments" })).not.toBeInTheDocument();
+    expect(container.querySelector(".module__tags, .module__tag")).not.toBeInTheDocument();
+    expect(container.querySelector("article.module--bank")).toBeInTheDocument();
+  });
 });

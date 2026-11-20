@@ -6,7 +6,7 @@ const HERO_HEIGHT = 900;
 
 function PatchBankItem({ bank, style, onDownload, eager = false }) {
   return (
-    <ModulePanel style={style}>
+    <ModulePanel className="module module--bank" style={style}>
       {bank.image && (
         <img
           className="module__hero"
@@ -27,13 +27,6 @@ function PatchBankItem({ bank, style, onDownload, eager = false }) {
         ) : null}
       </div>
       <p className="module__desc">{bank.description}</p>
-      {bank.instruments?.length > 0 && (
-        <ul className="module__tags" aria-label="Compatible instruments">
-          {bank.instruments.map((instrument) => (
-            <li key={instrument} className="module__tag">{instrument}</li>
-          ))}
-        </ul>
-      )}
 
       {bank.audioDemo?.filter(Boolean).map((videoId) => (
         <div key={videoId} className="module__media">
