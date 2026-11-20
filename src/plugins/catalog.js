@@ -1,6 +1,9 @@
 const MANAGER_RELEASE = 'https://github.com/alanmarcero/alan-m-OpenVSTManager/releases/latest';
 
 const repoUrl = (repo) => `https://github.com/alanmarcero/${repo}`;
+const releasesUrl = (repo) => `https://github.com/alanmarcero/${repo}/releases/latest`;
+const latestReleaseApiUrl = (repo) =>
+  `https://api.github.com/repos/alanmarcero/${repo}/releases/latest`;
 const shotUrl = (repo) =>
   `https://raw.githubusercontent.com/alanmarcero/${repo}/main/docs/screenshots/preview.png`;
 
@@ -82,5 +85,7 @@ export const PLUGINS = [
 ].map((plugin) => ({
   ...plugin,
   repoUrl: repoUrl(plugin.repo),
+  releasesUrl: releasesUrl(plugin.repo),
+  latestReleaseApiUrl: latestReleaseApiUrl(plugin.repo),
   shotUrl: shotUrl(plugin.repo),
 }));

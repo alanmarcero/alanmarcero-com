@@ -33,11 +33,44 @@ describe('PluginsPage', () => {
       expect(repo).toHaveAttribute('href', plugin.repoUrl);
       expect(repo).toHaveAttribute('target', '_blank');
       expect(repo).toHaveAttribute('rel', 'noopener noreferrer');
+
+      const release = screen.getByRole('link', { name: `${plugin.name} release notes` });
+      expect(release).toHaveAttribute('href', plugin.releasesUrl);
+      expect(release).toHaveAttribute('target', '_blank');
+      expect(release).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
     const kicker = screen.getByRole('img', { name: 'openKicker editor' });
     expect(kicker).toHaveAttribute('src', PLUGINS[0].shotUrl);
     fireEvent.error(kicker);
     expect(screen.getByText('Screenshot unavailable')).toBeInTheDocument();
+  });
+
+  it('shows latest release version and notes from GitHub when available', async () => {
+    window.sessionStorage?.clear();
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn((url) => {
+      if (String(url).includes('/openEDMKick/releases/latest')) {
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              tag_name: 'v3.10.0',
+              html_url: 'https://github.com/alanmarcero/openEDMKick/releases/tag/v3.10.0',
+              body: '- Zero-delay feedback SVF filters\n\n![shot](https://example.com/shot.png)',
+            }),
+        });
+      }
+      return Promise.resolve({ ok: false });
+    });
+
+    try {
+      render(<PluginsPage />);
+      expect(await screen.findByText('v3.10.0')).toBeInTheDocument();
+      expect(screen.getByText('- Zero-delay feedback SVF filters')).toBeInTheDocument();
+      expect(screen.queryByText(/example\.com\/shot\.png/)).not.toBeInTheDocument();
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 });
