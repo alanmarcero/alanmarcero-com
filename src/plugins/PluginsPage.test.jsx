@@ -18,15 +18,14 @@ describe('PluginsPage', () => {
     expect(screen.getByText(BETA_NOTE)).toBeInTheDocument();
   });
 
-  it('lists every plugin with its summary, reason, repo, and screenshot', () => {
+  it('lists every plugin with its summary, repo, and screenshot', () => {
     render(<PluginsPage />);
 
-    expect(screen.getAllByText('Why does this exist?')).toHaveLength(PLUGINS.length);
+    expect(screen.queryByText('Why does this exist?')).not.toBeInTheDocument();
 
     PLUGINS.forEach((plugin) => {
       expect(screen.getByRole('heading', { name: plugin.name })).toBeInTheDocument();
       expect(screen.getByText(plugin.summary)).toBeInTheDocument();
-      expect(screen.getByText(plugin.why)).toBeInTheDocument();
     });
 
     PLUGINS.forEach((plugin) => {

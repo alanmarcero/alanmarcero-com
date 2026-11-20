@@ -69,6 +69,16 @@
   background: transparent;
 }
 
+/* Size each card to its copy. Stretching a short summary up to a taller
+   neighbor left a blank band above the GitHub link. */
+.plugin-grid {
+  align-items: start;
+}
+
+.plugin-grid .module__desc {
+  flex-grow: 0;
+}
+
 .plugin-shot--fallback {
   display: grid;
   place-items: center;
@@ -80,24 +90,6 @@
   text-transform: uppercase;
   text-align: center;
   padding: var(--space-3);
-}
-
-.plugin-why {
-  margin: 0;
-  color: var(--ink);
-  font-size: var(--text-sm);
-  line-height: 1.6;
-}
-
-.plugin-why__label {
-  display: block;
-  margin-bottom: 0.3rem;
-  color: var(--amber);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .home-directory {

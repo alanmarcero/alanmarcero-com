@@ -52,7 +52,7 @@ export default function PluginsPage() {
 
         <p className="beta-note">{BETA_NOTE}</p>
 
-        <div className="module-grid">
+        <div className="module-grid plugin-grid">
           {PLUGINS.map((plugin, index) => (
             <ModulePanel key={plugin.repo} style={{ '--card-index': index }}>
               <div className="module__media">
@@ -62,10 +62,6 @@ export default function PluginsPage() {
                 <h2 className="module__title">{plugin.name}</h2>
               </div>
               <p className="module__desc">{plugin.summary}</p>
-              <p className="plugin-why">
-                <span className="plugin-why__label">Why does this exist?</span>
-                <span className="plugin-why__text">{plugin.why}</span>
-              </p>
               <div className="module__actions">
                 <a
                   className="btn btn--ghost"
