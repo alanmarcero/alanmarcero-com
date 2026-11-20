@@ -1,7 +1,9 @@
 import BiggestDrops from './BiggestDrops';
 import DrawdownChart from './DrawdownChart';
 import DrawdownTable from './DrawdownTable';
-import { describeDrawdowns, describeHold, summarizeDrawdowns } from '../drawdowns';
+import {
+  deepest, describeDrawdowns, describeHold, formatDepth, summarizeDrawdowns,
+} from '../drawdowns';
 import { formatDate, formatPrice } from '../format';
 
 /**
@@ -17,13 +19,35 @@ function DrawdownPanel({
   const caption = describeDrawdowns(summarizeDrawdowns(episodes), holdLabel, {
     formatDate, formatPrice,
   });
+  const worst = deepest(episodes, 1)[0];
+  const latest = points[points.length - 1];
 
   return (
     <>
       <section className="dd-panel" id={id} aria-labelledby={`${id}-heading`}>
         <div className="dd-panel__head">
-          <h2 className="dd-panel__title" id={`${id}-heading`}>{title}</h2>
-          {kicker && <p className="dd-panel__kicker">{kicker}</p>}
+          <div>
+            <h2 className="dd-panel__title" id={`${id}-heading`}>{title}</h2>
+            {kicker && <p className="dd-panel__kicker">{kicker}</p>}
+          </div>
+          {(worst || latest) && (
+            <div className="dd-panel__stats">
+              {worst && (
+                <span className="dd-stat">
+                  <span className="dd-stat__label">Max</span>
+                  <strong className="dd-stat__val dd-stat__val--max">{formatDepth(worst.depth)}</strong>
+                </span>
+              )}
+              {latest && (
+                <span className="dd-stat">
+                  <span className="dd-stat__label">Now</span>
+                  <strong className={`dd-stat__val${latest.depth < 0 ? ' dd-stat__val--dd' : ' dd-stat__val--ath'}`}>
+                    {latest.depth < 0 ? formatDepth(latest.depth) : 'ATH'}
+                  </strong>
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {children}

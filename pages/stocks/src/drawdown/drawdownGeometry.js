@@ -17,6 +17,44 @@ export function depthY(depth, domain, box) {
   return box.top + fraction * box.height;
 }
 
+/**
+ * Downsample plotted coordinates into `maxBuckets` min/max y-envelope buckets
+ * so long daily histories stay pixel-accurate without bloating the SVG DOM.
+ */
+export function downsampleCoords(coords, maxBuckets = 1200) {
+  if (coords.length <= maxBuckets * 2 || maxBuckets < 2) return coords;
+  const result = [coords[0]];
+  const innerCount = coords.length - 2;
+  const bucketSize = innerCount / maxBuckets;
+  let lastAdded = 0;
+
+  for (let b = 0; b < maxBuckets; b += 1) {
+    const start = 1 + Math.floor(b * bucketSize);
+    const end = Math.min(coords.length - 1, 1 + Math.floor((b + 1) * bucketSize));
+    if (start >= end) continue;
+    let minIdx = start;
+    let maxIdx = start;
+    for (let i = start + 1; i < end; i += 1) {
+      if (coords[i].y < coords[minIdx].y) minIdx = i;
+      if (coords[i].y > coords[maxIdx].y) maxIdx = i;
+    }
+    const first = Math.min(minIdx, maxIdx);
+    const second = Math.max(minIdx, maxIdx);
+    if (first > lastAdded) {
+      result.push(coords[first]);
+      lastAdded = first;
+    }
+    if (second > lastAdded) {
+      result.push(coords[second]);
+      lastAdded = second;
+    }
+  }
+
+  const tail = coords.length - 1;
+  if (lastAdded < tail) result.push(coords[tail]);
+  return result;
+}
+
 /** The daily underwater series placed in a plot box. */
 export function underwaterPlot(points, box, tickCount = 4) {
   const domain = stackDomain(points.map((p) => -p.depth), tickCount);
@@ -26,14 +64,15 @@ export function underwaterPlot(points, box, tickCount = 4) {
     x: xAt(index, points.length, box),
     y: depthY(p.depth, domain, box),
   }));
+  const traceCoords = downsampleCoords(coords, Math.max(200, Math.round(box.width * 1.2)));
   return {
     domain,
     // magnitudes, top to bottom: 0, 0.25, 0.5 …
     ticks: stackTicks(domain),
     coords,
-    line: polyline(coords),
+    line: polyline(traceCoords),
     // the water above the trace, closed along the zero line
-    area: areaUnder(coords, { bottom: box.top }),
+    area: areaUnder(traceCoords, { bottom: box.top }),
   };
 }
 
@@ -143,4 +182,75 @@ export function labelPlacement(marker, box, { gap = 16, halfWidth = 30 } = {}) {
     y: below ? marker.y + gap : marker.y - gap * 0.6,
     anchor,
   };
+}
+
+function labelBounds(at, halfWidth, labelHeight) {
+  const width = halfWidth * 2;
+  let left = at.x - halfWidth;
+  if (at.anchor === 'start') left = at.x;
+  if (at.anchor === 'end') left = at.x - width;
+  return {
+    left,
+    right: left + width,
+    top: at.y - labelHeight / 2,
+    bottom: at.y + labelHeight / 2,
+  };
+}
+
+function boxesOverlap(a, b) {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
+/**
+ * Place trough depth labels deepest-first without overlapping each other.
+ * Each candidate tries below the dot first, then above, and is skipped if
+ * neither position clears already-placed labels.
+ */
+export function placeTroughLabels(
+  markers,
+  box,
+  { gap = 16, halfWidth = 30, labelHeight = 16 } = {},
+) {
+  const sorted = [...markers].sort((a, b) => a.depth - b.depth);
+  const placed = [];
+  const occupied = [];
+
+  for (const marker of sorted) {
+    const primary = labelPlacement(marker, box, { gap, halfWidth });
+    const flippedY = primary.y > marker.y
+      ? Math.max(box.top + labelHeight / 2, marker.y - gap * 0.85)
+      : Math.min(box.bottom + gap / 2, marker.y + gap);
+    const candidates = [primary, { ...primary, y: flippedY }];
+
+    for (const candidate of candidates) {
+      const rect = labelBounds(candidate, halfWidth, labelHeight);
+      if (!occupied.some((r) => boxesOverlap(r, rect))) {
+        occupied.push(rect);
+        placed.push({ marker, at: candidate });
+        break;
+      }
+    }
+  }
+  return placed;
+}
+
+export const WINDOWS = [
+  { id: 'all', label: 'All', years: null },
+  { id: '10y', label: '10Y', years: 10 },
+  { id: '5y', label: '5Y', years: 5 },
+  { id: '3y', label: '3Y', years: 3 },
+  { id: '1y', label: '1Y', years: 1 },
+];
+
+export const DEFAULT_WINDOW = 'all';
+
+/** Slice `[date, close]` pairs to the trailing `years` window, or all. */
+export function sliceWindow(closes, windowId) {
+  const win = WINDOWS.find((w) => w.id === windowId);
+  if (!win?.years || !closes.length) return closes;
+  const lastDate = closes[closes.length - 1][0];
+  const year = Number(lastDate.slice(0, 4)) - win.years;
+  const cutoff = `${year}${lastDate.slice(4)}`;
+  const startIdx = closes.findIndex(([date]) => date >= cutoff);
+  return startIdx <= 0 ? closes : closes.slice(startIdx);
 }
