@@ -526,6 +526,16 @@ main {
   flex-grow: 1;
 }
 
+/* Patch-bank cards size to their content. Stretching the card and growing
+   the description left a blank band above the download. */
+.module--bank {
+  align-self: start;
+}
+
+.module--bank .module__desc {
+  flex-grow: 0;
+}
+
 .module__media {
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -918,25 +928,6 @@ footer {
     width: 190px;
     height: 190px;
   }
-}
-
-.module__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.module__tag {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--ink-muted);
-  background: var(--panel-inset);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 2px 8px;
 }
 
 .compat-wrap {
