@@ -211,10 +211,10 @@ export function overlayCorrelation(baseSeries, currentSeries) {
   return Math.max(-1, Math.min(1, num / denom));
 }
 
-/** Format a Pearson correlation coefficient `r`, e.g. `+0.84`, `−0.42`, `0.00`. */
+/** Format a Pearson correlation coefficient `r` as a signed percentage, e.g. `+84%`, `−42%`, `0%`. */
 export function formatCorrelation(r) {
   if (r === null || !Number.isFinite(r)) return 'n/a';
-  const abs = Math.abs(r);
-  if (abs < 0.005) return '0.00';
-  return `${r > 0 ? '+' : '−'}${abs.toFixed(2)}`;
+  const pct = Math.round(r * 100);
+  if (pct === 0) return '0%';
+  return `${pct > 0 ? '+' : '−'}${Math.abs(pct)}%`;
 }

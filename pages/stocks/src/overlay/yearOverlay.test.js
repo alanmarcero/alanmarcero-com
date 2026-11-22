@@ -176,10 +176,10 @@ describe('overlayCorrelation and formatCorrelation', () => {
     )).toBeNull();
   });
 
-  it('formats correlation coefficients with sign and two decimals', () => {
-    expect(formatCorrelation(0.842)).toBe('+0.84');
-    expect(formatCorrelation(-0.419)).toBe('−0.42');
-    expect(formatCorrelation(0.001)).toBe('0.00');
+  it('formats correlation coefficients as a signed percentage', () => {
+    expect(formatCorrelation(0.842)).toBe('+84%');
+    expect(formatCorrelation(-0.419)).toBe('−42%');
+    expect(formatCorrelation(0.001)).toBe('0%');
     expect(formatCorrelation(null)).toBe('n/a');
   });
 });

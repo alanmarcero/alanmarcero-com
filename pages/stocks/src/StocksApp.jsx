@@ -11,6 +11,10 @@ import { byLabel } from './instruments';
 import YearOverlayPanel from './overlay/YearOverlayPanel';
 
 const ORDERED = byLabel(INSTRUMENTS);
+const OVERLAY_SYMBOLS = ['SPY', 'QQQ', 'DIA', 'IWM'];
+const OVERLAY_INSTRUMENTS = OVERLAY_SYMBOLS
+  .map((sym) => INSTRUMENTS.find((i) => i.symbol === sym))
+  .filter(Boolean);
 
 function StocksApp() {
   const [windowId, setWindowId] = useState(DEFAULT_WINDOW);
@@ -33,7 +37,7 @@ function StocksApp() {
       />
 
       <main id="main-content" className="dd-main">
-        <YearOverlayPanel instruments={ORDERED} />
+        <YearOverlayPanel instruments={OVERLAY_INSTRUMENTS} />
 
         <div className="st-controls">
           <div className="dd-controls">

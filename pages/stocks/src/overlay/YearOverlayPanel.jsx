@@ -116,7 +116,7 @@ function YearOverlayContent({ instrument, baseYear, onSelectYear }) {
             {`(${formatPrice(firstCurrent.close)} → ${formatPrice(lastCurrent.close)})`}
           </>
         )}
-        {correlation !== null && ` · Pearson r = ${formatCorrelation(correlation)}`}
+        {correlation !== null && ` · Correlation ${formatCorrelation(correlation)}`}
         .
       </p>
 
@@ -144,10 +144,10 @@ function YearOverlayPanel({ instruments, defaultSymbol = 'SPY', defaultYear = 20
       <div className="dd-panel__head">
         <div>
           <h2 className="dd-panel__title" id="overlay-year-compare-heading">
-            {`${baseYear} vs ${CURRENT_YEAR}`}
+            Year-over-year correlation
           </h2>
           <p className="dd-panel__kicker">
-            Relative % change from each year&rsquo;s first close · aligned by calendar date
+            {`${baseYear} vs ${CURRENT_YEAR} · relative % change from each year’s first close · aligned by calendar date`}
           </p>
         </div>
 

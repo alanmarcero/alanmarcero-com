@@ -17,7 +17,7 @@ describe('StocksApp', () => {
     await loaded();
     const titles = screen.getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent)
-      .filter((t) => t !== 'Data and methodology' && !/^\d{4} vs 2026$/.test(t));
+      .filter((t) => t !== 'Data and methodology' && t !== 'Year-over-year correlation');
     expect(titles).toHaveLength(INSTRUMENTS.length);
     expect(titles[0]).toBe('AAPL — Apple');
     expect(titles[1]).toBe('AMZN — Amazon');
@@ -56,6 +56,8 @@ describe('StocksApp', () => {
     ).toBeInTheDocument();
 
     const instrumentPicker = screen.getByRole('group', { name: /Select instrument for year overlay/i });
+    expect(within(instrumentPicker).getAllByRole('button').map((b) => b.textContent))
+      .toEqual(['SPY', 'QQQ', 'DIA', 'IWM']);
     fireEvent.click(within(instrumentPicker).getByRole('button', { name: 'QQQ' }));
     expect(
       await screen.findByRole('img', { name: /QQQ 2018 vs 2026 relative percentage performance/i }),
@@ -64,7 +66,7 @@ describe('StocksApp', () => {
     const yearPicker = screen.getByRole('group', { name: /Select comparison year/i });
     const yearButtons = within(yearPicker).getAllByRole('button');
     expect(yearButtons).toHaveLength(10);
-    expect(yearButtons[0]).toHaveTextContent(/^2016[+\u2212]?\d\.\d{2}$/);
+    expect(yearButtons[0]).toHaveTextContent(/^2016[+\u2212]?\d+%$/);
     fireEvent.click(within(yearPicker).getByRole('button', { name: /^2016/ }));
     expect(
       await screen.findByRole('img', { name: /QQQ 2016 vs 2026 relative percentage performance/i }),

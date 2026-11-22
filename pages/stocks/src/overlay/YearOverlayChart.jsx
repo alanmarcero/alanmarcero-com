@@ -102,7 +102,7 @@ function YearOverlayChart({
   const ariaLabel = `${subject} ${baseYear} vs ${currentYear} relative percentage performance`
     + (lastBase ? `. ${baseYear} finished at ${formatSignedPct(lastBase.pct)}` : '')
     + (lastCurrent ? `. ${currentYear} is at ${formatSignedPct(lastCurrent.pct)} as of ${formatDate(lastCurrent.date)}` : '')
-    + (correlation !== null ? `. Correlation r = ${formatCorrelation(correlation)}` : '')
+    + (correlation !== null ? `. Correlation ${formatCorrelation(correlation)}` : '')
     + '.';
 
   return (
@@ -117,7 +117,7 @@ function YearOverlayChart({
             y={box.top + 14}
             textAnchor="start"
           >
-            {`r = ${formatCorrelation(correlation)}`}
+            {`Correlation ${formatCorrelation(correlation)}`}
           </text>
         )}
 
