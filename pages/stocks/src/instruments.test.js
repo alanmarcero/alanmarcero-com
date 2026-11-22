@@ -4,10 +4,10 @@ import { INSTRUMENTS } from './data/instruments';
 describe('byLabel', () => {
   it('orders the page alphabetically, ignoring case', () => {
     expect(byLabel(INSTRUMENTS).map((i) => i.label)).toEqual([
-      'AAPL', 'AMZN', 'AVGO', 'Bitcoin', 'BRK-B', 'DIA', 'Ethereum', 'GOOG',
-      'IWM', 'LLY', 'META', 'MSFT', 'NVDA', 'QQQ', 'Samsung', 'Saudi Aramco',
-      'SMH', 'SPCX', 'SPY', 'TSLA', 'TSM', 'WMT', 'XLB', 'XLE', 'XLF', 'XLK',
-      'XLP', 'XLRE', 'XLU', 'XLY',
+      'AAPL', 'AMZN', 'AVGO', 'Bitcoin', 'BRK-B', 'CHAT', 'DIA', 'Ethereum',
+      'GOOG', 'IVES', 'IWM', 'LLY', 'META', 'MSFT', 'NVDA', 'QQQ', 'Samsung',
+      'Saudi Aramco', 'SMH', 'SPCX', 'SPY', 'TSLA', 'TSM', 'WMT', 'XLB', 'XLE',
+      'XLF', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLY',
     ]);
   });
 
