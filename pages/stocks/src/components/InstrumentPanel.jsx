@@ -2,17 +2,17 @@ import { useMemo } from 'react';
 import useInViewport from '../../../../src/hooks/useInViewport';
 import DrawdownPanel from '../drawdown/components/DrawdownPanel';
 import { DEFAULT_WINDOW, sliceWindow } from '../drawdown/drawdownGeometry';
-import { drawdownEpisodes, heldAtLeast, underwater } from '../drawdown/drawdowns';
+import { deepestAtLeast, drawdownEpisodes, underwater } from '../drawdown/drawdowns';
 import { formatDate } from '../drawdown/format';
 import useCloses from '../useCloses';
 import { anchorOf, titleOf } from '../instruments';
 
-const WINDOW_HOLD_CAP = {
+const WINDOW_DEPTH_CAP = {
   all: Infinity,
   '10y': Infinity,
-  '5y': 90,
-  '3y': 60,
-  '1y': 14,
+  '5y': 0.10,
+  '3y': 0.05,
+  '1y': 0.03,
 };
 
 /**
@@ -28,17 +28,17 @@ function InstrumentPanel({ instrument, hold, windowId = DEFAULT_WINDOW }) {
     [closes, windowId],
   );
   const effectiveHold = useMemo(() => {
-    const cap = WINDOW_HOLD_CAP[windowId] ?? Infinity;
-    if (hold.days <= cap) return hold;
-    return { ...hold, days: cap };
+    const cap = WINDOW_DEPTH_CAP[windowId] ?? Infinity;
+    if (hold.minDepth <= cap) return hold;
+    return { ...hold, minDepth: cap };
   }, [hold, windowId]);
 
   const series = useMemo(() => (windowCloses
     ? { points: underwater(windowCloses), episodes: drawdownEpisodes(windowCloses) }
     : null), [windowCloses]);
   const episodes = useMemo(
-    () => (series ? heldAtLeast(series.episodes, effectiveHold.days) : []),
-    [series, effectiveHold.days],
+    () => (series ? deepestAtLeast(series.episodes, effectiveHold.minDepth) : []),
+    [series, effectiveHold.minDepth],
   );
 
   const id = anchorOf(instrument);

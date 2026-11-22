@@ -9,10 +9,15 @@
    ========================================================================== */
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const WEEK_52_DAYS = 365;
+
+function epochDay(isoDate) {
+  return Math.round(Date.parse(`${isoDate}T00:00:00Z`) / DAY_MS);
+}
 
 /** Whole days from one ISO date to another; negative if `to` is earlier. */
 export function daysBetween(from, to) {
-  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / DAY_MS);
+  return epochDay(to) - epochDay(from);
 }
 
 /** `112` -> `112 days`, and a lone day is not "1 days". */
@@ -20,29 +25,33 @@ export function formatDays(days) {
   return `${days} day${days === 1 ? '' : 's'}`;
 }
 
-/** How long a top has to stand before its drawdown counts. */
+/** Sensitivity levels for drawdown detection; lower depth thresholds highlight more drawdowns. */
 export const TOP_HOLDS = [
-  { id: 'any', days: 0, label: 'Any top' },
-  { id: '1m', days: 30, label: '1 month' },
-  { id: '3m', days: 90, label: '3 months' },
-  { id: '6m', days: 180, label: '6 months' },
-  { id: '1y', days: 365, label: '1 year' },
+  { id: 'any', minDepth: 0.03, label: 'Highest' },
+  { id: '1m', minDepth: 0.05, label: 'High' },
+  { id: '3m', minDepth: 0.10, label: 'Medium' },
+  { id: '6m', minDepth: 0.15, label: 'Low' },
+  { id: '1y', minDepth: 0.20, label: 'Lowest' },
 ];
 
-export const DEFAULT_TOP_HOLD = '6m';
+export const DEFAULT_TOP_HOLD = '3m';
 
 export function topHoldById(id) {
   return TOP_HOLDS.find((h) => h.id === id) || TOP_HOLDS[0];
 }
 
 /**
- * Every close against the highest close up to and including it. `depth` is
- * zero on a record close and negative below one.
+ * Every close against the highest close in the trailing 52 weeks (365 days).
+ * `depth` is zero on a 52-week high and negative below one.
  */
 export function underwater(closes) {
-  let peak = null;
+  const dq = [];
   return closes.map(([date, close]) => {
-    if (!peak || close > peak.close) peak = { date, close };
+    const day = epochDay(date);
+    while (dq.length && day - dq[0].day > WEEK_52_DAYS) dq.shift();
+    while (dq.length && dq[dq.length - 1].close < close) dq.pop();
+    dq.push({ date, close, day });
+    const peak = dq[0];
     return {
       date,
       close,
@@ -54,51 +63,52 @@ export function underwater(closes) {
 }
 
 /**
- * One record per stretch between two all-time closing highs that dipped at
- * all. The last one is `open` when the series ends below its peak.
+ * One record per stretch between two 52-week closing highs that dipped below
+ * zero. The last one is `open` when the series ends below its 52-week high.
  */
 export function drawdownEpisodes(closes) {
   if (!closes.length) return [];
-  const [firstDate, firstClose] = closes[0];
+  const points = underwater(closes);
+  const lastDate = closes[closes.length - 1][0];
   const episodes = [];
-  let peak = { date: firstDate, close: firstClose };
-  let trough = peak;
+  let trough = null;
 
-  const close = (recovery) => {
-    if (trough.close >= peak.close) return;
-    episodes.push(episode(peak, trough, recovery, closes[closes.length - 1][0]));
-  };
-
-  closes.slice(1).forEach(([date, price]) => {
-    if (price > peak.close) {
-      close(date);
-      peak = { date, close: price };
-      trough = peak;
-      return;
+  for (const point of points) {
+    if (point.depth === 0) {
+      if (trough) {
+        episodes.push(episode(trough, point.date, lastDate));
+        trough = null;
+      }
+    } else if (!trough || point.depth < trough.depth) {
+      trough = point;
     }
-    if (price < trough.close) trough = { date, close: price };
-  });
-  close(null);
+  }
+  if (trough) episodes.push(episode(trough, null, lastDate));
   return episodes;
 }
 
-function episode(peak, trough, recoveryDate, lastDate) {
+function episode(trough, recoveryDate, lastDate) {
   return {
-    peakDate: peak.date,
-    peak: peak.close,
+    peakDate: trough.peakDate,
+    peak: trough.peak,
     troughDate: trough.date,
     trough: trough.close,
-    depth: trough.close / peak.close - 1,
+    depth: trough.depth,
     recoveryDate,
     open: recoveryDate === null,
-    toBottomDays: daysBetween(peak.date, trough.date),
-    topDays: daysBetween(peak.date, recoveryDate || lastDate),
+    toBottomDays: daysBetween(trough.peakDate, trough.date),
+    topDays: daysBetween(trough.peakDate, recoveryDate || lastDate),
   };
 }
 
 /** The drawdowns whose top stood at least `minDays`. */
 export function heldAtLeast(episodes, minDays) {
   return episodes.filter((e) => e.topDays >= minDays);
+}
+
+/** The drawdowns that fell at least `minDepth` (e.g. `0.10` for 10%). */
+export function deepestAtLeast(episodes, minDepth) {
+  return episodes.filter((e) => -e.depth >= minDepth);
 }
 
 /** The `count` deepest drawdowns, deepest first. */
@@ -136,9 +146,9 @@ export function summarizeDrawdowns(episodes) {
   };
 }
 
-/** The filter in words: `at least 30 days`, or `any length of time`. */
+/** The filter in words: `at least 10%`, or `any depth`. */
 export function describeHold(hold) {
-  return hold.days ? `at least ${formatSpan(hold.days)}` : 'any length of time';
+  return hold.minDepth ? `at least ${Math.round(hold.minDepth * 100)}%` : 'any depth';
 }
 
 /**
@@ -147,19 +157,18 @@ export function describeHold(hold) {
  * the page's display helpers.
  */
 export function describeDrawdowns(summary, holdLabel, { formatDate, formatPrice }) {
-  if (!summary) return `No all-time high has stood for ${holdLabel}.`;
+  if (!summary) return `No drawdown from a 52-week high reached ${holdLabel}.`;
   const { count, deepest: worst, median, open } = summary;
   const recovery = worst.open
     ? ', and it has not recovered'
-    : `, and it took ${formatSpan(worst.topDays)} to close above that high again`;
+    : `, and it took ${formatSpan(worst.topDays)} to set a new 52-week high`;
   const still = open
     ? `The one still open topped out at ${formatPrice(open.peak)} on `
       + `${formatDate(open.peakDate)} and is ${formatDepth(open.depth)} at its lowest `
       + `close so far, ${formatSpan(open.topDays)} on. `
     : '';
-  return `${count} all-time high${count === 1 ? '' : 's'} held for ${holdLabel} before `
-    + `the price closed above ${count === 1 ? 'it' : 'them'} again. The deepest fall from one was `
-    + `${formatDepth(worst.depth)}, from ${formatDate(worst.peakDate)} to its bottom on `
+  return `${count} drawdown${count === 1 ? '' : 's'} from a 52-week high reached ${holdLabel}. `
+    + `The deepest fell ${formatDepth(worst.depth)}, from ${formatDate(worst.peakDate)} to its bottom on `
     + `${formatDate(worst.troughDate)}${recovery}; the median is ${formatDepth(median)}. `
     + `${still}A dot marks each bottom; the deepest are labelled.`;
 }

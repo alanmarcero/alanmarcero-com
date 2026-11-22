@@ -1,5 +1,5 @@
 import {
-  DEFAULT_TOP_HOLD, TOP_HOLDS, daysBetween, deepest, describeDrawdowns, describeHold,
+  DEFAULT_TOP_HOLD, TOP_HOLDS, daysBetween, deepest, deepestAtLeast, describeDrawdowns, describeHold,
   drawdownEpisodes, formatDays, formatDepth, formatSpan,
   heldAtLeast, summarizeDrawdowns, topHoldById, underwater, worstByYear,
 } from './drawdowns';
@@ -34,6 +34,17 @@ describe('underwater', () => {
   it('keeps the first peak on a tie, as the episodes do', () => {
     const tied = underwater([['2025-01-01', 10], ['2025-01-02', 10]]);
     expect(tied[1].peakDate).toBe('2025-01-01');
+  });
+
+  it('uses a rolling 52-week high so older peaks age out after 365 days', () => {
+    const series52w = underwater([
+      ['2024-01-01', 100],
+      ['2024-06-01', 60],
+      ['2025-01-02', 70],
+    ]);
+    expect(series52w[1].depth).toBeCloseTo(-0.4);
+    expect(series52w[2].peak).toBe(70);
+    expect(series52w[2].depth).toBe(0);
   });
 });
 
@@ -82,6 +93,11 @@ describe('filters and summaries', () => {
     expect(heldAtLeast(episodes, 0)).toHaveLength(2);
   });
 
+  it('keeps only drawdowns at least minDepth deep', () => {
+    expect(deepestAtLeast(episodes, 0.15)).toHaveLength(1);
+    expect(deepestAtLeast(episodes, 0.05)).toHaveLength(2);
+  });
+
   it('orders the deepest first', () => {
     expect(deepest(episodes, 1)[0].peakDate).toBe('2025-01-01');
   });
@@ -118,21 +134,21 @@ describe('captions', () => {
   const fmt = { formatDate: (d) => d, formatPrice: (p) => `$${p}` };
 
   it('names the filter in words', () => {
-    expect(describeHold(topHoldById('any'))).toBe('any length of time');
-    expect(describeHold(topHoldById('3m'))).toBe('at least 90 days');
+    expect(describeHold(topHoldById('any'))).toBe('at least 3%');
+    expect(describeHold(topHoldById('3m'))).toBe('at least 10%');
   });
 
   it('describes the deepest, the median and the open drawdown', () => {
     const text = describeDrawdowns(summarizeDrawdowns(drawdownEpisodes(CLOSES)), 'x', fmt);
-    expect(text).toMatch(/^2 all-time highs held for x/);
+    expect(text).toMatch(/^2 drawdowns from a 52-week high reached x/);
     expect(text).toContain('\u221220.0%, from 2025-01-01 to its bottom on 2025-01-03');
-    expect(text).toContain('took 4 days to close above that high again');
+    expect(text).toContain('took 4 days to set a new 52-week high');
     expect(text).toContain('The one still open topped out at $110 on 2025-01-05');
   });
 
   it('says so when nothing qualifies', () => {
-    expect(describeDrawdowns(null, 'at least 1 year', fmt))
-      .toBe('No all-time high has stood for at least 1 year.');
+    expect(describeDrawdowns(null, 'at least 20%', fmt))
+      .toBe('No drawdown from a 52-week high reached at least 20%.');
   });
 });
 

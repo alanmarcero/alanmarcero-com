@@ -93,4 +93,15 @@ describe('useChartCursor', () => {
     act(() => result.current.handlers.onKeyDown(key('ArrowLeft')));
     expect(result.current.index).toBe(1);
   });
+
+  it('snaps pointer movement to the nearest snapIndex when provided', () => {
+    const { result } = setup({ snapIndices: [1, 4, 8] });
+    result.current.svgRef.current = {
+      getBoundingClientRect: () => ({ left: 0, width: 1000 }),
+    };
+    act(() => result.current.handlers.onPointerMove({ clientX: 300 }));
+    expect(result.current.index).toBe(4);
+    act(() => result.current.handlers.onPointerMove({ clientX: 200 }));
+    expect(result.current.index).toBe(1);
+  });
 });

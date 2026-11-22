@@ -1,6 +1,19 @@
 import { useCallback, useRef, useState } from 'react';
 import { arrowStep, stepIndex, viewBoxX } from '../chartGeometry';
 
+function nearestSnap(target, snapIndices) {
+  let best = snapIndices[0];
+  let bestDist = Math.abs(best - target);
+  for (let i = 1; i < snapIndices.length; i += 1) {
+    const dist = Math.abs(snapIndices[i] - target);
+    if (dist < bestDist) {
+      best = snapIndices[i];
+      bestDist = dist;
+    }
+  }
+  return best;
+}
+
 /**
  * The crosshair every chart on the page shares: a pointer or the arrow keys
  * move it, and leaving or blurring the chart clears it. It holds an index
@@ -22,8 +35,10 @@ export default function useChartCursor({
   const onPointer = useCallback((event) => {
     const rect = svgRef.current?.getBoundingClientRect();
     if (!rect?.width) return;
-    moveTo(indexAtViewX(viewBoxX(event.clientX, rect, viewWidth)));
-  }, [indexAtViewX, moveTo, viewWidth]);
+    const raw = indexAtViewX(viewBoxX(event.clientX, rect, viewWidth));
+    if (!Number.isInteger(raw) || raw < 0 || raw >= count) return;
+    moveTo(snapIndices?.length ? nearestSnap(raw, snapIndices) : raw);
+  }, [count, indexAtViewX, moveTo, snapIndices, viewWidth]);
 
   const onKeyDown = useCallback((event) => {
     const step = arrowStep(event.key);

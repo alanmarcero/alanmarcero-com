@@ -71,6 +71,14 @@ function YearOverlayChart({
     box, plot, lookup, correlation, months,
   } = geometry;
 
+  const snapIndices = useMemo(() => {
+    const days = new Set([
+      ...baseSeries.map((p) => p.day),
+      ...currentSeries.map((p) => p.day),
+    ]);
+    return [...days].sort((a, b) => a - b);
+  }, [baseSeries, currentSeries]);
+
   const indexAtViewX = useCallback(
     (vx) => indexAtX(vx, DAYS_IN_YEAR, box),
     [box],
@@ -79,7 +87,7 @@ function YearOverlayChart({
     count: DAYS_IN_YEAR,
     viewWidth: view.w,
     indexAtViewX,
-    stride: 7,
+    snapIndices,
   });
 
   if (!baseSeries.length && !currentSeries.length) return null;

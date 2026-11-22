@@ -44,5 +44,11 @@ describe('DrawdownChart', () => {
 
     fireEvent.keyDown(svg, { key: 'ArrowLeft' });
     expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Jun 2, 2025');
+
+    svg.getBoundingClientRect = () => ({ left: 0, width: 1000 });
+    fireEvent(svg, new MouseEvent('pointermove', { bubbles: true, clientX: 900 }));
+    expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Nov 14, 2025');
+    fireEvent(svg, new MouseEvent('pointermove', { bubbles: true, clientX: 260 }));
+    expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Jun 2, 2025');
   });
 });

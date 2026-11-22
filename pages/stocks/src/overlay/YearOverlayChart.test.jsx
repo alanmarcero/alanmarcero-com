@@ -50,10 +50,14 @@ describe('YearOverlayChart', () => {
 
     const svg = container.querySelector('svg[role="img"]');
     fireEvent.keyDown(svg, { key: 'ArrowLeft' });
-    expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Dec');
+    expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Nov 13');
     expect(container.querySelector('.dd-tip')).toHaveTextContent('2020');
 
     fireEvent.keyDown(svg, { key: 'ArrowRight' });
     expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Dec 31');
+
+    svg.getBoundingClientRect = () => ({ left: 0, width: 1000 });
+    fireEvent(svg, new MouseEvent('pointermove', { bubbles: true, clientX: 500 }));
+    expect(container.querySelector('.dd-tip__week')).toHaveTextContent('Jun 1');
   });
 });

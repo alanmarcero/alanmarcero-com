@@ -15,9 +15,9 @@ function DrawdownTable({ episodes, holdLabel }) {
       hideLabel="Hide the drawdowns"
       caption={(
         <>
-          {`Every drawdown from an all-time closing high whose top stood `}
+          {`Every drawdown from a 52-week closing high of `}
           {holdLabel}
-          {`, deepest first. A top stands from its peak close to the first close above it.`}
+          {`, deepest first.`}
         </>
       )}
     >
@@ -34,7 +34,7 @@ function DrawdownTable({ episodes, holdLabel }) {
       </thead>
       <tbody>
         {rows.map((e) => (
-          <tr key={e.peakDate}>
+          <tr key={e.troughDate}>
             <td>{formatDate(e.peakDate)}</td>
             <td className="dd-num">{formatPrice(e.peak)}</td>
             <td>{formatDate(e.troughDate)}</td>

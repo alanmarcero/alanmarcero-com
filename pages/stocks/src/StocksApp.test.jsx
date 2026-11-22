@@ -4,12 +4,9 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import StocksApp from './StocksApp';
 import { INSTRUMENTS } from './data/instruments';
-import {
-  DEFAULT_TOP_HOLD, drawdownEpisodes, formatDepth, heldAtLeast, topHoldById, worstByYear,
-} from './drawdown/drawdowns';
 
 // every panel imports its series on mount; wait for them so no update lands after a test
-const loaded = () => screen.findAllByRole('img', { name: /as a loss from its all-time high/i }, { timeout: 10000 });
+const loaded = () => screen.findAllByRole('img', { name: /as a loss from its 52-week high/i }, { timeout: 10000 });
 
 // jsdom has no IntersectionObserver, so every panel counts as on screen and loads
 
@@ -23,42 +20,32 @@ describe('StocksApp', () => {
       .filter((t) => t !== 'Data and methodology' && !/^\d{4} vs 2026$/.test(t));
     expect(titles).toHaveLength(INSTRUMENTS.length);
     expect(titles[0]).toBe('AAPL — Apple');
-    expect(titles[1]).toBe('ABBV — AbbVie');
-    expect(titles[titles.length - 1]).toMatch(/^XOM/);
+    expect(titles[1]).toBe('AMZN — Amazon');
+    expect(titles[titles.length - 1]).toMatch(/^XLY/);
   });
 
-  it('indexes every instrument at the top, in the same order', async () => {
+  it('omits the top instrument index navigation and labels drawdown detection levels', async () => {
     render(<StocksApp />);
     await loaded();
-    const nav = screen.getByRole('navigation', { name: 'Instruments' });
-    const links = within(nav).getAllByRole('link');
-    const aapl = INSTRUMENTS.find((i) => i.symbol === 'AAPL');
-    expect(links[0]).toHaveTextContent(`AAPL${formatDepth(aapl.drawdown)}`);
-    expect(links[0]).toHaveAttribute('href', '#aapl');
-    expect(links).toHaveLength(INSTRUMENTS.length);
+    expect(screen.queryByRole('navigation', { name: 'Instruments' })).not.toBeInTheDocument();
+
+    const detectionGroup = screen.getByRole('group', { name: 'Drawdown detection' });
+    const buttons = within(detectionGroup).getAllByRole('button');
+    expect(buttons.map((b) => b.textContent)).toEqual(['Highest', 'High', 'Medium', 'Low', 'Lowest']);
   });
 
   it('draws every chart once its series loads', async () => {
     render(<StocksApp />);
-    const charts = await screen.findAllByRole('img', { name: /as a loss from its all-time high/i });
+    const charts = await screen.findAllByRole('img', { name: /as a loss from its 52-week high/i });
     expect(charts).toHaveLength(INSTRUMENTS.length);
     expect(screen.getByRole('img', { name: /^SPY daily close/ })).toBeInTheDocument();
   });
 
-  it('lists each chart\'s biggest drops, one per year', async () => {
+  it('omits the caption, biggest-drops list and keyboard hint under each chart', async () => {
     render(<StocksApp />);
     await loaded();
-    const spy = INSTRUMENTS.find((i) => i.symbol === 'SPY');
-    const { CLOSES } = await spy.load();
-    const minDays = topHoldById(DEFAULT_TOP_HOLD).days;
-    const expected = worstByYear(heldAtLeast(drawdownEpisodes(CLOSES), minDays));
-    const spyList = within(document.getElementById('spy')).getByRole('list');
-    const rows = within(spyList).getAllByRole('listitem');
-    expect(rows).toHaveLength(expected.length);
-    expect(rows[0]).toHaveTextContent(expected[0].year);
-    expect(rows[0]).toHaveTextContent(formatDepth(expected[0].depth));
-    const years = rows.map((r) => r.textContent.slice(0, 4));
-    expect(new Set(years).size).toBe(years.length);
+    expect(screen.queryByText(/Biggest drops, one per year/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/step between marked drops/i)).not.toBeInTheDocument();
   });
 
   it('renders the year overlay chart and switches instruments and comparison years', async () => {

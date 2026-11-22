@@ -4,10 +4,10 @@ import PageHeader from './drawdown/components/PageHeader';
 import ToggleGroup from './drawdown/components/ToggleGroup';
 import TopHoldControl from './drawdown/components/TopHoldControl';
 import { DEFAULT_WINDOW, WINDOWS } from './drawdown/drawdownGeometry';
-import { DEFAULT_TOP_HOLD, formatDepth, topHoldById } from './drawdown/drawdowns';
+import { DEFAULT_TOP_HOLD, topHoldById } from './drawdown/drawdowns';
 import InstrumentPanel from './components/InstrumentPanel';
 import { INSTRUMENTS } from './data/instruments';
-import { anchorOf, byLabel } from './instruments';
+import { byLabel } from './instruments';
 import YearOverlayPanel from './overlay/YearOverlayPanel';
 
 const ORDERED = byLabel(INSTRUMENTS);
@@ -24,24 +24,13 @@ function StocksApp() {
         title="Drawdowns"
         intro={(
           <>
-            How far each all-time high fell before it was beaten. Every daily close
+            How far each 52-week high fell before it was beaten. Every daily close
             Yahoo Finance holds for {INSTRUMENTS.length} stocks, funds and coins, each plotted as a
-            loss from the highest close before it, so the line sits on the top
-            edge at a record and hangs below it for as long as the record stands.
+            loss from the highest close in the trailing 52 weeks, so the line sits on the top
+            edge at a 52-week high and hangs below it during a drawdown.
           </>
         )}
-      >
-        <nav className="st-index" aria-label="Instruments">
-          {ORDERED.map((instrument) => (
-            <a key={instrument.symbol} className="dd-filter" href={`#${anchorOf(instrument)}`}>
-              {instrument.label}
-              <span className={`st-index__dd${instrument.drawdown < 0 ? '' : ' st-index__dd--ath'}`}>
-                {formatDepth(instrument.drawdown)}
-              </span>
-            </a>
-          ))}
-        </nav>
-      </PageHeader>
+      />
 
       <main id="main-content" className="dd-main">
         <YearOverlayPanel instruments={ORDERED} />
@@ -78,11 +67,9 @@ function StocksApp() {
               reads a little deeper here than its total return did.
             </li>
             <li>
-              A drawdown runs from an all-time closing high to the first close above
-              it, and its depth is the lowest close in between. A top "stands"
-              for the calendar days from its peak to that recovery, or to the last
-              close for the one still open; only tops that stood at least six
-              months (180 days) are counted.
+              A drawdown runs from a 52-week closing high to the next 52-week
+              closing high, and its depth is the lowest close in between. The
+              detection level filters by minimum drawdown depth.
             </li>
             <li>
               Bitcoin and Ethereum trade around the clock, so their "close"

@@ -121,7 +121,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
   const hover = cursor.index === null ? null : coords[cursor.index];
   const first = points[0];
   const last = points[points.length - 1];
-  const label = `${subject} as a loss from its all-time high, ${formatDate(first.date)} `
+  const label = `${subject} as a loss from its 52-week high, ${formatDate(first.date)} `
     + `to ${formatDate(last.date)}`
     + (worst ? `. The deepest drawdown shown is ${formatDepth(worst.depth)}.` : '.');
 
@@ -202,7 +202,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           const isMax = worst && m.peakDate === worst.peakDate;
           return (
             <circle
-              key={m.peakDate}
+              key={m.troughDate}
               className={`dd-chart__dot dd-chart__dot--drawdown${isMax ? ' dd-chart__dot--max' : ''}${m.open ? ' dd-chart__dot--open' : ''}`}
               cx={m.x}
               cy={m.y}
@@ -215,7 +215,7 @@ function DrawdownChart({ points, episodes, subject = 'Daily close' }) {
           const isMax = worst && marker.peakDate === worst.peakDate;
           return (
             <text
-              key={marker.peakDate}
+              key={marker.troughDate}
               className={`dd-chart__endlabel${isMax ? ' dd-chart__endlabel--max' : ''}`}
               x={at.x}
               y={at.y}
