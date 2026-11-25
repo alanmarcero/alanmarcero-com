@@ -7,6 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
+  OIDC_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
 permissions:
   id-token: write
@@ -30,14 +31,14 @@ jobs:
         run: npm run build
 
       - name: Configure AWS credentials (OIDC)
-        if: ${{ secrets.AWS_ROLE_ARN != '' }}
+        if: env.OIDC_ROLE_ARN != ''
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure AWS credentials (legacy static fallback)
-        if: ${{ secrets.AWS_ROLE_ARN == '' }}
+        if: env.OIDC_ROLE_ARN == ''
         uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -75,14 +76,14 @@ jobs:
           zip -r ../lambda.zip index.js contact.js
 
       - name: Configure AWS credentials (OIDC)
-        if: ${{ secrets.AWS_ROLE_ARN != '' }}
+        if: env.OIDC_ROLE_ARN != ''
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure AWS credentials (legacy static fallback)
-        if: ${{ secrets.AWS_ROLE_ARN == '' }}
+        if: env.OIDC_ROLE_ARN == ''
         uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
