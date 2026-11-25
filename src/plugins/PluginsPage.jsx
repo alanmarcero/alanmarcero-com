@@ -7,6 +7,16 @@ import { BETA_NOTE, MANAGER, PLUGINS } from './catalog';
 
 const RELEASE_CACHE_TTL_MS = 10 * 60 * 1000;
 
+function safeHttpsUrl(value) {
+  if (!value) return null;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:' ? parsed.href : null;
+  } catch {
+    return null;
+  }
+}
+
 function stripMarkdownImages(body) {
   return String(body || '')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
@@ -88,7 +98,7 @@ function useLatestReleases(plugins) {
             const json = await response.json();
             const info = {
               tag: json.tag_name || '',
-              url: json.html_url || plugin.releasesUrl,
+              url: safeHttpsUrl(json.html_url) || plugin.releasesUrl,
               notes: stripMarkdownImages(json.body),
             };
             writeCachedRelease(plugin.repo, info);
@@ -174,7 +184,7 @@ export default function PluginsPage() {
                   </a>
                   <a
                     className="btn btn--ghost"
-                    href={release?.url || plugin.releasesUrl}
+                    href={safeHttpsUrl(release?.url) || plugin.releasesUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${plugin.name} release notes`}

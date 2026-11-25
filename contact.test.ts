@@ -23,7 +23,12 @@ const payload = (over: Partial<ContactPayload> = {}): ContactPayload => ({
 
 const event = (body: unknown, headers: Record<string, string> = {}) => ({
   body: typeof body === "string" ? body : JSON.stringify(body),
-  headers: { origin: "https://alanmarcero.com", "cloudfront-viewer-address": "203.0.113.9:4431", ...headers },
+  headers: {
+    origin: "https://alanmarcero.com",
+    "content-type": "application/json",
+    "cloudfront-viewer-address": "203.0.113.9:4431",
+    ...headers,
+  },
 });
 
 let send: jest.MockedFunction<SendMail>;
@@ -62,10 +67,16 @@ describe("handleContact", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("rejects a foreign or missing Origin", async () => {
+  it("rejects a foreign, localhost, or missing Origin", async () => {
     expect((await run(event(payload(), { origin: "https://evil.example" }))).statusCode).toBe(403);
+    expect((await run(event(payload(), { origin: "http://localhost:5173" }))).statusCode).toBe(403);
     const noOrigin = { body: JSON.stringify(payload()), headers: {} };
     expect((await handleContact(noOrigin, { now: NOW, send })).statusCode).toBe(403);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("rejects non-JSON Content-Type", async () => {
+    expect((await run(event(payload(), { "content-type": "text/plain" }))).statusCode).toBe(415);
     expect(send).not.toHaveBeenCalled();
   });
 

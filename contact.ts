@@ -33,8 +33,8 @@ const MIN_MESSAGE = 10;
 const ALLOWED_ORIGINS = new Set([
   "https://alanmarcero.com",
   "https://www.alanmarcero.com",
-  "http://localhost:5173",
 ]);
+const MAX_TRACKED_IPS = 10_000;
 
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[A-Za-z]{2,}$/;
 const LINK_RE = /https?:\/\/|www\./gi;
@@ -147,14 +147,26 @@ export const resetContactState = (): void => {
   seenStamps.clear();
 };
 
+const pruneExpiredIps = (now: number): void => {
+  recentByIp.forEach((timestamps, key) => {
+    const active = timestamps.filter(t => now - t < RATE_WINDOW_MS);
+    if (active.length === 0) {
+      recentByIp.delete(key);
+      return;
+    }
+    if (active.length !== timestamps.length) recentByIp.set(key, active);
+  });
+};
+
 const rateLimited = (ip: string, now: number): boolean => {
-  const recent = (recentByIp.get(ip) ?? []).filter(t => now - t < RATE_WINDOW_MS);
-  if (recent.length >= RATE_MAX) {
-    recentByIp.set(ip, recent);
-    return true;
+  pruneExpiredIps(now);
+  const recent = recentByIp.get(ip) ?? [];
+  if (recent.length >= RATE_MAX) return true;
+  if (!recentByIp.has(ip) && recentByIp.size >= MAX_TRACKED_IPS) {
+    const oldestKey = recentByIp.keys().next().value;
+    if (oldestKey !== undefined) recentByIp.delete(oldestKey);
   }
-  recent.push(now);
-  recentByIp.set(ip, recent);
+  recentByIp.set(ip, [...recent, now]);
   return false;
 };
 
@@ -199,6 +211,9 @@ export const handleContact = async (
 
   const origin = header(event, "origin");
   if (!origin || !ALLOWED_ORIGINS.has(origin)) return reject(403, "Forbidden");
+
+  const contentType = header(event, "content-type")?.split(";")[0]?.trim().toLowerCase();
+  if (contentType !== "application/json") return reject(415, "Unsupported Media Type");
 
   const p = parsePayload(event);
   if (!p) return reject(400, "Invalid request.");

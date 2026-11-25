@@ -73,4 +73,20 @@ describe('PluginsPage', () => {
       global.fetch = originalFetch;
     }
   });
+
+  it('falls back to plugin.releasesUrl when cached release url has an unsafe scheme', () => {
+    const kicker = PLUGINS[0];
+    window.sessionStorage?.setItem(
+      `plugin-release:${kicker.repo}`,
+      JSON.stringify({
+        fetchedAt: Date.now(),
+        data: { tag: 'v9.9.9', url: 'javascript:alert(1)', notes: '' },
+      }),
+    );
+
+    render(<PluginsPage />);
+    const release = screen.getByRole('link', { name: `${kicker.name} release notes` });
+    expect(release).toHaveAttribute('href', kicker.releasesUrl);
+    window.sessionStorage?.clear();
+  });
 });

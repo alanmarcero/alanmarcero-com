@@ -16,14 +16,14 @@ jobs:
     steps:
       - name: Configure AWS credentials (OIDC)
         if: env.OIDC_ROLE_ARN != ''
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Configure AWS credentials (legacy static fallback)
         if: env.OIDC_ROLE_ARN == ''
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -76,7 +76,7 @@ jobs:
             },
             "Compress": true,
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
-            "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+            "OriginRequestPolicyId": "33f36d7e-f396-46d9-90e0-52428a34d9dc",
             "SmoothStreaming": false,
             "FieldLevelEncryptionId": "",
             "LambdaFunctionAssociations": { "Quantity": 0, "Items": [] },

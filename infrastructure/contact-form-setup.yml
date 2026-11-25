@@ -26,14 +26,14 @@ jobs:
     steps:
       - name: Configure AWS credentials (OIDC)
         if: env.OIDC_ROLE_ARN != ''
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure AWS credentials (legacy static fallback)
         if: env.OIDC_ROLE_ARN == ''
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -44,30 +44,37 @@ jobs:
           DIST_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
           aws cloudfront get-distribution-config --id "$DIST_ID" --output json > cf.json
-          if jq -e '.DistributionConfig.CacheBehaviors.Items // [] | any(.PathPattern == "/api/contact")' cf.json > /dev/null; then
-            echo "/api/contact behavior already present"
+          POLICY_ID="33f36d7e-f396-46d9-90e0-52428a34d9dc"
+          if jq -e --arg p "$POLICY_ID" '.DistributionConfig.CacheBehaviors.Items // [] | any(.PathPattern == "/api/contact" and .OriginRequestPolicyId == $p)' cf.json > /dev/null; then
+            echo "/api/contact behavior already configured"
             exit 0
           fi
-          # CachingDisabled + AllViewerExceptHostHeader (which also forwards
-          # CloudFront-Viewer-Address, the rate limiter's client IP).
-          jq '.DistributionConfig | .CacheBehaviors.Items = [{
-            "PathPattern": "/api/contact",
-            "TargetOriginId": "lambda-api",
-            "ViewerProtocolPolicy": "https-only",
-            "AllowedMethods": {
-              "Quantity": 7,
-              "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"],
-              "CachedMethods": { "Quantity": 2, "Items": ["HEAD", "GET"] }
-            },
-            "Compress": true,
-            "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-            "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
-            "SmoothStreaming": false,
-            "FieldLevelEncryptionId": "",
-            "LambdaFunctionAssociations": { "Quantity": 0, "Items": [] },
-            "FunctionAssociations": { "Quantity": 0, "Items": [] }
-          }] + (.CacheBehaviors.Items // []) | .CacheBehaviors.Quantity = (.CacheBehaviors.Items | length)' \
-            cf.json > cf-next.json
+          # CachingDisabled + AllViewerAndCloudFrontHeaders-2022-06 (injects
+          # CloudFront-Viewer-Address so clients cannot spoof the rate-limit IP).
+          jq --arg p "$POLICY_ID" '
+            .DistributionConfig |
+            if (.CacheBehaviors.Items // [] | any(.PathPattern == "/api/contact")) then
+              .CacheBehaviors.Items |= map(if .PathPattern == "/api/contact" then .OriginRequestPolicyId = $p else . end)
+            else
+              .CacheBehaviors.Items = [{
+                "PathPattern": "/api/contact",
+                "TargetOriginId": "lambda-api",
+                "ViewerProtocolPolicy": "https-only",
+                "AllowedMethods": {
+                  "Quantity": 7,
+                  "Items": ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "POST", "DELETE"],
+                  "CachedMethods": { "Quantity": 2, "Items": ["HEAD", "GET"] }
+                },
+                "Compress": true,
+                "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+                "OriginRequestPolicyId": $p,
+                "SmoothStreaming": false,
+                "FieldLevelEncryptionId": "",
+                "LambdaFunctionAssociations": { "Quantity": 0, "Items": [] },
+                "FunctionAssociations": { "Quantity": 0, "Items": [] }
+              }] + (.CacheBehaviors.Items // []) | .CacheBehaviors.Quantity = (.CacheBehaviors.Items | length)
+            end
+          ' cf.json > cf-next.json
           aws cloudfront update-distribution --id "$DIST_ID" \
             --if-match "$(jq -r '.ETag' cf.json)" \
             --distribution-config file://cf-next.json > /dev/null
