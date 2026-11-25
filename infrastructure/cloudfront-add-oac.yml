@@ -48,7 +48,7 @@ jobs:
         run: |
           aws lambda update-function-url-config \
             --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
-            --auth-type AWS_IAM
+            --auth-type AWS_IAM >/dev/null
           echo "Lambda Function URL auth switched to AWS_IAM"
 
       - name: Grant CloudFront permission to invoke Lambda
@@ -59,7 +59,7 @@ jobs:
             --statement-id "AllowCloudFrontServicePrincipal" \
             --action "lambda:InvokeFunctionUrl" \
             --principal "cloudfront.amazonaws.com" \
-            --source-arn "arn:aws:cloudfront::${ACCOUNT_ID}:distribution/${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+            --source-arn "arn:aws:cloudfront::${ACCOUNT_ID}:distribution/${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" >/dev/null
           echo "Lambda resource policy updated"
 
       - name: Attach OAC to lambda-api origin in CloudFront
@@ -80,7 +80,7 @@ jobs:
           aws cloudfront update-distribution \
             --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --if-match "$ETAG" \
-            --distribution-config file://dist-config-updated.json
+            --distribution-config file://dist-config-updated.json >/dev/null
           echo "CloudFront distribution update initiated"
 
       - name: Verify setup

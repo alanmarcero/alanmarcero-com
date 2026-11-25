@@ -94,7 +94,7 @@ jobs:
         run: |
           aws lambda update-function-code \
             --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
-            --zip-file fileb://lambda.zip
+            --zip-file fileb://lambda.zip >/dev/null
 
       # The contact form's recipient lives only in the CONTACT_EMAIL secret.
       # update-function-configuration replaces the whole environment, so the

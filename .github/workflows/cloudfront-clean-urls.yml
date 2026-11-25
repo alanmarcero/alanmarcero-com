@@ -100,7 +100,6 @@ jobs:
           EOF
 
       - name: Create or update CloudFront Function
-        id: fn
         run: |
           FN_NAME="alanmarcero-clean-urls"
           FN_CONFIG='{"Comment":"Generic clean-URL rewrite + .html canonicalization","Runtime":"cloudfront-js-2.0"}'
@@ -112,26 +111,25 @@ jobs:
               --name "$FN_NAME" \
               --if-match "$ETAG" \
               --function-config "$FN_CONFIG" \
-              --function-code fileb://clean-urls.js
+              --function-code fileb://clean-urls.js >/dev/null
           else
             echo "Function does not exist; creating."
             aws cloudfront create-function \
               --name "$FN_NAME" \
               --function-config "$FN_CONFIG" \
-              --function-code fileb://clean-urls.js
+              --function-code fileb://clean-urls.js >/dev/null
           fi
 
           # Publish DEVELOPMENT -> LIVE
           ETAG=$(aws cloudfront describe-function --name "$FN_NAME" --query 'ETag' --output text)
-          aws cloudfront publish-function --name "$FN_NAME" --if-match "$ETAG"
+          aws cloudfront publish-function --name "$FN_NAME" --if-match "$ETAG" >/dev/null
 
-          FN_ARN=$(aws cloudfront describe-function \
+          aws cloudfront describe-function \
             --name "$FN_NAME" \
             --stage LIVE \
             --query 'FunctionSummary.FunctionMetadata.FunctionARN' \
-            --output text)
-          echo "FN_ARN=$FN_ARN" >> "$GITHUB_OUTPUT"
-          echo "Function published: $FN_ARN"
+            --output text > fn-arn.txt
+          echo "Function published."
 
       - name: Associate function with default cache behavior
         run: |
@@ -142,7 +140,7 @@ jobs:
           jq -r '.ETag' cf-config.json > etag.txt
           jq '.DistributionConfig' cf-config.json > dist-config.json
 
-          FN_ARN="${{ steps.fn.outputs.FN_ARN }}"
+          FN_ARN=$(cat fn-arn.txt)
 
           # Idempotent: replace any existing viewer-request association on the
           # default behavior with our function.
@@ -157,7 +155,7 @@ jobs:
           aws cloudfront update-distribution \
             --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --if-match "$ETAG" \
-            --distribution-config file://dist-config-updated.json
+            --distribution-config file://dist-config-updated.json >/dev/null
 
           echo "CloudFront distribution update initiated"
 

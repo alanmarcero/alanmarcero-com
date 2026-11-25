@@ -89,7 +89,7 @@ jobs:
           aws cloudfront update-distribution \
             --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --if-match "$ETAG" \
-            --distribution-config file://dist-config-final.json
+            --distribution-config file://dist-config-final.json >/dev/null
 
       - name: Wait for deployment
         run: |
